@@ -1,0 +1,490 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vishnu - References</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Vishnu - References</h1>
+    <p><a href="../index.html">← Back</a></p>
+    <p> </p><p> </p><p> </p><h2>Schema Table Creation</h2><p>Refer to the following options to automate the creation of schema tables:</p><p><strong>Note</strong>: You must verify the following points after a table is created:</p><ul>
+<li data-list-item-id="eef4a637dde4b55ba8b1c8b79c1476702">Update the description as necessary.</li>
+<li data-list-item-id="e95fb96972bfa31ba44521731a163cefe">Update as "String Array" or "Integer Array" when multiValued = true.</li>
+<li data-list-item-id="e161ed2f842ea809f8e49d67d4b3f977c">Add a red asterisk for required attributes.</li>
+<li data-list-item-id="eb64b5c8449fc30c2a06e504c1ce6a2fb">Check for uniqueness.<br/><strong>Notes</strong>: <ul>
+<li data-list-item-id="e2eb54dd4e95d34923ba16388cf143bb0">
+<em>If the </em><code data-stringify-type="code"><em>uniqueness</em></code><em> of any attribute in the schema is </em><code data-stringify-type="code"><em>server</em></code><em>, make sure that we use “<strong data-stringify-type="bold">unique”</strong> term in the description. For example, </em><code data-stringify-type="code"><em>The unique phone number of the user</em></code><em>.</em>
+</li>
+<li data-list-item-id="ee63364e6843a3d75eff1ef20a9f448bf">
+<em>In case the  </em><code data-stringify-type="code"><em>uniqueness</em></code><em> is </em><code data-stringify-type="code"><em>global</em></code><em>, we will add the following note in the Description column:</em><br/><em><strong>Note</strong>: The value must be unique across all instances of the ABC application.</em>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e70b0095d3f532c4a4a87890ca70fc7a2">Add canonicalValues if any. For example, <strong>Note</strong>: The supported values are work and home.</li>
+<li data-list-item-id="e46cefec906412c3747b3ebff32df4744">Remove all custom fields/attributes and put the format of the custom attribute along with the proper data types. For example, applications[].jobDetails.customFields.&lt;customAttributeName&gt; </li>
+<li data-list-item-id="e6df18c468cd0b08799201d5b02742d5b">Remove rows of complex data types.</li>
+</ul><p><strong>Option 1:</strong> For complex schemas, you can use the following script to generate schema tables in Postman:</p><div>
+<pre>
+var template = `
+&lt;style type="text/css"&gt;
+.tftable th, .tftable td { text-align: center; }
+&lt;/style&gt;
+{{#each response.Resources}}
+&lt;h2&gt;{{name}}&lt;/h2&gt;
+&lt;table class="tftable" border="1"&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Data Type&lt;/th&gt;
+&lt;th&gt;Example Values&lt;/th&gt;
+&lt;th&gt;Mutability&lt;/th&gt;
+&lt;/tr&gt;
+{{#each attributes}}
+{{#if isComplexType}}
+{{#each subAttributes}}
+&lt;tr&gt;
+&lt;td&gt;{{../name}}{{#if ../isMultiValued}}[]{{/if}}.{{name}}{{#if isMultiValued}}[]{{/if}}{{#if required}}&lt;span style="color: red;"&gt;*&lt;/span&gt;{{/if}}&lt;/td&gt;
+&lt;td&gt;{{description}}&lt;/td&gt;
+&lt;td&gt;{{type}}&lt;/td&gt;
+&lt;td&gt;{{example}}&lt;/td&gt;
+&lt;td&gt;{{mutability}}&lt;/td&gt;
+&lt;/tr&gt;
+{{#if subAttributes}}
+{{#each subAttributes}}
+&lt;tr&gt;
+&lt;td&gt;{{../../name}}{{#if ../../isMultiValued}}[]{{/if}}.{{../name}}{{#if ../isMultiValued}}[]{{/if}}.{{name}}{{#if isMultiValued}}[]{{/if}}{{#if required}}&lt;span style="color: red;"&gt;*&lt;/span&gt;{{/if}}&lt;/td&gt;
+&lt;td&gt;{{description}}&lt;/td&gt;
+&lt;td&gt;{{type}}&lt;/td&gt;
+&lt;td&gt;{{example}}&lt;/td&gt;
+&lt;td&gt;{{mutability}}&lt;/td&gt;
+&lt;/tr&gt;
+{{#if subAttributes}}
+{{#each subAttributes}}
+&lt;tr&gt;
+&lt;td&gt;{{../../../name}}{{#if ../../../isMultiValued}}[]{{/if}}.{{../../name}}{{#if ../../isMultiValued}}[]{{/if}}.{{../name}}{{#if ../isMultiValued}}[]{{/if}}.{{name}}{{#if isMultiValued}}[]{{/if}}{{#if required}}&lt;span style="color: red;"&gt;*&lt;/span&gt;{{/if}}&lt;/td&gt;
+&lt;td&gt;{{description}}&lt;/td&gt;
+&lt;td&gt;{{type}}&lt;/td&gt;
+&lt;td&gt;{{example}}&lt;/td&gt;
+&lt;td&gt;{{mutability}}&lt;/td&gt;
+&lt;/tr&gt;
+{{#if subAttributes}}
+{{#each subAttributes}}
+&lt;tr&gt;
+&lt;td&gt;{{../../../../name}}{{#if ../../../../isMultiValued}}[]{{/if}}.{{../../../name}}{{#if ../../../isMultiValued}}[]{{/if}}.{{../../name}}{{#if ../../isMultiValued}}[]{{/if}}.{{../name}}{{#if ../isMultiValued}}[]{{/if}}.{{name}}{{#if isMultiValued}}[]{{/if}}{{#if required}}&lt;span style="color: red;"&gt;*&lt;/span&gt;{{/if}}&lt;/td&gt;
+&lt;td&gt;{{description}}&lt;/td&gt;
+&lt;td&gt;{{type}}&lt;/td&gt;
+&lt;td&gt;{{example}}&lt;/td&gt;
+&lt;td&gt;{{mutability}}&lt;/td&gt;
+&lt;/tr&gt;
+{{#if subAttributes}}
+{{#each subAttributes}}
+&lt;tr&gt;
+&lt;td&gt;{{../../../../../name}}{{#if ../../../../../isMultiValued}}[]{{/if}}.{{../../../../name}}{{#if ../../../../isMultiValued}}[]{{/if}}.{{../../../name}}{{#if ../../../isMultiValued}}[]{{/if}}.{{../../name}}{{#if ../../isMultiValued}}[]{{/if}}.{{../name}}{{#if ../isMultiValued}}[]{{/if}}.{{name}}{{#if isMultiValued}}[]{{/if}}{{#if required}}&lt;span style="color: red;"&gt;*&lt;/span&gt;{{/if}}&lt;/td&gt;
+&lt;td&gt;{{description}}&lt;/td&gt;
+&lt;td&gt;{{type}}&lt;/td&gt;
+&lt;td&gt;{{example}}&lt;/td&gt;
+&lt;td&gt;{{mutability}}&lt;/td&gt;
+&lt;/tr&gt;
+{{/each}}
+{{/if}}
+{{/each}}
+{{/if}}
+{{/each}}
+{{/if}}
+{{/each}}
+{{/if}}
+{{/each}}
+{{else}}
+&lt;tr&gt;
+&lt;td&gt;{{name}}{{#if isMultiValued}}[]{{/if}}{{#if required}}&lt;span style="color: red;"&gt;*&lt;/span&gt;{{/if}}&lt;/td&gt;
+&lt;td&gt;{{description}}&lt;/td&gt;
+&lt;td&gt;{{type}}&lt;/td&gt;
+&lt;td&gt;{{example}}&lt;/td&gt;
+&lt;td&gt;{{mutability}}&lt;/td&gt;
+&lt;/tr&gt;
+{{/if}}
+{{/each}}
+&lt;/table&gt;
+{{/each}}
+`;
+function constructVisualizerPayload() {
+var res = pm.response.json();
+res.Resources.forEach(schema =&gt; {
+schema.attributes.forEach(attr =&gt; {
+attr.isComplexType = attr.type === "complex";
+attr.isMultiValued = attr.multiValued === true;
+attr.required = attr.required === true;
+if (attr.subAttributes) {
+attr.subAttributes.forEach(subAttr =&gt; {
+subAttr.isMultiValued = subAttr.multiValued === true;
+subAttr.required = subAttr.required === true;
+if (subAttr.subAttributes) {
+subAttr.subAttributes.forEach(subSubAttr =&gt; {
+subSubAttr.isMultiValued = subSubAttr.multiValued === true;
+subSubAttr.required = subSubAttr.required === true;
+if (subSubAttr.subAttributes) {
+subSubAttr.subAttributes.forEach(subSubSubAttr =&gt; {
+subSubSubAttr.isMultiValued = subSubSubAttr.multiValued === true;
+subSubSubAttr.required = subSubSubAttr.required === true;
+if (subSubSubAttr.subAttributes) {
+subSubSubAttr.subAttributes.forEach(subSubSubSubAttr =&gt; {
+subSubSubSubAttr.isMultiValued = subSubSubSubAttr.multiValued === true;
+subSubSubSubAttr.required = subSubSubSubAttr.required === true;
+});
+}
+});
+}
+});
+}
+});
+}
+});
+});
+return { response: res };
+}
+pm.visualizer.set(template, constructVisualizerPayload());
+
+
+        </pre>
+<div> </div>
+</div><p><strong>Option 2:</strong> You can use the <a href="https://support.aquera.com/hc/article_attachments/38180719343895" rel="noopener noreferrer" target="_blank">Create IAN Attributes Table</a> file to automate the IAN Attributes table creation.<br/>Perform the following steps to create the IAN Attributes table:</p><ol><li data-list-item-id="e5868ceec8aa36d61b7c7fcbca7f4e35b"> <ol><li data-list-item-id="ef74573aedfb0dd51258c8dbc212bce39"> <ol data-border="0" data-indent="0" data-stringify-type="ordered-list">
+<li data-list-item-id="e387f7898ce2ced3da3b1f0c3a7738e67" data-stringify-border="0" data-stringify-indent="0">Open the<strong> </strong><a href="https://support.aquera.com/hc/article_attachments/38180719343895" rel="noopener noreferrer" target="_blank"><strong>Create IAN Attributes Table</strong></a> file.</li>
+<li data-list-item-id="e03cd6ea7d93eea571c16b35019c61bb5" data-stringify-border="0" data-stringify-indent="0">Select <strong data-stringify-type="bold">Enable Macros</strong>, if it asks.</li>
+<li data-list-item-id="e921207f6b9f8004b7fa70aeb74743903" data-stringify-border="0" data-stringify-indent="0">Copy all IAN Attributes from Postman and paste them into <strong data-stringify-type="bold">cell 1A</strong> of <strong>sheet 1</strong> in the <strong data-stringify-type="bold">Create IAN Attributes Table</strong> file.</li>
+<li data-list-item-id="e111e6341a494bf68737c0f3c372e27de" data-stringify-border="0" data-stringify-indent="0">Use shortcut <strong data-stringify-type="bold">cmd+opt+z</strong> to create the IAN attributes Table which will be available in <strong data-stringify-type="bold">sheet 2</strong> of the file.</li>
+<li data-list-item-id="e723621f9c38457b5bced57cb18110c9c" data-stringify-border="0" data-stringify-indent="0">You can copy this table now and paste it into Zendesk.</li>
+</ol>
+</li></ol>
+</li></ol><h2>OpenAPI Table Creation</h2><p>Use the following script to automate the creation of OpenAPI tables:</p><div>
+<pre>// Helper function to flatten deeply nested properties into an array with full paths and levels
+function flattenProperties(properties, parentPath = '', levels = 0, operationId = '', required = false) {
+let flattened = [];
+for (let prop in properties) {
+let fullPath = parentPath ? `${parentPath} &gt; ${prop}` : prop;
+let property = properties[prop];
+let isRequired = required || (properties.required &amp;&amp; properties.required.includes(prop));
+flattened.push({ 
+name: fullPath, 
+level: levels, 
+operationId, 
+required: isRequired, 
+multivalued: property.type === 'array', 
+...property 
+});
+if (property.type === "object" &amp;&amp; property.properties) {
+flattened.push(...flattenProperties(property.properties, fullPath, levels + 1, operationId, isRequired));
+}
+if (property.type === "array" &amp;&amp; property.items &amp;&amp; property.items.properties) {
+flattened.push(...flattenProperties(property.items.properties, fullPath, levels + 1, operationId, isRequired));
+}
+}
+return flattened;
+}
+// Helper function to filter out properties with type "object" or "array"
+function filterPropertiesByType(properties) {
+return properties.filter(property =&gt; property.type !== "object" &amp;&amp; property.type !== "array");
+}
+// Function to construct the visualizer payload
+function constructVisualizerPayload() {
+var res = pm.response.json();
+let operationData = [];
+let schemaData = [];
+if (res &amp;&amp; res.document) {
+if (res.document.paths) {
+for (let path in res.document.paths) {
+let pathItem = res.document.paths[path];
+for (let method in pathItem) {
+if (['get', 'post', 'put', 'delete', 'patch', 'head', 'options'].includes(method)) {
+let operation = pathItem[method];
+if (operation &amp;&amp; operation.operationId) {
+let pathParameters = [];
+if (operation.parameters) {
+pathParameters = operation.parameters.map(parameter =&gt; ({
+name: parameter.name,
+type: parameter.schema ? parameter.schema.type : '',
+description: parameter.description ? parameter.description : '',
+level: 0,
+operationId: operation.operationId,
+required: parameter.required || false,
+multivalued: parameter.schema &amp;&amp; parameter.schema.type === 'array'
+}));
+}
+let requestBodyParameters = [];
+if (operation.requestBody &amp;&amp; operation.requestBody.content) {
+let content = operation.requestBody.content;
+for (let contentType in content) {
+let schema = content[contentType].schema;
+if (schema &amp;&amp; schema.properties) {
+let flattenedProperties = flattenProperties(schema.properties, '', 0, operation.operationId);
+let filteredProperties = filterPropertiesByType(flattenedProperties);
+filteredProperties.sort((a, b) =&gt; a.name.localeCompare(b.name));
+requestBodyParameters = filteredProperties;
+}
+}
+}
+operationData.push({
+operationId: operation.operationId,
+parameters: pathParameters.concat(requestBodyParameters)
+});
+}
+}
+}
+}
+}
+if (res.document.components &amp;&amp; res.document.components.schemas) {
+for (let schemaName in res.document.components.schemas) {
+let schema = res.document.components.schemas[schemaName];
+let flattenedSchemaProperties = flattenProperties(schema.properties);
+let filteredSchemaData = filterPropertiesByType(flattenedSchemaProperties);
+schemaData = schemaData.concat(filteredSchemaData.map(property =&gt; ({
+schemaName: schemaName, // This should be the schema name
+operationId: schemaName, // Use schemaName as Operation ID for schema data
+propertyName: property.name,
+type: property.type,
+description: property.description,
+required: schema.required &amp;&amp; schema.required.includes(property.name.split(' &gt; ').pop()) ? true : property.required || false,
+multivalued: property.multivalued || false
+})));
+}
+}
+}
+return { response: { operationData, schemaData } };
+}
+// Combined template to handle all operations and schemas
+var template = `
+&lt;style&gt;
+table {
+width: 100%;
+border-collapse: collapse;
+text-align: center;
+}
+th, td {
+border: 1px solid black;
+padding: 8px;
+}
+th {
+background-color: #f2f2f2;
+}
+td {
+text-align: center;
+}
+.required { 
+color: red;
+}
+&lt;/style&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Operation ID&lt;/th&gt;
+&lt;th&gt;Parameter Name&lt;/th&gt;
+&lt;th&gt;Parameter Data Type&lt;/th&gt;
+&lt;th&gt;Parameter Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+{{#each response.operationData}}
+{{#each this.parameters}}
+&lt;tr&gt;
+&lt;td&gt;{{operationId}}&lt;/td&gt;
+&lt;td&gt;{{{name}}}{{#if multivalued}}[]{{/if}}{{#if required}} &lt;span class="required"&gt;*&lt;/span&gt;{{/if}}&lt;/td&gt;
+&lt;td&gt;{{type}}&lt;/td&gt;
+&lt;td&gt;{{description}}&lt;/td&gt;
+&lt;/tr&gt;
+{{/each}}
+{{/each}}
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;br&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Operation ID&lt;/th&gt;
+&lt;th&gt;Property Name&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+{{#each response.schemaData}}
+&lt;tr&gt;
+&lt;td&gt;{{operationId}}&lt;/td&gt;
+&lt;td&gt;{{{propertyName}}}{{#if multivalued}}[]{{/if}}{{#if required}} &lt;span class="required"&gt;*&lt;/span&gt;{{/if}}&lt;/td&gt;
+&lt;td&gt;{{type}}&lt;/td&gt;
+&lt;td&gt;{{description}}&lt;/td&gt;
+&lt;/tr&gt;
+{{/each}}
+&lt;/tbody&gt;
+&lt;/table&gt;
+`;
+// Set the visualizer template
+pm.visualizer.set(template, constructVisualizerPayload());
+</pre>
+<div> </div>
+</div><h1>Overview</h1><p>The following code snippets allow you to enhance the overall user experience. You can copy the code by clicking the copy button and use it on your pages.</p><h1>Note</h1><h2>Implementation</h2><div>
+<pre><code>&lt;!--Note--&gt;
+&lt;div class="note-callout"&gt;
+&lt;div id="custom-note-icon" class="note-icon"&gt;
+&lt;em class="fas-duotone fas-notes"&gt;&lt;/em&gt;
+&lt;p&gt;Note:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="note-content"&gt;
+&lt;p class="normal-text"&gt;
+This is normal text outside the lists. It aligns with the Level 1 bullet
+point.
+&lt;/p&gt;
+&lt;p class="normal-text"&gt;&amp;nbsp;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<div> </div>
+</div><h2>Preview</h2><div>
+<div><p>Note:</p></div>
+<div>
+<p>This is your note content. You can add text, lists, and more to provide information or instructions.</p>
+<ul>
+<li data-list-item-id="ec74468ce330eb5e7cae7396e4f790bac">Item 1</li>
+<li data-list-item-id="e0b0908b0db83064e2a0c3a54803f95d4">Item 2</li>
+<li data-list-item-id="eb894d74b3eea082d3a588b856a2c0a80">Item 3</li>
+<li data-list-item-id="e9eb1e4e324286c52da79163a77a98d88">item 4</li>
+</ul>
+<p>Here is a line.</p>
+<p>This is normal text. This is normal text. This is normal text. This is normal text. This is normal text. This is normal text. This is normal text. This is normal text. This is normal text. This is normal text. This is normal text. This is normal text. This is normal text.</p>
+<ol>
+<li data-list-item-id="e51554f0ec6ea8653349a6afa09611bf5">First item</li>
+<li data-list-item-id="e0496bf5a20730e43df5e5f7ca87bcc6f">Second item</li>
+<li data-list-item-id="e6b3fa7f1f15e55378affee485f7b0ca3">Third item</li>
+</ol>
+<p>This is normal text. This is normal text. This is normal text. This is normal text. This is normal text. This is normal text.</p>
+</div>
+</div><h1>Swagger</h1><div>
+<pre><code>
+&lt;!-- API documentation will appear below when published --&gt;
+&lt;p&gt;
+  &lt;button id="toggle-swagger-btn" style="margin-bottom: 10px; background: #0072ef; color: #fff; border: none; border-radius: 4px; padding: 8px 18px; font-size: 16px; cursor: pointer; transition: background 0.2s;"&gt;View OpenAPI Document&lt;/button&gt;
+&lt;/p&gt;
+&lt;div id="swagger-card" style="display: none; max-width: 900px; margin: 0 auto 24px auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px 16px; position: relative;"&gt;
+  &lt;div id="swagger-ui" style="margin-top: 0;"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;
+  &lt;script&gt;
+const DisableAuthorizePlugin = function() {
+    return {
+      wrapComponents: {
+        authorizeBtn: () =&gt; () =&gt; null
+      }
+    }
+};
+
+let swaggerLoaded = false;
+document.getElementById('toggle-swagger-btn').addEventListener('click', function() {
+    const card = document.getElementById('swagger-card');
+    if (card.style.display === 'none' || card.style.display === '') {
+      card.style.display = 'block';
+      this.textContent = 'Hide OpenAPI Document';
+      if (!swaggerLoaded) {
+        SwaggerUIBundle({
+          url: "ADD YOUR URL HERE",
+          dom_id: '#swagger-ui',
+          displayOperationId: true,
+          supportedSubmitMethods: [],
+          docExpansion: "list",
+          plugins: [DisableAuthorizePlugin],
+          presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+          ]
+        });
+        swaggerLoaded = true;  
+          function enhanceOperationIds() {
+          document.querySelectorAll('.opblock-summary-operation-id').forEach(function(el) {
+          if (!el.dataset.enhanced) {
+          const opId = el.textContent.trim();
+            el.innerHTML = `
+                &lt;span class="opid-label"&gt;Operation ID:&lt;/span&gt;
+                &lt;span class="opid-value"&gt;${opId}&lt;/span&gt;
+              `;
+              el.dataset.enhanced = "true";
+              }
+                });
+                  }
+                setTimeout(enhanceOperationIds, 1200);
+                document.addEventListener('click', function(e) {
+                    if (e.target.closest('.opblock-summary-control')) {
+                      setTimeout(enhanceOperationIds, 500);
+                    }
+                });
+      }
+    } else {
+      card.style.display = 'none';
+      this.textContent = 'View OpenAPI Document';
+    }
+});
+  &lt;/script&gt;
+  </code></pre>
+<div><!-- Copy button will be dynamically created here --></div>
+</div><h2>OpenAPI Documentation Process</h2><ol>
+<li data-list-item-id="e81ac3a427d64fd75ab7991444481ace0">In your draft article, under the OpenAPI section, upload your API file.</li>
+<li data-list-item-id="efab1606a65923274cfa0f62360dc95e4">Attach your OpenAPI (Swagger) YAML or JSON file to your draft article in Zendesk Guide.</li>
+<li data-list-item-id="eed5d3b188a1e3acc5b62031f05a33250">Publish your document internally, set the article visibility to internal and publish it.<br/>This step generates a public/internal link for your attachment.</li>
+<li data-list-item-id="ed8e79460b3902f76d7338943d58cabd2">Copy your OpenAPI spec link, and open the published draft article.</li>
+<li data-list-item-id="e017c8e789d3b9aae861b8645be631ec8">Right-click the attachment link for your OpenAPI file and copy the link address</li>
+<li data-list-item-id="e47d5aa504d63116d3f87e7e1b28d79ba">The link should look something like: <a href="https://support.yoursite.com/hc/en-us/article_attachments/1234567890/your_api.yaml/Json">https://support.yoursite.com/hc/en-us/article_attachments/1234567890/your_api.yaml/Json</a>
+</li>
+<li data-list-item-id="e2bc54079d21e6b350645b78a2f2db661">Copy the Swagger rendering code from the Content Enhancements - Development page.<br/>Find the Swagger rendering code sample.</li>
+<li data-list-item-id="e829d05a8e5c5599f9b8183c51915be28">Paste the code in your draft document. In your Zendesk article editor, switch to Source Code view (usually a &lt;&gt;&lt;/&gt; button)</li>
+<li data-list-item-id="ecd56052305199c3a5b67bb634dd4da0e">Paste the copied Swagger rendering code where you want the API docs to appear.</li>
+</ol><p>Replace the placeholder with your OpenAPI spec URL</p><p>Find the line in the code that looks like: URL: "ADD YOUR URL HERE",</p><p>Replace "ADD YOUR URL HERE" with the link you copied in Step 3.</p><h1>Code Block</h1><h2>Implementation and Preview</h2><div>
+<pre><code>
+    &lt;div class="code-block"&gt;
+ &lt;pre&gt;<br/>&lt;code class="python"&gt;<br/><br/>#START<br/>#PASTE YOUR CONTENT BY REPLACING THE BELOW EXAMPLE CONTENT TILL #END<br/><br/># Taking kilometre<br/>s input from the user
+kilometers = float(input("Enter value in kilometers: "))
+
+# conversion factor
+conv_fac = 0.621371
+
+# calculate miles
+miles = kilometers * conv_fac
+print('%0.2f kilometers is equal to %0.2f miles' %(kilometers,miles))<br/>#END<br/>&lt;/code&gt;&lt;/pre&gt;
+<br/>&lt;div class="copy-button-container"&gt;
+    &lt;!-- Copy button will be dynamically created here --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;  </code></pre>
+<div><!-- Copy button will be dynamically created here --></div>
+</div><h1><!--Accordion--></h1><p>INFO ABOUT CODE BLOCK<br/>You might face problems with code blocks as Zendesk or any static html website generator by default converts any HTML code. For example, If angle braces are present in your code, your code block does not render, or the block breaks. In this case, the following steps will help you to fix the problem:</p><ol>
+<li data-list-item-id="e28a252f74f8b7ab04c308b973820db7f">Verify if your code has special characters such as &lt;, &gt;, &amp;.</li>
+<li data-list-item-id="e0eaf92dfd8bbb17aed1e20c719b8ad09">Copy your code segment.</li>
+<li data-list-item-id="ea2ee2c3aa6d95926fc607453da0ee20c">Navigate to <a href="https://codebeautify.org/html-encode-string">https://codebeautify.org/html-encode-string</a>
+</li>
+<li data-list-item-id="e3bac8302fbdc62a50b97aa7459945342">Paste your code under **Enter the text to be HTML encoded** textbox.</li>
+<li data-list-item-id="eeb4bd8c86a822a274227a217d4c37c84">Click **HTML Encode**.</li>
+<li data-list-item-id="e133af24883a29d0e1c87a890a903ba8d">Click **Copy to Clipboard**.</li>
+<li data-list-item-id="eb5ad32003e17d2ab7e20fcf3709b2231">Paste this code within the code block and save it.</li>
+</ol><h1>Accordion </h1><h2>Implementation and Preview</h2><div>
+<pre><code> 
+&lt;!--Accordion--&gt;
+&lt;div class="accordion"&gt;
+  &lt;div class="accordion-header"&gt;
+    &lt;p&gt;Section 1&lt;/p&gt;
+    &lt;span class="accordion-toggle" data-expanded="false"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="accordion-panel"&gt;
+    &lt;p&gt;
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+      ea commodo consequat.
+    &lt;/p&gt;
+  &lt;/div&gt;
+  </code></pre>
+<div> </div>
+</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UKG Pro / SAP Concur Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>UKG Pro / SAP Concur Integration Guide</h1>
+    <p><a href="../index.html">← Back</a></p>
+    <h1>Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This guide outlines the end-to-end steps required to set up the integration that synchronizes employee data between UKG Pro and SAP Concur.</p><p>To identify records across both systems, the integration uses either the employee ID or email ID (based on selection) from UKG Pro, and matches it to the employee number or username (based on selection) in the SAP Concur as a correlation attribute.</p><h2>Key Functions</h2><p>This integration automates identity lifecycle management between UKG Pro (an HR/Payroll system) and SAP Concur (an expense management system) with the following primary capabilities:</p><ul>
+<li data-list-item-id="e56c5417a4d358b5c8dedf8f6796ab64b">Creates new users in <strong>SAP Concur</strong> when they are added in <strong>UKG Pro</strong>.</li>
+<li data-list-item-id="eba9e5cdb83d7fa8fc5b9606a3f79c785">Updates existing <strong>SAP Concur</strong> users when their information changes in <strong>UKG Pro</strong>.</li>
+<li data-list-item-id="e2c796a0a237bd52f6a0c531f217f6547">Deactivates <strong>SAP Concur</strong> users when employees are terminated in <strong>UKG Pro</strong>.</li>
+<li data-list-item-id="e86fe2205e4756d3c4b07354fa41662a4">Creates and deletes users based on a specific date and time.</li>
+<li data-list-item-id="eced533f7299b5cc28b379619bb1dad1d">Assigns appropriate roles in <strong>SAP Concur</strong> based on job titles from <strong>UKG Pro</strong>.</li>
+<li data-list-item-id="ebc29e5b86192d9e508f5963d5afe4cab">Updates employee expense records from <strong>SAP Concur</strong> to <strong>UKG Pro </strong>(writeback).</li>
+<li data-list-item-id="e97c4793b7b1994ae990655b97619120c">Supports testing mode for validation.</li>
+<li data-list-item-id="efeb09ce99ba6319152746ce33118c114">Supports incremental synchronization to process only changed records.</li>
+<li data-list-item-id="e6368919fa1d63461ad9f457052c71f41">Sends email notifications for various events, such as user creations, updates, and terminations.</li>
+</ul><h2>Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e8c48b75cc663635539e1f83903210464">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e5719a93d0320d815e9552d06811090b0">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e80d38c646dd8c914a3a2fb50dfc57fc7">
+<strong>UKG Pro</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4420217992727" rel="noopener noreferrer" target="_blank">UKG Pro Configuration Guide</a> for configuration details.<br/><strong>Note</strong>: Only the following tenant attributes must be configured during connector setup:<ul>
+<li data-list-item-id="e600e1a461aac6d2d0af84ef218f680c0">Client ID</li>
+<li data-list-item-id="ed0839ea9147bd15c9045b71afb2b648c">Client Secret</li>
+<li data-list-item-id="ed9608b5f68a85e5d39ff3301b24d465f">Service Account Username</li>
+<li data-list-item-id="e2c0e5a3cbe6f0c6bc9ef6117fec4d024">Service Account Password</li>
+<li data-list-item-id="ee801941f2e69b143cfe4a6a98f078713">Service Account Customer API Key</li>
+</ul>
+</li>
+<li data-list-item-id="ed51ca970721c911fc21a11e3284451e3">
+<strong>SAP Concur</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/1500007327282" rel="noopener noreferrer" target="_blank">SAP Concur Configuration Guide</a> for configuration details.<br/><strong>Note</strong>: Only the following tenant attributes must be configured during connector setup:<ul>
+<li data-list-item-id="e2a6192c99451b3b01262c0c5a7c7c33e">Webservices Company UUID</li>
+<li data-list-item-id="e8b1ef1e2b11ed7b90403ff19f8cf928a">Webservices Request Token</li>
+<li data-list-item-id="e631e1c9a187745c3b1b3ad9113145c67">Auto assign ExpenseApprovers role to the expense approver of the user</li>
+<li data-list-item-id="e30ff41e15b3e636a4f8bf99a0f839bc4">Auto assign RequestApprovers role to the request approver of the user</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h1>Integration Setup</h1><p>This section details the configuration and mapping process for integrating UKG Pro with SAP Concur. It outlines the steps to create the integration, set up integration preferences, and define how data is mapped.</p><h2>Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>UKG Pro / SAP Concur</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <strong>UKG Pro</strong> and <strong>SAP Concur</strong> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2>Configuration</h2><p>On the <strong>Configuration</strong> page, the following sections are displayed:</p><h3>Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3>Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and general settings according to your specific use case.</p><h4>Integration Features</h4><p>Enable the following feature based on your requirements:</p><ul>
+<li data-list-item-id="ed1234ffabeed19197d59323d2c1a2519">
+<strong>Enable Employee Lifecycle Management</strong>: Select this checkbox to synchronize employees' records from <strong>UKG Pro</strong> to <strong>SAP Concur</strong>. When enabled, the <a href="#01K4A9WTC4984KJ3X6ABQ5B8WR">Manage Employees</a> section is displayed to configure further integration settings.</li>
+<li data-list-item-id="eb55e9210777e4e83cb34ed12a228b7ed">
+<strong>Enable Expense Management</strong>: Select this checkbox to synchronize the expense records from <strong>SAP Concur</strong> to <strong>UKG Pro</strong>. When enabled, the <a href="#01KDDAV3EAHNZE8QK11E0YJGYB" rel="noopener noreferrer" target="_blank">Manage Expense</a> section is displayed to configure further integration settings.</li>
+<li data-list-item-id="ee0e753daf7819ad8d5da18a5d0ae13af">
+<strong>Enable Entitlement Management</strong>: Select this checkbox to synchronize the entitlement assignments (<strong>roles</strong>) from <strong>UKG Pro </strong>to <strong>SAP Concur</strong>. When enabled, the <a href="#h_01KFJRNFACHS8WM9P5V7MT582D" rel="noopener noreferrer" target="_blank">Entitlements</a> tab is displayed for further configuration.</li>
+</ul><h4>Execution Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="ebff04ab63aecc883e87174957c380fa9">
+<strong>Enable Debug Mode</strong>: Select this checkbox to execute the integration with a test user for debugging purposes. When enabled, the <a href="#01K5V7T6T6MJ13XCZYCT1T59VP">Debug Settings</a> fields are displayed within the <a href="#01KEVCPV02BP8SAN60Y62Q2F7A">Operational Settings</a> section for further configuration.</li>
+<li data-list-item-id="e2c127388dfc9a4d274129f42a0399be1">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K3JDHSDXSJJHPRZMHT47QV8A">Log Settings</a> fields are displayed within the <a href="#01KEVCPV02BP8SAN60Y62Q2F7A">Operational Settings</a> section for further configuration.</li>
+<li data-list-item-id="ec950cfa7b76fc23c068c6282dad55767">
+<strong>Enable Reporting</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Report Settings</a> fields are displayed within the <a href="#01KEVCPV02BP8SAN60Y62Q2F7A">Operational Settings</a> section for further configuration.</li>
+<li data-list-item-id="e07ae56f8724e8d6b2a8a4bc46d225a9e">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights Settings</a> fields are displayed within the <a href="#01KEVCPV02BP8SAN60Y62Q2F7A">Operational Settings</a> section for further configuration.</li>
+<li data-list-item-id="edf135f42cbad17a1df20d35d400c648e">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01KEVBSF1NCB75TGKYHG2Q3V98">Notification Center</a> section is displayed for further configuration.</li>
+</ul><h3>Manage Employees</h3><p>The <strong>Manage Employees</strong> section enables you to customize the integration settings for employee lifecycle management according to your specific use case. It synchronizes employee data from <strong>UKG Pro</strong> to <strong>SAP Concur</strong>.<br/><strong>Note</strong>: This section appears only if the <strong>Enable Employee Lifecycle Management</strong> setting is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul>
+<li data-list-item-id="ea79986c80fd80978f51e92ee35e7a483">
+<span><strong>Match Expression</strong>: This section enables you to choose the correlation attributes in the source and target applications used to identify matching records. It has the following settings:</span><ul>
+<li data-list-item-id="ec30dee13473fa652ae25938dc548f7ea">
+<span><strong>Source Correlation Attribute</strong>: </span>Select the correlation attribute available in UKG Pro to distinctly find the associated SAP Concur record. The available options are <strong>EmployeeID</strong> and <strong>Email</strong>.</li>
+<li data-list-item-id="eb5d1bf95cc9a1a532e5a1b540534fefe">
+<span><strong>Target Correlation Attribute</strong>: </span>Select the correlation attribute available in SAP Concur to distinctly find the associated UKG Pro record. The available options are <strong>EmployeeNumber</strong> and <strong>UserName</strong>.</li>
+</ul>
+</li>
+<li data-list-item-id="e438a844978b2020eddb0bb1b01e89471">
+<span><strong>Filter Employees</strong>: This section enables you to filter employees by selecting the statuses of employees that would be considered active or inactive. It has the following settings:</span><ul>
+<li data-list-item-id="ebdcc9e5f8bb641ac26e0aa778537a4c0">
+<span><strong>Statuses to be considered Active</strong></span><span>*</span><span>: Select one or more UKG Pro Employee statuses that must be considered active.</span>
+</li>
+<li data-list-item-id="e7f7fea39860f54a28f8abeb40d675ddc">
+<span><strong>Statuses to be considered Inactive</strong></span><span>*</span><span>: Select one or more UKG Pro Employee statuses that must be considered inactive.</span>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ef52f1d39e9bca88d0d8e1c2f1b681a46">
+<strong>Create Condition</strong><span>: This section enables you to define the create condition for the integration. Based on this configuration, the employees from UKG Pro will be created in SAP Concur. It has the following settings:</span><ul>
+<li data-list-item-id="efedca38228dff3e758e9bd3b75a22282">
+<strong>Employees to be Created in SAP Concur</strong><span>: Select the UKG Pro employees whose records must be created in SAP Concur. It has the following options:</span><ul>
+<li data-list-item-id="ee02a78665966c075d9d57eba65adef38"><span><strong>All Active Employees</strong>: Select this if you want all active employees to be created in SAP Concur.</span></li>
+<li data-list-item-id="ece3509a074f7ee9dc7928233a2ee3e72"><span><strong>All Active Full-Time Employees</strong>: Select this if you want only active full-time employees to be created in SAP Concur.</span></li>
+<li data-list-item-id="eb8abf21b262f3ff52d281b70c732dc2e"><span><strong>All Active Part-Time Employees</strong>: Select this if you want only active part-time employees to be created in SAP Concur.</span></li>
+<li data-list-item-id="e642e98363e8ed85c8a962e238cb57e90">
+<span><strong>Custom</strong>: Select this to configure an expression to identify employees to be created in SAP Concur. When selected, the following field is displayed:</span><ul><li data-list-item-id="efd9157483bebb6b12355e0734773e1a5">
+<strong>Custom Expression</strong><span>: Provide an expression to identify employees to be created in SAP Concur.</span>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ee5987cd4b30f1604dd5cb3fc35b26159">
+<span><strong>Map Manager</strong>: Select this checkbox to include employee's manager information during creation in SAP Concur. If this checkbox is not selected, the manager data will not be synchronized from UKG Pro to SAP Concur during creation.</span><br/><span><strong>Note</strong>: Ensure that the <strong>Auto assign ExpenseApprovers role to the expense approver of the user</strong> tenant attribute is enabled in your SAP Concur application connector.</span>
+</li>
+<li data-list-item-id="eb8a3d526af40a5f4006d643ff2c38240">
+<strong>Enable Time-Based User Creation</strong><span>: Select this checkbox to create users in SAP Concur based on their timezone. When enabled, user accounts are created according to configured time rules instead of being created immediately.</span><br/><span>When you select this checkbox, the following section is displayed for further configuration:</span><ul><li data-list-item-id="eb939f217a9d45f6a09a2f7316ce0fb7e">
+<strong>Time-Based Onboarding</strong><span>: This section enables you to configure the settings for time-based onboarding. It has the following parameters:</span><ul>
+<li data-list-item-id="e40f7a27a25dd8c9e8dab33fa7fa90497">
+<strong>UKG Pro Attribute for Onboarding Date</strong>:<span> Select an attribute to determine the onboarding date. For example, when you select <em>Original Hire Date</em> in this parameter, the Original Hire Date will be used to calculate the onboarding date.</span>
+</li>
+<li data-list-item-id="eaf79545022e722433946788b2d62dc3c">
+<p><span><strong>Onboarding Date Offset</strong>: Select the Onboarding date offset. The following options are available:</span></p>
+<ul>
+<li data-list-item-id="e0284b9ba71c75fc873549ba2ced2e902"><span><strong>Offset Before Onboarding Date</strong>: Select this to set the onboarding date earlier by a specified number of days.</span></li>
+<li data-list-item-id="ef45b5dfed760893b1621f194a9792056"><span><strong>Offset After Onboarding Date</strong>: Select this to delay the onboarding date by a specified number of days.</span></li>
+<li data-list-item-id="e4d730ac9fcf5b2005f28762b7626e537">
+<strong>No Offset</strong>:<span> Select this if you do not want to apply any offset to the onboarding date.</span>
+</li>
+</ul>
+<p><strong>Note</strong>: When you select either <strong>Offset Before Onboarding Date</strong> or <strong>Offset After Onboarding Date</strong>, the following parameters are displayed for configuration:</p>
+<ul>
+<li data-list-item-id="e948e4b7eb6829c6729c883321804e107">
+<span><strong>Days of Offset before Onboarding</strong>: Enter the number of days for offset before onboarding. For example, if you enter 5 in this field, the user will be onboarded 5 days before the specified date.</span><br/><span><strong>Note</strong>: This field is available only when you select <strong>Offset Before Onboarding Date </strong>in the <strong>Onboarding Date Offset </strong>field.</span>
+</li>
+<li data-list-item-id="e9e4007e090d49c21f1725b3dd8b2419e">
+<span><strong>Days of Offset after Onboarding</strong>: Enter the number of days for offset after onboarding. For example, if you enter 5 in this field, the user will be onboarded 5 days after the specified date.</span><br/><span><strong>Note</strong>: This field is available only when you select <strong>Offset After Onboarding Date </strong>in the <strong>Onboarding Date Offset </strong>field.</span>
+</li>
+<li data-list-item-id="eeda2b0c905f01835092ec6c14c6c0265">
+<span><strong>Timezone for Onboarding</strong>: Select the timezone to onboard employees. The following are the available options:</span><ul>
+<li data-list-item-id="e246fcf5f18104f9940f627d1beac7a06"><span><strong>UTC</strong>: Select this to onboard employees using Coordinated Universal Time (UTC), regardless of the employee’s local time.</span></li>
+<li data-list-item-id="e173fa066fcfcf5b9035e86697be5d0f1">
+<span><strong>Based on Source Timezone Attribute</strong>: Select this to onboard employees based on their work location’s timezone. When selected, the following field is displayed:</span><ul><li data-list-item-id="ea14be5085ef7d09eee92ca96175a4814">
+<strong>Source Attribute for Timezone</strong><span>: Select an attribute to determine the employee's timezone. For example, <em>Work Address</em>.</span>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e45610daa9785c8e4c319579c6b3fa633">
+<strong>Onboarding Time</strong><span>: Enter the time for the onboarding in 24-hour format (HH:MM). For example, <em>03:40</em></span>
+</li>
+</ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e250d452ca83301fc8aab733e25f16c8b">
+<strong>Update Condition</strong><span>: This section enables you to define the update condition for the integration. Based on this configuration, the employees from UKG Pro will be updated in SAP Concur. It has the following settings:</span><ul>
+<li data-list-item-id="e79400c83596343580d9136696a4f9f80">
+<strong>Employees to be Updated in SAP Concur</strong><span>: Select the UKG Pro employees whose records must be updated in SAP Concur. It has the following options:</span><ul>
+<li data-list-item-id="e371e851fc1cdc72e22a589675fc95ecd"><span><strong>All Active Employees</strong>: Select this if you want all active employees to be updated in SAP Concur.</span></li>
+<li data-list-item-id="e4da40abe8a96f0919520538dc197dd5a"><span><strong>All Active Full-Time Employees</strong>: Select this if you want only active full-time employees to be updated in SAP Concur.</span></li>
+<li data-list-item-id="ecf5ad22eb54fa643088468551df4ebc8"><span><strong>All Active Part-Time Employees</strong>: Select this if you want only active part-time employees to be updated in SAP Concur.</span></li>
+<li data-list-item-id="e48437aa74df73b7236d5f9f86c42e7f9">
+<span><strong>Custom</strong>: Select this to configure an expression to identify employees to be updated in SAP Concur. When selected, the following field is displayed:</span><ul><li data-list-item-id="ed04ada0bf00f832ff74c43372742cfa6">
+<strong>Custom Expression</strong><span>: Provide an expression to identify employees to be updated in SAP Concur.</span>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e3f1f29901c38cad4943dcfb7ac495ff8">
+<strong>Attributes to be Updated</strong><span>: Select the UKG Pro attributes that must be considered for updates in SAP Concur. For example, if <strong>Name</strong> is selected in this field, and an employee’s name has been updated in UKG Pro, the updated value will be reflected in SAP Concur after the integration execution. However, if <strong>Name</strong> is not selected in this field, the updated value will not be updated in SAP Concur.</span>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ebb87c2382e148f9c6aa2dde520458038">
+<strong>Delete Condition</strong>:<span> This section enables you to define the delete condition for the integration. Based on this configuration, the UKG Pro employees will be deleted from SAP Concur. It has the following settings:</span><ul>
+<li data-list-item-id="e62cea5b1d8f1596f7a0468bcc2d09d96">
+<strong>Employees to be Deleted in SAP Concur</strong><span>: Select the UKG Pro employees whose records must be deleted from SAP Concur. It has the following options:</span><span></span><ul>
+<li data-list-item-id="ecc027ac56b29434f4086d5eaffef6065"><span><strong>All Inactive Employees</strong>: Select this checkbox if you want all inactive employees in UKG Pro to be deleted from SAP Concur.</span></li>
+<li data-list-item-id="ea9429b0a91dbf2a16ee4986445b657ad">
+<span><strong>Custom</strong>: Select this to configure an expression to identify employees to be deleted from SAP Concur. When selected, the following field is displayed:</span><ul><li data-list-item-id="eca790fabfd4501015644ff1a79e17c31">
+<strong>Custom Expression</strong><span>: Provide an expression to identify employees to be deleted from SAP Concur.</span><span></span>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ebbccbc6641711dd3a5f6dae7cea57235">
+<strong>Enable Time-Based User Deletion</strong>:<span> Select this checkbox to delete users from SAP Concur based on their timezone. When enabled, user accounts are deleted according to configured time rules instead of being deleted immediately.</span><br/><span>When you select this checkbox, the following section is displayed for further configuration:</span><ul><li data-list-item-id="e2cdf5607835bff685da90c6e6a34daca">
+<strong>Time-Based Offboarding</strong><span>: This section enables you to configure the settings for time-based offboarding. It has the following parameters:</span><ul>
+<li data-list-item-id="ecc7ac25ce42cbbec104de328e2e9820f">
+<strong>UKG Pro Attribute for Offboarding Date</strong><span>: Select the attribute to determine the offboarding date. For example, when you select <strong>Termination Date</strong> in this parameter, the value of the <strong>Termination Date</strong> attribute will be used to calculate the offboarding date.</span>
+</li>
+<li data-list-item-id="e869781b6278fbca9aea8e2921ad7ae8a">
+<p><span><strong>Offboarding Date Offset</strong>: Select the Offboarding date offset. The following are the available options:</span></p>
+<ul>
+<li data-list-item-id="e2addd35a9dddb28e3dd669d3c9fc7c74">
+<strong>No Offset</strong><span>: Select this if you do not want to apply any offset to the offboarding date.</span>
+</li>
+<li data-list-item-id="e1646bbb10080c494f58b7e4d3f5f60ec"><span><strong>Offset Before Offboarding Date</strong>: Select this to set the offboarding date earlier by a specified number of days.</span></li>
+<li data-list-item-id="e98587912a4558f657a39285aa8a49ab7"><span><strong>Offset After Offboarding Date</strong>: Select this to delay the offboarding date by a specified number of days.</span></li>
+</ul>
+<p><strong>Note</strong>: When you select either <strong>Offset Before Offboarding Date</strong> or <strong>Offset After Offboarding Date</strong>, the following parameters are displayed for configuration:</p>
+<ul>
+<li data-list-item-id="e831f02c489795d6d126653bc32bcde7f">
+<span><strong>Days of Offset before Offboarding</strong>: Enter the number of days for offset before offboarding. For example, if you enter 5 in this field, the user will be deleted 5 days before the specified date.</span><br/><span><strong>Note</strong>: This field is available only when you select <strong>Offset Before Offboarding Date </strong>in the <strong>Offboarding Date Offset </strong>field.</span>
+</li>
+<li data-list-item-id="ea7843890aff4e8b7144a5f080411c578">
+<span><strong>Days of Offset after Offboarding</strong>: Enter the number of days for offset after offboarding. For example, if you enter 5 in this field, the user will be deleted 5 days after the specified date.</span><br/><span><strong>Note</strong>: This field is available only when you select <strong>Offset After Offboarding Date </strong>in the <strong>Offboarding Date Offset </strong>field.</span>
+</li>
+<li data-list-item-id="e772540fb408584cd4d493057a3b30daf">
+<span><strong>Timezone for Offboarding</strong>: Select the timezone to delete employees. The following are the available options:</span><ul>
+<li data-list-item-id="e7b96c1dc34f2fd725cc211c8ba5898a5"><span><strong>UTC</strong>: Select this to delete employees using Coordinated Universal Time (UTC), regardless of the employee’s local time.</span></li>
+<li data-list-item-id="eabb8c89cce4da9caf2da0c4cd1991b00">
+<span><strong>Based on Source Timezone Attribute</strong>: Select this to delete employees based on their work location’s timezone. When selected, the following field is displayed:</span><ul><li data-list-item-id="e2d62b55bb70825e35bfcc5d5bd6eb11a">
+<strong>Source Attribute for Timezone</strong><span>: Select the attribute to determine the employee's timezone.</span>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="eb92762492b398ee01ed04e81526063de">
+<strong>Offboarding Time</strong><span>: Enter the time for the offboarding in 24-hour format (HH:MM). For example, <em>03:40</em>.</span>
+</li>
+</ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3>Manage Expense</h3><p>The <strong>Manage Expense</strong> section enables you to configure the integration settings for expense management according to your specific use case.<br/><strong>Note</strong>: This section appears only if the <strong>Enable Expense Management</strong> setting is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="ef7a9f0dba039eebd5213f7b3e6f11e2a">
+<strong>Match Expression</strong>: This section enables you to choose the correlation attributes in the source and target applications used to identify matching records. It has the following settings:<ul>
+<li data-list-item-id="e2153ab1f95b8845c039418e551db8bfa">
+<strong>Correlation Attribute in UKG Pro: </strong>Select the correlation attribute available in UKG Pro to distinctly find the associated SAP Concur record.</li>
+<li data-list-item-id="e2e2b0ecaf7f5e97c4ed52c97d3356131">
+<strong>Correlation Attribute in SAP Concur: </strong>Select the correlation attribute available in SAP Concur to distinctly find the associated UKG Pro record.</li>
+</ul>
+</li>
+<li data-list-item-id="e1d0ae6b846560345ec1e56ee27e3ab97">
+<strong>Expense Type Configuration</strong>: <span>This section enables you to define the expense types to be included in the integration. Based on this configuration, the expense records from SAP Concur will be updated in UKG Pro. It has the following settings:</span> <ul>
+<li data-list-item-id="e93ba88ca7fdfee82803ed8614af89264">
+<strong>Expense Types</strong>: Select the expense types to be managed. For example, if you select <strong>Airfare</strong> and <strong>Hotel</strong> in this field, only the related expenses will be considered for synchronization.<br/><strong>Note</strong>: Only the approved expenses will be synchronized.</li>
+<li data-list-item-id="e7cd84dd5381e056e42aaeb45068df8b1">
+<strong>Fetch Expense Reports for Last X Days</strong>: Specify the number of past days to retrieve expense reports. The system will fetch all expense reports created or updated within the last X days.</li>
+</ul>
+</li>
+</ul><h3>Notification Center</h3><p>This section enables you to customize the notification settings.</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Notifications</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e1b3a295fbc8b029701b8dde47fa8de72">
+<strong>Enable Email Notifications</strong>: Select this checkbox to enable integration-related email notifications. When enabled, the following parameters are displayed for further configuration:<ul>
+<li data-list-item-id="efeea05cae254e950355070401a0384d7">
+<strong>Send Email Notification On</strong>: Select which notification types should send email notifications. For example, select <em>User Creation</em>, <em>User Update</em>, and <em>Success Events</em> in this field to receive email notification for these events.<br/>Based on your selection a separate section will be displayed for further configuration. For example, if you select <em>User Creation </em>in this field, <a href="#h_01KEVBSF1NRMYBN1KPWF14T49Z">User Creation Notifications</a> section is displayed.</li>
+<li data-list-item-id="e78dcb16ff72d08d196ec9df496a90b19">
+<strong>Include report as email attachment</strong>: Select this checkbox if you want to attach the generated report to the email as a downloadable file.<ul>
+<li data-list-item-id="e2f2bea52d2127362438f39a59d14d3af">
+<strong>Report File Format</strong>: Select the file format of the report to be included with the email notification. The available options are <em>CSV Report</em> and <em>Excel Repor</em>t.</li>
+<li data-list-item-id="e4d5d988e7298eab1f344bb865f61fd3c">
+<strong>Report Type</strong>: Select the report type to be included with the email notification. This will decide the level of details to be included in the report.<br/>The following are the available options:<ul>
+<li data-list-item-id="ec8ebdd898590370deaca14ef87ce3523">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e12d795481a9dde8877e120aabfd97914">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ecbe3f40985940f60cc96f9fbddcc2fca">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="eaa6b60d9a0d4de5d65c3b6dcc1a41b69">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e78d743ce4f7a61c00e09a887dfa6119a">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ee07fd39fa315bac9089312749d95d06d">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.<br/><br/>The following fields are displayed for further configuration if <strong>Metadata</strong>, <strong>Non-PII Data</strong>, <strong>GUID with Non-PII Data</strong>, or <strong>Employee Number with Non-PII Data</strong> are selected:<ul><li data-list-item-id="e23095c7f69817ce6994c0cf88f73b16a">
+<strong>Report Level</strong>: Select the report level. The following are the available options:<ul>
+<li data-list-item-id="e1b3da34b501b68de493a8ceefd3cc584">
+<strong>All</strong>: Select this to include all attribute details in the report.</li>
+<li data-list-item-id="e33327d390fa66fd133a5680df62d6e09">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included in the report. When selected, the following field is displayed:<ul><li data-list-item-id="eae89dab776e1985891e3f5a40bc2b2be">
+<strong>Attributes to be Included in Report</strong>: Select the attributes to be included in the report. For example, <em>LastName</em>.</li></ul>
+</li>
+<li data-list-item-id="e0c073d6483b52d20a1fa05757cbe018f">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded in the report. When selected, the following field is displayed:<ul><li data-list-item-id="e1cb39bf87809fc649a353f6218ab5c45">
+<strong>Attributes to be Excluded in Report</strong>: Select the attributes to be excluded in the report. For example, <em>SSN</em>.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li></ul><h4>User Creation Notifications</h4><p>This section enables you to customize the notifications sent for the User Creation event .</p><p><strong>Note</strong>: This section appears only if you have selected <em>User Creation</em> in the <strong>Send Email Notification On</strong> field.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="ef95421d5a5adb1fae7d899d7b38fe665">
+<strong>Send Notifications To</strong>: To add recipients, select <strong>Custom</strong> in this field. When selected, the following field is displayed:<ul><li data-list-item-id="e63a86ed840c6afbbcaadf9c38150f18f">
+<strong>Custom</strong>: Enter the list of email addresses to which notifications on this integration have to be sent. After entering each email, hit enter to save.</li></ul>
+</li>
+<li data-list-item-id="e9607d0420e5176f4856db93d453758c1">
+<strong>Additional Recipients (CC)</strong>: Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e3871a51a8ad2148e8c6603f43b2fd664">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject. It supports dynamic variables.</li>
+<li data-list-item-id="e967f0573c1134be6207b92bcbf1b7f89">
+<strong>Email Body</strong>: Enter the content that must be used as the email body for the email notifications.</li>
+</ul><p><strong>Note</strong>: Similarly, specific sections will be displayed based on the selection made in the <strong>Send Email Notification On</strong> field to customize the notification.</p><h3>Operational Settings</h3><p>This section enables you to customize the operational settings.</p><p>It has the following sub-sections:</p><h4>Debug Settings</h4><p>This section enables you to customize the debug mode settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Debug Mode</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="eafe45626b2f4d4f90f194acd728dadaa">
+<strong>Testing Mode</strong>: Select this checkbox to simulate the synchronization for a test user. When selected, the following fields are displayed:<ul>
+<li data-list-item-id="e5db072ee08555e79d2a8626a05829e3f">
+<strong>Test Source Employee Email</strong>: Enter a valid email ID used for end-to-end testing.</li>
+<li data-list-item-id="eb75b42fd59934dddc814cc8a0481d487">
+<strong>Target Test Username</strong>: Enter a valid username used for end-to-end testing.</li>
+</ul>
+</li></ul><h4>Log Insights Settings</h4><p>This section enables you to customize the log insight settings.</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e1cd273dbf281b714531b76c1dbb04ba2">
+<strong>Log Insight Type</strong>: Select the log insight type. This will decide the level of details to be included for log insight.<br/>The following are the available options:<ul>
+<li data-list-item-id="e3fa4d356345f47e41a43765f2f54192f">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e72da4e565edc3581fcad8f3fb62fd122">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e34b68e605b9730a72b44b458319ba43f">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e4d8c39a0cd6c739378a9ce080267f2a8">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ebd4105f2912ffee87b31585d7f727617">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ea2eacd44780a25c19b133d184d7add32">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.<br/>The following fields are displayed for further configuration if <strong>Metadata</strong>, <strong>Non-PII Data</strong>, <strong>GUID with Non-PII Data</strong>, or <strong>Employee Number with Non-PII Data</strong> are selected:<ul><li data-list-item-id="e397d19c8592723c4e79e39486a7204da">
+<strong>Log Insight Level</strong>: Select the log insight level. The following are the available options:<ul>
+<li data-list-item-id="ee5869bf4f693876de5b8b74cb5556cf9">
+<strong>All</strong>: Select this to include all attribute details for analysis.</li>
+<li data-list-item-id="ec7b235fe6d0351cea1be6c072f83dc2d">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included for analysis. When selected, the following field is displayed:<ul><li data-list-item-id="e4128f9e91525a511d25ed979c2e54a80">
+<strong> Attributes to be Included</strong>: Select the attributes to be included. For example, <em>PersonNumber</em>.</li></ul>
+</li>
+<li data-list-item-id="e5b4616be3b1318b41809f423b2251af9">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded from the analysis. When selected, the following field is displayed:<ul><li data-list-item-id="e0064932b1c5e3b842fdee5d34ce0559a">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><p>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/34146465327383" rel="noopener noreferrer" target="_blank">Log Insights</a> guide for more details.</p><h4>Log Settings</h4><p>This section enables you to customize the log generation settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong data-end="1326" data-start="1308">Enable Logging</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e4bc6efe9dd21f013e9bef81c2b806a89">
+<strong>Log Type</strong>: Select the log type. This will decide the level of details to be included in logs.<br/>The following are the available options:<ul>
+<li data-list-item-id="eee87bc4a4e8e2769868a4cdf2806e94c">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e284c2dd50191a7ed7b65f21c7e9527a7">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="edf2e063b2c92e41260eccb35158e96be">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ed91d6501ecba6ef4ccde5af478236353">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e7d8c4c9b3560095b5be7cefda8a9a866">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eca84914fac0275342f8edd5816b435c9">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.<br/>The following fields are displayed for further configuration if <strong>Metadata</strong>, <strong>Non-PII Data</strong>, <strong>GUID with Non-PII Data</strong>, or <strong>Employee Number with Non-PII Data</strong> are selected:<ul><li data-list-item-id="e8bae689c4e786b6b5ed9e8a294989b64">
+<strong>Log Level</strong>: Select the log level. The following are the available options:<ul>
+<li data-list-item-id="e334c2a9be28a887b81b0b069b2b9687f">
+<strong>All</strong>: Select this to include all attribute details in logs.</li>
+<li data-list-item-id="e0a0e4fc30ff691a51deea86dcbe8a200">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="ece619ac13d01477b152f74ba5ce1a600">
+<strong>Attributes to be Included</strong>: Select the attributes to be included. For example, <em>PersonNumber</em>.</li></ul>
+</li>
+<li data-list-item-id="e021c5e0434296b06e09c2dc11556d56f">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="efa820082a20358934dff3c0238a27fca">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h4>Report Settings</h4><p>This section enables you to customize the report generation settings.</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Reporting</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="ecc1cdb5a700dbaa4098567bf254ecec0">
+<strong>ReportingType</strong>: Select the reporting type. This will decide the level of details to be included in reports.<br/>The following are the available options:<ul>
+<li data-list-item-id="e76ba9672224478693fa26d6855599867">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ed75c5c757977e1a04523eeb8af16b09e">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e78ffa688c3018035777f877291883141">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e960b42aebe8bc193112a66a1f0745108">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e5235ffa63405fdfd0ec95f2e6850643d">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ec74e34b25764c5ab7f5847d18ed8af75">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.<br/>The following fields are displayed for further configuration if <strong>Metadata</strong>, <strong>Non-PII Data</strong>, <strong>GUID with Non-PII Data</strong>, or <strong>Employee Number with Non-PII Data</strong> are selected:<ul><li data-list-item-id="e5aff2daae3b48f0d9819316a468b86bd">
+<strong>Reporting Level</strong>: Select the reporting level. The following are the available options:<ul>
+<li data-list-item-id="e7286392df6cc40d3a295d5589853ac5c">
+<strong>All</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="e7284a250a242e113808c8f8fcd188dbe">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="edbd14b07282a4c2fc64ffa179b7dff74">
+<strong>Attributes to be Included</strong>: Select the attributes to be included. For example, <em>PersonNumber</em>.</li></ul>
+</li>
+<li data-list-item-id="eb703d9ebb0b99fbf41697bee9ea13ae5">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="ede783854c0146f9992cfb8081fddcbbf">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e30966afe97d7da4651e09426e8ed07d3">
+<strong>Report Format</strong>: Select the file format of the report to be generated. The available options are <em>CSV Report</em> and <em>Excel Report</em>.</li>
+</ul><h3>Execution</h3><p>This section enables you to customize the settings related to integration execution.</p><p>It has the following settings:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul>
+<li data-list-item-id="e6155c93246a1ff952d0a6648fec32bb6">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e1ed91223c98425e91e11c18cbe7ce30c">
+<strong>Run in Incremental Mode</strong>: Select this checkbox to execute integration in the incremental mode. When enabled, the integration retrieves only workers who have been updated since the previous execution. If disabled, it retrieves all workers during every execution.</li>
+<li data-list-item-id="e9793bf59f5cadb7f00b0c4eafba4c411">
+<strong>Employee Update Limit</strong>: <span>Enter the maximum number of records that should be updated in each integration run. By default, the value is 100.</span>
+</li>
+<li data-list-item-id="e947b31bf44083fc8ea3f6f78efc66061">
+<strong>Employee Creation Limit</strong>: <span>Enter the maximum number of records that should be created in each integration run. By default, the value is 100.</span>
+</li>
+<li data-list-item-id="ed97afae4388d9173884c5529334317f4">
+<strong>Employee Delete Limit</strong>: <span>Enter the maximum number of records that should be deleted in each integration run. By default, the value is 100.</span>
+</li>
+<li data-list-item-id="ec7dbe56df5b6cc4cd8409c7ec077b2e2"><span><strong>Expense Report Limit</strong>: Enter the maximum number of records that should be deleted in each integration run. By default, the value is 100.</span></li>
+<li data-list-item-id="eac0fbd335589ad0188a5d905606cb6db">
+<strong>CUSTOMER API KEY</strong><span>*</span>: Enter the Customer API Key that is displayed on the <strong>Service Account Administration</strong> page in the UKG Pro application.</li>
+<li data-list-item-id="e19078d3bd0e2f175911de4204d824c92">
+<strong>Primary Company Code</strong><span>*</span>: Enter the primary company code that is displayed on the <strong>Company Setup</strong> page (<strong>System Configuration</strong> &gt; <strong>Company Setup</strong>) in the UKG Pro application.</li>
+</ul><h2><span>Entitlements</span></h2><p>The <strong>Entitlements</strong> tab is displayed only when it is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH" rel="noopener noreferrer" target="_blank">Parameters</a> section.</p><p>It allows you to configure how entitlement assignments (roles) are managed through this integration.</p><p>In this tab, you can define conditions that control how entitlements are assigned to employees.</p><p>Perform the following procedure to create role assignment rules:</p><ol>
+<li data-list-item-id="e0c5a03a5074248727065f0874a96508b">Click <strong>Add New Rule</strong> to create a new assignment rule. The following fields are displayed:<br/><img alt="2026-01-16_15-11-15.png" height="654" src="https://support.aquera.com/hc/article_attachments/38125384640663" width="2142"/>
+</li>
+<li data-list-item-id="ead2135a970f025dba170e78cca64c165">Click <strong>Choose Attribute</strong> to view the list of UKG Pro employee attributes.</li>
+<li data-list-item-id="e7058c4766f875c2150155bc930c101ea">Search and select the attribute using which you want to set a condition. For example, <em>Job Title</em>.</li>
+<li data-list-item-id="ea5f71b674981ebdff293f3f2ae1e6a0b">Select the attribute value to define the rule. Only those users who meet this condition will satisfy this assignment rule. If multiple values are provided, an <em>OR</em> condition is applied among those values. For example, in the following sample condition, an employee's job title must be either <em>Benefits Administrator </em>or <em>Benefits Manager</em> for them to satisfy this assignment rule.<br/><img alt="2026-01-16_15-24-20.png" height="654" src="https://support.aquera.com/hc/article_attachments/38125384642583" width="682"/>
+</li>
+<li data-list-item-id="e649114d716a582b0e1ff3e7b33dda06c">In the <strong>Entitlement Assignment</strong> column, select the roles to which the employees who satisfy the specified condition must be assigned. The list shows all the roles from the target <strong>SAP Concur</strong> application.<br/><img alt="2026-01-16_15-31-39.png" height="584" src="https://support.aquera.com/hc/article_attachments/38125384643863" width="1478"/>
+</li>
+<li data-list-item-id="e2102b448f582f336fe065cf113027ea8">Click <strong>Add Row</strong> to add another condition and assignment for the same UKG Pro attribute.<br/><img alt="2026-01-16_15-33-51.png" height="454" src="https://support.aquera.com/hc/article_attachments/38125384644759" width="1548"/><br/><strong>Notes</strong>:<ul>
+<li data-list-item-id="e1e726fd171ce5235ac7d73b245a48910">You can add any number of rows within a rule.</li>
+<li data-list-item-id="e6d95d1cdfa0a21c14849cc6ed68ba6ef">You can delete a row by using the delete icon at the right end of the row.<br/><img alt="2026-01-16_15-33-51.png" height="454" src="https://support.aquera.com/hc/article_attachments/38125344325271" width="1548"/>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e869b839d8b37acc03c72dbc29e67c3f4">
+<em>[Optional] </em>If you want to write a JavaScript expression to set the condition, click <strong>Switch to Expression</strong>.<br/><strong>Note</strong>: When you switch to the <em>Expression</em> mode or to the <em>Basic Condition</em> mode, all the configured conditions of the rule will be cleared.<ol>
+<li data-list-item-id="ebdde549c5c2db6e02ea8f057212dfa7c">Select one of the following based on your requirement:<ul>
+<li data-list-item-id="e9ca3605d8ef583b22d4e7d992d73a567">
+<strong>For Conditions Only</strong>: Select this if you want to write a JavaScript expression only for the conditions.<br/><img alt="2026-01-16_15-40-52.png" height="406" src="https://support.aquera.com/hc/article_attachments/38125344326295" width="1872"/> </li>
+<li data-list-item-id="e3a8f8b8ddf8e476aedb059ce62cf5a93">
+<strong>For Conditions and Assignments</strong>: Select this if you want to write expression for both, conditions and assignments.<br/><img alt="2026-01-16_15-42-49.png" height="406" src="https://support.aquera.com/hc/article_attachments/38125344327575" width="2630"/>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e87d9f82086ed22e34c00bd9c92dc15c7">Click <strong>Continue</strong> to configure the expression.<br/><br/><strong>Note</strong>: Expressions can use all attributes in the source and destination applications. The configured expressions must always be evaluated to <em>true</em> or <em>false</em>.<br/><strong>SOURCE</strong> must be used in an expression to represent an attribute in the source application and <strong>DEST</strong> to represent an attribute in the destination application.<br/>For example, <em>SOURCE.EmployeeNumber</em>, <em>SOURCE.HomeOrganization.ShortName</em>, and <em>DEST.EmployeeNumber</em>.</li>
+</ol>
+</li>
+<li data-list-item-id="ebb86894653d6adacd6ba7bf9bbaae264">Click <strong>Add New Rule</strong> to add another assignment rule, as explained above.<br/><strong>Note</strong>: You can add any number of assignment rules. However, you can see only 5 rules on a single page. If you add more than 5 rules, navigation options will be available at the bottom of the page to navigate to other pages for configuring or viewing the remaining defined rules.</li>
+</ol><p><strong>Note</strong>: The integrations assigns roles to the user but doesn't remove the existing assigned roles. You must unassign the required roles manualy in SAP Concur.</p><h2>Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2>Schedule</h2><p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="https://support.aquera.com/hc/en-us/articles/10209078646807" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span></p><h1>Run Integration</h1><p>You can set event or schedule triggers to run the integration. For more details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/11086740764951-User-Actions-on-Integrations#h_01J0XHHKT5BCASDP2GSQAN3EGG" rel="noopener noreferrer" target="_blank">Executing an Integration</a> section.</p><p> </p><p> </p><p> </p><p> </p>
+  </div>
+</body>
+</html>

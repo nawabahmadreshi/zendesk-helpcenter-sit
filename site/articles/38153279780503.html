@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Active Directory / Jira Service Management Cloud Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Active Directory / Jira Service Management Cloud Integration Guide</h1>
+    <p><a href="../index.html">← Back</a></p>
+    <h1>Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, any contractors created, updated, or terminated in Jira Service Management Cloud are automatically updated in Active Directory based on the defined schedule.</p><p>To identify user records across both systems, the integration uses the attribute configured in the <span><strong>Jira Correlation Attribute</strong></span> parameter from <strong>Jira</strong> <strong>Service Management Cloud</strong> and matches it to the <strong>userPrincipalName</strong> in <strong>Active Directory</strong> as a correlation attribute.</p><h1>Key Functions</h1><p>The Active Directory to Jira Service Management Cloud Integration performs the following functions:</p><ul>
+<li data-list-item-id="e3620a23ec36b6883af0190f4cf4156bc">Synchronizes contractor records from Jira Service Management Cloud to Active Directory.</li>
+<li data-list-item-id="edfba2248015e70ce7d61ed9b921444b9">Creates new contractors in Active Directory when they are added in Jira Service Management Cloud.</li>
+<li data-list-item-id="e50de0c3775af1e264f73c750878cd50c">Updates existing Active Directory contractors when their information changes in Jira Service Management Cloud.</li>
+<li data-list-item-id="e104db4671224a77b5fe1b87dbc3bc3b2">Deactivates or deletes Active Directory contractors when they are no longer active in Jira Service Management Cloud.</li>
+<li data-list-item-id="e1874e049b3c247df818226c8a3925696">Supports both full synchronization and incremental synchronization to process only changed records.</li>
+<li data-list-item-id="ec482526a6021911a3284227432faad39">Generates Common Name (CN), User Principal Name (UPN), Security Account Manager (SAM), and Password for contractors in Active Directory based on configured policies.</li>
+</ul><h1>Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ecaadbfffad040d58d39ec13f54873f7b">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e7782602d02a3303651bf4355bc5cddb9">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ed409c74c26e2a96b87d65720ed094bff">
+<strong>Jira Service Management Cloud</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/13840676724631" rel="noopener noreferrer" target="_blank">Jira Service Management Cloud Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="eb59e4500441c5a258d0f9aa17300b70d">
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+</ul><h1>Integration Setup</h1><p>This section outlines how the integration must be configured to push user-related data from Jira Service Management to Active Directory.</p><h2>Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e4410efe1092ba7da0f8782cf32b4df63">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ea757b309a787397d1e77fd55e4e76de5">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e2f442833d01d921d1cda8f112a4a1780">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e17f12d01fd86ae10b01d2ae05ed4a263">Select<strong> Active Directory / Jira Service Management Cloud</strong>.</li>
+<li data-list-item-id="e0ac098601f6e0eec82b6fc507f627045">Enter a name and a description for the integration.</li>
+<li data-list-item-id="edd3d3144f3f763d50ce10da6e15079ba">Select your <strong>Jira Service Management</strong> and <strong>Active Directory</strong> connector instances.</li>
+<li data-list-item-id="e0204536dca2702c51696f1a9e777a790">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2>Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3>Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3>Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4>Integration Features</h4><p>Enable the following feature based on your requirements:</p><ul data-end="1629" data-start="288"><li data-list-item-id="e3e66fb1a6aac1c865baca6a8d87d76ac">
+<strong>Enable Contractor Management</strong>: Select this checkbox to enable contractor provisioning and perform incremental updates. When enabled, the <a href="#h_01KGMG4JM3JXCF60W9N6GEFS2V">Contractor Management</a>,<strong> </strong><a href="#h_01K94HJ4VRD3Z51KDD0GHGF1AR"><strong>Naming Policy</strong></a>, and <a href="#h_01KGP7D7WBJTJDYYJYCKWPZ9VD">Password Policy</a> sections will be displayed for further configuration.</li></ul><h4>General Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="ee4804751381e68f39f031b83deddbc39">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e61753e9814b5fbe051f565b87246850f">
+<strong>Enable Full Sync</strong>: Select this checkbox to execute the integration in full sync.</li>
+<li data-list-item-id="ecdcb3a8d4a2be5fb30c1d2d48c7022f5">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Logging</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eb725a5e711d04653e2da36bf8ace5b9c">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e4ac8ac18e3c9d7f920d59e3fa014949c">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e07806529df3e9c83e84b1903ed85cd0d">
+<strong>Enable Log Insights</strong>: Select this to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+</ul><h3>Contractor Management</h3><p>The <strong>Contract</strong> <strong>Management</strong> section enables you to customize the integration settings for contractor management according to your specific use cases.</p><h4>Active Directory Settings</h4><p>Configure the following settings:</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e5a360660db2c7cded0202d137dea625c">
+<span><strong>Active Directory Applications for Provisioning</strong></span>: Select one or more Active Directory applications to which contractors must be provisioned. Only the Active Directory applications configured in your Aquera tenant will be available for selection.</li>
+<li data-list-item-id="ed294d44e296248e60d3418787bb2609a">
+<span><strong>Delete Contractors Upon Termination</strong></span>: Select this to delete contractor records from the Active Directory upon termination.</li>
+<li data-list-item-id="e1c32c8ff39410351ca537044005f74b7">
+<span><strong>Map Manager</strong></span>: Select this to map the contractor's manager while creating and updating in Active Directory.</li>
+</ul><h4>Jira Service Management Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e691405e292d361f742054d68762807f4">
+<strong>Jira Project</strong><span>*</span>: Select a Jira project from the drop-down from which contractors should be provisioned to Active Directory.</li>
+<li data-list-item-id="e59116a5ae3d83ef1663d041d3bee36d8">
+<strong>Work Type</strong><span>*</span>: Select a Jira work type from the drop-down from which contractors should be provisioned to Active Directory.</li>
+<li data-list-item-id="e8be122d81578f1e1df73e8aa0412da6a">
+<strong>Status</strong><span>*</span>: Select a Jira status from the drop-down to provision contractors with this status to Active Directory.</li>
+<li data-list-item-id="e945daf5e4359994da6cf299fe81262a9">
+<strong>Jira Status on Successful Provisioning</strong><span>*</span>: Select a Jira status from the drop-down to be set after successful contractor provisioning from Jira Service Management Cloud to Active Directory.</li>
+<li data-list-item-id="ea4de7a8cfb63f9f4c356d1332e742b5b">
+<strong>Active Directory OU Provisioning Jira Attribute</strong><span>*</span>: Select a Jira attribute that determines the contractor’s provisioning into an OU in Active Directory.</li>
+<li data-list-item-id="ebd41a363f89c923daff9d6af485d207e">
+<span><strong>Jira Attribute for Manager</strong></span>: Select an attribute that stores the contractor’s manager information in Jira.</li>
+<li data-list-item-id="e6c0d63229324cc9bd946279f37741028">
+<strong>Jira Service Management Filter</strong>: Select this checkbox to filter the Jira tickets by Issue ID or Issue Key.</li>
+<li data-list-item-id="e8ff42d24919321a7e38fc44e5a438418">
+<strong>Issue ID or Issue Key</strong><span>*</span>: Enter an Issue ID or Issue Key to filter the Jira tickets. This parameter is displayed only when the <strong>Jira Service Management Filter</strong> parameter is selected.</li>
+</ul><h4>Provisioning Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="ec1d652e6d7e4f4a7253b8981933edc8c">
+<span><strong>Jira Field to Categorize Tickets</strong></span><span>*</span>: Select a Jira field from the drop-down menu that categorizes the ticket. The following parameter values vary based on this selection.</li>
+<li data-list-item-id="e1105442dc21df179f116c7d3faeafcb5">
+<strong>Create Conditions</strong><span>*</span>: Select one or more create conditions from the drop-down menu. Contractors meeting these conditions will be created in Active Directory.</li>
+<li data-list-item-id="e345b48eed01af62d0c6225c2ae79557c">
+<strong>Update Conditions</strong><span>*</span>: Select one or more update conditions from the drop-down menu. Contractors meeting these conditions will be updated in Active Directory.</li>
+<li data-list-item-id="e0534e7c51f6f5a141e320bdf860970a2">
+<strong>Delete Conditions</strong><span>*</span>: Select one or more delete conditions from the drop-down menu. Contractors meeting these conditions will be deleted in Active Directory.</li>
+</ul><h4>Correlation Settings</h4><p>Configure the following correlation settings:</p><ul>
+<li data-list-item-id="e36333ce5d0f357bf71171711f41564b3">
+<strong>Jira Correlation Attribute</strong><span>*</span>: Select the Jira attribute to distinctly find the associated Active Directory contractor record. For example, if you select <em>Assignee </em>in this field, the <em>Assignee</em> attribute will be used as a correlation attribute.</li>
+<li data-list-item-id="ed2a7eb238ad797a8e25ce7d92bec5133">
+<strong>Active Directory Correlation Attribute</strong><span>*</span>: Select the Active Directory attribute to distinctly find the associated Jira contractor record. For example, if you select <em>userPrincipalName </em>in this field, the <em>userPrincipalName</em> attribute will be used as a correlation attribute.</li>
+</ul><h4>Provisioning Threshold</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e4a4ce89efc28439c9d02b80682e87464">
+<strong>Import Limit:</strong> Enter the maximum number of contractor records to be processed in a single integration run. For example, entering <strong>10 </strong>processes only includes the first ten contractor records.</li>
+<li data-list-item-id="ec89aebc13c61ff05ac44955c1d4ba552">
+<strong>Create Limit:</strong> Enter the maximum number of contractor records that can be created in a single integration run. For example, entering 7 allows only 7 contractor records to be created in a single integration run.</li>
+<li data-list-item-id="e38e7b48a5f8684ce0dab0b0238cd3c08">
+<strong>Update Limit:</strong> Enter the maximum number of contractor records that can be updated in a single integration run. For example, entering 5 updates only 5 contractor records in a single integration run.</li>
+<li data-list-item-id="ef9d6b1697a29891ffbd8c9ff2da7dcd6">
+<strong>Delete Limit:</strong> Enter the maximum number of contractor records that can be deleted in a single integration run. For example, entering 10 allows only 10 contractor records to be deleted in a single integration run.</li>
+</ul><h3 data-end="3158">Naming Policy</h3><p>Configure the following naming policy settings:</p><h4>Generate Common Name (CN) Settings</h4><ul>
+<li data-list-item-id="e9ecb44a38aa27ffaeabcbf152eb37fec">
+<p><strong>Enter your prompt</strong>: Enter your prompt for generating the common name. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote><p>Using the Ticket context (First Name, Last Name), generate different unique human-readable Common Name (CN). <br/>Rules:<br/>- Prefer  First Name and Last Name.<br/>- Remove invalid AD characters: , + " \ ; &lt; &gt; |<br/>- Format: "&lt;First Name&gt; &lt;Last Name&gt;"<br/>- Ensure it looks like a person’s full display name.<br/>- Add a numeric suffix only if needed for uniqueness.<br/>Return minimum 10 unique CN string.</p></blockquote>
+<p><strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: john, <strong>Last Name</strong>: smith), the generated common name values are John Smith, John Smith1, John Smith2, John Smith3, John Smith4, John Smith5, John Smith6, John Smith7, John Smith8, John Smith9, and John Smith10 as displayed under the <strong>Preview</strong> section. To view the default name values, turn on the <strong>Advanced Preview Options</strong> toggle.<br/><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated common name values will appear in the <strong>Preview</strong> section.</p>
+<h4>Generate User Principal Name (UPN)</h4>
+</li>
+<li data-list-item-id="e54f30184f2a37bb1c0494557e90447b5">
+<p><strong>Enter your prompt</strong>: Enter your prompt for generating the universal principal name. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote><p>Using the Ticket context (First Name, Last Name), generate a UPN prefix (without @domain).<br/>Rules:<br/>- Otherwise build from preferred names: First Name.Last Name.<br/>- Remove spaces and invalid AD characters.<br/>- Ensure the prefix is clean, readable, and unique.<br/>Return minimum 5 UPN prefix string (do not include any domain).</p></blockquote>
+<p><strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: john, <strong>Last Name</strong>: smith), the generated common name values are john.smith, johnsmith, jsmith, johns, and j.smith as displayed under the <strong>Preview</strong> section. To view the default name values, turn on the <strong>Advanced Preview Options</strong> toggle.<br/><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated common name values will appear in the <strong>Preview</strong> section.</p>
+<h4>Generate Security Account Manager (SAM)</h4>
+</li>
+<li data-list-item-id="e1f385410480c5a7434c3680d9514dbf7">
+<p><strong>Enter your prompt</strong>: Enter your prompt for generating the security account manager. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote><p>Using the worker (First Name, Last Name), generate a unique sAMAccountName.<br/>Rules:<br/>- Use only letters and numbers; no spaces or symbols.<br/>- Keep within the 20-character AD limit.<br/>- Use a short format such as firstname.lastname.<br/>- Add a numeric suffix only if needed for uniqueness.<br/>Return minimum 5 sAMAccountName string.</p></blockquote>
+<p><strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: john, <strong>Last Name</strong>: smith), the generated common name values are john.smith, joh.smith, j.smith, john.smith1, and john.smith2 as displayed under the <strong>Preview</strong> section. To view the default name values, turn on the <strong>Advanced Preview Options</strong> toggle.<br/><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated common name values will appear in the <strong>Preview</strong> section.</p>
+</li>
+</ul><h3 data-end="3158">Password Policy</h3><p>The Password Policy section enables you to customize the integration settings for password based on your specific use case.</p><h4><span>Password Policy Settings</span></h4><p><span>Configure the following settings:</span></p><ul><li data-list-item-id="edccc8ae5470c79ca2809f4113d2c1591">
+<span><strong>Password Generation Method</strong>: Select a method from the drop-down menu to generate the contractor's password in Active Directory. The available options are <em>Auto Generate Password</em> and <em>Custom Password Policy</em>.</span><ul>
+<li data-list-item-id="e8be3896303e7c20d74cf9a6187bf5fd3"><span><strong>Auto-Generate Password</strong>: Select this to automatically generate a password in Active Directory.</span></li>
+<li data-list-item-id="e6d44b31334ef827dfefb473d316570e0"><span><strong>Custom Password Policy</strong>: Select this to create a password according to your preference. Selecting this will display the <strong>Custom Password Policy Settings</strong> section. </span></li>
+</ul>
+</li></ul><h4><span>Custom Password Policy Settings</span></h4><p><span>Configure the following Custom Password Policy settings:</span></p><ul>
+<li data-list-item-id="e982528021acea4c37b0c27a495d8ef11"><span><strong>Password Complexity Condition</strong>: Select one or more conditions from the drop-down menu to apply when creating a contractor password in Active Directory. The<strong> </strong>available options are <em>Require Uppercase Letters</em>, <em>Require Lowercase Letters</em>, <em>Require Numbers</em>, and <em>Require Special Chars</em>.</span></li>
+<li data-list-item-id="e9bc54738cf6aa6f69c209069a1ba4b12"><span><strong>Password Special Characters</strong>: Select one or more special characters from the drop-down menu to apply when creating a contractor password in Active Directory. The<strong> </strong>available options are <em>!</em>, <em>@</em>, <em>#</em>, <em>$</em>,<em> %</em>, <em>^</em>, <em>&amp;</em>, <em>*</em>, <em>(</em>, <em>)</em>, <em>&lt;</em>, and <em>&gt;</em>. This parameter is displayed only if <strong>Require Special Chars</strong> option is selected in the above parameter.</span></li>
+<li data-list-item-id="eefff0e639ba4caa4a699d9fe497664da"><span><strong>Character Type Condition</strong>: Enter a number to determine the password combination. For example, if you enter 2, the password will include any two of the character types uppercase letters, lowercase letters, numbers, and special characters.</span></li>
+<li data-list-item-id="e6c98c0c520a5a42499b35efc156d0d48"><span><strong>Password Length</strong>: Specify the desired length of the generated password. For example, enter 12 to generate a 12-character password instead of the default 8-character length.</span></li>
+</ul><h3>Logging</h3><p>The <strong>Logging</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4>Log Settings</h4><p>Configure the following log settings:</p><ul><li data-list-item-id="e9e7fd427e014dfc80a6f19d5bae559b5">
+<strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ec30a0a63b067e5fcdb70eaa84b3af240">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e4586c7c14675fb3f51ae09e3885fbf67">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e049bc2312815ec947a7fc936eab27c51">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span>*</span> drop-down menu with the following options:<ul>
+<li data-list-item-id="e706154af74d1024b3dd978951c371c4e">
+<strong>Includ</strong><span><strong>ed</strong></span><strong> Attributes</strong>: Enter the attributes to be included in the log. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>parameter.</li>
+<li data-list-item-id="e0601595bafbfc302075f799799b337a5">
+<strong>Exclud</strong><span><strong>ed</strong></span><strong> Attributes</strong>: Enter the attributes to be excluded from the log. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li>
+<li data-list-item-id="e89dc54843c218b1dcca70d3fd5fa353c">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values for each event when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul>
+</li></ul><h3>Notifications</h3><p>The <strong>Notifications</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p><h4>Notification Settings</h4><p>Configure the following notification settings:</p><ul>
+<li data-list-item-id="ebf94e0452e250596c60425e24f3554b6">
+<strong>Admin's Email Address</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
+<li data-list-item-id="ed54b3084ce662c157ff2d2d19b147229">
+<strong>Domain</strong>: Enter a comma-separated list of domains that should receive integration-related notifications. For example, if you enter aquera.com, all email addresses with this domain will receive the notifications.</li>
+<li data-list-item-id="eedd39cffccbafe85a0e926155a9d2526">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications.</li>
+<li data-list-item-id="ece57cfb08780faa1ac7b56f0082e3ec9">
+<strong>Email Body</strong>: Enter the content that must be used as the email body for sending email notifications.</li>
+<li data-list-item-id="eee7d6056026127fce141dd9e7003bd83">
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for each integration execution. When enabled, the <strong>Email Report Settings</strong> section is displayed for further configuration.</li>
+<li data-list-item-id="e5f4641d6453c546d28241b603f9d085b">
+<strong>Alert Aquera Support On </strong><span><strong>Integration</strong></span><strong> Failure</strong><span><strong>s</strong></span>: Select this checkbox to send a notification alert to the Aquera support on Integration failures.</li>
+<li data-list-item-id="e3b4b89bf2db30fac5cb86b903afee86f">
+<strong>Send Notification on Successful User Creation</strong>: Select this checkbox to send a notification on successful user creation. When enabled, the <strong>Contractor Creation Notifications</strong> section is displayed for further configuration.</li>
+</ul><h4>Email Report Settings</h4><p>Configure the following email report settings:</p><ul><li data-list-item-id="e3b231ee9796849745d5cea3fc5401408">
+<strong>Report Detail Level</strong><span>*</span>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e4a7e73b7a2b599ada48d305572df1bbf">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e8d96fd2796079bd1395e2970a5140ac5">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e113ac1b8555ab7562d3142484e24df92">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the  <strong>Attribute Filter</strong><span>*</span> drop-down menu with the following options:<ul>
+<li data-list-item-id="ef204af643a21192878b0fa159536296c">
+<strong>Included Attributes</strong>: Enter the attributes to be included in the email report. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+<li data-list-item-id="e07254636968b06a15c78a3b95985dcd7">
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the email report. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+</ul>
+</li>
+<li data-list-item-id="e4024768b612647b2995f8e90785c684a">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values for each event when choosing the Full Details or Custom option.</li>
+</ul>
+</li></ul><h4>Contractor Creation Notifications</h4><p>Configure the following user creation notification settings:</p><ul>
+<li data-list-item-id="e7baf4c82f58b489a141c0346853791e0">
+<strong>Jira field that contains the contractor's email address</strong>: Select a Jira field from the dropdown that holds the user's email address. For example, Assignee<em>.</em>
+</li>
+<li data-list-item-id="e087c0bed1fecf8f16647a798c281b190">
+<strong>Custom Recipients</strong>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select Custom in the Recipients' Email Addresses parameter.</li>
+<li data-list-item-id="e3d58182a23db27140cc9cf7246e7685e">
+<strong>CC</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e9d0f84bfa6f45a85ee4782236c3b10ae">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li data-list-item-id="e50bc3e4b3497703243361f61c11f5393">
+<strong>Email body</strong>: Enter the content that must be used as the email body for notifications sent upon successful user creation.</li>
+</ul><h3>Reporting</h3><p>The <strong>Reporting</strong> section enables you to customize the integration settings according to your specific use case. This section is used to download the integration report in CSV format from the execution timeline. It has the following settings:</p><h4>Report Settings</h4><p>Configure the following report settings:</p><ul><li data-list-item-id="e6bc84cbe5848e31c66b4a710a9e5f636">
+<strong>Report </strong><span><strong>Detail</strong></span><strong> Level</strong><span>*</span>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e11c7fe522055aef1a51d5ceef5ac03b9">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e2049c039e4627ba16a5ef43d556cafeb">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ea290105938a80cf8a716980154e0cd02">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="e3bfece9dd6d8b8f970b2747e665ec91a">
+<strong>Included Attributes</strong>: Enter the attributes to be included in the report. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+<li data-list-item-id="e1f06fcf359550694979ccbece983b053">
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the report. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+</ul>
+</li>
+<li data-list-item-id="e52e70dc9b2066f702d9e18359c1e513d">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul>
+</li></ul><h3>Log Insights</h3><p>The <strong>Log Insights</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4>Log Insight Settings</h4><p>Configure the following settings to customize the log insights:</p><p>It has the following settings:</p><ul><li data-list-item-id="e28c806d83a2f2cde4f3a1de6ea0e8caa">
+<strong data-end="185" data-start="147">Log Insights Detail Level</strong><span>*</span><strong data-end="185" data-start="147">:</strong> Select the level of detail from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ed0f48557375b6cc686d87308ff417705">
+<strong data-end="337" data-start="320">Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ea756834d34241357c0042a4ed770e831">
+<strong data-end="440" data-start="423">Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e434cab2c8458915320227d094dd73641">
+<strong data-end="493" data-start="482">Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span>*</span> drop-down menu with the following options:<ul>
+<li data-list-item-id="eea9d008b2695f8aee226078f19447934">
+<strong>Included Attributes</strong>: Enter the attributes that should be included in the log insights. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+<li data-list-item-id="eed204f03eee88947be5b815ba5d1602b">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log insights. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+</ul>
+</li>
+<li data-list-item-id="ec5596007e44b62a142df2ae87ebe2169">
+<strong>Log Insights Dashboard Name</strong>: Provide a name for the log insights dashboard.</li>
+<li data-list-item-id="e488114d5a117f98e641883fd31f71bce">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+</li></ul><h2>Rule Builder</h2><p>The <strong>Rule Builder</strong> tab is displayed only when the <strong>Enable Contractor Management</strong> is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>This integration allows you to configure and map contractor country locations to Active Directory OU paths. A rule based on country location and OU path is available. Configure each location and specify its corresponding OU path.</p><p>Perform the following procedure to set up a rule:</p><ol>
+<li data-list-item-id="ee9c551da6e0710552152b913417fdd54">In the <strong>CountryLocation</strong> column, click the drop-down to view the list of countries and select the preferred country.</li>
+<li data-list-item-id="e945fad1639fc17dbf0ff2f9ed38d3113">In the <strong>OU Path</strong> column, click the drop-down to view the list of OU paths and select the preferred OU path to be mapped to the country selected in the <strong>CountryLocation</strong> column.<br/>Notes:<ul>
+<li data-list-item-id="e8e7dc0f5f053123f3ff462b5b77bbd6f">You can add any number of rows within a rule.</li>
+<li data-list-item-id="e5c1f3eec12bb7f30d82ff41663a41158">You can delete a row by using the delete icon at the right end of the row.<br/><img alt="2026-02-06_15-41-18.png" height="384" src="https://support.aquera.com/hc/article_attachments/38211261308567" width="1574"/><br/> </li>
+</ul>
+</li>
+<li data-list-item-id="ef50a11501d878b87d9aef21dbffa3904">
+<em>[Optional] </em>If you want to write a JavaScript expression to set the condition, click <strong>Switch to Expression</strong>. Click <strong>Switch to Expression</strong> to view <em>For Conditions Only</em> and <em>For Conditions and Assignments</em> options.<br/><strong>Note</strong>: When you switch to the <em>For Conditions Only</em> or <em>For Conditions and Assignments</em>, all the configured conditions of the rule will be cleared.<ol>
+<li data-list-item-id="eef0d164f93e67f8a6fde522d756d4249">Select one of the following based on your requirement:<ul>
+<li data-list-item-id="ee08aababf4c9e44351e32d5e2d81b81d">
+<strong>For Conditions Only</strong>: Select this if you want to write a JavaScript expression only for the conditions. </li>
+<li data-list-item-id="e4c19f9a3d0ca8fa640f62758dbcfca07">
+<strong>For Conditions and Assignments</strong>: Select this if you want to write expression for both, conditions and assignments.</li>
+</ul>
+</li>
+<li data-list-item-id="e33c9b7a29258ddefdd08e0c0b4460eb3">Click <strong>Continue</strong> to configure the expression.<br/><br/><strong>Note</strong>: Expressions can use all attributes in the source and destination applications. The configured expressions must always be evaluated to <em>true</em> or <em>false</em>.<br/><strong>SOURCE</strong> must be used in an expression to represent an attribute in the source application and <strong>DEST</strong>to represent an attribute in the destination application.<br/>For example, <em>SOURCE.EmployeeNumber</em>, <em>SOURCE.HomeOrganization.ShortName</em>, and <em>DEST.EmployeeNumber</em>.</li>
+</ol>
+</li>
+<li data-list-item-id="e830213679a965eaccb59d155977e753c">Click <strong>Add New Rule</strong> to add another assignment rule, as explained above.<br/><strong>Note</strong>: You can add any number of assignment rules. However, you can see only 5 rules on a single page. If you add more than 5 rules, navigation options will be available at the bottom of the page to navigate to other pages for configuring or viewing the remaining defined rules.</li>
+</ol><h2>Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2>Tables</h2><p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the Paycor application, and you want to update a value for that attribute in AD. Based on your requirement, you can add any number of tables in the integration.</p><p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360051052493-Using-Tables-in-Integrations#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a>section in the <strong>Using Tables in Integration</strong> guide for details.</p><h2>Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="https://support.aquera.com/hc/en-us/articles/10209078646807" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1>Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/11086740764951" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1>Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="https://support.aquera.com/hc/en-us/articles/11086740764951" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+  </div>
+</body>
+</html>

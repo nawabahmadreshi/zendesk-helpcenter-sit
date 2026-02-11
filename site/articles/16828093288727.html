@@ -1,0 +1,4727 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Microsoft 365 App Registration Configuration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Microsoft 365 App Registration Configuration Guide</h1>
+    <p><a href="../index.html">← Back</a></p>
+    <h1>Overview</h1>
+<p>Microsoft 365 is the productivity cloud designed to help users pursue passion and run businesses. More than just apps like Word, Excel, and PowerPoint, Microsoft 365 brings together best-in-class productivity apps with powerful cloud services, device management, and advanced security in one, connected experience.</p>
+<p>As an identity provider, Microsoft 365 lets organizations manage user logins and permissions in one place for Microsoft services, third-party apps, and custom solutions. With features like single sign-on (SSO), multi-factor authentication (MFA), conditional access, and user lifecycle management, it offers secure and easy access for users.</p>
+<p>This guide helps users create a Microsoft 365 App Registration connector on the Aquera platform.</p>
+<p>For further details on the Microsoft 365 application, visit the <a href="https://www.microsoft.com/en-us/microsoft-365" rel="noopener noreferrer" target="_blank">Microsoft 365</a> website.</p>
+<!--Note-->
+<div>
+<div>
+<strong>NOTE 1</strong>: Follow this guide to configure the Microsoft 365 connector with Client Credentials flow. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> to configure the Microsoft 365 connector with OAuth2 flow.</div>
+</div>
+<div>
+<div>
+<strong>NOTE 2</strong>: The <strong>version 21</strong> of this connector is compatible only with <strong>version 5</strong> of the User Integration. If you are using an older version of the User Integration, contact Aquera support team to upgrade it to <strong>version 5</strong>.</div>
+</div>
+<h1>Supported Features</h1>
+<p>The Microsoft 365 connector supports the following features:</p>
+<table border="1" width="859">
+<tbody>
+<tr>
+<td><strong>Resource</strong></td>
+<td><strong>Import</strong></td>
+<td><strong>Provisioning</strong></td>
+</tr>
+<tr>
+<td><strong>Users</strong></td>
+<td>
+<ul>
+<li>Full import</li>
+<li>Incremental import</li>
+<li><a href="#h_01GQJ0KEQBJSCYXT8HSSGPM0A9">Filter users</a></li>
+</ul>
+</td>
+<td>
+<ul>
+<li>Create a user</li>
+<li>Update a user</li>
+<li>Delete a user</li>
+<li>Activate or Deactivate a user</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><strong>Groups</strong></td>
+<td>
+<ul>
+<li>Full import</li>
+<li>Incremental import</li>
+<li><a href="#h_01GQJ0MK5VF3F70NQ0TJRWQAGP">Filter groups</a></li>
+</ul>
+</td>
+<td>
+<ul>
+<li>Create a group</li>
+<li>Add users to a group</li>
+<li>Remove users from a group</li>
+<li>Delete a group</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><strong>Teams</strong></td>
+<td>
+<ul>
+<li>Full import</li>
+<li>Incremental import</li>
+<li><a href="#h_01GQJ0MK5VF3F70NQ0TJRWQAGP">Filter teams</a></li>
+</ul>
+</td>
+<td>
+<ul>
+<li>Create a team</li>
+<li>Add users to a team</li>
+<li>Remove users from a team</li>
+<li>Delete a team</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><strong>Shared Mailbox</strong></td>
+<td>
+<ul>
+<li>Full import</li>
+<li>Incremental import</li>
+<li><a href="#h_01GQJ0MK5VF3F70NQ0TJRWQAGP">Filter shared mailbox</a></li>
+</ul>
+</td>
+<td>
+<ul>
+<li>Add members to a shared mailbox</li>
+<li>Remove members from a shared mailbox</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><strong>App Roles</strong></td>
+<td>
+<ul>
+<li>Full import</li>
+<li>Incremental import</li>
+<li><a href="#h_01GQJ0MK5VF3F70NQ0TJRWQAGP">Filter app roles</a></li>
+</ul>
+</td>
+<td>
+<ul>
+<li>Add users to an app role</li>
+<li>Remove users from an app role</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><strong>Privileged Identity Management</strong></td>
+<td>
+<ul>
+<li>Full import</li>
+<li>Incremental import</li>
+<li><a href="#h_01GQJ0MK5VF3F70NQ0TJRWQAGP">Filter privileged identity management</a></li>
+</ul>
+</td>
+<td>
+<ul>
+<li>Add users to a role in privileged identity management</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><strong>Events</strong></td>
+<td>
+<ul>
+<li>Full import</li>
+<li>Incremental import</li>
+<li><a href="#h_01HVR5NHQVYZHVG766EG7GR42Z">Filter events</a></li>
+</ul>
+</td>
+<td>Not supported</td>
+</tr>
+<tr>
+<td><strong>Channels</strong></td>
+<td>
+<ul>
+<li>Full import</li>
+<li>Incremental import</li>
+<li><a href="#h_01GQJ0MK5VF3F70NQ0TJRWQAGP">Filter channels</a></li>
+</ul>
+</td>
+<td>
+<ul>
+<li>Add members to a channel</li>
+<li>Remove members from a channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>Access to these resources is through the Microsoft Graph API endpoint. Microsoft Graph is a RESTful web API that enables you to access Microsoft Cloud service resources, such as Users, Groups, and Mailboxes.</li>
+<li>You cannot update the attributes of a user in EntraID if those attributes are synced from Active Directory using the Microsoft Entra Connect. You can update the attributes of a user account only if the source of those attributes is Entra ID</li>
+<li>The resource types <strong>Teams</strong>, <strong>Shared Mailbox</strong>, <strong>App Roles</strong>, <strong>Channels</strong>, and <strong>Privileged Identity Management</strong> are managed through the resource type <strong>Groups</strong> (/Groups).</li>
+<li>While retrieving channels, the channel's owner will not be included in the response.</li>
+<li>You can add or remove a user from a shared channel only if the userType of the user is <em>Member</em>, and the user must be active.</li>
+<li>You can add or remove a user from a private channel if the userType of the user is <em>Member </em>or<em> guest,</em> and the user must be active.</li>
+<li>You cannot add or remove users from a standard channel.</li>
+<li>When you want to set up multiple Aquera Integrations in an incremental mode where Entra ID is the source/target application, make sure that you create multiple instances/endpoints of the Microsoft 365 connector to be used in different Integrations. A single instance of the connector must not be used in multiple Integrations. Otherwise, incremental imports may not work as expected.</li>
+<li>It is recommended to set the frequency of incremental integration runs to less than 25 days. Otherwise, a full import of users will be performed instead of incremental imports.</li>
+</ul>
+<p>The Microsoft 365 connector also supports features as per OpenAPI specification. Refer to the <a href="#h_01FEN6W3GTVQGCARPR4B9PQWJA">OpenAPI Specification</a> section for details.</p>
+<p><strong>Note</strong>: To see a list of features supported by this connector and their availability across different versions, <a href="https://support.aquera.com/hc/article_attachments/30616291915799" rel="noopener noreferrer" target="_blank">click here</a>.</p>
+<h1>Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Service Account</strong>: A service account/user account with appropriate roles is needed for configurations in the Microsoft portal. You can use the same service account or create a new service account to <a href="#h_01J0XF9CG6QSCA6X5AKV2X8XST">manage PowerShell Services</a> as well.<br/>Use one of the following approaches if your use case requires managing PowerShell Services:<br/>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>When MFA is enabled</strong></td>
+<td><strong>When MFA is not enabled</strong></td>
+</tr>
+<tr>
+<td>
+<p>If MFA is enabled for the service account, you must use <strong>Certificate-Based Authentication (CBA)</strong> to manage PowerShell Services. In this case, a service account to manage PowerShell Services is <strong>not needed</strong>.</p>
+</td>
+<td>
+<p>If MFA is not enabled, a service account is needed to manage PowerShell Services, and the following tenant attributes must be configured in the connector:<strong><br/></strong></p>
+<ul>
+<li>
+<ul>
+<li><strong>Admin's Username</strong></li>
+<li><strong>Admin's Password</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>Note</strong>: You can also use the <strong>Certificate-Based Authentication (CBA)</strong> to manage PowerShell Services, even when MFA is not enabled. In this case, a service account to manage PowerShell Services is <strong>not needed</strong>. </p>
+</td>
+</tr>
+</tbody>
+</table>
+Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32868720954135" rel="noopener noreferrer" target="_blank">Service Account Setup in Microsoft 365</a> guide to learn how to set up a service account.<br/>To know more about the PowerShell features and their related attributes, refer to the <a href="#h_01J0XF9CG6QSCA6X5AKV2X8XST" rel="noopener noreferrer" target="_blank">Manage PowerShell Services</a> section.</li>
+<li>
+<strong>App Registration</strong>: App registration is mandatory to define and configure application and API permissions. Once you register an application in the Microsoft portal, you will have access to the <strong>client ID</strong> and <strong>client secret</strong>, that are required for authentication.<br/>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide to learn how to register an application.<br/><strong>Note</strong>:<strong> To use app-only or certificate-based authentication, you can use the same application or create a new application, as mentioned in the next point.</strong>
+</li>
+<li>
+<strong>Application for Certificate-Based Authentication</strong>: To use app-only or certificate-based authentication, you must have an application in Microsoft Entra ID. Refer to the <a href="#h_01J03E5PG5F24Z3NZ7E4S0FNQV">Application for Certificate Based Authentication</a> section for further details.<br/><strong>Note</strong>: If your use case requires <a href="#h_01J0XF9CG6QSCA6X5AKV2X8XST">managing PowerShell Services</a> and if MFA is enabled for the service account, you must use this authentication method.<br/>In that case, the following tenant attributes must be configured in the connector:
+<ul>
+<li>
+<ul>
+<li><strong>Exchange Online Authentication Certificate</strong></li>
+<li><strong>App ID of Registered Application</strong></li>
+<li><strong>Domain provided by Microsoft</strong></li>
+<li><strong>Password provided while certificate export</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Tenant ID</strong>: You must have the tenant ID of your directory. Refer to the <a href="#h_01GW72KF1ZV1HMGPEQHB2DE6SJ">Obtaining the Tenant ID of Azure Active Directory</a> section for more details.</li>
+<li>
+<strong>PnP Management Shell Application</strong>: If your use case requires features related to OneDrive and SharePoint, you must configure the PnP Management Shell Application in the Microsoft Azure Portal using PowerShell commands.<br/>In this case, you must configure the <strong>PnP Management Shell Application ID</strong> tenant attribute in the connector.<br/>However, <strong>if you are using Certificate-Based Authentication, you do not need to configure the PnP Management Shell application. In this case, you must configure the <em>App ID of Registered Application</em> tenant attribute instead of the <em>PnP Management Shell Application ID</em> tenant attribute in the connector to use features related to OneDrive and SharePoint</strong>.</li>
+</ul>
+<h1>Supported Groups</h1>
+<p>The Microsoft 365 connector supports the following groups: </p>
+<ul>
+<li>Microsoft 365 groups</li>
+<li>Security groups</li>
+<li>Mail-enabled security groups<br/><strong>Note</strong>: Users can only update Mail-enabled security groups by adding or removing members. Users cannot create or delete these groups.</li>
+<li>Distribution groups<br/><strong>Note</strong>: Users can only update distribution groups by adding or removing members. Users cannot create or delete these groups.</li>
+</ul>
+<p>For more details on groups, refer to the <a href="https://docs.microsoft.com/en-us/graph/api/resources/groups-overview?view=graph-rest-beta" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p>
+<h2>Manage Groups</h2>
+<p>To manage the groups that have option <strong>Azure AD roles can be assigned to the group</strong> enabled in the Microsoft Azure portal, the service account must have the following:</p>
+<ul>
+<li>
+<strong>Privileged Role Administrator </strong>role</li>
+<li>
+<strong>RoleManagement.ReadWrite.Directory </strong>permission: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide to learn how to enable this permission.</li>
+</ul>
+<h1>Supported Extensions</h1>
+<p>Extensions can be added to the user, group, organization, device, and application resources. Only 100 extension values across all types and all applications can be written to any single Azure AD resource.</p>
+<p>For more details on extensions, refer to the <a href="https://docs.microsoft.com/en-us/graph/api/resources/extensionproperty?view=graph-rest-1.0" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p>
+<p>The following extension types are supported:</p>
+<h2>Open Extensions</h2>
+<p>Open extensions provide an easy way to directly add untyped properties to a resource in Microsoft Graph. These are represented by the <strong>openTypeExtension</strong> resource.</p>
+<p>Any open extension added to a resource shows up in the <strong>extensions</strong> navigation property, which is derived from the extension abstract type. Each extension has an <strong>extensionName</strong> property which is the only pre-defined, writable property for all extensions along with your custom data.</p>
+<p>For detailed information, refer to the <a href="https://docs.microsoft.com/en-us/graph/api/resources/opentypeextension?view=graph-rest-1.0" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p>
+<p>The connector supports open extensions through the tenant attribute <strong>Extended Schema</strong>. Refer to the <a href="#h_01FGR6V8T3DM3BSGCZQ643HRCY">Aquera Tenant Attributes</a> section for more details. A maximum of two open extensions are supported for a user.</p>
+<p><strong>Note</strong>: If you select the <strong>create external ID</strong> checkbox in the <a href="#h_01FGR6V8T3DM3BSGCZQ643HRCY">Aquera Tenant Attributes</a> section, it is considered an open extension attribute.</p>
+<h2>Schema Extensions</h2>
+<p>Schema extensions allow you to define a schema to extend and add strongly-typed custom data to a resource type. The custom data appears as a complex type on the extended resource.</p>
+<div>
+<div>The connector supports schema extensions through the tenant attribute <strong>Schema Extensions Custom Attribute IDs</strong>. Refer to the <a href="#h_01FGR6V8T3DM3BSGCZQ643HRCY">Aquera Tenant Attributes</a> section for more details.</div>
+<div>To add Schema extensions, you must have schema extension IDs.</div>
+<div>Perform the following steps to obtain the schema extension IDs:</div>
+<ol>
+<li>Log in to <a data-sk="tooltip_parent" data-stringify-link="https://developer.microsoft.com/en-us/graph/graph-explorer" href="https://developer.microsoft.com/en-us/graph/graph-explorer" rel="noopener noreferrer" target="_blank">graph-explorer</a> using your Microsoft 365 credentials.</li>
+<li>On the left menu pane, expand <strong>Extensions</strong>.</li>
+<li>Click <strong>GET available schema extensions </strong>and select the required ones, which support targetTypes User.</li>
+<li>Since it is a paged response, copy the value of the <em>@odata.nextLink</em> attribute available in the response and paste it into the URL section of Graph Explorer.</li>
+<li>Run the query again.</li>
+<li>Once the response is found, check for the required ID/attribute. Follow the same steps until you reach the last page where the <em>@odata.nextLink</em> attribute will not be present.</li>
+</ol>
+<div>
+<strong>Note</strong>: Existing customers, who need this feature to be enabled, have to get re-authorized.</div>
+</div>
+<p>For detailed information on schema extension, refer to the <a href="https://docs.microsoft.com/en-us/graph/api/resources/schemaextension?view=graph-rest-1.0" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p>
+<h2>Application Extensions</h2>
+<p>Application extensions enable you to control and access custom properties of an application resource that is registered in Azure.</p>
+<p>The connector supports application extensions through the tenant attribute <strong>Application ID for extension properties</strong>. Refer to the <a href="#h_01FGR6V8T3DM3BSGCZQ643HRCY">Aquera Tenant Attributes</a> section for more details.</p>
+<p>To add or modify application extensions, you must have application IDs. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide for details on obtaining the application ID (client ID) of your application.</p>
+<p>These extension attributes can be added and modified only through APIs and not through the Azure application UI.</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>Extension attributes of <em>string</em> data type only are supported.</li>
+<li>The name of the application extension attributes must be entered in the format, <em>extension_&lt;applicationId&gt;_&lt;attributeName&gt;. </em>For example, <em>extension_d038e19b0ac14ab295da0a19b7812a34_SAMPLEATTRIBUTE</em>
+</li>
+<li>The application ID in the extension attribute name must not contain hyphen (-). Also, it is recommended to have the extension attribute names starting with an alphabet.</li>
+</ul>
+<h1>Connector Configuration</h1>
+<p>Perform the following steps to configure the Microsoft 365 connector:</p>
+<ol>
+<li><span>Log in to the Aquera Admin portal.</span></li>
+<li><span>Navigate to <strong>Applications</strong> and click <strong>Add Application</strong>.</span></li>
+<li>Search for <em>Microsoft 365 App Registration </em>and select the icon.</li>
+<li>Enter the values for the following fields under the <strong>Configuration</strong> tab:
+<ul>
+<li>
+<strong>Basic Details</strong>:
+<ul>
+<li>
+<strong>Display Name</strong>:<strong> </strong>Enter a display name for your application.</li>
+<li>
+<strong>Description</strong>:<strong> </strong>Enter a description for your application. </li>
+<li>
+<strong>Source Owner</strong>: Enter valid email IDs of the source owners.</li>
+<li>
+<strong>Subscribe to error notification</strong>: Enable the toggle button to send notification emails to source owners for errors in the user data transactions. Click <strong>Edit Preference</strong> to select the error types for which you want to receive notifications. After you configure your preference, you will receive error notifications only for the selected error types. By default, all error types are selected.</li>
+<li>
+<strong>Pick your protocol</strong>: Select the protocol from the dropdown list based on your requirement. <em data-stringify-type="italic">SCIM</em> is the default value.</li>
+<li>
+<strong>Copy this URL</strong>: This field displays the base URL of the connector API endpoint. The URL is populated based on your selected protocol. Copy and paste this URL while provisioning to the identity service provider or performing OpenAPI operations, if supported.</li>
+</ul>
+</li>
+<li>
+<strong>Tenant Attributes</strong>: Refer to the <a href="#h_01FGR6V8T3DM3BSGCZQ643HRCY">Aquera Tenant Attributes</a> section for details.</li>
+</ul>
+</li>
+<li>Click <strong>Create </strong>to add the Microsoft 365 connector.</li>
+</ol>
+<p>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/19411681244951" rel="noopener noreferrer" target="_blank">Getting Started with Connectors</a> guide to learn more about connector setup including different tabs of the connector configuration page.</p>
+<p>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32445918196503" rel="noopener noreferrer" target="_blank">Test Connection for Microsoft 365 Connector</a> guide to learn more about the <strong>Test Connection</strong> feature.</p>
+<h2>Aquera Tenant Attributes</h2>
+<p>The following are the Aquera Tenant Attributes:</p>
+<ul>
+<li>
+<strong>Convert Users regular mailbox to shared mailbox on Delete</strong>: Select this checkbox to convert the private (regular) mailbox of a user to a shared mailbox on user deletion.</li>
+<li>
+<strong>Admin's Username</strong>: Enter the username of a service account with the administrator role if you want to manage the features listed in the <a href="#h_01J0XF9CG6QSCA6X5AKV2X8XST">Manage PowerShell Services</a> section.<br/>However, if MFA is enabled for the service account, you must use Certificate Based Authentication to Manage PowerShell Services. In that case, this tenant attribute is not required.<br/><strong>Notes</strong>:
+<ul>
+<li>
+<ul>
+<li>Make sure that the service account has a valid license with the <em>Exchange Online</em> and <em>Exchange Online Archiving</em> plans enabled.</li>
+<li>If you are providing username of the service account other than the one used for authentication as per the <a href="#h_01G0H1MYQ5Z7AVXXQ09FSG62RM">Authentication</a> section, ensure that the Exchange Administrator role is assigned to the service account for PowerShell services.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Admin's Password</strong>: Enter the password of a service account with the administrator role if you want to manage the features listed in the <a href="#h_01J0XF9CG6QSCA6X5AKV2X8XST">Manage PowerShell Services</a> section.<br/>However, if MFA is enabled for the service account, you must use Certificate Based Authentication to Manage PowerShell Services. In that case, this tenant attribute is not required.</li>
+<li>
+<strong>Photos</strong>: Select this checkbox to include the photo attribute of the users in the response while importing users.</li>
+<li>
+<strong>Create ExternalId attribute</strong>: Select this checkbox to create an open extension with the <em>externalId</em> attribute for create and update user requests. Refer to the <a href="#h_01EYTB8XEJ05JDMX633K2BA374">Open Extensions</a> section for more details.</li>
+<li>
+<strong>Extended Schema</strong>: This field is used for open extension schema. Multiple values must be separated by a comma. For example, attribute1, attribute2.<br/>Refer to the <a href="#h_01EYTB8XEJ05JDMX633K2BA374">Open Extensions</a> section to know more about open extensions.<br/><strong>Note</strong>: A maximum of two values are accepted.</li>
+<li>
+<strong>Schema Extensions Custom Attribute IDs</strong>: This field is used for schema extension. Multiple values must be separated by a comma. For example, <em>onPremisesExtensionAttributes, adatumisv_courses, extv8fta6be_ClaimSchemaExtension</em>.<br/>Refer to the <a href="#h_01EYTB9EK499P12V39FNDPADSY">Schema Extensions</a> section to know more about schema extensions.<br/><strong>Note</strong>: To include the custom on-premises user extension attributes, enter <em><strong>onPremisesExtensionAttributes</strong></em> as the attribute ID in this field.</li>
+<li>
+<strong data-stringify-type="bold">Microsoft Graph Endpoint</strong>: Enter the Microsoft graph API endpoint to make API calls for user provisioning. By default, <a data-sk="tooltip_parent" data-stringify-link="http://graph.microsoft.com" href="http://graph.microsoft.com/" rel="noopener noreferrer" target="_blank">graph.microsoft.com</a> is used. For example, enter <em>graph.microsoft.us</em> for US Government cloud.</li>
+<li>
+<strong>Remove Manager</strong>: If this checkbox is selected and a user's manager is removed from the user in the source, the user's manager will be removed (unlinked) from the user in Azure AD. If this checkbox is not selected, the user's manager will not be removed in Azure AD even if the manager is removed for the user in the source.</li>
+<li>
+<strong>Application ID for extension properties</strong>: Enter the Application (Client) ID of your registered application in Azure. This value is required for the connector to support the application extension properties. <label>Multiple application IDs must be separated by a comma. </label>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide for details on obtaining the application ID of your application.<br/>Refer to the <a href="#h_01FMVFYAW7JN6GZEA0TE2TD5RQ">Application Extensions</a> section to know more about application extensions.</li>
+<li>
+<label><label><strong>List of application Ids to manage App roles</strong></label>: Enter the Application (Client) IDs of your registered applications in Azure for managing the app roles in those applications. Multiple application IDs must be separated by a comma. If the ID is not passed, then all app roles will be supported. </label>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide <label>for details on obtaining the application ID of your application. For details on creating an app role in an application, refer to the <a href="#h_01FS1KEFPQR4ZYGBSGQ0PN2960">Adding App Roles</a> section.</label>
+</li>
+<li>
+<strong>Customized Message Body for Guest User Invite Mail</strong>: Enter the message body that must be included in the invitation email to the guest account.<br/><strong>Note</strong>: The message provided in this tenant attribute will be used in the invitation email body only if the value of the IAN attribute, <em>customizedMessageBody</em> is blank for a guest user. </li>
+<li>
+<strong>Include User AppRoles in Users import</strong>: Select this checkbox to retrieve the list of user app roles during the user import operation. If this checkbox is not selected, the user app roles will not be part of the response.<br/><strong>Note</strong>: When you select this checkbox, you must have the <em>Directory.Read.All </em>API permission. If you do not set this permissions, it will throw a 403 Error (Insufficient Permissions).</li>
+<li>
+<strong>Include Groups in Users imports</strong>: Select this checkbox if user groups and admin roles must be retrieved during the user import operations. If this checkbox is not selected, user groups and admin roles will not be retrieved. This checkbox is selected by default. <br/><strong>Notes</strong>:
+<ul>
+<li>The admin roles give permission to users in your organization to do specific tasks in the admin centers.</li>
+<li>If you want the user groups to be managed through Synchronizations, this checkbox must be selected.</li>
+</ul>
+</li>
+<li>
+<strong>Guest UserType userPrincipalName suffix</strong>: Enter the User Principal Name suffix (domain) to filter the guest user accounts from a specific domain. The connector retrieves all the guest user accounts belonging to the domain name that is specified in this field. For example, to filter guest accounts from the domain <em>example.onmicrosoft.com</em>, you must enter the UPN suffix as <em>example.onmicrosoft.com</em>.</li>
+<li>
+<strong>Include roles as groups during Groups import</strong>: Select this checkbox if you want to include Administrative roles, Application roles, and PIM roles (if available) as groups during group import. If this checkbox is not selected, the roles will not be included as groups during group import. This checkbox is selected by default. </li>
+<li>
+<strong>Convert Users regular mailbox to shared mailbox on Deactivation</strong>: Select this checkbox to convert the private (regular) mailbox of a user to a shared mailbox on user deactivation.</li>
+<li>
+<strong>Support Manager through IAN</strong>: Select this checkbox to update managers for users based on the manager's username in the <em>IAN.managerUsername</em> attribute of the user object. If the checkbox is not selected, the manager values in the user enterprise attributes are considered.<br/><strong>Note</strong>: If you are using <strong>Map Manager</strong> feature in your User Integration Setup, ensure that this tenant attribute is not enabled.</li>
+<li>
+<strong>Allow OneDrive access to manager on deletion or deactivation</strong>: Select this checkbox to grant OneDrive access to a user's manager when the user is deactivated or deleted. Make sure that the account of user's manager is active.<br/><strong>Notes</strong>:
+<ul>
+<li>The PnP Management Shell app must be configured to use this feature. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36715756992535" rel="noopener noreferrer" target="_blank">PnP Management Shell Application Configuration</a> guide for more details.</li>
+<li>The <strong>PnP Management Shell Application ID</strong> tenant attribute must be configured to use this feature. If you are using <strong>certificate-based authentication</strong>, you must configure the <strong>App Id of Registered Application</strong> tenant attribute instead of the <strong>PnP Management Shell Application ID</strong> tenant attribute.</li>
+<li>The OneDrive access to manager will be ignored if:
+<ul>
+<li>The user does not have a manager.</li>
+<li>The OneDrive setup is not done for the user.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Allow OneDrive access to users on deletion or deactivation</strong>: Enter the list of comma-separated usernames of active users to be granted access to a user's OneDrive when the user is deactivated or deleted. For example,<em> john@example.microsoft.com,david@example.microsoft.com</em><em>.</em><br/><strong>Notes</strong>:
+<ul>
+<li>The PnP Management Shell app must be configured to use this feature. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36715756992535" rel="noopener noreferrer" target="_blank">PnP Management Shell Application Configuration</a> guide for more details.</li>
+<li>The <strong>PnP Management Shell Application ID</strong> tenant attribute must be configured to use this feature. If you are using <strong>certificate-based authentication</strong>, you must configure the <strong>App Id of Registered Application</strong> tenant attribute instead of the <strong>PnP Management Shell Application ID</strong> tenant attribute.</li>
+</ul>
+</li>
+<li>
+<strong>Include shared mailbox as groups during Groups import</strong>: Select this checkbox to retrieve the shared mailbox details during the group import operations. The shared mailbox details will be retrieved in the groups' attributes.</li>
+<li>
+<strong>Forward emails of a deactivated user to their manager</strong>: When this checkbox is selected, the emails that are sent to a deactivated user will be forwarded to their manager's email address.<br/><strong>Note</strong>: This tenant attribute will be ignored if the IAN user attribute <strong>stopEmailForwarding</strong> is set to <em>true</em>.</li>
+<li>
+<strong>Include mailbox status in the response</strong>: Select this checkbox to include the mailbox status in the response. For example, if this checkbox is selected, the user's mailbox status (shared or regular) will be retrieved in the response.<br/><strong>Notes</strong>:
+<ul>
+<li>The mailbox status of a user will be retrieved only if the user has a valid license with the Exchange Online plan.</li>
+<li>You need to provide the <strong>Admin's userName </strong>and the <strong>Admin's Password </strong>to support this tenant attribute.</li>
+</ul>
+</li>
+<li>
+<strong>Include Mailbox Size in User Response</strong>: Select this checkbox to include the user's mailbox size in the response.</li>
+<li>
+<strong>Validate phone number</strong>: Select this checkbox to validate the phone number of the user to ensure that the phone number is valid. If this checkbox is not selected, the connector will not validate the phone number.</li>
+<li>
+<strong>Tenant ID</strong>: Provide the Tenant ID of your Azure Active Directory. Refer to the <a href="#h_01GW72KF1ZV1HMGPEQHB2DE6SJ">Obtaining the Tenant ID of Azure Active Directory</a> section to retrieve the Tenant ID.</li>
+<li>
+<strong>Map the email with userName if the email is not present</strong>: Select this checkbox to map the email with userName when the email for a user is not available. This will retrieve the username (UPN) as email in the response when the email is not present for a user.</li>
+<li>
+<strong>Add shared mailbox permission to the manager on deactivation</strong>: Select this checkbox to add the shared mailbox permission to the user's manager when the user is deactivated.<br/><strong>Note</strong>: Deactivating and converting the shared mailbox and assigning permission to manager changes will be visible in the exchange online admin portal.</li>
+<li>
+<strong>Manage Proxy Addresses</strong>: Select this checkbox to manage the proxy addresses of member users. If this checkbox is not selected, you will not be able to modify the <strong>proxyAddresses </strong>attribute.<br/><strong>Note</strong>: Microsoft 365 does not allow to remove username from the ProxyAddresses list.</li>
+<li>
+<strong>Use Phone Number in SCIM Format</strong>: Select this checkbox to convert a valid phone number to SCIM format. For example, this will convert <em>+12144189898</em> to<em> +1-214-418-9898</em>.</li>
+<li>
+<div>
+<strong>Send auto response message after the user is deactivated</strong>: Select this checkbox to set an automatic out-of-office reply on a user's mailbox upon deactivation.<br/><strong>Note</strong>: You can also set the automatic out-of-office reply on a user's mailbox upon deactivation through the <strong>setAutoReply</strong> IAN user attribute. However, if this tenant attribute and the <strong>setAutoReply</strong> IAN user attribute both are configured, the priority is given to the IAN user attribute.</div>
+</li>
+<li>
+<strong>Auto Reply Message For Deactivated Users</strong>: Enter the message that must be sent as an automatic out-of-office reply on behalf of a user when the user is deactivated. This automatic reply works only if the <strong>Send auto response message after the user is deactivated</strong><strong> </strong>checkbox is selected.<br/><strong>Note</strong>: If a message is configured in this tenant attribute and a different message is added for the IAN user attribute <strong>autoReplyMessage</strong>, the priority is given to the IAN user attribute <strong>autoReplyMessage</strong>.</li>
+<li>
+<strong>Revoke User Sessions On Deactivation</strong>: If this checkbox is selected, the user will be signed out from all devices after the user is deactivated.</li>
+<li>
+<strong>Add MFA phone number</strong>: Select this checkbox to add a phone number of the user for Multi-factor authentication (MFA). The phone number available in the IAN user attribute <strong>mfaPhoneNumber</strong> is considered the phone number for MFA.<br/><strong>Note</strong>: To enable this feature, you must add <em>UserAuthenticationMethod.ReadWrite.All</em> permission as per the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide.<em><br/></em>
+</li>
+<li>
+<strong>Return 204 status code in PATCH Response</strong>: Select this checkbox to return 204 status code in the patch response. This will send a 204 status only in the patch response instead of a response with all the details.</li>
+<li>
+<strong>Include dynamic groups in response</strong>: Select this checkbox to include dynamic groups in the response. If this checkbox is not selected, all groups with the group type dynamicMembership will not be included in the response.</li>
+<li>
+<strong>Include group-based licenses in user response</strong>: Select this checkbox to include group-based licenses in the user response. If this checkbox is not selected, group-based licenses will not be retrieved in the user response, even if the group-based licenses are available.</li>
+<li>
+<strong>Include on-premise sync-enabled groups in response</strong>: Select this checkbox to include on-premise sync-enabled groups in response. If this checkbox is not selected, the on-premise sync-enabled groups will not be retrieved.</li>
+<li>
+<strong>Disable Exchange ActiveSync for a mailbox on Deactivation</strong>: Select this checkbox to disable the Exchange ActiveSync (Mobile) for a user's mailbox when the user is deactivated.</li>
+<li>
+<strong>Add new unknown domains to External collaboration restrictions list automatically</strong>: Select this checkbox to add the domains in the guest users list to the list of allowed domains for sending invitations in the<strong> External Collaborations Settings</strong> page of the app. The guest invitations will be then allowed to send to those domains.</li>
+<li>
+<strong>Auto Mappings for Mailbox Permissions</strong>: Select this checkbox to automatically map the mailbox permissions. This will allow the user's manager to see the user's mailbox along with his mailbox automatically when the user is deactivated. If this checkbox is not selected, the manager has to add the user's mailbox manually. By default, the checkbox is selected.<br/><strong>Note</strong>: Ensure that the checkbox <strong>Add shared mailbox permission to the manager on deactivation </strong>is selected.</li>
+<li>
+<strong>Additional Resource Types in Group Members Response</strong>: Enter additional resource types to retrieve in the group response. Multiple values must be separated by a comma. For example, <em>group, device</em>.<br/>If this field is left blank, only users will be retrieved.<br/><strong>Note</strong>: The supported values are <em>group</em>, <em>serviceprincipal</em>, and <em>device</em>.</li>
+<li>
+<strong>Remove recurring meetings from calendar on user's deactivation</strong>: Select this checkbox to remove all recurring meetings that were created by a user when the user is deactivated.<br/><strong>Notes</strong>:
+<ul>
+<li>To enable this feature, you must add <em>Calendars.ReadWrite</em> and<em> Calendars.Read </em>permissions as per the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide.</li>
+<li>If this tenant attribute is enabled and the value in IAN User attribute <strong>removeRecurringMeetingsFromCalendar</strong> is set to <em>false</em>, the connector will ignore this tenant attribute, and recurring meetings will not be removed from the calendar.</li>
+</ul>
+</li>
+<li>
+<strong>Disable Auto Reply after X Days</strong>: Enter the number of days after which you want to disable the automatic out-of-office reply from a deactivated user's mailbox. For example, if you have enabled an automatic out-of-office reply for deactivated users through the <strong>Send auto response message after the user is deactivated</strong> tenant attribute or the <strong>setAutoReply</strong> IAN user attribute, and if you set 90 in the <strong>Disable Auto Reply after X Days</strong> tenant attribute, the automatic out-of-office reply will not be sent after 90 days of deactivation of a user account.<br/><strong>Notes</strong>:
+<ul>
+<li>This tenant attribute configuration will be applicable only for those users that were deactivated after a value had been assigned to this tenant attribute.</li>
+<li>If both the <strong>Disable Auto Reply after X Days</strong> tenant attribute and the <strong>autoReplyEndAfter</strong> IAN user attribute are configured, the priority is given to the <strong>autoReplyEndAfter</strong> IAN user attribute.</li>
+</ul>
+</li>
+<li>
+<strong>Update conflicting created user</strong>: Select this checkbox to update the existing guest user if there is a creation request for the same user. The existing guest user data will be updated with the information in the new creation request.<br/>If this checkbox is not selected and there is a user creation request for an existing user, you will see a 409 error that says the user already exists. </li>
+<li>
+<strong>Resend invitation on duplicate creation</strong>: Select this checkbox to resend the invitation to the existing guest user if there is a creation request for the same user. Ensure that you have selected the <strong>Update conflicting created user </strong>tenant attribute and the <strong>sendInvitationMessage</strong> IAN attribute is set to <em>true</em>.</li>
+<li>
+<strong>Delete conflicting created user</strong>: Select this checkbox to delete an existing guest user if there is a creation request for the same user. The existing guest user data will be deleted and a new guest user account will be created with the information in the creation request.<br/><strong>Note</strong>: If the <strong>Update conflicting created user</strong> tenant attribute is selected along with the <strong>Delete conflicting created user</strong> tenant attribute, the priority is given to the <strong>Delete conflicting created user </strong>tenant attribute.</li>
+<li>
+<strong>Remove user from groups when user is deleted</strong>: Select this checkbox to remove the user from <strong>Security</strong> and <strong>Microsoft 365</strong> groups when the user is deleted.</li>
+<li>
+<strong>Remove user from groups when user is deactivated</strong>: Select this checkbox to remove the user from <strong>Security</strong> and <strong>Microsoft 365</strong> groups when the user is deactivated.</li>
+<li>
+<strong>Remove user application roles when user is deactivated</strong>: Select this checkbox to remove user application roles when the user is deactivated. Only the application roles that are directly assigned to the user will be removed.</li>
+<li>
+<strong>Remove user application roles when user is deleted</strong>: Select this checkbox to remove user application roles when the user is deleted. Only the application roles that are directly assigned to the user will be removed.</li>
+<li>
+<strong>Suffix for user's display name on mailbox conversion on user deactivation</strong>: Enter a suffix that you want to append to the display name of the user while converting the private (regular) mailbox of the user to a shared mailbox. For example, if you have configured the value <em>(Shared)</em> in this tenant attribute and you deactivate/delete a user with the mailbox display name as <em>John</em>, then the name of the user's mailbox will be changed to <em>John(Shared)</em> on deactivation/deletion.<br/><strong>Notes</strong>:
+<ul>
+<li>
+<ul>
+<li>If both <strong>Suffix for user's display name on mailbox conversion on user deactivation</strong> tenant attribute and the <strong>suffixForSharedMailbox</strong> IAN user attribute are configured, the priority is given to the <strong>suffixForSharedMailbox</strong> IAN user attribute.</li>
+<li>If you are converting the shared mailbox of a user back to private (regular) mailbox, you need to manually remove the suffix from the user's display name if required.</li>
+<li>This tenant attribute will be effective only if you have enabled any of the following Aquera tenant attributes: <strong>Convert Users regular mailbox to shared mailbox on Delete</strong>, <strong>Convert Users regular mailbox to shared mailbox on Deactivation</strong>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Ignore partial update error while updating a user</strong>: If this checkbox is selected, the partial update errors while updating a user will be ignored and the user will be updated partially.<br/>If this checkbox is not selected, the connector will return a validation error and the user will be updated partially.</li>
+<li>
+<strong>Remove shared mailbox delegations on user deactivation</strong>: Select this checkbox to remove the shared mailbox delegations on user deactivation. If this checkbox is selected, all delegated access to other users’ shared mailboxes will be removed from the user on deactivation.</li>
+<li>
+<strong>Exchange Online Authentication Certificate</strong>: Run the following PowerShell commands to generate a self-signed certificate and base64 certificate key:<br/>
+<pre>$mycert = New-SelfSignedCertificate -DnsName "abc.org" -CertStoreLocation "cert:\CurrentUser\My" -NotAfter (Get-Date).AddYears(1) -KeySpec KeyExchange<br/><br/># Export certificate to .pfx file<br/>$mycert | Export-PfxCertificate -FilePath mycert.pfx -Password (Get-Credential).password<br/><br/># Export certificate to .cer file<br/>$mycert | Export-Certificate -FilePath mycert.cer<br/><br/># get bytes from the certificate<br/>$fileBytes = [System.IO.File]::ReadAllBytes("path\to\your\certificate.pfx")<br/><br/>#get base64 certificate<br/>[System.Convert]::ToBase64String($fileBytes)</pre>
+Copy the logged key and paste it into this tenant attribute.</li>
+<li>
+<strong>Note</strong>: If the copied key includes multiple lines, each line break will be replaced by a space in the tenant attribute field. Remove those spaces from the key pasted in the tenant attribute field.</li>
+<li>
+<strong>App Id of Registered Application</strong>: Enter the application ID of the application created as per the <a href="#h_01J03E5PG5F24Z3NZ7E4S0FNQV">Application for Certificate Based Authentication</a> section. Ensure that the self-signed certificate is uploaded to the application.</li>
+<li>
+<strong>Domain provided by Microsoft</strong>: Enter the domain name (tenant) provided by Microsoft.</li>
+<li>
+<strong>Password provided while certificate export</strong>: Enter the password that was provided while generating the self-signed certificate as per the <a href="https://learn.microsoft.com/en-us/powershell/exchange/app-only-auth-powershell-v2?view=exchange-ps#step-3-generate-a-self-signed-certificate" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a>.</li>
+<li>
+<strong>Remove Devices that are managed or pre-enrolled through Microsoft Intune on User Deactivation</strong>: Select this checkbox to remove all devices of a user that are managed or pre-enrolled through Microsoft Intune Admin Center when the user is deactivated.<br/><strong>Notes</strong>:
+<ul>
+<li>To enable this feature, you must add <em>DeviceManagementManagedDevices.ReadWrite.All </em>permission as per the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide.</li>
+<li>This feature requires an active <strong>Intune license</strong>.</li>
+</ul>
+</li>
+<li>
+<strong>PnP Management Shell Application ID</strong>: Enter the Application ID (Client ID) of the PnP management shell application configured in your tenant. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36715756992535" rel="noopener noreferrer" target="_blank">PnP Management Shell Application Configuration</a> guide to obtain the value.<br/><strong>Notes</strong>:
+<ul>
+<li>This tenant attribute is mandatory if you want to use features related to OneDrive and SharePoint.</li>
+<li>If you are using certificate-based authentication, you must configure the <strong>App Id of Registered Application</strong> tenant attribute instead of the <strong>PnP Management Shell Application ID</strong> tenant attribute to use features related to OneDrive and SharePoint.</li>
+</ul>
+</li>
+<li>
+<strong>Manage License Service Plans</strong>: Select this checkbox to manage the license service plans of a user. This tenant attribute is required if you want to remove the service plans of a user.</li>
+<li>
+<strong>Include channels in groups response</strong>: Select this checkbox to include channels from Teams in the groups response.</li>
+<li>
+<strong>Retrieve Devices that are managed or pre-enrolled through Microsoft Intune</strong>: Select this checkbox to retrieve the user's owned devices in the user response. If this checkbox is selected, the <strong>managedDevices</strong> IAN attribute will be retrieved in the response that displays the list of all owned devices that are managed or pre-enrolled through Microsoft Intune.<br/><strong>Notes</strong>:
+<ul>
+<li>To enable this feature, you must add <em>DeviceManagementManagedDevices.Read.All </em>permissions as per the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide.</li>
+<li>This feature requires an active <strong>Intune license</strong>.</li>
+</ul>
+</li>
+<li>
+<strong>Set Authentication Method for SSPR</strong>: Select this checkbox to set the user’s authentication method to email or phone number, which will be used for Self-Service Password Reset (SSPR). When this checkbox is selected, the email ID or phone number provided in the IAN user attribute is used for receiving OTP or link to reset the login password. You can set both email and phone number as the authentication method.<br/><strong>Note</strong>: To enable this feature, you must add<em> UserAuthenticationMethod.ReadWrite.All </em>permission as per the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide.</li>
+<li>
+<strong>Create Microsoft Group for Group Creation Request</strong>: Select this checkbox to create microsoft group for a group creation request. If this checkbox is not selected, a security group will be created.</li>
+<li>
+<strong>Retrieve user's owned devices</strong>: Select this checkbox to retrieve user's owned devices in the user response. If this checkbox is selected, the <strong>devices</strong> IAN attribute will be retrieved in the response that displays the list of all owned devices of the user.<br/><strong>Note</strong>: To enable this feature, you must add<em> Directory.Read.All, Directory.ReadWrite.All, User.Read.All, and User.ReadWrite.All </em>permissions as per the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide.</li>
+<li>
+<strong>Include sign-in activity in user response</strong>: Select this checkbox to include user's sign-in activity details in the user response. The sign-in activity details include the most recent interactive and non-interactive sign-in information.<br/><strong>Note</strong>: To enable this feature, you must add <strong>AuditLog.Read.All</strong> permission as per the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide. Also, the service account must have <strong>Reports Reader</strong> or a higher privileged administrator role.</li>
+<li>
+<strong>Manage User's Access Packages</strong>: Select this checkbox to manage the access packages of users. If selected, the IAN user attribute, <strong>accessPackageAssignments</strong> will be available to manage access packages.<br/><strong>Notes</strong>:
+<ul>
+<li>To manage access packages, a Microsoft Entra ID P2 license is required. Also, the service account must have <strong>Identity Governance Administrator</strong> or a higher privileged administrator role.</li>
+<li>To enable this feature, you must add <strong>EntitlementManagement.Read.All</strong> and <strong>EntitlementManagement.ReadWrite.All </strong>permission as per the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide.</li>
+<li>While retrieving access packages of a user, all associated resources, such as groups, roles, and applications are included in the response.</li>
+<li>After assigning access packages to a user, there might be some delay (5 to 10 mins) before it reflects in the response.</li>
+</ul>
+</li>
+<li>
+<strong>Transfer group ownership to manager on deactivation or deletion</strong>: Select this checkbox to automatically remove a user's group ownership and assign it to their manager when the user is deactivated or deleted. This applies only when the user is the only owner of the group.<br/><strong>Note</strong>: If this tenant attribute is configured along with the <strong>transferGroupOwnershipToManager</strong> IAN attribute, the IAN attribute takes precedence.</li>
+</ul>
+<h3>Pre-processing and Post-processing Scripts</h3>
+<p>This section describes the Aquera tenant attribute fields that are used to set scripts, which must be executed before and after the user import, create, and update operations. These are optional configurations.</p>
+<h4>Get All Pre Script</h4>
+<p>Enter the script that must be used to filter the users during import.</p>
+<p>For example:</p>
+<pre data-stringify-type="pre">path="/Users?filter=userName co \"aquera\""</pre>
+<pre>path="/Users?filter=meta.lastModified gt \"2024-07-21T22:56:22Z\""</pre>
+<h4>Get All Post Script</h4>
+<p>Enter the script that must be executed to modify the imported users.</p>
+<p>For example:</p>
+<pre data-stringify-type="pre">if(Array.isArray(output)){
+   output = output.map((user)=&gt;{
+        delete user.userType;
+        user.displayName += " Team1";
+        return user;
+   }); 
+}</pre>
+<h4>Get Pre Script</h4>
+<p>Enter the script that must be executed before importing a specific user.</p>
+<p>For example:</p>
+<pre data-stringify-type="pre">output = {
+            code : 400,
+            message: "Return error without further process"
+        }</pre>
+<h4>Get Post Script</h4>
+<p>Enter the script that must be used to modify the imported user.</p>
+<p>For example:</p>
+<pre data-stringify-type="pre">output.displayName += " Aquera User";</pre>
+<h4>Create Pre Script</h4>
+<p>Enter the script that must be executed before creating a user in Microsoft 365.</p>
+<p>For example:</p>
+<pre data-stringify-type="pre">if(!input.userName.includes("@aqueratest.onmicrosoft.com")){
+    output= {
+        code : 403,
+        message: "Invalid domain. User can be created only if the domain is<br/>        @aqueratest.onmicrosoft.com"
+    }
+}
+else{
+    input.givenName = "From script" 
+}</pre>
+<h4>Create Post Script</h4>
+<p>Enter the script that must be executed after creating a user in Microsoft 365.</p>
+<p>For example:</p>
+<pre data-stringify-type="pre">output.displayName += " Aquera User";</pre>
+<h4>Update Pre Script</h4>
+<p>Enter the script that must be executed before updating a user in Microsoft 365.</p>
+<p>For example:</p>
+<pre data-stringify-type="pre">if(!input.userName.includes("@aqueratest.onmicrosoft.com")){
+    output= {
+        code : 403,
+        message: "Invalid domain. User can be updated only if the domain is<br/>        @aqueratest.onmicrosoft.com"
+    }
+}
+else{
+    input.givenName = "From script" 
+}</pre>
+<h4>Update Post Script</h4>
+<p>Enter the script that must be executed after updating a user in Microsoft 365.</p>
+<p>For example:</p>
+<pre data-stringify-type="pre">if(output.displayName.includes("aquera")){
+input.displayName = "Changed in update post script" 
+}
+else{
+output = {
+            code : 400,
+            message: "Error: Display name must contain aquera"
+        }
+}</pre>
+<h2>Obtaining the Tenant ID of Azure Active Directory</h2>
+<p>Perform the following steps to retrieve the tenant ID of your Azure Active Directory:</p>
+<ol>
+<li>Log in to <a href="https://portal.azure.com/" rel="noopener noreferrer" target="_blank">Microsoft Azure Portal</a>.</li>
+<li>Search for and select <strong>Azure Active Directory</strong>. The <strong>Overview</strong> page is displayed.<br/>The <strong>Tenant ID</strong> is displayed on this page.<br/><img alt="Obtaining the Tenant ID _Image 1.png" src="https://support.aquera.com/hc/article_attachments/17110058693271"/><br/><br/>You can also obtain the tenant ID by navigating to the <strong>Properties</strong> page.<br/><br/><img alt="Obtaining the Tenant ID _Image 2.png" src="https://support.aquera.com/hc/article_attachments/17110082654871"/>
+</li>
+</ol>
+<h2>Manage PowerShell Services</h2>
+<p>The Microsoft 365 connector uses PowerShell to manage the following features and their related attributes:</p>
+<ul>
+<li>Conversion of the private mailbox to a shared mailbox.</li>
+<li>Shared mailbox permission to the user's manager.</li>
+<li>Manage proxy addresses.</li>
+<li>Removal of the user's photo.</li>
+<li>Forwarding emails to the user's manager.</li>
+<li>Setting mail litigation hold.</li>
+<li>Managing mail-enabled security groups or distribution lists.</li>
+<li>OneDrive access to the user's manager.</li>
+<li>Send auto-reply.</li>
+<li>Include mailbox status in the response.</li>
+<li>Include mailbox size in user response.</li>
+<li>Include shared mailbox as groups during group import.</li>
+</ul>
+<p>To allow the connector to use PowerShell, you must have a <a href="https://support.aquera.com/hc/en-us/articles/32868720954135" rel="noopener noreferrer" target="_blank">service account</a> that has a license with the <strong>Exchange Online</strong> and <strong>Exchange Online Archiving</strong> plans enabled. For example, E3.</p>
+<p>You must have <strong>Exchange Administrator</strong> role along with <strong>SharePoint administrator</strong> role assigned to the service account to allow the connector to use PowerShell.</p>
+<p>The <strong>Exchange Administrator</strong> role is required for Exchange related PowerShell scripts, such as conversion of mailbox and managing mail-enabled security groups.<br/>The <strong>SharePoint Administrator</strong> role is required for SharePoint related PowerShell scripts, such as providing OneDrive access to the user's manager.</p>
+<p>To manage PowerShell services, <strong>when MFA is enabled</strong>, you must use Certificate Based Authentication. In that case, you must configure the following tenant attributes:</p>
+<ul>
+<li><strong>Exchange Online Authentication Certificate</strong></li>
+<li><strong>App Id of Registered Application</strong></li>
+<li><strong>Domain provided by Microsoft</strong></li>
+<li><strong>Password provided while certificate export</strong></li>
+</ul>
+<p>However, if<strong> MFA is not enabled</strong> for the service account, following tenant attributes are mandatory to manage PowerShell services:</p>
+<ul>
+<li><strong>Admin's Username</strong></li>
+<li><strong>Admin's Password</strong></li>
+</ul>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>To allow OneDrive access to a user's manager, the service account must have the <strong>SharePoint </strong>plan enabled along with the <strong>Exchange Online</strong> and <strong>Exchange Online Archiving</strong> plans.</li>
+<li>You must configure the <strong>PnP Management Shell Application ID</strong> tenant attribute if you want to use features related to OneDrive and SharePoint. However, if you are using certificate-based authentication, you must configure the <strong>App Id of Registered Application</strong> tenant attribute instead of the <strong>PnP Management Shell Application ID</strong> tenant attribute to use features related to OneDrive and SharePoint.</li>
+</ul>
+<h2>Adding App Roles</h2>
+<p>App roles are custom roles to assign permissions to users or apps.</p>
+<ol>
+<li>Log in to <a href="https://portal.azure.com/" rel="noopener noreferrer" target="_blank">Microsoft Azure Portal</a>.</li>
+<li>Search for and select <strong>Azure Active Directory</strong>. The following page is displayed.<br/><br/><img alt="09-08-23 at 8.07 PM.png" src="https://support.aquera.com/hc/article_attachments/17113336374551"/>
+</li>
+<li>Click <strong>App registrations</strong>.</li>
+<li>Select your application.</li>
+<li>Click <strong>App roles</strong> from the left pane. The <strong>App roles</strong> page is displayed.</li>
+<li>Click <strong>Create app role</strong> at the top of the page. The <strong>Create app role</strong> page is displayed.<br/><br/><img alt="Image 29-08-23 at 6.24 PM.png" height="441" src="https://support.aquera.com/hc/article_attachments/17113347731095" width="508"/>
+</li>
+<li>Provide the <strong>Display name</strong> for the role and other details, as required.</li>
+<li>Click <strong>Apply</strong>. The app role is created for the application.</li>
+</ol>
+<h1>Authentication</h1>
+<p>The Microsoft 365 connector supports Basic Authentication. You must provide <strong>Client ID</strong> as the username and <strong>Client Secret</strong> as the password for authentication.</p>
+<p>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide to learn how to retrieve the <strong>Client ID</strong> and <strong>Client Secret</strong>.</p>
+<h2>Application for Certificate Based Authentication</h2>
+<p>This section describes how to create an application for Certificate Based Authentication (CBA) or app-only authentication, and provide necessary permissions.</p>
+<p>Watch the following training video to view all steps required to finish the setup:</p>
+<p><iframe allowfullscreen="" frameborder="0" height="315" src="https://www.youtube-nocookie.com/embed/qKJ7sMOMxCY" width="560"></iframe></p>
+<p>The above video is also available in the <a href="https://support.aquera.com/hc/en-us/articles/30787274988311" rel="noopener noreferrer" target="_blank">Application Configuration for Certificate Based Authentication in Microsoft 365</a> guide.</p>
+<p>Perform the following steps to create an application for Certificate Based Authentication (CBA) or app-only authentication:</p>
+<ol>
+<li>Register an application in Microsoft Entra ID as per the <a href="https://learn.microsoft.com/en-us/powershell/exchange/app-only-auth-powershell-v2?view=exchange-ps#step-1-register-the-application-in-microsoft-entra-id" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a>.</li>
+<li>Assign API permissions to the application as per the <a href="https://learn.microsoft.com/en-us/powershell/exchange/app-only-auth-powershell-v2?view=exchange-ps#step-2-assign-api-permissions-to-the-application" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a>.<br/><strong>Note</strong>: If you want to use features related to OneDrive and SharePoint, you must assign the following permissions along with those mentioned in the Microsoft Documentation:<br/><img alt="2025-12-08_15-02-16.png" src="https://support.aquera.com/hc/article_attachments/36853061885335"/>
+</li>
+<li>Perform the following steps to assign the Exchange Administrator role to the application:
+<ol>
+<li>Go to the <strong>Microsoft Entra roles and administrators </strong>page.</li>
+<li>Search for Exchange Administrator role and select it.<br/><img alt="2025-03-25_18-17-41.png" src="https://support.aquera.com/hc/article_attachments/30906166186647"/>
+</li>
+<li>Click <strong>+ Add assignments</strong>.</li>
+<li>Click <strong>No member selected</strong>.</li>
+<li>In the <strong>Select a member</strong> search bar, type the application name.</li>
+<li>Select the application and click <strong>Next</strong>.</li>
+<li>Enter your comment in the <strong>Enter Justification</strong> field and then click <strong>Assign</strong>.</li>
+</ol>
+</li>
+<li>Generate a self-signed certificate. Use the following PowerShell commands to generate a self-signed certificate and base64 certificate key:<br/>
+<pre>$mycert = New-SelfSignedCertificate -DnsName “{micrsoft instance domain}” -CertStoreLocation “cert:\CurrentUser\My” -NotAfter (Get-Date).AddYears(1) -KeySpec KeyExchange<br/><br/># Export certificate to .pfx file<br/>$mycert | Export-PfxCertificate -FilePath mycert.pfx -Password (Get-Credential).password<br/><br/># Export certificate to .cer file<br/>$mycert | Export-Certificate -FilePath mycert.cer<br/><br/># get bytes from the certificate<br/>$fileBytes = [System.IO.File]::ReadAllBytes(“mycert.pfx”)<br/><br/>#get base64 certificate<br/>[System.Convert]::ToBase64String($fileBytes)</pre>
+Refer to the <a href="https://learn.microsoft.com/en-us/powershell/exchange/app-only-auth-powershell-v2?view=exchange-ps#step-3-generate-a-self-signed-certificate" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a> for more details.<br/><strong>Note</strong>: In the above command, replace the {micrsoft instance domain} with your primary domain. For example, <em>aqueratest.onmicrosoft.com</em>.</li>
+<li>Upload the certificate to the Microsoft Entra application as per the <a href="https://learn.microsoft.com/en-us/powershell/exchange/app-only-auth-powershell-v2?view=exchange-ps#step-4-attach-the-certificate-to-the-microsoft-entra-application" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a>.</li>
+<li>Navigate to <strong>Manage</strong> &gt; <strong>Manifest</strong> and ensure that the following <em>requiredResourceAccess</em> entry is available:<br/><img alt="2025-03-25_17-34-07.png" height="420" src="https://support.aquera.com/hc/article_attachments/30906166194839" width="637"/> </li>
+</ol>
+<h1>Schema Attributes</h1>
+<p>The following tables describe the attributes available in the Microsoft 365 schema:</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>All attributes marked with a red asterisk (<span>*</span>) are mandatory attributes.</li>
+<li>The Microsoft 365 connector supports dynamic schema. The attributes vary based on your Microsoft 365 instance.</li>
+</ul>
+<h2>Users</h2>
+<h3>Core User Attributes</h3>
+<table border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<div><strong>Name</strong></div>
+</div>
+</td>
+<td>
+<div>
+<div><strong>Description</strong></div>
+</div>
+</td>
+<td><strong>Data Type</strong></td>
+<td><strong>Example Values</strong></td>
+<td><strong>Mutability</strong></td>
+</tr>
+<tr>
+<td>
+<div>
+<div>externalId</div>
+</div>
+</td>
+<td>
+<div>
+<div>A unique identifier for the SCIM resource as defined by the service provider</div>
+</div>
+</td>
+<td>string</td>
+<td>bjensen1 </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>userName<span>*</span>
+</td>
+<td>
+<p>The username of the user</p>
+<p><strong>Note</strong>: For more details on Azure AD username and its limitations, refer to <a href="#h_01GM3AH4T2TPKNCF5TC4P3H2GP">Notes 2 and 7</a>.</p>
+</td>
+<td>string</td>
+<td>johndoe@example.onmicrosoft.com</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.familyName<span>*</span>
+</td>
+<td>The last name of the user</td>
+<td>string</td>
+<td>Jensen</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.givenName<span>*</span>
+</td>
+<td>The first name of the user</td>
+<td>string</td>
+<td>Barbara </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.formatted</td>
+<td>The full name of the user, formatted for display purpose</td>
+<td>string</td>
+<td>Ms. Barbara J Jensen Jr III</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>active<span>*</span>
+</td>
+<td>Indicates if the user's account is active</td>
+<td>boolean</td>
+<td>true/false</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>emails[].value<span>*</span>
+</td>
+<td>The email ID of the user<br/><strong>Note</strong>: The work email is mandatory to create a user. For further details, refer to <a href="#h_01GM3AH4T2TPKNCF5TC4P3H2GP">Note 4</a>.</td>
+<td>string</td>
+<td>bjensen@example.com</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>emails[].display</td>
+<td>The display name for the email of the user</td>
+<td>string</td>
+<td>bjensen@example.com</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>emails[].type</td>
+<td>
+<div>
+<div>The type of email ID</div>
+</div>
+</td>
+<td>string</td>
+<td>work</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>emails[].primary</td>
+<td>Indicates if the email ID is the primary contact preference of the user</td>
+<td>boolean</td>
+<td>True </td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>addresses[].streetAddress</td>
+<td>The street address of the user</td>
+<td>string</td>
+<td>Civil Town</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>addresses[].locality</td>
+<td>The locality of the user</td>
+<td>string</td>
+<td>Old Plainsboro</td>
+<td>readwrite</td>
+</tr>
+<tr>
+<td>addresses[].region</td>
+<td>The region of the user's address</td>
+<td>string</td>
+<td>New Jersey</td>
+<td>readwrite</td>
+</tr>
+<tr>
+<td>addresses[].postalCode</td>
+<td>The postal code of the user</td>
+<td>string</td>
+<td>769009</td>
+<td>readwrite</td>
+</tr>
+<tr>
+<td>addresses[].country</td>
+<td>The country where the user lives</td>
+<td>string</td>
+<td>United States</td>
+<td>readwrite</td>
+</tr>
+<tr>
+<td>addresses[].type</td>
+<td>
+<div>
+<div>The type of address of the user</div>
+</div>
+</td>
+<td>string</td>
+<td>work</td>
+<td>readwrite</td>
+</tr>
+<tr>
+<td>addresses[].primary</td>
+<td>
+<div>
+<div>Indicates if the address is the primary address preference of the user</div>
+</div>
+</td>
+<td>boolean</td>
+<td>true or false</td>
+<td>readwrite</td>
+</tr>
+<tr>
+<td>userType</td>
+<td>
+<div>
+<div>Indicates the relationship between the organization and the user</div>
+</div>
+</td>
+<td>string</td>
+<td>Member or Guest</td>
+<td>readwrite</td>
+</tr>
+<tr>
+<td>title</td>
+<td>The organizational title of the user</td>
+<td>string</td>
+<td>Vice President</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td>The display name of the user</td>
+<td>string</td>
+<td>Barbara Jensen</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>password</div>
+</div>
+</td>
+<td>
+<div>
+<div>The user's cleartext password</div>
+</div>
+</td>
+<td>string</td>
+<td>Passxxxxxx</td>
+<td>writeOnly</td>
+</tr>
+<tr>
+<td>preferredLanguage</td>
+<td>The preferred language of the user</td>
+<td>string</td>
+<td>
+<div>
+<div>en-US</div>
+</div>
+</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>phoneNumbers[].value</td>
+<td>
+<p>The phone number of the user</p>
+<p><strong>Notes</strong>: </p>
+<ul>
+<li>The phoneNumbers value must include the correct country code.</li>
+<li>The SCIM format is available in v10 and above of the connector.</li>
+</ul>
+</td>
+<td>string</td>
+<td>
+<p>+1-214-418-9898;ext=124</p>
+<p>or</p>
+<p>+359-88-272-0029</p>
+</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>phoneNumbers[].type</td>
+<td>
+<p>Type of phone number of the user</p>
+<p><strong>Note</strong>: The possible valid values are work, mobile, and fax.</p>
+</td>
+<td>string</td>
+<td>Work</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>phoneNumbers[].primary</td>
+<td>Indicates if the phone number is the primary phone number preference of the user</td>
+<td>boolean</td>
+<td>true or false</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>groups[].value</td>
+<td>A unique identifier for the group of the user</td>
+<td>string</td>
+<td>Aquerateam2</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>groups[].$ref</td>
+<td>The URI of the corresponding Group resource to which the user belongs</td>
+<td>reference</td>
+<td>users/v2/quefg73290</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>groups[].display</td>
+<td>The display name of the user's group</td>
+<td>string</td>
+<td>aquerateam</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>groups[].type</td>
+<td>
+<div>
+<div>Indicates if the details contain the user's app role. For further details, refer to <a href="#h_01GM3AH4T2TPKNCF5TC4P3H2GP">Note 6</a>.</div>
+</div>
+</td>
+<td>string</td>
+<td>AppRole (or)
+<div data-qa="virtual-list-item" tabindex="0">
+<div data-qa="message_container" data-qa-placeholder="false" data-qa-unprocessed="false">
+<div aria-roledescription="message" data-qa-hover="true">
+<div>
+<div>
+<div data-qa="message_content">
+<div>
+<div>
+<div data-qa="block-kit-renderer">
+<div>
+<div dir="auto">
+<div>AdministrativeRole (or)</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div data-qa="virtual-list-item" tabindex="-1">
+<div data-qa="message_container" data-qa-placeholder="false" data-qa-unprocessed="false">
+<div aria-roledescription="message" data-qa-hover="true">
+<div>
+<div>
+<div data-qa="message_content">
+<div>
+<div>
+<div data-qa="block-kit-renderer">
+<div>
+<div dir="auto">
+<div>AdministrativeRoleEligible</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>roles[].value<strong><span>*</span></strong>
+</td>
+<td>
+<div>
+<div>The name of the user's role</div>
+</div>
+</td>
+<td>string</td>
+<td>
+<p data-stringify-type="pre">Application Administrator, Attack Payload Author, Application Developer</p>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>roles[].type</td>
+<td>The type of the user's role</td>
+<td>string</td>
+<td>Standard</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>roles[].display</td>
+<td>
+<div>
+<div>The display name of the user's role</div>
+</div>
+</td>
+<td>string</td>
+<td>App Admin</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>employeeNumber</td>
+<td>The employee number of the user</td>
+<td>string</td>
+<td>675681</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>organization</td>
+<td>The organization of the user</td>
+<td>string</td>
+<td>Aquera</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>division</td>
+<td>The division of the user</td>
+<td>string</td>
+<td>Marketing</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>costCenter</td>
+<td>The cost center of the user</td>
+<td>string</td>
+<td>4730</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>department</td>
+<td>The department of the user</td>
+<td>string</td>
+<td>Development</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>manager.value</td>
+<td>The SCIM ID of the user's manager</td>
+<td>string</td>
+<td>
+<div>
+<div>365664ec-22cd-4520-8832-51bf7a618cfc</div>
+</div>
+</td>
+<td>
+<div>
+<div>readWrite</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>manager.$ref</td>
+<td>The reference value of the user's manager</td>
+<td>reference</td>
+<td>users/v2/plmefb9812</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>manager.displayName</td>
+<td>The display name of the user's manager</td>
+<td>string</td>
+<td>Jack</td>
+<td>readOnly</td>
+</tr>
+</tbody>
+</table>
+<h3>IAN User Attributes</h3>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Name</strong></td>
+<td>
+<p><strong>Description</strong></p>
+</td>
+<td><strong>Data Type</strong></td>
+<td>
+<p><strong>Example Values</strong></p>
+</td>
+<td>
+<p><strong>Mutability</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>isManagementRestricted</div>
+</div>
+</td>
+<td>
+<div>
+<div>Indicates if the management is restricted</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>boolean</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>true/false</div>
+</div>
+</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div>
+<div>employeeLeaveDateTime</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>Identifies the leave date time of employee</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>dateTime</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>2023-02-01T11:41:18Z</div>
+</div>
+</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>azureADUserPrincipalName</div>
+</div>
+</td>
+<td>
+<div>
+<div>The userPrincipalName in azure AD</div>
+</div>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>
+<div>
+<div>0014sws65@aqueratest.onmicrosoft.com</div>
+</div>
+</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td height="21">stopEmailForwarding</td>
+<td height="21">Indicates if the stop email forwarding option is enabled. This will stop forwarding emails.</td>
+<td height="21">boolean</td>
+<td>
+<p>true/false </p>
+</td>
+<td height="21">readWrite</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>imAddresses</div>
+</div>
+</td>
+<td>IM addresses</td>
+<td>string array</td>
+<td>
+<div>
+<div>[</div>
+<div>"001664ss4985@aqueratest.onmicrosoft.com",<br/>"001664ss4985@aqueratest.onmicrosoft.com"</div>
+<div>]</div>
+</div>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].displayName</td>
+<td>Identifies the display name of the user's device</td>
+<td>string</td>
+<td>AqueraDevice </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].accountEnabled</td>
+<td>
+<p>Indicates whether the device's account is enabled and is active</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>A device is allowed to interact with Azure AD only when the device is active (this attribute shows <em>true</em>).</li>
+<li>If a device is not active, the device will not be allowed to authenticate with Azure AD, and it won't be able to access resources protected by Azure AD unless the account is re-enabled.</li>
+</ul>
+</td>
+<td>boolean</td>
+<td>true/false </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].trustType</td>
+<td>Identifies the method by which the device is registered or joined to the Azure AD environment</td>
+<td>string</td>
+<td>AzureAD </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].managementType</td>
+<td>Identifies how the device is managed, and helps determine the level of control administrators have over the device</td>
+<td>string</td>
+<td> MDM (Mobile Device Management)</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].isCompliant</td>
+<td>Indicates whether the device is compliant with the organization's policies</td>
+<td>boolean</td>
+<td>true/false </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].registrationDateTime</td>
+<td>Identifies the date and time when the device was first registered with Azure AD</td>
+<td>string</td>
+<td>2024-08-30T07:04:28Z</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].isManaged</td>
+<td>Indicates if the device is actively managed by the organization's device management</td>
+<td>boolean</td>
+<td>true/false </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].mdmAppId</td>
+<td>Identifies the Mobile Device Management (MDM) application ID used to manage the device</td>
+<td>string</td>
+<td>0000000a-0000-0000-c000-000000000000</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].operatingSystem</td>
+<td>Name of the operating system running on the device</td>
+<td>string</td>
+<td>AndroidForWork</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].model</td>
+<td>The manufacturer's model identifier for the device</td>
+<td>string</td>
+<td>SM-M336BU</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>devices[].deviceOwnership</td>
+<td>Identifies the ownership status of the device</td>
+<td>string</td>
+<td>Personal</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td height="21">allowOneDriveAccessToUser</td>
+<td height="21">
+<p>The list of usernames to be granted access to a user's OneDrive.</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>If the tenant attribute <strong>Allow OneDrive access to users on deletion or deactivation</strong> contains a list of users too, the priority is given to the tenant attribute.</li>
+<li>The PnP Management Shell app must be configured to use this feature. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36715756992535" rel="noopener noreferrer" target="_blank">PnP Management Shell Application Configuration</a> guide for more details.</li>
+<li>The <strong>PnP Management Shell Application ID</strong> tenant attribute must be configured to use this feature. If you are using <strong>certificate-based authentication</strong>, you must configure the <strong>App Id of Registered Application</strong> tenant attribute instead of the <strong>PnP Management Shell Application ID</strong> tenant attribute.</li>
+</ul>
+</td>
+<td height="21">string array</td>
+<td>
+<p>[“john@example.microsoft.com”,“david@example.microsoft.com”] </p>
+</td>
+<td height="21">writeOnly</td>
+</tr>
+<tr>
+<td height="21">allowOneDriveAccessToManager</td>
+<td height="21">
+<p>Indicates if OneDrive access is to be granted to a user's manager.</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>The PnP Management Shell app must be configured to use this feature. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36715756992535" rel="noopener noreferrer" target="_blank">PnP Management Shell Application Configuration</a> guide for more details.</li>
+<li>The <strong>PnP Management Shell Application ID</strong> tenant attribute must be configured to use this feature. If you are using <strong>certificate-based authentication</strong>, you must configure the <strong>App Id of Registered Application</strong> tenant attribute instead of the <strong>PnP Management Shell Application ID</strong> tenant attribute.</li>
+</ul>
+</td>
+<td height="21">boolean</td>
+<td>
+<p>true/false </p>
+</td>
+<td height="21">writeOnly</td>
+</tr>
+<tr>
+<td height="21">convertMailboxToShared</td>
+<td height="21">Indicates if convert the private (regular) mailbox of a user to a shared mailbox is enabled.</td>
+<td height="21">boolean</td>
+<td>
+<p>true/false </p>
+</td>
+<td height="21">writeOnly</td>
+</tr>
+<tr>
+<td height="21">deleteSharedMailbox</td>
+<td height="21">Indicates if the shared Mailbox of the user is to be deleted.</td>
+<td height="21">boolean</td>
+<td>
+<p>true/false </p>
+</td>
+<td height="21">writeOnly</td>
+</tr>
+<tr>
+<td height="21">
+<div>
+<div>externalUserState</div>
+</div>
+</td>
+<td height="21">unique externalUserState</td>
+<td height="21"> string</td>
+<td>
+<div>
+<div>PendingAcceptance</div>
+</div>
+</td>
+<td height="21">readOnly </td>
+</tr>
+<tr>
+<td height="21">
+<div>
+<div>externalUserStateChangeDateTime</div>
+</div>
+</td>
+<td height="21">externalUserStateChangeDateTime </td>
+<td height="21">string</td>
+<td>
+<div>
+<div>2023-02-01T11:41:18Z</div>
+</div>
+</td>
+<td height="21">readOnly </td>
+</tr>
+<tr>
+<td height="21">
+<div>
+<div>creationType</div>
+</div>
+</td>
+<td height="21">
+<div>
+<div>creationType</div>
+</div>
+</td>
+<td height="21">string</td>
+<td>
+<div>
+<div>Invitation </div>
+</div>
+</td>
+<td height="21">readOnly </td>
+</tr>
+<tr>
+<td height="21">
+<div>
+<div>infoCatalogs</div>
+</div>
+</td>
+<td height="21">
+<div>
+<div>infoCatalogs</div>
+</div>
+</td>
+<td height="21">string array </td>
+<td> </td>
+<td height="21">readOnly </td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesDomainName</div>
+</div>
+</td>
+<td>
+<div>
+<div>onPremisesDomainName</div>
+</div>
+</td>
+<td>string</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesSamAccountName</div>
+</div>
+</td>
+<td>
+<div>
+<div>onPremisesSamAccountName</div>
+</div>
+</td>
+<td>string</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>refreshTokensValidFromDateTime</div>
+</div>
+</td>
+<td>
+<div>
+<div>refreshTokensValidFromDateTime</div>
+</div>
+</td>
+<td>string</td>
+<td>
+<div>
+<div>2023-01-31T08:43:43Z</div>
+</div>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>securityIdentifier</div>
+</div>
+</td>
+<td>
+<div>
+<div>securityIdentifier</div>
+</div>
+</td>
+<td>string</td>
+<td>
+<div>
+<div>S-1-11-1-3512121</div>
+</div>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>signInSessionsValidFromDateTime</div>
+</div>
+</td>
+<td>
+<div>
+<div>signInSessionsValidFromDateTime</div>
+</div>
+</td>
+<td>string</td>
+<td>2023-01-31T08:43:43Z</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>lastPasswordChangeDateTime</div>
+</div>
+</td>
+<td>
+<div>
+<div>lastPasswordChangeDateTime</div>
+</div>
+</td>
+<td>string</td>
+<td>2023-01-31T08:43:43Z</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>birthday</div>
+</div>
+</td>
+<td>
+<div>
+<div>birthday</div>
+</div>
+</td>
+<td>string</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>hireDate</div>
+</div>
+</td>
+<td>
+<div>
+<div>hireDate</div>
+</div>
+</td>
+<td>string</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>pastProjects</div>
+</div>
+</td>
+<td>
+<div>
+<div>pastProjects</div>
+</div>
+</td>
+<td>string array</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>responsibilities</div>
+</div>
+</td>
+<td>
+<div>
+<div>responsibilities</div>
+</div>
+</td>
+<td>string array</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div>
+<div>schools</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>schools</div>
+</div>
+</div>
+</div>
+</td>
+<td>string array</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div>
+<div>skills</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>skills</div>
+</div>
+</div>
+</div>
+</td>
+<td>string array</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>authorizationInfo__certificateUserIds</div>
+</div>
+</td>
+<td>
+<div>
+<div>authorizationInfo__certificateUserIds</div>
+</div>
+</td>
+<td>string array</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>deviceKeys[].deviceId</td>
+<td>
+<div>
+<div>The device ID</div>
+</div>
+</td>
+<td>string</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>deviceKeys[].keyMaterial</td>
+<td>
+<div>
+<div>The key material</div>
+</div>
+</td>
+<td>string</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>deviceKeys[].keyType</td>
+<td>The key type</td>
+<td>string</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesProvisioningErrors</div>
+</div>
+</td>
+<td>
+<div>
+<div>onPremisesProvisioningErrors</div>
+</div>
+</td>
+<td>string array</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>licenseAssignmentStates</div>
+</div>
+</td>
+<td>
+<div>
+<div>licenseAssignmentStates</div>
+</div>
+</td>
+<td>string array</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>photo</td>
+<td>
+<p> The photo of the user<br/><strong>Note</strong>: The maximum allowed size is 4 MB.</p>
+</td>
+<td>string</td>
+<td>
+<p>data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/</p>
+<p>2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQ EBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/</p>
+</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>mailboxStatus</div>
+</div>
+</td>
+<td>
+<div>The mailbox status of the user. Valid values are <strong>shared</strong> and <strong>regular</strong>.</div>
+<div>
+<strong>Note</strong>: In POST and PUT operations, there can be a delay in getting the mailbox status in the user response.</div>
+</td>
+<td>string</td>
+<td>
+<p>shared/regular</p>
+</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>mailBoxSize</td>
+<td>
+<div>The mailbox size of the user in MB</div>
+</td>
+<td>string</td>
+<td>
+<p>10 MB</p>
+</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>sendAs</td>
+<td>
+<p>It takes an array of strings that allow the user to send emails as another<br/>user or as a shared mailbox.</p>
+</td>
+<td>
+<p>string<br/>array</p>
+</td>
+<td>[“Tom Bill ”,“SharedMailbox1"]</td>
+<td>
+<p>writeOnly</p>
+</td>
+</tr>
+<tr>
+<td>sharedMailbox</td>
+<td>
+<p>These are resources inside the Microsoft365 to which a user can be granted rights to use.<br/>The format of the sharedMailbox is: <br/>MailboxName:AccessRights:AutoMapping:InheritanceType:Owner  <br/>where the values are as below:<br/>MailboxName: userPrincipalName(alan@aqueratest.onmicrosoft.com)<br/>AccessRights: changeowner/changepermission/deleteitem/externalaccount/fullaccess/readpermission<br/>AutoMapping: true/false<br/>InheritanceType: all/children/descendants[sic],selfandchildren<br/>Owner: true/false</p>
+<p>For further details, refer <a href="#h_01GM3AH4T2TPKNCF5TC4P3H2GP">Note 5</a>.</p>
+</td>
+<td>string<br/>array</td>
+<td>
+<p>["alan@aqueratest.onmicrosoft.com:fullaccess:false:all:false"]</p>
+</td>
+<td>
+<p>writeOnly</p>
+</td>
+</tr>
+<tr>
+<td>mailNickname<strong><span>*</span></strong>
+</td>
+<td>
+<p>The nick-name of the user's mail.</p>
+<p><strong>Note</strong>: The mailNickname value can not be removed.</p>
+</td>
+<td>string</td>
+<td>jane </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>officeLocation</td>
+<td>
+<p>The physical delivery office name.<br/>It contains the office location in the user's place of business.</p>
+</td>
+<td>string</td>
+<td>Los Angeles </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>onPremisesImmutableId</td>
+<td>onPremisesImmutableId</td>
+<td>string</td>
+<td>ID1 </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>onPremisesLastSyncDateTime</td>
+<td>onPremisesLastSyncDateTime</td>
+<td>string</td>
+<td>10-12-2019:9.25 </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>onPremisesSecurityIdentifier</td>
+<td>onPremisesSecurityIdentifier</td>
+<td>string</td>
+<td>Ident1 </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>onPremisesSyncEnabled</td>
+<td>onPremisesSyncEnabled</td>
+<td>string</td>
+<td>Enabled </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>passwordPolicies</td>
+<td>Specifies password policies for the user. This value is an enumeration with one possible value being <em>DisableStrongPassword</em>, which allows weaker passwords than the default policy to be specified. <em>DisablePasswordExpiration</em> can also be specified. The two may be specified together; for example: <em>DisablePasswordExpiration, DisableStrongPassword</em>.</td>
+<td>string</td>
+<td>
+<div aria-expanded="false" data-qa="virtual-list-item" tabindex="-1">
+<div data-qa="message_container" data-qa-placeholder="false" data-qa-unprocessed="false">
+<div data-qa-hover="true">
+<div>
+<div>
+<div data-qa="message_content">
+<div>
+<div>
+<div data-qa="block-kit-renderer">
+<div>
+<div dir="auto">
+<div>
+<em>DisableStrongPassword</em>,<br/><em>DisablePasswordExpiration</em>,<br/><em>DisablePasswordExpiration, DisableStrongPasswor</em>d</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>proxyAddresses</td>
+<td>
+<p>proxyAddresses</p>
+<p><strong>Note</strong>: The proxyAddresses of a user can be updated only if the userType is <em>Member</em>.</p>
+</td>
+<td>string<br/>array</td>
+<td>[Address1, Addresss2]</td>
+<td>
+<div>
+<div>readWrite</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>usageLocation</td>
+<td>A two-letter country code (ISO standard 3166). Required for users that will be assigned licenses due to legal requirement to check for availability of services in countries. Examples include: “US”, “JP”, and “GB”. Not nullable.</td>
+<td>string</td>
+<td>US</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>assignedLicenses</td>
+<td>
+<div>
+<div>List of licenses assigned to the user. When you assign the user account a license for Exchange Online, a mailbox is automatically created for the user.</div>
+</div>
+</td>
+<td>string<br/>array</td>
+<td>[ "ATA", “RMS_S_PREMIUM2" ]</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>assignedPlans[].assignedDateTime</td>
+<td>Date and time when the plan was assigned to the user</td>
+<td>string</td>
+<td>
+<p data-stringify-type="pre">2023-04-06T03:28:46Z</p>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>assignedPlans[].capabilityStatus</td>
+<td>The status of the plan - Enabled or Disabled</td>
+<td>string</td>
+<td>Enabled</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>assignedPlans[].service</td>
+<td>The service plan name</td>
+<td>string</td>
+<td>
+<p data-stringify-type="pre">exchange</p>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>assignedPlans[].servicePlanId</td>
+<td>The service plan ID</td>
+<td>string</td>
+<td>
+<p data-stringify-type="pre">42a3ec34-28ba-46b6-992f-db53a675ac5b</p>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>disableServicePlans</td>
+<td>
+<p>List of disabled service plans in the following format:<br/><em>licenseName__servicePlanName</em></p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>Refer to the <a href="https://learn.microsoft.com/en-us/entra/identity/users/licensing-service-plan-reference" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a> to know the licenseName (String ID) and the servicePlanName (Service plans included) for your service plans.</li>
+<li>This feature will work only if the <strong>Manage License Service Plans</strong> tenant attribute is enabled.</li>
+<li>You can disable a service plan only if it is assigned to the user, and the service plan must be available under the corresponding license in the <strong>assignedLicenses</strong> IAN attribute.</li>
+</ul>
+</td>
+<td>string<br/>array</td>
+<td>[<br/>"Dynamics_365_Sales_Premium_Viral_Trial__CUSTOMER_VOICE_DYN365_VIRAL_TRIAL",<br/>"FLOW_FREE__DYN365_CDS_VIRAL",<br/>"FLOW_FREE__FLOW_P2_VIRAL"<br/>]</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>provisionedPlans</td>
+<td>provisionedPlans</td>
+<td>string<br/>array</td>
+<td>[Plan3, Plan4] </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>groupsStrings</td>
+<td>groupsStrings</td>
+<td>string<br/>array</td>
+<td>[gr1, gr2] </td>
+<td>
+<p>readOnly</p>
+</td>
+</tr>
+<tr>
+<td>showInAddressList</td>
+<td>
+<p>Show in address list</p>
+<p>For further details, refer to <a href="#h_01GM3AH4T2TPKNCF5TC4P3H2GP">Notes 1 and 3</a>.</p>
+</td>
+<td>boolean</td>
+<td>true or false</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute1</div>
+</div>
+</td>
+<td>User extension attribute 1</td>
+<td>string</td>
+<td>user@aqueratest.onmicrosoft.com</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute2</div>
+</div>
+</td>
+<td>User extension attribute 2</td>
+<td>string</td>
+<td>Extension attribute2 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute3</div>
+</div>
+</td>
+<td>User extension attribute 3</td>
+<td>string</td>
+<td>Extension attribute3 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute4</div>
+</div>
+</td>
+<td>User extension attribute 4</td>
+<td>string</td>
+<td>Extension attribute4 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute5</div>
+</div>
+</td>
+<td>User extension attribute 5</td>
+<td>string</td>
+<td>Extension attribute5 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute6</div>
+</div>
+</td>
+<td>User extension attribute 6</td>
+<td>string</td>
+<td>Extension attribute6 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute7</div>
+</div>
+</td>
+<td>User extension attribute 7</td>
+<td>string</td>
+<td>Extension attribute7 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute8</div>
+</div>
+</td>
+<td>User extension attribute 8</td>
+<td>string</td>
+<td>Extension attribute8 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute9</div>
+</div>
+</td>
+<td>User extension attribute 9</td>
+<td>string</td>
+<td>Extension attribute9 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute10</div>
+</div>
+</td>
+<td>User extension attribute 10</td>
+<td>string</td>
+<td>Extension attribute10 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute11</div>
+</div>
+</td>
+<td>User extension attribute 11</td>
+<td>string</td>
+<td>Extension attribute11 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute12</div>
+</div>
+</td>
+<td>User extension attribute 12</td>
+<td>string</td>
+<td>Extension attribute12 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute13</div>
+</div>
+</td>
+<td>User extension attribute 13</td>
+<td>string</td>
+<td>Extension attribute13 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute14</div>
+</div>
+</td>
+<td>User extension attribute 14</td>
+<td>string</td>
+<td>Extension attribute14 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes_extensionAttribute15</div>
+</div>
+</td>
+<td>User extension attribute 15</td>
+<td>string</td>
+<td>Extension attribute15 value</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>userAppRoles</div>
+</div>
+</td>
+<td>The list of user app roles in the following format:<br/><em> appName,objectId (Object Id of an Enterprise Application),AppRoleName</em>
+</td>
+<td>string<br/>array</td>
+<td>
+<p data-stringify-type="pre">[ "App1,0e66b535-97c0-433b-b8a8-0bae515e52b1,User", "App2,303d6fab-0565-4a14-94c0-7c82bce8d028,User"]</p>
+</td>
+<td>
+<p>readWrite</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div>
+<div>sendInvitationMessage</div>
+</div>
+</div>
+</div>
+</td>
+<td>Indicates whether an invitation has to be sent to the guest user when their account is created. This attribute is supported only in the updated version of the connector.</td>
+<td>boolean</td>
+<td>
+<p data-stringify-type="pre">true or false</p>
+</td>
+<td>
+<p>writeOnly</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>inviteRedirectUrl</div>
+</div>
+</td>
+<td>The URL to which a guest user must be redirected after accepting the invitation message</td>
+<td>string</td>
+<td>
+<p data-stringify-type="pre">https://exampleurl.io/</p>
+</td>
+<td>
+<p>writeOnly</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>customizedMessageBody</div>
+</div>
+</td>
+<td>The customized message body in the invitation message for the guest user. If this attribute value is blank, the message provided in the tenant attribute, <strong>Customized Message Body for Guest User Invite Mail, </strong>will be used in the invitation email.</td>
+<td>string</td>
+<td>
+<p data-stringify-type="pre">Invitation Message</p>
+</td>
+<td>
+<p>writeOnly</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesUserPrincipalName</div>
+</div>
+</td>
+<td>
+<div>
+<div>Contains the on-premises User Principal Name (UPN) synchronized from the on-premises directory.</div>
+</div>
+</td>
+<td>string</td>
+<td>bjensen@microsoft.com</td>
+<td>
+<p>readOnly</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesDistinguishedName</div>
+</div>
+</td>
+<td>
+<div>
+<div>Contains the on-premises Active Directory distinguished name. This attribute is only populated for users who are synchronizing their on-premises directory to Azure Active Directory via Azure AD Connect.</div>
+</div>
+</td>
+<td>string</td>
+<td>Barbara J</td>
+<td>
+<p>readOnly</p>
+</td>
+</tr>
+<tr>
+<td>
+<div>passwordProfile.forceChangePasswordNextSignIn</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>Indicates if the user must change their password on the next login.</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>boolean</div>
+</div>
+</td>
+<td>true or false</td>
+<td>
+<div>
+<div>readWrite</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>passwordProfile.forceChangePasswordNextSignInWithMfa</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>Indicates at next sign-in, the user must perform a multi-factor authentication (MFA) before being forced to change their password.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>boolean</div>
+</div>
+</td>
+<td>true or false</td>
+<td>
+<div>
+<div>readWrite</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>otherMails</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>A list of additional email addresses for the user.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>string<br/>array</div>
+</div>
+</td>
+<td> </td>
+<td>
+<div>
+<div>
+<div>
+<div>readWrite</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>mailLitigationHold</div>
+</div>
+</td>
+<td>
+<div>
+<div>Indicates whether the user mailbox is placed on litigation hold.</div>
+</div>
+</td>
+<td>
+<div>
+<div>boolean</div>
+</div>
+</td>
+<td>true or false</td>
+<td>
+<div>
+<div>
+<div>
+<div>writeOnly</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>managerUsername</div>
+</div>
+</td>
+<td>
+<div>
+<div>The username of the user's manager.</div>
+</div>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>john@example.com</td>
+<td>
+<div>
+<div>
+<div>
+<div>readWrite</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremisesExtensionAttributes</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>onPremisesExtensionAttributes. For further details, refer <a href="#h_01GM3AH4T2TPKNCF5TC4P3H2GP">Notes 3</a>.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>string</div>
+</div>
+</div>
+</div>
+</td>
+<td> </td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readWrite</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>employeeType</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>The employment type of the user.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>string</div>
+</div>
+</div>
+</div>
+</td>
+<td>Active</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readWrite</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>managerEmployeeId</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>The employee ID of the user's manager.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>string</div>
+</div>
+</div>
+</div>
+</td>
+<td>10037</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readOnly</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>employeeHireDate</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>The hire date of the employee.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>string</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>2022-03-01T00:00:00Z</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readWrite</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div>
+<div>mfaPhoneNumber</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>The phone number of the user for MFA.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>string</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>+359-88-272-0029</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readWrite</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>ageGroup</div>
+</div>
+</td>
+<td>
+<div>
+<div>ageGroup</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>string</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div> </div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readOnly</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>consentProvidedForMinor</div>
+</div>
+</td>
+<td>
+<div>
+<div>consentProvidedForMinor</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>string</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div> </div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readOnly</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>legalAgeGroupClassification</div>
+</div>
+</td>
+<td>
+<div>
+<div>legalAgeGroupClassification</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>string</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div> </div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readOnly</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div>
+<div>passwordProfile__forceChangePasswordNextSignIn</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>Indicates if the user must change their password on the next login.</div>
+<div>
+<strong>Note</strong>: If both <strong>passwordProfile__forceChangePasswordNextSignIn</strong> and <strong>passwordProfile__forceChangePasswordNextSignInWithMfa</strong> attributes are set to false, these attributes will not be available in the user response. However, if any one of these attributes is set to true, both attributes will be part of the response.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>boolean</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>true/false</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readWrite</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div>
+<div>passwordProfile__forceChangePasswordNextSignInWithMfa</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>Indicates at next sign-in, the user must perform a multi-factor authentication (MFA) before being forced to change their password.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>boolean</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>true/false</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>readWrite</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>revokeSessions</div>
+</div>
+</td>
+<td>
+<div>
+<div>Indicates if revoking sessions is enabled. If set to true, it will sign-out all the sessions of the user on deactivation.</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div><span>boolean</span></div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div><span>true/false</span></div>
+</div>
+</td>
+<td><span>writeOnly</span></td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>removeRegisteredDevices</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>Indicates if removeRegisteredDevices is enabled. If set to true, the user will be removed from registered devices on deactivation.</td>
+<td><span>boolean</span></td>
+<td>
+<div><span>true/false</span></div>
+</td>
+<td><span>writeOnly</span></td>
+</tr>
+<tr>
+<td>
+<div>
+<div>removeOwnedDevices</div>
+</div>
+</td>
+<td>Indicates if removeOwnedDevices is enabled. If set to true, the user will be removed from owned devices on deactivation.</td>
+<td><span>boolean</span></td>
+<td><span>true/false</span></td>
+<td>
+<div><span>writeOnly</span></div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>transferGroupOwnershipToManager</div>
+</div>
+</td>
+<td>
+<p>Indicates whether the user's group ownership must be transferred to the manager.</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>This applies only when the user is the only owner of the group.</li>
+<li>This attribute value will take precedence over the <strong>Transfer group ownership to manager on deactivation or deletion</strong> tenant attribute.</li>
+</ul>
+</td>
+<td><span>boolean</span></td>
+<td><span>true/false</span></td>
+<td>
+<div><span>writeOnly</span></div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>shareConvertedMailBoxWithManager</div>
+</div>
+</td>
+<td>
+<p>Indicates if shareConvertedMailBoxWithManager is enabled. If set to true, the shared mailbox access is given to the user's manager on deactivation.</p>
+<p><strong>Note</strong>: The <strong><span>Convert Users regular mailbox to shared mailbox on Deactivation</span></strong> tenant attribute must be enabled to convert the private (regular) mailbox of a user to a shared mailbox on user deactivation.</p>
+</td>
+<td><span>boolean</span></td>
+<td><span>true/false</span></td>
+<td>
+<div><span>writeOnly</span></div>
+</td>
+</tr>
+<tr>
+<td>shareMailboxWithManager</td>
+<td>
+<p>Share the user's mailbox with the user's manager</p>
+<p><strong>Note</strong>: If you want to share the user's mailbox (regular mailbox or shared mailbox) with the user's manager, the value for the <strong>shareMailboxWithManager</strong> must be <em>true</em>.</p>
+</td>
+<td>boolean</td>
+<td>true/false</td>
+<td>writeOnly</td>
+</tr>
+<tr>
+<td>removeManagerAccessFromUserMailbox</td>
+<td>
+<p>Indicates if the manager has to be removed from the user’s mailbox delegation. If set to true, the manager’s access to the user’s mail box will be revoked.</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>This IAN attribute helps to remove manager's access from both, regular and shared mailboxes.</li>
+<li>To convert a user's shared mailbox to regular and remove manager from user's mailbox, the <strong>mailboxType</strong> attribute value must be <em>Regular</em> and the <strong>removeManagerAccessFromUserMailbox</strong> attribute must be set to <em>true</em>.</li>
+</ul>
+</td>
+<td>boolean</td>
+<td>true/false</td>
+<td>writeOnly</td>
+</tr>
+<tr>
+<td>setAutoReply</td>
+<td>Indicates if the setAutoReply feature is enabled for the user.<br/>If set to <em>true</em>, it will set an auto-reply message to the user's mailbox.</td>
+<td>boolean</td>
+<td>true/false</td>
+<td>writeOnly</td>
+</tr>
+<tr>
+<td>autoReplyMessage</td>
+<td>The auto-reply message that is set for the user's mailbox</td>
+<td>string</td>
+<td>out of office</td>
+<td>writeOnly</td>
+</tr>
+<tr>
+<td>suffixForSharedMailbox</td>
+<td>Suffix to append to the mailbox display name on user deactivation</td>
+<td>string</td>
+<td>shared</td>
+<td>writeOnly</td>
+</tr>
+<tr>
+<td>autoReplyEndAfter</td>
+<td>
+<p>Indicates the number of days after which you want to disable the automatic out-of-office reply setting. <br/><strong>Note</strong>: This attribute will work only if the <strong>Send auto response message after the user is deactivated</strong> tenant attribute is enabled or the <strong>setAutoReply</strong> IAN attribute is set to <em>true</em>.</p>
+</td>
+<td>integer</td>
+<td>90</td>
+<td>writeOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div>
+<div>customSecurityAttributes_{attributeSetName}_{attributeName}</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<p>The value of the customSecurityAttributes defined in Azure AD.</p>
+</td>
+<td>
+<div>
+<div>string/string array/integer/<br/>integer array/boolean </div>
+</div>
+</td>
+<td>customSecurityAttributes_hourlySalary_rate</td>
+<td>
+<div>
+<div>readWrite</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>managedDevices</td>
+<td>
+<p>Indicates the list of user's owned devices</p>
+</td>
+<td>
+<div>
+<div>string array</div>
+</div>
+</td>
+<td> </td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>authenticationMethod__email</td>
+<td>
+<p>Identifies the email ID used for Self-Service Password Reset</p>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>jbensen@example.com</td>
+<td>
+<div>
+<div>readWrite</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>authenticationMethod__phone_primary</td>
+<td>
+<p>Identifies the primary phone number for Self-Service Password Reset</p>
+<p><strong>Note</strong>: The country code, such as +1 must be added along with the phone number.</p>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>+1 2223334445</td>
+<td>
+<div>readWrite</div>
+</td>
+</tr>
+<tr>
+<td>authenticationMethod__phone_alternate</td>
+<td>
+<p>Identifies the alternate phone number for Self-Service Password Reset</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>The primary phone number for SSPR must be added before setting the alternate phone number.</li>
+<li>The country code, such as +1 must be added along with the phone number.</li>
+</ul>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>+1 2223334446</td>
+<td>
+<div>readWrite</div>
+</td>
+</tr>
+<tr>
+<td>authenticationMethod__phone_office</td>
+<td>
+<p>Identifies the office phone number</p>
+<p><strong>Note</strong>: The country code, such as +1 must be added along with the phone number.</p>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>+1 2223334447</td>
+<td>
+<div>readWrite</div>
+</td>
+</tr>
+<tr>
+<td>mailboxType</td>
+<td>
+<p>Identifies the mailbox type</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>The supported values are <em>Regular</em>, <em>Shared</em>, <em>Room</em>, and <em>Equipment</em>.</li>
+<li>The mailboxType attribute can be updated only during user updation.</li>
+</ul>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>Regular</td>
+<td>
+<div>
+<div>writeOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>signInActivity__lastSignInDateTime</td>
+<td>
+<p>The last interactive sign-in date and time</p>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>2025-05-22T16:28:32Z</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>signInActivity__lastSignInRequestId</td>
+<td>
+<p>Request identifier of the last interactive sign-in</p>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>8aa530de-9058-45a9</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>signInActivity__lastNonInteractiveSignInDateTime</td>
+<td>
+<p>The last non-interactive sign-in date</p>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>2025-05-22T16:56:20Z</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>signInActivity__lastNonInteractiveSignInRequestId</td>
+<td>
+<p>Request identifier of the last non-interactive sign-in</p>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>11c17d8e-08dd-41d2-b51a</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>signInActivity__lastSuccessfulSignInDateTime</td>
+<td>
+<p>The date and time of the user's most recent successful interactive or non-interactive sign-in</p>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>2025-05-22T16:56:20Z</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>signInActivity__lastSuccessfulSignInRequestId</td>
+<td>
+<p>The request ID of the last successful sign-in</p>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>12c17d8e-07dd-41d2-b32a</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>removeRecurringMeetingsFromCalendar</td>
+<td>
+<p>Indicates if the recurring meetings from calendar must be removed<br/><strong>Note</strong>: If the <strong>Remove recurring meetings from calendar on user's deactivation</strong> tenant attribute is enabled and the value in this attribute is set to <em>false</em>, the connector will ignore the tenant attribute, and recurring meetings will not be removed from the calendar.</p>
+</td>
+<td>boolean</td>
+<td>true/false</td>
+<td>
+<div>
+<div>writeOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>accessPackageAssignments</td>
+<td>
+<p>A list of access package assignments' display names</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>If you provide an empty value for this attribute in the update payload of a user who already has access packages, all existing access packages will be removed. Similarly, if the update payload does not include the user’s current access packages, they will also be removed.</li>
+<li>To manage access packages, the <strong>Manage User's Access Packages</strong> tenant attribute must be enabled.</li>
+</ul>
+</td>
+<td>
+<div>
+<div>string array</div>
+</div>
+</td>
+<td> </td>
+<td>
+<div>
+<div>readWrite</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<h2>Groups</h2>
+<h3>Core Group Attributes</h3>
+<table border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<div><strong>Name</strong></div>
+</div>
+</td>
+<td>
+<div>
+<div><strong>Description</strong></div>
+</div>
+</td>
+<td><strong>Data Type</strong></td>
+<td><strong>Example Values</strong></td>
+<td><strong>Mutability</strong></td>
+</tr>
+<tr>
+<td>displayName</td>
+<td>The display name of the group/team</td>
+<td>string</td>
+<td>SampleGroup </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>members[].value</td>
+<td>The ID of the group member</td>
+<td>string </td>
+<td>ff77883b-c34b-4446-8687-3b7b5a</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>members[].display</td>
+<td>The display name of the group member</td>
+<td>string </td>
+<td>
+<p> bjeans@jeans.onmicrosoft.com </p>
+</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>members[].$ref</td>
+<td>The URI of the group member</td>
+<td>string </td>
+<td>Groups/abc@aquera.com</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>members[].type</td>
+<td>
+<p>The type of the group member</p>
+<p><strong>Note</strong>: The supported values are <em>user</em>, <em>group</em>, <em>servicePrincipal</em>, <em>device</em>, and <em>organizationalContact</em>.</p>
+</td>
+<td>string</td>
+<td>user</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>IAN Group Attributes</h3>
+<table border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<div><strong>Name</strong></div>
+</div>
+</td>
+<td>
+<div>
+<div><strong>Description</strong></div>
+</div>
+</td>
+<td><strong>Data Type</strong></td>
+<td><strong>Example Values</strong></td>
+<td><strong>Mutability</strong></td>
+</tr>
+<tr>
+<td>
+<div>
+<div>mail</div>
+</div>
+</td>
+<td>
+<div>
+<div>Email address of the group</div>
+</div>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>abc@example.com</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<p>mailNickname</p>
+</td>
+<td>
+<div>
+<div>Nick-name of the group's mail.<br/><strong>Note</strong>: If the <em>mailNickname</em> value is not provided while creating a group, the display name of the group will be used instead. In such a scenario, if the display name exceeds 64 characters, the upstream system will assign a random 10-digit GUID value to the <em>mailNickname</em>. </div>
+</div>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>TeamsTestA</td>
+<td>
+<div>
+<div>immutable</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>dynamicMembership</div>
+</div>
+</td>
+<td>
+<div>
+<div>Indicates if the group supports Dynamic membership</div>
+</div>
+</td>
+<td>
+<div>
+<div>boolean</div>
+</div>
+</td>
+<td>true/false</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>mailEnabled</div>
+</div>
+</td>
+<td>
+<div>
+<div>Indicates if the group is mailEnabled</div>
+</div>
+</td>
+<td>
+<div>
+<div>boolean</div>
+</div>
+</td>
+<td>true/false</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>securityEnabled</div>
+</div>
+</td>
+<td>
+<div>
+<div>Indicates if the group is securityEnabled</div>
+</div>
+</td>
+<td>boolean</td>
+<td>true/false</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>onPremises</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>Indicates group is synced from onPrem</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>boolean</div>
+</div>
+</td>
+<td>true/false</td>
+<td>
+<div>
+<div>
+<div>
+<div>readOnly</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>type</div>
+</div>
+</td>
+<td>
+<div>Indicates the type of the group (team, shared mailbox, or channel)</div>
+<div>
+<strong>Notes</strong>:</div>
+<ul>
+<li>This attribute must be passed if you want to create teams.</li>
+<li>After you create a team or add members to a team through the API, there may be a slight delay of up to 20 seconds for this change to get reflected in the response.</li>
+</ul>
+</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>teams / sharedMailbox / channel</td>
+<td>
+<div>
+<div>
+<div>
+<div>immutable</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>groupTypes</div>
+</div>
+</td>
+<td>
+<div>Identifies if the group type is Microsoft 365 group or Security group</div>
+<div>
+<strong>Notes</strong>:</div>
+<ul>
+<li>The Microsoft 365 group is identified by the <em>unified</em> value.</li>
+<li>The Microsoft 365 group is created only if the <strong>securityEnabled</strong> IAN user attribute is set to <em>false</em>.</li>
+</ul>
+</td>
+<td>
+<div>
+<div>string array</div>
+</div>
+</td>
+<td>["unified"]</td>
+<td>immutable</td>
+</tr>
+</tbody>
+</table>
+<h2>Events</h2>
+<h3>Event Attributes</h3>
+<table border="1">
+<tbody>
+<tr>
+<td><span><strong>Name</strong></span></td>
+<td><span><strong>Description </strong></span></td>
+<td><span><strong>Data Type </strong></span></td>
+<td><span><strong>Example Values </strong></span></td>
+<td><strong><span>Mutability</span></strong></td>
+</tr>
+<tr>
+<td>type</td>
+<td>The type of the event</td>
+<td>string</td>
+<td>Import</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>effectiveDate</td>
+<td>The date and time when the event will be effective</td>
+<td>dateTime</td>
+<td>2023-10-10T07:32:17.574Z </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>publishedDate</td>
+<td>The date and time when this event was published</td>
+<td>dateTime</td>
+<td>2023-10-10T07:32:17.574Z </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>resource_id</td>
+<td>The target identifier of the event</td>
+<td>string</td>
+<td>00uck4l </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>resource_name</td>
+<td>The target name of the event</td>
+<td>string</td>
+<td>Users </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>category</td>
+<td>The category of the event</td>
+<td>string</td>
+<td>Provisioning Management</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>correlationId</td>
+<td>The correlation ID of the event</td>
+<td>string</td>
+<td>ab09cd0-0abc</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>result</td>
+<td>The result of the event</td>
+<td>string</td>
+<td>success</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>operationType</td>
+<td>The operation type of the event</td>
+<td>string</td>
+<td>Update</td>
+<td>readOnly</td>
+</tr>
+</tbody>
+</table>
+<h4>
+<strong>Notes</strong>:</h4>
+<ol>
+<li>The <strong>Hide From Address Lists</strong> checkbox on the Microsoft Azure portal will be checked or unchecked based on the value of the IAN attribute, <strong>showInAddressList</strong>. There can be a small delay of 1 to 2 minutes in updating the checkbox in the UI. This is because the API response is faster than the UI update.</li>
+<li>The <strong>userName</strong> should be of the form <em>abcd@domain-name</em>, for example, "johndoe@tenant-value.onmicrosoft.com". The following are the length constraints for an Azure AD username:
+<ul>
+<li>The total length must not exceed 113 characters.</li>
+<li>There can be up to 64 characters before the @ symbol.</li>
+<li>There can be up to 48 characters after the @ symbol.<br/>If the username does not follow the above-mentioned length constraints, an error message is returned.<br/><strong>Limitations</strong>:
+<ul>
+<li>Only the first 54 characters of the username will be visible in the UI and returned in the API response even if the username follows the above-mentioned length constraints. The remaining characters are truncated in the UI and in the API response.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Updating attributes <strong>OnPremisesExtensionAttributes </strong>and <strong>showInAddressList</strong><strong> </strong>through Graph API is only possible for user objects that are, and have always been managed and mastered in Azure AD. Even if a user created in AD is later synchronized to Azure AD and then disconnected from AD, you will still not be able to update these attributes for that user object through Graph API.</li>
+<li>The email ID will not be updated if the email ID is same and the letter case alone is different. The Microsoft Graph API does not support updating only the letter case of emails.</li>
+<li>
+<strong>Shared Mailboxes </strong>are resources inside the Microsoft 365 that a user can be granted rights to use. User can add a new array attribute to the user object called sharedMailbox: ["string","string",...]<br/>The string will have the following format:<br/>"MailboxName:AccessRights:Automapping:InheritanceType:Owner"<br/>Where,
+<ol>
+<li>
+<ul>
+<li>MailboxName is the name of the mailbox.</li>
+<li>AccessRights can be one of the following:<br/>changeowner, changepermission, deleteitem, externalaccount, fullaccess, or readpermission.</li>
+<li>Both MailboxName and AccessRights fields are mandatory.</li>
+<li>AutoMapping can be true or false.</li>
+<li>InheritanceType can be all, children, descendants[sic], or selfandchildren.</li>
+<li>Owner can be true or false.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>AdministrativeRole group(id) will have the suffix of AR, whereas the same for AdministrativeRoleEligible will be ARE. These values are seen under core groups.<br/>The group displayName for AdministrativeRoleEligible will have a suffix of Eligible.<br/>For example:
+<pre>displayName:Attribute Definition Reader Eligible</pre>
+</li>
+<li>The userName of a user cannot be updated if the userType is <em>Guest</em>.</li>
+<li>If the username and email ID are same for a member user, updating the username will also update the email ID.</li>
+<li>The format for App roles in groups response is "<em>roleId_appId"</em>.</li>
+<li>The ID for a channel in the groups response is displayed in the <em>TeamID_ChannelID</em> format. For example, <em>2535b35f-820b-1e6cce0_19:5e1916aade1d4c7d982481e@thread.tacv2</em>.</li>
+<li>The displayName of a channel in the groups response is displayed in the <em>TeamName__ChannelName</em> format. For example, <em>TeamGroup1725528148__Test1</em>.</li>
+</ol>
+<h2>Sample User Object in JSON Format</h2>
+<p>Click <a href="https://support.aquera.com/hc/article_attachments/16994417700887" rel="noopener noreferrer" target="_blank">here</a> to download the sample User Object in JSON format.</p>
+<h1>Manage User Licenses</h1>
+<p>You can manage user licenses with the help of the IAN user attribute <strong>assignedLicenses</strong>. Refer to the <a href="#h_01H3HNPGMQWQ0V45XDE88WS9FZ">IAN User Attributes</a> section for more details. The values would be the SKU numbers of the Microsoft 365 licenses.</p>
+<p>For more information on how to get the SKU numbers, refer to the <a href="https://docs.microsoft.com/en-us/azure/active-directory/users-groups-roles/licensing-service-plan-reference" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p>
+<p>To add or remove the licenses, the IAN user attribute <strong>usageLocation</strong> is mandatory. The value of this attribute is a two-letter country code (ISO standard 3166).  It is required for users to check the availability of services in countries due to legal requirements. Examples include, “US”, “JP”, and “GB”. It is not nullable.<br/>For more details, refer to the <a href="https://docs.microsoft.com/en-us/azure/active-directory/users-groups-roles/licensing-service-plan-reference" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p>
+<p><strong>Note</strong>: While creating a new user, if no licenses are available to be assigned to the user, then the user will be created without any license. The license can be later added to the user.</p>
+<h1>Mailbox Setup</h1>
+<p>When a license containing the Exchange Online plan is assigned to a user, a mailbox is automatically created for the user. The license values must be provided as an array of strings in the IAN user attribute <strong>assignedLicenses</strong>.</p>
+<h1>On-Demand Provisioning For Dynamic Groups</h1>
+<p>When a member is assigned to or removed from a dynamic group in Azure AD, the change will be reflected in the target application automatically when the automatic provisioning is triggered in Azure AD. In order to reflect the change immediately in the target application, you must use the <strong>Provision on demand</strong> feature in Azure AD.</p>
+<p><strong>Note</strong>: In Azure AD dynamic groups, members are assigned based on a rule, and not manually.</p>
+<p>The following is the procedure to perform the on-demand provisioning in Azure AD for adding or removing users in the target application group:</p>
+<ol>
+<li>Select your application in Azure AD, and then go to the <strong>Provisioning</strong> configuration page.</li>
+<li>Select <strong>Provision on demand</strong>.</li>
+<li>Search for the dynamic group and then select the user. To select the user:
+<ul>
+<li>If the user is removed from the group, click <strong>View all users</strong> and then search for the user account and select it.</li>
+<li>If the user is assigned to the group, click <strong>View members only</strong> and then search for the user account and select it.<br/><img alt="User_sel.png" src="https://support.aquera.com/hc/article_attachments/16994417702679"/>
+</li>
+</ul>
+</li>
+<li>Select <strong>Provision</strong> at the bottom of the page. After the successful on-demand provisioning of a user, a window similar to the following is displayed:<br/><img alt="Azure_Action.png" src="https://support.aquera.com/hc/article_attachments/16994429690263"/><br/>The change will be reflected immediately in the target application.</li>
+</ol>
+<p><strong>Note</strong>: Any user assignment or removal in the target application groups will not be synced back to Azure AD.</p>
+<h1>Configure Azure AD Certificate-based Authentication</h1>
+<p>Users can sign in to the Microsoft Azure portal using one of the following options:</p>
+<ul>
+<li>Using the username and password of an administrator.</li>
+<li>Using an x.509 certificate.</li>
+</ul>
+<p>Azure Active Directory (Azure AD) certificate-based authentication (CBA) enables organizations to allow users to authenticate with X.509 certificates created by their Enterprise Public Key Infrastructure (PKI) for applications and browser sign-in. This feature enables organizations to adopt phishing-resistant modern passwordless authentication by using an x.509 certificate.<span> </span></p>
+<p>The x.509 certificate is validated against the user account and if successful, they sign in.</p>
+<p>Perform the following steps to configure certification authority (CA) in the Microsoft Azure portal:</p>
+<ol>
+<li>Sign in to the Microsoft Azure portal as an administrator.</li>
+<li>Navigate to <strong>Azure Active Directory</strong> &gt; <strong>Security</strong> &gt; <strong>Certificate authorities.</strong>
+</li>
+<li>Click<strong> Upload. </strong>Upload a .cer file.</li>
+<li>Select <strong>Yes</strong> if the CA is a root certificate, otherwise, select <strong>No.</strong>
+</li>
+<li>Set the HTTP internet-facing<strong> Certificate Revocation List URL </strong>and <strong>Delta Certificate Revocation List URL</strong>. Click <strong>Add</strong>.</li>
+</ol>
+<p>Perform the following steps to enable the certificate-based authentication (CBA) in the Microsoft Azure portal:</p>
+<ol>
+<li>Sign in to the Microsoft Azure portal as an Authentication Policy Administrator.</li>
+<li>Navigate to <strong>Azure Active Directory</strong> &gt; <strong>Security</strong> &gt; <strong>Authentication methods &gt; Policies.</strong>
+</li>
+<li>Select the authentication method as <strong>Certificate-based authentication.</strong>
+</li>
+<li>Toggle to turn on the <strong>Enable</strong> button.</li>
+<li>Include Target by clicking <strong>All users</strong>, or <strong>Select groups</strong> to select specific groups. Click <strong>Save.</strong>
+</li>
+</ol>
+<p>The users who are enabled for certificate-based authentication will be able to sign in using the X.509 certificate.<span> </span></p>
+<p>For more information on certificate-based authentication, refer to the <a href="https://learn.microsoft.com/en-in/azure/active-directory/authentication/how-to-certificate-based-authentication" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p>
+<h1>Provisioning to SharePoint Online Using Groups</h1>
+<p>Provisioning to Microsoft SharePoint Online is supported only through groups. This section describes the procedures to enable group provisioning in Azure to allow the user access to Microsoft SharePoint.</p>
+<h2>Creating a Group in Azure</h2>
+<p>Perform the following steps to create a group:</p>
+<ol>
+<li value="1">Log in to the <a href="https://portal.azure.com/" rel="noopener noreferrer" target="_blank">Microsoft Azure Portal</a>.
+<p><strong>Note</strong>: Make sure that the MFA is not enabled during the sign-in event.</p>
+</li>
+<li value="2">Search for and select <strong>Azure Active Directory</strong>.</li>
+<li value="3">On the <strong>Active Directory</strong> page, select <strong>Groups</strong> and create a new group.<br/><img alt="Image 08-08-23 at 7.30 PM.png" src="https://support.aquera.com/hc/article_attachments/16994417709975"/><br/>
+<p>For details on group creation, refer to <a href="https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-groups-create-azure-portal" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p>
+</li>
+<li value="4">Return to the <strong>Active Directory</strong> page, navigate to <strong>Enterprise applications &gt; Office 365 SharePoint Online &gt; Users and groups</strong>, and click <strong>Add user/group</strong>.</li>
+<li value="5">Assign the group that you have created to the SharePoint Online application.<br/><img alt="Image 08-08-23 at 7.32 PM.png" src="https://support.aquera.com/hc/article_attachments/16994429692311"/>
+</li>
+</ol>
+<h2>Setting Group Rules in the Aquera Integrations</h2>
+<p>Perform the following steps:</p>
+<ol>
+<li value="1">Create a User Synchronization from the source system to Microsoft 365 in Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4404835146135" rel="noopener noreferrer" target="_blank">User Integration Setup Guide</a> for more details.</li>
+<li value="2">Set <strong>Group Rules</strong> in such a way that intended users are assigned to the group created by you in Azure. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/14601048367511" rel="noopener noreferrer" target="_blank">Managing Groups in User Integrations</a> for more details.
+<p><img alt="Group_Rule.png" src="https://support.aquera.com/hc/article_attachments/16994417717783"/></p>
+</li>
+</ol>
+<h1>Supported Filters</h1>
+<p>This section explains the filters supported by the Microsoft 365 connector.</p>
+<h2>Users</h2>
+<p>The Microsoft 365 connector supports filtering users by the following attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td>
+<p><strong>Filter By</strong></p>
+</td>
+<td>
+<p><strong>Supported Operator</strong></p>
+</td>
+<td>
+<p><strong>Format and Example</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>userName</p>
+</td>
+<td>
+<p>eq, ew</p>
+<p><strong>Note:</strong> <strong>ew </strong>with <strong>or</strong> condition is also supported.</p>
+</td>
+<td>
+<p>userName eq "value"<br/>Example: <em>userName eq "bjensen</em></p>
+<p>userName ew "value" <br/>Examples: <em>userName ew "aquera.com"</em><br/><em>userName ew "@example1.com" or userName ew "@example2.com" or userName ew "@example3.com"</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>employeeNumber</p>
+</td>
+<td>
+<p>eq</p>
+</td>
+<td>
+<p data-stringify-type="pre">urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:employeeNumber eq "value"</p>
+<p>Example: <em>urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:employeeNumber eq "61928"</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>meta.lastModified</p>
+</td>
+<td>
+<p>gt</p>
+</td>
+<td>
+<p>meta.lastModified gt "&lt;YYYY-MM-DD&gt;T&lt;hh:mm:ss&gt;Z"</p>
+<p>Example: <em>meta.lastModified gt "2022-04-20T08:13:54.882Z"</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>emails</p>
+</td>
+<td>
+<p>eq, ew</p>
+</td>
+<td>
+<p><em>emails[value eq "value"]</em></p>
+<p>Example: <em>emails[value eq "bjensen@example.com"]</em></p>
+<p><em>emails[value ew "value"]</em></p>
+<p>Example: <em>emails[value ew "bjensen@example.com"]</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>groups</p>
+</td>
+<td>
+<p>eq</p>
+</td>
+<td>
+<p>groups[display eq "value"]</p>
+<p>Example: <em>groups[display eq "aquerateam"]</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>active</p>
+</td>
+<td>
+<p>eq</p>
+</td>
+<td>
+<p>active eq "value"</p>
+<p>Example: <em>active eq "true"</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>(Application extension attribute)</p>
+</td>
+<td>
+<p>eq, ne</p>
+</td>
+<td>
+<p>urn:ietf:params:scim:schemas:extension:ian:2.0:User:extension_&lt;AppID&gt;_&lt;ExtAttribute&gt; eq "value"</p>
+<p>Example: <em>urn:ietf:params:scim:schemas:extension:ian:2.0:User:extension_831482919c734299821c9c1b5a19ca08_one eq "test"</em></p>
+<p>urn:ietf:params:scim:schemas:extension:ian:2.0:User:extension_&lt;AppID&gt;_&lt;ExtAttribute&gt; ne "value"</p>
+<p>Example: <em>urn:ietf:params:scim:schemas:extension:ian:2.0:User:extension_831482919c734299821c9c1b5a19ca08_one ne "test1"</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>On-prem extension attributes from onPremisesExtensionAttributes_extensionAttribute1</p>
+<p>to </p>
+<p>onPremisesExtensionAttributes_extensionAttribute15 </p>
+</td>
+<td>
+<p>eq</p>
+</td>
+<td>
+<p>urn:ietf:params:scim:schemas:ian:User:onPremisesExtensionAttributes_extensionAttribute1 eq "someName"</p>
+<p>Example: <em>urn:ietf:params:scim:schemas:ian:User:onPremisesExtensionAttributes_extensionAttribute1 eq "someName"</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>(Schema extension custom attributes containing sub-attributes)</p>
+</td>
+<td>
+<p>eq</p>
+</td>
+<td>
+<p>urn:ietf:params:scim:schemas:extension:ian:2.0:User:&lt;schema_extension_attribute&gt;.&lt;sub-attribute_name&gt; eq "value"</p>
+<p>Example:</p>
+<p data-stringify-type="pre"><em>urn:ietf:params:scim:schemas:ian:2.0:User:extv8fta6be_ClaimSchemaExtension.ClaimType eq "SampleType"</em></p>
+<p data-stringify-type="pre"><em>urn:ietf:params:scim:schemas:ian:2.0:User:extv8fta6be_ClaimSchemaExtension.ClaimValue eq "SampleValue"</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>usageLocation</p>
+</td>
+<td>
+<p>eq</p>
+</td>
+<td>
+<p>urn:ietf:params:scim:schemas:ian:User:usageLocation eq "data"</p>
+<p>Example: <em>urn:ietf:params:scim:schemas:ian:User:usageLocation eq "US</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>meta.created</p>
+</td>
+<td>
+<p>gt</p>
+</td>
+<td>
+<p>meta.created gt "&lt;YYYY-MM-DD&gt;T&lt;hh:mm:ss&gt;Z"</p>
+<p>Example: <em>meta.created gt "2022-04-20T08:13:54.882Z"<br/></em><strong>Note</strong>: Only 25 users will be retrieved per page.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Combining Multiple Filters </h3>
+<p>The Microsoft 365 connector supports combining the <strong>userName</strong> attribute filter and the <strong>application extension attribute</strong> filter using the <em><strong>and</strong></em> operator as follows:</p>
+<p><em>urn:ietf:params:scim:schemas:extension:ian:2.0:User:extension_831482919c734299821c9c1b5a19ca08_one eq "test" and userName eq "bjensen@example.com"</em></p>
+<h2>Groups</h2>
+<p>The Microsoft 365 connector supports filtering groups by the following attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td>
+<p><strong>Filter By</strong></p>
+</td>
+<td>
+<p><strong>Supported Operator</strong></p>
+</td>
+<td>
+<p><strong>Format and Example</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>displayName</p>
+</td>
+<td>
+<p>eq, sw</p>
+</td>
+<td>
+<p>displayName eq "value"</p>
+<p>Example: <em>displayName eq "SampleGroup"</em></p>
+<p>displayName sw "value"</p>
+<p>Example: <em>displayName eq "TeamGroup1725528148__Test1"</em></p>
+<p><strong>Note</strong>: You can filter <strong>Groups</strong>, <strong>Teams</strong>, <strong>Channels</strong>, <strong>Shared Mailbox</strong>, <strong>Microsoft 365 groups</strong>, <strong>Security groups</strong>, <strong>Mail-enabled security groups</strong>, <strong>Distribution groups</strong>, and <strong>Privileged Identity Management</strong> by this attribute.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>mail</p>
+</td>
+<td>
+<p>eq</p>
+</td>
+<td>
+<p>urn:ietf:params:scim:schemas:extension:ian:2.0:Group:mail eq "value"</p>
+<p>Example: urn:ietf:params:scim:schemas:extension:ian:2.0:Group:mail eq "abc@example.com"</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2>Events</h2>
+<p>The Microsoft 365 connector supports filtering events by the following attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Filter By</strong></td>
+<td><strong>Supported Operator</strong></td>
+<td><strong>Format and Example</strong></td>
+</tr>
+<tr>
+<td>
+<div>
+<div>id</div>
+</div>
+</td>
+<td>eq</td>
+<td>id eq "value"<br/>Example:<br/>id eq "1234"</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>type</div>
+</div>
+</td>
+<td>eq</td>
+<td>type eq "value"<br/>Example:<br/>type eq "Import"</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>effectiveDate</div>
+</div>
+</td>
+<td>eq, gt, ge</td>
+<td>effectiveDate gt "value"<br/>Example:<br/>effectiveDate gt "2023-10-10T07:32:17.574Z"</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>publishedDate</div>
+</div>
+</td>
+<td>eq, gt, ge</td>
+<td>publishedDate gt "value"<br/>Example:<br/>publishedDate gt "2023-10-10T07:32:17.574Z"</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>meta.created</div>
+</div>
+</td>
+<td>eq, gt, ge</td>
+<td>meta.created gt "&lt;YYYY-MM-DD&gt;T&lt;hh:mm:ss&gt;Z"<br/>Example: <br/>meta.created gt "2023-10-05T00:00:00.000Z"</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>meta.lastModified</div>
+</div>
+</td>
+<td>eq, gt, ge</td>
+<td>meta.lastModified gt "&lt;YYYY-MM-DD&gt;T&lt;hh:mm:ss&gt;Z"<br/>Example: <br/>meta.lastModified gt "2023-08-05T00:00:00.000Z"</td>
+</tr>
+<tr>
+<td>resource_id</td>
+<td>eq</td>
+<td>resource_id eq "value"<br/>Example:<br/>resource_id eq "00uck4l"</td>
+</tr>
+<tr>
+<td>category</td>
+<td>eq</td>
+<td>category eq "value"<br/>Example:<br/>category eq "Provisioning Management"</td>
+</tr>
+<tr>
+<td>correlationId</td>
+<td>eq</td>
+<td>correlationId eq "value"<br/>Example:<br/>correlationId eq "ab09cd0-0abc"</td>
+</tr>
+<tr>
+<td>operationType</td>
+<td>eq</td>
+<td>operationType eq "value"<br/>Example:<br/>operationType eq "Update"</td>
+</tr>
+</tbody>
+</table>
+<h1>Notification - Name Attribute for Exchange Online</h1>
+<p>Microsoft is changing the way the Name attribute will be set for a user in Azure AD. After this change, the Name attribute for an object in Azure AD will be populated with the External Directory Object ID (EDOID) value, which is a unique ID of the object. This attribute is primarily used by Microsoft Exchange when it is running in Hybrid mode to bind an on-premise Active Directory account to a cloud-based Mailbox. Azure AD Connect may stop syncing the Name attribute from the on-prem AD to Azure AD after the change.<br/>For more details, refer to this <a href="https://techcommunity.microsoft.com/t5/exchange-team-blog/change-in-naming-convention-of-user-s-name-parameter/ba-p/3284733" rel="noopener noreferrer" target="_blank">webpage</a>.</p>
+<h1>Troubleshooting</h1>
+<p>The following table lists the various errors that you may encounter when the API transaction is performed and the corresponding solutions to resolve those errors.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Error Code</strong></td>
+<td><strong>Description</strong></td>
+<td><strong>Resolution</strong></td>
+</tr>
+<tr>
+<td>500</td>
+<td>
+<p>Invalid username/password configured in Aquera Admin console. Make sure your account has access to Office 365 Exchange Online.</p>
+</td>
+<td>
+<p>This error can occur due to the following reasons:</p>
+<ul>
+<li>
+<strong>Incorrect Username or Password</strong>: Ensure that the Admin Username or the Admin Password provided in the <a href="#h_01FGR6V8T3DM3BSGCZQ643HRCY">Aquera Tenant Attributes</a> section are correct and not expired. If you have changed your password, ensure that you update the same password in the <a href="#h_01FGR6V8T3DM3BSGCZQ643HRCY">Aquera Tenant Attributes</a> section.</li>
+<li>
+<strong>Invalid License</strong>: Make sure that the service account has a valid license with the <em>Exchange Online</em> and <em>Exchange Online Archiving</em> plans enabled. For example, E3.</li>
+<li>
+<strong>Conditional Access policies</strong>: If any conditional access has been enabled for the service account that is blocking the execution of the PowerShell script, you must check the access for the service account. Refer to the <a href="https://learn.microsoft.com/en-us/entra/identity-platform/reference-error-codes" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a> for further information related to the conditional access errors.</li>
+</ul>
+<p>Now, execute the following PowerShell command to verify that the account has admin access to manage groups:</p>
+<p>$password = ConvertTo-SecureString "PASSWORD_HERE" -AsPlainText -Force;$Cred = New-Object System.Management.Automation.PSCredential ("USERNAME_HERE", $password);Connect-ExchangeOnline -Credential $Cred;</p>
+<p><strong>Note</strong>: Replace the actual username and password in the command.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>400</p>
+<p>(Request_BadRequest)</p>
+</td>
+<td>
+<p>Unable to update the specified properties for objects that have originated within an external service.</p>
+</td>
+<td>
+<p><strong>Updating through Graph API</strong>:<br/>Updating OnPremisesExtensionAttributes through Graph API is only possible for user objects that are, and have always been managed and mastered in Azure AD. Even if a user created in AD is later synchronized to Azure AD and then disconnected from AD, you will still not be able to update these attributes for that user object through Graph API.</p>
+<p><strong>Updating through PowerShell exchange online</strong>: <br/>If you are updating OnPremisesExtensionAttributes through PowerShell exchange online, ensure that the Microsoft Exchange online license is present for the user. Ensure that the username and password are configured in the Aquera Admin portal to update OnPremisesExtensionAttributes, which is synced from AD or from some other source.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>400</p>
+</td>
+<td>
+<p>Unable to update the specified properties for on-premises mastered Directory Sync objects or objects currently undergoing migration.</p>
+</td>
+<td>
+<p>This issue occurs when there is a hybrid environment and the users that are in Azure AD are still being mastered through AD. You cannot update all the attributes for such records.</p>
+</td>
+</tr>
+<tr>
+<td>Authorization_RequestDenied during the POST operation</td>
+<td>
+<p>Insufficient privileges to complete the operation.</p>
+</td>
+<td>
+<p>This issue occurs when the Service account does not have administrative permissions attached to it to perform the operations. For details on required Service Account permissions, refer to the <a href="https://support.aquera.com/hc/en-us/articles/32868720954135" rel="noopener noreferrer" target="_blank">Service Account Setup in Microsoft 365</a> guide.</p>
+</td>
+</tr>
+<tr>
+<td>403</td>
+<td>
+<p>Insufficient Permissions</p>
+</td>
+<td>
+<p>This issue occurs if the service account doesn't have the required permissions assigned to it. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a> guide to add all required permissions.</p>
+</td>
+</tr>
+<tr>
+<td>403</td>
+<td>
+<p>Insufficient privileges to complete the operation.</p>
+</td>
+<td>
+<p>If you are trying to update sensitive user properties, such as accountEnabled, <span data-renderer-mark="true">mobilePhone</span>, and otherMails, make sure that the Enterprise application in Azure AD is assigned a higher privileged administrator role. Refer to the <a href="https://learn.microsoft.com/en-us/graph/api/resources/users?view=graph-rest-1.0#who-can-perform-sensitive-actions" rel="noopener noreferrer" target="_blank">Microsoft documentation</a> for more details on who can perform sensitive actions.</p>
+<p>Perform the following steps to assign a role to your Enterprise Application:</p>
+<ol>
+<li>Log in to <a href="https://portal.azure.com/" rel="noopener noreferrer" target="_blank">Microsoft Azure Portal</a>.</li>
+<li>Search for and select <strong>Azure Active Directory</strong>.</li>
+<li>Select <strong>Roles and administrators</strong> in left sidebar.</li>
+<li>Search for and select a role mentioned in the <a href="https://support.aquera.com/hc/en-us/articles/32868720954135-Service-Account-Setup-in-Microsoft-365#h_01GEPF0Q4RVQE1T3Y7HM0M8B8X" rel="noopener noreferrer" target="_blank">Creating a Service Account with Read-Write Permissions</a> section based on your requirements.</li>
+<li>Click <strong>Add assignments</strong> and then click <strong>No member selected</strong>.</li>
+<li>Search for the Enterprise Application that you need to give access.</li>
+<li>Select the checkbox and click<strong> Select</strong>.</li>
+<li>Click <strong>Next</strong>, enter a justification, and then click <strong>Assign</strong>.<br/><strong>Note</strong>: Make sure that the assigned Enterprise application is listed in the active assignments list of the role.</li>
+</ol>
+</td>
+</tr>
+<tr>
+<td>400</td>
+<td>
+<p>ProxyAddresses must contain the userPrincipalName in the list.</p>
+</td>
+<td>
+<p>This issue occurs if you try to remove the username from the ProxyAddresses list. Microsoft 365 does not allow to remove UPN from the ProxyAddresses list.</p>
+</td>
+</tr>
+<tr>
+<td>400</td>
+<td>
+<p>License assignment cannot be done for user with invalid usage location.</p>
+</td>
+<td>
+<p>Ensure that the attribute <em>usageLocation</em> has a valid value. Refer to the <a href="https://learn.microsoft.com/en-us/entra/identity/users/licensing-groups-resolve-problems#usage-location-isnt-allowed" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a> for further details on resolving this error.</p>
+</td>
+</tr>
+<tr>
+<td>400</td>
+<td>
+<p>License assignment failed because service plans are mutually exclusive.</p>
+</td>
+<td>
+<p>Refer to the <a href="https://learn.microsoft.com/en-us/entra/identity/users/licensing-groups-resolve-problems#conflicting-service-plans" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a> to resolve this error.</p>
+</td>
+</tr>
+<tr>
+<td>400</td>
+<td>AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'</td>
+<td>Verify that the <strong>Allow public client flows</strong> toggle is set to <em>Yes</em> while configuring the PnP Management Shell application. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36715756992535" rel="noopener noreferrer" target="_blank">PnP Management Shell Application Configuration</a> guide for details.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>
+<p>Error while updating group. The operation on Identity failed because it's out of the current user's write scope. Group isn't within your current write scopes. Can't perform save operation.</p>
+</td>
+<td>
+<p>Ensure that you are an owner of the group that you want to update. You will be able to update a group only after you become an owner of the group. Refer to the <a href="https://learn.microsoft.com/en-us/entra/fundamentals/how-to-manage-groups#add-or-remove-members-and-owners" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a> to add or remove owners.</p>
+</td>
+</tr>
+<tr>
+<td>409</td>
+<td>
+<p>User already exists with the same userName in the application / userName is not unique</p>
+</td>
+<td>
+<p>You need to provide a different userName while creating a new user as the given userName already exists.</p>
+</td>
+</tr>
+<tr>
+<td>409</td>
+<td>
+<p>Another object with the same value for property proxyAddresses already exists.</p>
+</td>
+<td>
+<p>This issue occurs if the value for proxyAddresses is not unique. Ensure that the proxyAddresses value is unique for the user.</p>
+</td>
+</tr>
+<tr>
+<td>403</td>
+<td>
+<p>Insufficient privileges to complete the operation.</p>
+</td>
+<td>
+<p>This issue occurs if the user account that the service account is trying to update is part of a role-assignable group. Make sure that the service account has <strong>Privileged Auth Admin</strong> or a higher privileged administrator role in order to perform the operation.</p>
+</td>
+</tr>
+<tr>
+<td>N/A</td>
+<td>
+<p>Register-PnPAzureADApp: A parameter cannot be found that matches parameter name 'Interactive'.</p>
+</td>
+<td>
+<p>This issue occurs while executing command in PowerShell to register a new application. If you are using PowerShell version 7.46 or above, and PnP module version 3.0.0 or above, ensure that the command doest not include <strong><em>- Interactive</em></strong>. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36715756992535" rel="noopener noreferrer" target="_blank">PnP Management Shell Application Configuration</a> guide<span> for more details.</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h1>FAQs</h1>
+<p><span><strong>Question 1</strong>: How does the connector determine the active status of a user?</span></p>
+<p><span><strong>Answer</strong>: The active status of a user is determined based on the <strong>Account enabled</strong> setting on the user's profile page. If this setting is enabled for a user, the user will be considered active.<br/><strong>Note</strong>: If you are using an older version of the Microsoft 365 application where the <strong>Account enabled</strong> setting is not available, the active status of a user is determined based on the <strong>Block sign in</strong> setting on the user's profile page. If this setting is disabled for a user, the user will be considered active.</span></p>
+<p><span><strong>Question 2</strong>: </span><span>Are the behaviour of IAN attributes and their corresponding tenant attributes the same?</span></p>
+<p><span><strong>Answer</strong>: </span>The <span>behaviour of IAN attributes and their corresponding tenant attributes are different. The IAN attribute, such as shareMailboxWithManager can be used for active or inactive users. However, the corresponding tenant attribute will work only if a user is deactivated.<br/></span></p>
+<p><span>In other words, the IAN attributes are independent of active/inactive, whereas the user must be deactivated for the tenant attributes to work.</span></p>
+<p><strong>Question 3</strong>: Can I whitelist an IP or a range of IPs of a server to allow service account login only from the whitelisted IPs?</p>
+<p><span><strong>Answer</strong>: Yes, you can whitelist the IPs of the server where the PS scripts are running. This will allow service account login only from the whitelisted IPs.</span></p>
+<p><span><strong>Question 4</strong>: How do you verify that the PowerShell commands are using certificate details or the service account?</span></p>
+<p><span><strong>Answer</strong>: If you have provided only service account details, the PowerShell commands use service account only. If both service account details and certificate-based authentication details are provided, you can find out which credentials are used with the help of Microsoft Entra ID audit logs.</span></p>
+<p><span><strong>Question 5</strong>: </span><span>How to validate the basic permissions while using certificate-based authentication for PowerShell related activities?</span></p>
+<p><span><strong>Answer</strong>: Run the following sample scripts to verify if the certificate-based authentication is set correctly:</span></p>
+<pre>$password = ConvertTo-SecureString '&lt;&lt;password&gt;&gt;' -AsPlainText -Force<br/><br/># Replace the &lt;&lt;password&gt;&gt; with the correct password that is provided while creating certificate.<br/><br/>Connect-ExchangeOnline -CertificateFilePath "&lt;&lt;certificatePath&gt;&gt;" -CertificatePassword $password -AppID "&lt;&lt;appIdOfRegisteredApplication&gt;&gt;" -Organization "&lt;&lt;organizationDomain&gt;&gt;"<br/><br/># &lt;&lt;certificatePath&gt;&gt; is where .pfx certificate is downloaded and stored.<br/># &lt;&lt;appIdOfRegisteredApplication&gt;&gt; is the appId of the registered application where certificate is configured.<br/># &lt;&lt;organizationDomain&gt;&gt; is the domain being used in azure AD, such as "aquera.onmicrosoft.com".<br/><br/><br/># To get one of the mailbox<br/>Get-EXOMailbox -ResultSize 1</pre>
+<h1>OpenAPI Specification</h1>
+<p>OpenAPI Specification is an API description format to define the structure and syntax of REST APIs. You can view the OpenAPI specification document in an API tool which defines the elements of an API. The OpenAPI operations can be used in Aquera's workflows and integrations using scripts.</p>
+<p>Perform the following steps to view the OpenAPI specification in an API tool:</p>
+<ol>
+<li>Copy the OpenAPI URL from <strong>Copy this URL </strong>field on the connector configuration page of the Aquera Admin portal.</li>
+<li>Add <strong data-stringify-type="bold">/document </strong>at the end of the copied URL.</li>
+<li>Run the URL in an API tool, such as Postman using the GET method with the correct authentication credentials. The tool will display the OpenAPI specification document with all the supported OpenAPI operations. You can view the parameters and request body in the specification document.</li>
+</ol>
+<p>You can also view the OpenAPI specification document by clicking the <strong>View OpenAPI Document</strong> button.</p>
+<!-- API documentation will appear below when published -->
+<p><button>View OpenAPI Document</button></p>
+<div>
+<div></div>
+</div>
+<p>
+</p>
+<h2>Requires Scopes</h2>
+<p>The following table lists all the required scopes and information for the corresponding OpenAPI operation IDs:</p>
+<table border="1" width="631">
+<tbody>
+<tr>
+<td><strong> <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">Operation ID</font> </span> </strong></td>
+<td>
+<p><strong> <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Required Scopes</font> </span> </strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>listRawUsers</p>
+fetchRawUser<br/><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>lookup-proxy-address<br/>getUserDirectReport</span> </font>
+</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td>createRawUser<br/><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>userManagerAssign</span> </font>
+</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.ReadWrite.All, Directory.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td>deleteRawUser</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td>updateRawUser</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.ManageIdentities.All, User.EnableDisableAccount.All, User.ReadWrite.All, Directory.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>powershellforwardemails</span> </font></td>
+<td>
+<p><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Microsoft 365 Business Premium<br/></span> </font></p>
+<p><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span><strong>Notes</strong>:<br/></span> </font></p>
+<ul>
+<li>In the <strong>email</strong> field, you must provide email ID of the user to which the emails have to be forwarded.</li>
+<li>In the <strong>id</strong> field, you must provide user ID from which the emails have to be forwarded.</li>
+<li><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>To perform this operation, both users, configured in the <strong>email</strong> and <strong>id</strong> fields, must have the Microsoft 365 Business Premium license. In case the recipient user’s email is set to be forwarded to the recipient’s manager, then the recipient’s manager must also have the Microsoft 365 Business Premium license.</span> </font></li>
+<li><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>If the provided ID is invalid or the user does not have the required license, the connector returns a 400 error.</span> </font></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listGroupsAndUsersOfApplication</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>AppRoleAssignment.ReadWrite.All, Application.Read.All, Directory.Read.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listNestedTransitiveMembers<br/>listDirectMembers<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>GroupMember.Read.All, Directory.Read.All, Group.Read.All, Group.ReadWrite.All, GroupMember.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listAuditLogs</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>AuditLog.Read.All, Directory.Read.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>retrieveSynchronizationSchema</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>CustomSecAttributeProvisioning.Read.All, Application.ReadWrite.OwnedBy, CustomSecAttributeProvisioning.ReadWrite.All, Synchronization.Read.All, Synchronization.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listDeltaUsers</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.Read.All, Directory.Read.All, Directory.ReadWrite.All, User.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>searchSites<br/>getAllSites<br/>getSite<br/>listSubSites<br/>getSiteByPath<br/>getGroupSite<br/>getSitesDelta<br/>listBaseSitePages<br/>getAllSiteList<br/>getSiteListById<br/>enumerateListItems<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Sites.Read.All, Sites.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>followSite<br/>unFollowSite<br/>createSiteListItem<br/>updateListItem<br/>deleteSiteListItem<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Sites.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listSitePermissions<br/>getSitePermissions<br/>deletePermission<br/>updateSitePermission<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Sites.FullControl.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listSiteOperations<br/>listSiteListOperations<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Sites.Read.All, Sites.FullControl.All, Sites.Manage.All, Sites.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>createSiteList</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Sites.Manage.All, Sites.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getSiteListItem</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Sites.Read.All, Sites.ReadWrite.All, Sites.Manage.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listSiteColumns<br/>listColumnDefinitions<br/>getColumnDefinitionFromSite<br/>getColumnDefinitionFromList<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Sites.Read.All, Sites.Manage.All, Sites.FullControl.All, Sites.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>createSiteColumnDefinition<br/>createColumnDefinitionInList<br/>updateColumnDefinitionInSite<br/>deleteSiteColumn<br/>updateColumnDefinitionInList<br/>deleteListColumn<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Sites.Manage.All, Sites.FullControl.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getUserOneDriveAccessStatus</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td>getUserOneDrivePermissionsList</td>
+<td rowspan="4">
+<font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All, User.Read.All, User.ReadWrite.All, Directory.Read.All, Directory.ReadWrite.All</span> </font> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span><br/></span> </font>
+</td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>grantOneDrivePermissions</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>removeOneDrivePermissions</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>addAdministratorsToOneDrive</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>retryServiceProvisioning</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.ManageIdentities.All, User.EnableDisableAccount.All, User.ReadWrite.All, Directory.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>revokeSignInSessions<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.RevokeSessions.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>exportPersonalData</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.Export.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getProfilePhoto</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Contacts.Read, Contacts.ReadWrite, ProfilePhoto.Read.All, ProfilePhoto.ReadWrite.All, Group.Read.All, Group.ReadWrite.All, Team.ReadBasic.All, TeamSettings.Read.All, TeamSettings.ReadWrite.All, ProfilePhoto.Read.All, ProfilePhoto.ReadWrite.All, User.Read.All, User.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>updateProfilePhoto</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Contacts.ReadWrite, ProfilePhoto.ReadWrite.All, Group.ReadWrite.All, ProfilePhoto.ReadWrite.All, User.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>deleteProfilePhoto</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>ProfilePhoto.ReadWrite.All, User.ReadWrite.All, ProfilePhoto.ReadWrite.All, Group.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getProfilePhotoMetadata</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Contacts.Read, Contacts.ReadWrite, ProfilePhoto.Read.All, ProfilePhoto.ReadWrite.All, Group.Read.All, Group.ReadWrite.All, Team.ReadBasic.All, TeamSettings.Read.All, TeamSettings.ReadWrite.All, ProfilePhoto.Read.All, ProfilePhoto.ReadWrite.All, User.Read.All, User.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>updateUserLicense</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>LicenseAssignment.ReadWrite.All, Directory.ReadWrite.All, User.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getUserTeams</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Team.ReadBasic.All, TeamSettings.Read.All, TeamSettings.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getDirectoryObject</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Directory.Read.All, Directory.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getTransitiveDirectory</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.Read.All, Directory.Read.All, Directory.ReadWrite.All, Group.Read.All, GroupMember.Read.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getUserDriveChildren</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Files.Read.All, Files.ReadWrite.All, Sites.Read.All, Sites.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getDirectoryObjectsByIds</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Directory.Read.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>checkMemberGroupsForDirectoryObject</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.Read.All, GroupMember.Read.All, Group.Read.All, Directory.Read.All, Group.ReadWrite.All, Directory.ReadWrite.All, Application.Read.All, Application.ReadWrite.All, Device.Read.All, Device.ReadWrite.All, User.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getMemberGroupsForUser</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Directory.Read.All, User.ReadBasic.All, GroupMember.Read.All, User.Read.All, Group.Read.All, Directory.Read.All, GroupMember.Read.All, Group.Read.All, Group.ReadWrite.All, Directory.ReadWrite.All, Application.Read.All, Application.ReadWrite.All, Device.Read.All, Device.ReadWrite.All, GroupMember.Read.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>checkMemberObjectsForUser</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.Read.All, Directory.Read.All, User.ReadWrite.All, Directory.ReadWrite.All, GroupMember.Read.All, Group.Read.All, Group.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getMemberObjectsForUser</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Directory.Read.All, User.Read.All, User.ReadWrite.All, Directory.ReadWrite.All, GroupMember.Read.All, Group.Read.All, Group.ReadWrite.All, Application.Read.All, Application.ReadWrite.All, Device.Read.All, Device.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getCreatedObjectsForUser</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.Read.All, Directory.Read.All, Directory.ReadWrite.All, User.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getDeletedUserOwnedObjects</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Group.Read.All, Group.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getDeletedUsers</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.Read.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getDeletedItemById</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.Read.All, AdministrativeUnit.Read.All, Application.Read.All, Group.Read.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>restoreDeletedItem</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>User.ReadWrite.All, AdministrativeUnit.ReadWrite.All, Application.ReadWrite.OwnedBy, Group.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>permanentlyDeleteDeletedItem</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Application.ReadWrite.OwnedBy, Application.ReadWrite.OwnedBy</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getUserAppRoleAssignments</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Directory.Read.All, AppRoleAssignment.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>assignAppRoleToUser<br/>deleteAppRoleToUser<br/>listApplicationsOfGroup<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>AppRoleAssignment.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>fetchGroup<br/>getGroupsDelta<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>GroupMember.Read.All, Directory.Read.All, Directory.ReadWrite.All, Group.Read.All, Group.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>updateGroupRaw<br/>upsertGroup<br/>AddGroupOwner<br/>removeGroupOwner<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Group.ReadWrite.All, Directory.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>deleteGroup</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Group.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>deleteMemberFromGroup</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>GroupMember.ReadWrite.All, Directory.ReadWrite.All, Group.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getGroupOwners</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>GroupMember.Read.All, Group.ReadWrite.All, Directory.Read.All, Group.Read.All, GroupMember.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listGroupTransitiveMemberOf</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Directory.Read.All, Directory.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>updateGroupLicenses</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>LicenseAssignment.ReadWrite.All, Directory.ReadWrite.All, Group.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listApplications<br/>getApplication<br/>getApplicationDelta <br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Application.Read.All </span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>createApplication<br/>updateApplication<br/>deleteApplication<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Application.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listServicePrincipals<br/>createServicePrincipal<br/>getServicePrincipal<br/>updateServicePrincipal<br/>upsertServicePrincipal<br/>deleteServicePrincipal<br/>deltaServicePrincipal<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> A service principal can retrieve its own application and service principal details without being granted any application permissions. The Application.ReadWrite.OwnedBy permission allows an app to call GET /applications and GET /servicePrincipals to list all applications and service principals in the tenant.</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>listAccessPackages<br/>getAccessPackage<br/>listAccessPackageCatalog<br/>getAccessPackageCatalog<br/>listAccessPackageResourceRequests<br/>listAccessPackageAssignmentPolicies<br/>listAccessPackageAssignmentRequests<br/>getAccessPackageAssignmentRequests<br/>FilterAccessPackageAssignmentRequestsByCurrentUser<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>EntitlementManagement.Read.All </span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>createAccessPackage<br/>updateAccessPackage<br/>deleteAccessPackage<br/>createAccessPackageCatalog<br/>updateAccessPackageCatalog<br/>deleteAccessPackageCatalog<br/>createAccessPackageResourceRequests<br/>createAccessPackageAssignmentRequests<br/>cancelAccessPackageAssignmentRequests<br/>deleteAccessPackageAssignmentRequests<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>EntitlementManagement.ReadWrite.All</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>getManagedDevices<br/>createManagedDevice<br/>deleteManagedDevice<br/>updateManagedDevice<br/>getManagedDevicesByApp<br/>createManagedDeviceByApp<br/>deleteManagedDeviceByApp<br/>updateManagedDeviceByApp<br/>getManagedDevicesByUserAndApp<br/>createManagedDeviceByUserAndApp<br/>deleteManagedDeviceByUserAndApp<br/>updateManagedDeviceByUserAndApp<br/>getManagedDeviceOverview<br/>updateManagedDeviceOverview<br/></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>A Microsoft 365 E3 or E5 license for the user, or a standalone Intune device license, or a Microsoft Entra ID P1 or P2 license along with a Microsoft Intune subscription</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>createTemporaryAccessPass</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>A TAP can be created only for users with userType Member.</span> </font></td>
+</tr>
+<tr>
+<td>stopEmailForwardingOfUser</td>
+<td>
+<p>Enter the user ID in the <strong>id</strong> field to stop email forwarding to another user.</p>
+<p><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>If the provided ID is invalid, the connector returns a 400 error.</span> </font></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div>
+<div></div>
+</div>
+<h1>Performing OpenAPI Operation</h1>
+<h2>Using an API Tool</h2>
+<p>You can perform OpenAPI operations using an OpenAPI tool as follows:</p>
+<ol>
+<li>Copy the OpenAPI URL from <strong>Copy this URL </strong>field on the connector configuration page. </li>
+<li>Add <strong data-stringify-type="bold">/invoke </strong>at the end of the copied URL.</li>
+<li>Paste the URL in an API tool.</li>
+<li>Provide the required credentials for authentication.</li>
+<li>Pass the operation ID, parameters, and properties in the request body.<br/><strong>Note</strong>: The parameters/properties vary depending on the type of operation.</li>
+<li>Run the URL using the POST method.</li>
+</ol>
+<p>The following is the format to be passed in the request body:</p>
+<pre data-stringify-type="pre"><code>{
+"operationId": &lt;&lt;Operation ID&gt;&gt;,
+"parameters": {&lt;&lt;parameter name&gt;&gt;: &lt;&lt;parameter value&gt;&gt;},
+"requestBody": {&lt;&lt;property name&gt;&gt;: &lt;&lt;property value&gt;&gt;}
+}    </code></pre>
+<h2>Using Workflows</h2>
+<p>You can perform OpenAPI operations using Workflows. Contact the Aquera support team for configuring Workflows.</p>
+<h2>Using Scripts</h2>
+<p>You can perform OpenAPI operations using Scripts. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4410150491159-Custom-Script-Orchestration-User-Guide" rel="noopener noreferrer" target="_blank">Integration </a><a href="https://support.aquera.com/hc/en-us/articles/4410150491159-Integration-Using-Scripts" rel="noopener noreferrer" target="_blank">Using</a><a href="https://support.aquera.com/hc/en-us/articles/4410150491159-Custom-Script-Orchestration-User-Guide" rel="noopener noreferrer" target="_blank"> Scripts</a> guide for details on how to set up an integration using scripts.</p>
+<p>OpenAPI operations can be invoked using the following format:</p>
+<p>&lt;AppVariableName&gt;.&lt;OpenAPI_MethodName&gt;({parameterName: parameterValue})</p>
+<p>Here, &lt;AppVariableName&gt; is the name of the variable that you have configured in the script to refer to the provisioned connector, and the &lt;OpenAPI_MethodName&gt; is the name of the OpenAPI method to invoke the corresponding OpenAPI operation. </p>
+<p>Provide a comma-separated list of parameter names with parameter values enclosed in curly braces.</p>
+<p>For further details on how to invoke OpenAPI methods using scripts, refer to the <a href="https://support.aquera.com/hc/en-us/articles/17199986640151-Working-With-Synchronization-Scripts#h_01H9J2N15DM5DCQCAT1EV50DAN" rel="noopener noreferrer" target="_blank">Working With</a> <a href="https://support.aquera.com/hc/en-us/articles/17199986640151-Working-With-Synchronization-Scripts#h_01H9J2N15DM5DCQCAT1EV50DAN" rel="noopener noreferrer" target="_blank">Integration Scripts</a> guide.</p>
+<h1>References</h1>
+<ul>
+<li><a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a></li>
+<li><a href="https://support.aquera.com/hc/en-us/articles/32868720954135" rel="noopener noreferrer" target="_blank">Service Account Setup in Microsoft 365</a></li>
+<li><a href="https://support.aquera.com/hc/en-us/articles/36285366359319" rel="noopener noreferrer" target="_blank">App Registration in Microsoft Entra ID</a></li>
+<li><a href="https://support.aquera.com/hc/en-us/articles/36715756992535" rel="noopener noreferrer" target="_blank">PnP Management Shell Application Configuration</a></li>
+<li value="1"><a href="https://support.aquera.com/hc/en-us/articles/4404835146135" rel="noopener noreferrer" target="_blank">User Integration Setup Guide</a></li>
+<li value="2"><a href="https://support.aquera.com/hc/en-us/articles/14601048367511" rel="noopener noreferrer" target="_blank">Managing Groups in User Integrations</a></li>
+</ul>
+  </div>
+</body>
+</html>

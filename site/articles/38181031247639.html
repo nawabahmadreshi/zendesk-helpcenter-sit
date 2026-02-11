@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Entra ID to ServiceNow Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Entra ID to ServiceNow Integration Guide</h1>
+    <p><a href="../index.html">← Back</a></p>
+    <h1>Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide describes the Paylocity to Brivo integration, which synchronizes user data from <strong>Entra ID</strong> to <strong>ServiceNow</strong> to support user lifecycle and group management.</p><p>To identify user records across both systems, the integration uses the <strong>Mail</strong> attribute from <strong>Entra ID</strong> and matches it to the <strong>Email</strong> in <strong>ServiceNow</strong> as a correlation attribute.</p><h2>Key Functions</h2><p>The <strong>Entra ID</strong> to <strong>ServiceNow</strong> integrations provide the following functions:</p><ul>
+<li data-list-item-id="ebe226122c81678635fba6c1bf6004833">
+<strong>User Lifecycle Management</strong>: Maps users from Entra ID to ServiceNow and creates, updates, or deactivates users based on their activity status.</li>
+<li data-list-item-id="e276936bd53115b4822dfbd397426be0b">
+<strong>Onboarding Tickets</strong>: Creates onboarding tickets for new Entra ID users who need to be added to ServiceNow.</li>
+<li data-list-item-id="ef7e876ec5e4b490b12c44878b4940900">
+<strong>Offboarding Tickets</strong>: Creates offboarding tickets for existing users in both Entra ID and ServiceNow.</li>
+</ul><h1>Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e3c3e66851db2fab4170a823a5d6f5349">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e01f103f016c3aec4d70da2efaff0620d">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e301a520ff5884215883633bd178a1b1a">
+<strong>Entra ID</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32091350086423-Entra-ID-Configuration-Guide" rel="noopener noreferrer" target="_blank">Entra ID Configuration Guide</a> for details.</li>
+<li data-list-item-id="ee939638a4e21e521b138d8bf15cc9eb0">
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854-ServiceNow-Configuration-Guide" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1>Integration Setup</h1><p>This section outlines how the integration must be configured to push user data from Paylocity to Brivo.</p><h2>Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e2537e4cb2b98316d8f070904ddd4c22a">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e02fd27d566095617cfdaee43072d15ed">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="eafa7bbc85c1ba34d414b4c5609763966">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e70bdda0cb074c62328ccd890451bf989">Select <strong>Entra ID to ServiceNow Integration</strong>.</li>
+<li data-list-item-id="e8be7f6a80a4a624ab6765ec9ed79883d">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e35f895c2338cda9523f2c5d2b491c742">Select your <strong>Entra ID</strong> and <strong>ServiceNow</strong> connector instances.</li>
+<li data-list-item-id="e29e4e1c8ad399bb90d094e51b8830628">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2>Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3>Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3>Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4>Integration Scenarios</h4><p>Configure the following integration scenarios:</p><ul>
+<li data-list-item-id="e0cb9051dd13bb67c3d95d0e46bb6ba04">
+<strong>Enable User Lifecycle Management</strong>: Select to enable user provisioning and perform incremental updates.</li>
+<li data-list-item-id="e789e4e999976fb14aaae5aa5d720152f">
+<strong>Enable Onboarding Ticket Management</strong>: Select to enable onboarding ticket from Entra ID to ServiceNow.</li>
+<li data-list-item-id="e2e49fd35c531a8dc929cc27d77439a83">
+<strong>Enable Offboarding Ticket Management</strong>: Select to enable offboarding ticket from Entra ID to ServiceNow.</li>
+</ul><h4>Global Settings</h4><p>Configure the following global settings:</p><ul>
+<li data-list-item-id="e6b335d7f6bf7be5343232f997ecfb376">
+<strong>Enable Report-Only Mode: </strong>Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e024c1844f216075f037253d06f5f77bd">
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li data-list-item-id="e2a519da9fb531ac5d3d241bd7bd6e8b5">
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li data-list-item-id="edf547944b2332a1d10825a66c7804bff">
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+<li data-list-item-id="e22ffb6152e127539a465dde97662821b">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+</ul><h3>User Management</h3><p>The<strong> User Management</strong> section enables you to customize the user integration settings according to your specific use case. It has the following settings:</p><h4>User Provisioning Settings</h4><p>Configure the following user provisioning settings:</p><ul>
+<li data-list-item-id="edc98b6647cb05eff307388b2be3870ad">
+<strong>Source Correlation Attribute</strong>: Select the <strong>Entra ID</strong> attribute for correlation from the dropdown menu. The available option is <strong>Mail</strong>.</li>
+<li data-list-item-id="e317c523686f492c29f419de36c753e92">
+<strong>Target Correlation Attribute</strong>: Select the <strong>ServiceNow</strong> attribute for correlation from the dropdown menu. The available option is <strong>Email</strong>.</li>
+<li data-list-item-id="e05484a2e4498a6d7a6f138f286ce574a">
+<strong>Enable Source Filter</strong>: Select to enable the source filter.<ul>
+<li data-list-item-id="eb4d6e5f83689ca7a619ac8d270ce21db">
+<strong>Source Filter</strong>: Select the Entra ID attribute to filter the users while retrieving from Entra ID. The available options are <strong>Mail</strong> and <strong>User Principal Name</strong>.</li>
+<li data-list-item-id="e3effaad25b99360e3bd6550c41aa0aa4">
+<strong>Source Filter Value</strong>: Provide the value for the selected source filter.</li>
+</ul>
+</li>
+<li data-list-item-id="ecbd623486132589d4bc124f3f6bce2e8">
+<strong>Create User</strong>: Select to create a user from Entra ID to ServiceNow.</li>
+<li data-list-item-id="e7cb496cdc1bd1c4a7c3776a113b0386a">
+<strong>Update User</strong>: Select to update a user from Entra ID to ServiceNow</li>
+<li data-list-item-id="e505e772b3bc5226af4dd5ce1a006f06f">
+<strong>Deactivate User</strong>: Select to deactivate a user from Entra ID to ServiceNow</li>
+<li data-list-item-id="e5599f9de70b3712fea022a1146dad581">
+<strong>Enable Incremental Mode</strong>: Select to run the integration in incremental mode.</li>
+<li data-list-item-id="e0580dcc7b6aa71b060b6f7f101b2d22a">
+<strong>Sync User Manager</strong>: Select to assign the user's Entra manager as the ServiceNow manager.</li>
+</ul><h4>User Provisioning Threshold Settings</h4><p>Configure the following provisioning threshold settings:</p><ul>
+<li data-list-item-id="e38c73b285802aa5371e99e23f2beccc8">
+<strong>Import Limit</strong>: Specify the maximum number of user records that can be imported in the target application during a single integration run.</li>
+<li data-list-item-id="e497d8d7d3873e8b70700d04046163cfc">
+<strong>Create Limit</strong>: Specify the maximum number of user records that can be created in the target application during a single integration run.</li>
+<li data-list-item-id="ee5dcff99e085b13b97995f811ea42c6b">
+<strong>Update Limit</strong>: Specify the maximum number of user records that can be updated in the target application during a single integration run.</li>
+<li data-list-item-id="e97ce4f7f223a29c5ecacfab6abd82836">
+<strong>Deactivate Limit</strong>: Specify the maximum number of user records that can be deactivated from the target application during a single integration run.</li>
+</ul><h4>Create User Settings</h4><p>Configure the following create user settings:</p><ul><li data-list-item-id="ed295569f15ccc554d3ebb40d81ee3dd0">
+<strong>Create Condition</strong>: Select a condition from the dropdown menu to determine when users are created.<ul><li data-list-item-id="ee805ac1580292cd5cd2759b6d45a78dd">
+<strong>Custom Create Condition</strong>: Enter the JavaScript expression to create a new user in the target application. </li></ul>
+</li></ul><h4>Update User Settings</h4><p>Configure the following update user settings:</p><ul><li data-list-item-id="e460250e398f3cddab031f801b42d352f">
+<strong>Update Condition</strong>: Select a condition from the dropdown menu to determine when users are updated.<ul><li data-list-item-id="ecfaec237d717e637b23865e244a4a6ce">
+<strong>Custom Update Condition</strong>: Enter the JavaScript expression to update a user in the target application. </li></ul>
+</li></ul><h3>Onboarding Ticket Settings</h3><p>The <strong>Onboarding Ticket Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul><li data-list-item-id="e6fa27860d153e9d7d88c8d327cca2981">
+<strong>Ticket Trigger Type</strong>: Select the Ticket Trigger Type from the dropdown menu. <ul>
+<li data-list-item-id="e0c499b55918345983d2fd6192dc9fb12">
+<strong>Ticket Type</strong>: Select the ticket type from the dropdown menu.<ul><li data-list-item-id="eb8f01fedb147c0887a440df1e042241b">
+<strong>Custom Ticket Type</strong>: Enter the ServiceNow custom ticket table name.</li></ul>
+</li>
+<li data-list-item-id="e475ce739dd959f3b4d378b8679d9c562">
+<strong>Service Catalog</strong>: Select the Service Catalog to use when creating the ticket from the dropdown menu.</li>
+<li data-list-item-id="ec471a2cfbee6c4ee7a63670924bbb73c">
+<strong>Order Guide</strong>: Select the Order Guide to use when creating the ticket from the dropdown menu.</li>
+</ul>
+</li></ul><h3>Offboarding Ticket Settings</h3><p>The <strong>Offboarding Ticket Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul><li data-list-item-id="ea75d8d5ff14679cd7b7040ab330afa11">
+<strong>Ticket Trigger Type</strong>: Select the Ticket Trigger Type from the dropdown menu. <ul>
+<li data-list-item-id="eac4db0a7e77d0d71bd142d281c16de03">
+<strong>Ticket Type</strong>: Select the ticket type from the dropdown menu. <ul><li data-list-item-id="e80141967484af3fe82341c56ccd10469">
+<strong>Custom Ticket Type</strong>: Enter the ServiceNow custom ticket table name.</li></ul>
+</li>
+<li data-list-item-id="e6d25fa8396a5815735d927cb9461effe">
+<strong>Service Catalog</strong>: Select the Service Catalog to use when creating the ticket from the dropdown menu.</li>
+<li data-list-item-id="e24efc2d584f34dc64189fa83775c31c9">
+<strong>Order Guide</strong>: Select the Order Guide to use when creating the ticket from the dropdown menu.</li>
+</ul>
+</li></ul><h3>Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul><li data-list-item-id="e637706399fb9da73671901cc209f372c">
+<strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e44a6a92ceaaa35975a3bd6cc6f8e4ad5">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ed9d78ca9efe6c14642a756b24d020357">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ebc508b83b24c305c3e9639999c8ef0f5">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="eb4089188e5fc8bd5469f60938ddb16c8">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log.</li>
+<li data-list-item-id="eb4722be66244b8538b01894c4ef0e060">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3>Report Settings</h3><p>The <strong>Report Settings</strong> section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p><ul><li data-list-item-id="ef9d2bf29d3b50a9d57c4c56d8863188e">
+<strong>Report Detail Level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e9f0930311b99dd70376eab6fc17a9298">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ecd4b56036f0b766ce3bb22e8d43bc95b">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e62748b019a6547e1575736611cdaacd0">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="e53efbc5ee46e47b2b8f1f0ac07015b80">
+<strong>Included Attributes</strong>: Select the attributes to be included in the report.</li>
+<li data-list-item-id="ef8475b25fe6f805a790c6d435e1b1c69">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3>Notifications</h3><p>The <strong>Notifications</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="e41abe82a8851b5f6cd72bb3908f2d1d9">
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="eeda0086c933d2fd14523c9e4eec595ef">
+<strong>Notification Report Detail Level</strong>: Select the desired notification report detail level. The following are the available options:<ul>
+<li data-list-item-id="e71b7e816d17b059d240a86149164718a">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ec73a9bddc6491bf103099d9d3fd70ef4">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="eb7f494df66a4320af81c1f0ea4e91095">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="e9345e59dfcd03664426f5f0dcea0a652">
+<strong>Included Attributes</strong>: Select the attributes to be included in the notification report.</li>
+<li data-list-item-id="ebb6ed970bb48a8e6a8bc0f276c91ad1c">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the notification report.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h3>Log Insight Settings</h3><p>The <strong>Log Insight Settings</strong> section enables you to customize the integration log insight settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="e15dc5cd6a9ac9bb5c3399819ac74e507">
+<strong>Dashboard Name: </strong>Enter the dashboard name for log insights.</li>
+<li data-list-item-id="e1be6641b9363624b2603580d7341ac3e">
+<strong>Log Detail Level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e5f657d3e1269d50be544ccc1eec5037b">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e43d000dbc650ec576af80b2942a3e411">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ef0f041f221d4239e1d8bd5f63d3c9cda">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="e070f73846486c0059c63112718ea0c0a">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log insights.</li>
+<li data-list-item-id="eb496b2fac34f49a13ecb3c92c61dd5e2">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log insights.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h2>Attribute Map</h2><p>The Attribute Map tab in <strong>Entra ID </strong>to<strong> ServiceNow </strong>Synchronization defines the default <strong>Entra ID</strong> attributes that are mapped to the <strong>ServiceNow</strong> attributes.</p><h2>Tables</h2><p>In the Tables tab, you can add tables to the integration. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360051052493" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p><h2>Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="https://support.aquera.com/hc/en-us/articles/10209078646807" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1>Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/11086740764951" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1>Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="https://support.aquera.com/hc/en-us/articles/11086740764951" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p><p> </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Active Directory to Jira Service Management Integration - To be Merged</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Active Directory to Jira Service Management Integration - To be Merged</h1>
+    <p><a href="../index.html">← Back</a></p>
+    <h2 data-end="11" data-start="0">Overview</h2><p data-end="338" data-start="13">The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p data-end="761" data-start="340">The <strong data-end="405" data-start="344">Active Directory to Jira Service Management (Jira Assets)</strong> integration synchronizes user data from Active Directory to Jira Assets. It ensures that identity information in Jira remains accurate and up-to-date. The integration handles new, updated, or inactive users in Active Directory and ensures these changes are reflected in Jira Assets by creating, updating, or managing user records as needed.</p><p data-end="1143" data-start="763">The integration monitors changes in Active Directory, such as the creation of new users, attribute updates (for example, department, title, and manager), and de-provisioned accounts. It maps the AD attributes to corresponding fields in Jira Assets. The integration also establishes manager relationships using asset references, enabling hierarchical visibility within Jira Assets.</p><p data-end="1510" data-is-last-node="" data-is-only-node="" data-start="1145">This guide provides details on the configurations available in the Aquera Admin Portal for setting up and managing the <strong data-end="1485" data-start="1429">Active Directory to Jira Service Management (Assets)</strong> integration.</p><div><div tabindex="-1">
+<div><div data-message-author-role="assistant" data-message-id="cb1e0517-8994-4f31-bf4c-4e04c67ff6a3" data-message-model-slug="gpt-5-2-thinking" dir="auto"><div><div>
+<h2 data-end="16" data-start="0">Key Functions</h2>
+<p data-end="129" data-start="18">The <strong data-end="83" data-start="22">Active Directory to Jira Service Management (Jira Assets)</strong> integration performs the following functions:</p>
+<ul data-end="2584" data-is-last-node="" data-is-only-node="" data-start="131">
+<li data-end="470" data-list-item-id="e7a703942678002dd7822da8ee2786e82" data-start="131"><p data-end="470" data-start="133">Retrieves Active Directory users across one or more domains and supports both <strong data-end="225" data-start="212">full sync</strong> (all users) and <strong data-end="262" data-start="242">incremental sync</strong> (only users changed since the last run).<span data-state="closed"></span></p></li>
+<li data-end="612" data-list-item-id="ec96fd05ee54806ab09127393637cbc12" data-start="472"><p data-end="612" data-start="474">Builds a safe AD user filter that includes only <strong data-end="539" data-start="522">user accounts</strong> and excludes <strong data-end="573" data-start="553">computer accounts</strong>. In Active Directory, <strong data-end="42" data-start="21">computer accounts</strong> are identities created for <strong data-end="81" data-start="70">devices</strong> (like laptops, desktops, and servers)<span data-state="closed"></span></p></li>
+<li data-end="786" data-list-item-id="e2f6435553eb42d29eefecd0b76bb00c6" data-start="614"><p data-end="786" data-start="616">Enriches users with manager details by collecting and resolving manager Distinguished Names (DNs) to ensure that manager attributes can be mapped correctly. <span data-state="closed"></span></p></li>
+<li data-list-item-id="ea9f0cdaa5061770f6980dd94d0e220d6">Checks Jira Assets once to identify the right workspace and record type (like User). Then it loads the existing records and compares them with Active Directory users. <br/><strong>Note</strong>: In Jira Assets, a workspace is where data is stored, and a record type (like User or Employee) is how that data is grouped.<span data-state="closed"></span>
+</li>
+<li data-end="1342" data-list-item-id="e9923974be67ff6a26e195a3f281b7959" data-start="1040"><p data-end="1342" data-start="1042">Uses a configured <strong data-end="1085" data-start="1060">correlation attribute</strong> (for example, employee ID/email / username) to match AD users to Jira Assets and then categorizes users into <strong data-end="1216" data-start="1206">Create</strong>, <strong data-end="1228" data-start="1218">Update</strong>, or <strong data-end="1257" data-start="1233">Terminate/Deactivate</strong> buckets. <span data-state="closed"></span> <span data-state="closed"></span></p></li>
+<li data-end="1342" data-list-item-id="eb201b963ca22e13ec0ad9f7333fa382f" data-start="1040">
+<p data-end="1342" data-start="1042">The integration treats <strong data-end="156" data-start="138">inactive users</strong> differently, depending on whether they already exist in Jira Assets.</p>
+<ul>
+<li data-end="1342" data-list-item-id="eab8c0b1ffe7e2d4a6a40f2899c869e0c" data-start="1040">
+<p data-end="1342" data-start="1042"><strong data-end="308" data-start="229">If a user is inactive in Active Directory and does NOT exist in Jira Assets</strong></p>
+<ul>
+<li data-list-item-id="e6457f0322233dcdb9ac5193dd5db0174"><p data-end="224" data-start="115">The integration <strong data-end="348" data-start="332">does nothing</strong>.</p></li>
+<li data-list-item-id="e13128efbabbe8fe876cdd44d9f330ff4"><p data-end="224" data-start="115">It <strong data-end="379" data-start="360">does not create</strong> a new user record in Jira Assets for inactive users.</p></li>
+</ul>
+</li>
+<li data-list-item-id="e853f505730323730f1ffb408003ec1cd">
+<p data-end="224" data-start="115"><strong data-end="516" data-start="437">If a user is inactive in Active Directory and already exists in Jira Assets</strong><br/>The integration looks at your configuration:</p>
+<ul>
+<li data-end="663" data-list-item-id="e5d5374a91c6700192c202ab9345812ab" data-start="572"><p data-end="663" data-start="574">If <strong data-end="602" data-start="577">Delete Inactive Users</strong> is enabled, the user record is <strong data-end="645" data-start="634">deleted</strong> from Jira Assets.</p></li>
+<li data-end="803" data-list-item-id="e67c74069133575b08fb30aeeb7f127dc" data-start="667"><p data-end="803" data-start="669">If <strong data-end="697" data-start="672">Delete Inactive Users</strong> is disabled, the user record is <strong data-end="741" data-start="730">updated</strong> (for example, it is not marked inactive or modified based on mappings). <span data-state="closed"></span></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="1818" data-list-item-id="ee06b7b06db402730bb5b0f89ed20a530" data-start="1629"><p data-end="1818" data-start="1631">Applies configurable <strong data-end="1666" data-start="1652">conditions</strong> (filters) and <strong data-end="1701" data-start="1681">execution limits</strong> to control which users are processed and how many records are handled per run. <span data-state="closed"></span></p></li>
+<li data-end="2037" data-list-item-id="e272d59840d6724a24d65b24f6824c08f" data-start="1820"><p data-end="2037" data-start="1822">Maps AD attributes to Jira Assets attributes using the <strong data-end="1894" data-start="1877">Attribute Map</strong>, including optional <strong data-end="1934" data-start="1915">manager mapping</strong> using Jira Assets object references (for hierarchy/reporting). <span data-state="closed"></span><span data-state="closed"></span></p></li>
+</ul>
+</div></div></div></div>
+<h2 data-end="16" data-start="0">Prerequisites</h2>
+<p data-end="54" data-start="18">The following are the prerequisites:</p>
+<ul data-end="866" data-is-last-node="" data-is-only-node="" data-start="56">
+<li data-end="365" data-list-item-id="e7954f77c2ac398a1d8ccd3f45ef940e4" data-start="56"><p data-end="365" data-start="58"><strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a></p></li>
+<li data-end="866" data-is-last-node="" data-list-item-id="eb5851fc90d8a56c5a933643d11a65dc8" data-start="367">
+<p data-end="542" data-start="369"><strong data-end="433" data-start="369">Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the required application connectors in the Aquera Admin Portal based on your environment:</p>
+<ul data-end="866" data-is-last-node="" data-start="545">
+<li data-end="680" data-list-item-id="ee50ed5a5b8e71f068813485ed7c435b2" data-start="545"><p data-end="680" data-start="547"><strong data-end="568" data-start="547">Active Directory:</strong> Configure the <a href="https://support.aquera.com/hc/en-us/articles/26093919567255-Active-Directory-AD-Version-8-Configuration-Guide">Active Directory connector</a> so Aquera can read user details (and manager information if required).</p></li>
+<li data-end="866" data-is-last-node="" data-list-item-id="e4addd8c9166b8baab04d585d82c75e6a" data-start="683"><p data-end="866" data-is-last-node="" data-start="685"><strong data-end="727" data-start="685">Jira Service Management (Jira Assets):</strong> Configure the <a href="https://support.aquera.com/hc/en-us/articles/13840676724631-Jira-Service-Management-Cloud-Configuration-Guide">Jira connector</a> with access to <strong data-end="782" data-start="772">Assets </strong>so that Aquera can create and update records in the selected workspace and object type.</p></li>
+</ul>
+</li>
+</ul>
+<h2 data-end="20" data-start="0">Integration Setup</h2>
+<p data-end="320" data-start="22">This section describes the configuration required for the <strong data-end="141" data-start="80">Active Directory to Jira Service Management (Jira Assets)</strong> integration. It covers selecting the applications involved and configuring the integration settings used to create and update Jira Asset records for Active Directory users.</p>
+<h2 data-end="343" data-start="322">Create Integration</h2>
+<p data-end="399" data-start="345">Perform the following steps to create the integration:</p>
+<ol data-end="741" data-start="401">
+<li data-end="444" data-list-item-id="e9aab7d0e1a6bcebdbaadecea6119509b" data-start="401"><p data-end="444" data-start="404">Log in to the <strong data-end="441" data-start="418">Aquera Admin Portal</strong>.</p></li>
+<li data-end="504" data-list-item-id="e518c7f883d846268ddba1caade46b6c4" data-start="445"><p data-end="504" data-start="448">Navigate to <strong data-end="476" data-start="460">Integrations</strong> from the left-side panel.</p></li>
+<li data-end="539" data-list-item-id="eb25ca7a6127ef38ffa7676586a66c127" data-start="505"><p data-end="539" data-start="508">Click <strong data-end="536" data-start="514">Create Integration</strong>.</p></li>
+<li data-end="614" data-list-item-id="e1b822730f77b7edd91810dc2171143d3" data-start="540"><p data-end="614" data-start="543">Select <strong data-end="611" data-start="550">Active Directory to Jira Service Management (Jira Assets)</strong>.</p></li>
+<li data-end="677" data-list-item-id="e3ffc0541f1b79278dac2d30cd55df851" data-start="615"><p data-end="677" data-start="618">Enter a <strong data-end="634" data-start="626">name</strong> and <strong data-end="654" data-start="639">description</strong> for the integration.</p></li>
+<li data-end="741" data-list-item-id="ef82ff866069a41bc5985924e1ce006be" data-start="678"><p data-end="741" data-start="681">Click <strong data-end="699" data-start="687">Continue</strong>. The <strong data-end="722" data-start="705">Configuration</strong> page is displayed.</p></li>
+</ol>
+<h2 data-end="759" data-start="743">Configuration</h2>
+<p data-end="830" data-start="761">The following sections are displayed under the <strong data-end="825" data-start="808">Configuration</strong> tab:</p>
+<h3 data-end="848" data-start="832">Applications</h3>
+<p data-end="977" data-start="850">The <strong data-end="870" data-start="854">Applications</strong> section shows the application connectors required for this integration. This section allows you to select:</p>
+<ul data-end="1145" data-start="978">
+<li data-end="1040" data-list-item-id="ef11d3e00aec0bd1646a6d3451e0a5798" data-start="978"><p data-end="1040" data-start="980">The <strong data-end="1004" data-start="984">Active Directory</strong> connector retrieves user details.</p></li>
+<li data-end="1145" data-list-item-id="e63bdd85f2144b3f512452afc57d81a61" data-start="1041"><p data-end="1145" data-start="1043">The <strong data-end="1088" data-start="1047">Jira Service Management (Jira Assets)</strong> connector is used to create or update user records.</p></li>
+</ul>
+<h3 data-end="1161" data-start="1147">Parameters</h3>
+<p data-end="1388" data-is-last-node="" data-is-only-node="" data-start="1163">The <strong data-end="1181" data-start="1167">Parameters</strong> section lets you customize the integration settings for your use case. It includes settings to control how users are matched, which records are processed, and how Jira Assets records are created or updated.</p>
+<h4>Integration Features</h4>
+<ul><li data-list-item-id="ef5f33aa9662b9290401aa5ac345f7b62">
+<strong>Enable User Lifecycle Management</strong>: Select to enable user provisioning and perform incremental updates.</li></ul>
+<h4>General Settings</h4>
+<p>This section enables you to configure the following integration features:</p>
+<ul>
+<li data-list-item-id="ed5fe55e6c67e8c3cf1752deea7f20c0d">
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the updates that would happen, but without applying them.</li>
+<li data-list-item-id="e9f625dca31a2c328636bba787c360fe4">
+<strong>Enable Full Sync: </strong>Select to process all Active Directory users during the run.</li>
+<li data-list-item-id="eb0bd802fd2d342a56bfa9c2cf45eb0cc">
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li data-list-item-id="e01333ab9a78d5d5e2ff81e7bc70eeeed">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report.</li>
+<li data-list-item-id="e798794202552c73245e901359645af39">
+<strong>Enable Email Notifications</strong>: Select this checkbox to enable the integration-related notifications.</li>
+<li data-list-item-id="eec849234c9a8867a0b046ae1aace2790">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.</li>
+</ul>
+<h4>Manage Users </h4>
+<ul><li data-list-item-id="e390ac60d90549940b8827496c0c4960f"><p data-end="2439" data-start="2191"><strong data-end="24" data-is-only-node="" data-start="0">AD Application List:</strong> Select one or more Active Directory instances to pull user data for synchronization. For example, selecting <strong data-end="164" data-start="134">Active Directory–Corporate</strong> and <strong data-end="198" data-start="169">Active Directory–Regional</strong> syncs users from both directories.</p></li></ul>
+<h5><strong>Active Directory Settings</strong></h5>
+<ul>
+<li data-list-item-id="e51b99d29e98c837ecbb642aa710b921a"><p data-end="2609" data-start="2441"><strong data-end="2459" data-start="2441">Select AD Domain:</strong> Specifies the Active Directory domain to search for users. For example, selecting <strong data-end="2565" data-start="2542">dc=aqueratest,dc=in</strong> restricts the sync to users in that domain.</p></li>
+<li data-list-item-id="e5f5d245c79774285e06dddc0b4e95e21"><p data-end="2785" data-start="2611"><strong data-end="19" data-is-only-node="" data-start="0">AD Filter Name:</strong> Choose the Active Directory attribute that determines which users are included in the sync. For example, selecting <strong data-end="149" data-start="135">employeeID</strong> limits the sync to users identified by their employee ID.</p></li>
+<li data-list-item-id="e9ebf9940cfaf5328442cfa0edefc28a8"><p data-end="2943" data-start="2787"><strong data-end="2804" data-start="2787">Filter Criteria Value:</strong> Enter the value used to match users for the selected filter. For example, entering five retrieves users with employeeID = 5.</p></li>
+</ul>
+<h5><strong>JIRA Settings</strong></h5>
+<ul>
+<li data-list-item-id="e7cfb2c922ddcab452c2a1bd021bcd0ba"><p data-end="3154" data-start="2945"><strong data-end="3004" data-start="2945">Target Schema (Jira Assets):</strong> Determines where user records are stored in Jira Assets. For example, selecting <strong data-end="3093" data-start="3085">test</strong> ensures all users are created or updated within that schema.</p></li>
+<li data-list-item-id="e7f8f487766a7eb615665f24430f64859"><p data-end="3364" data-start="3156"><strong data-end="3213" data-start="3156">Target Object Type (Jira Assets):</strong> Defines the Jira Assets object type used to store users. For example, selecting <strong data-end="3307" data-start="3294">Employees</strong> stores each Active Directory user as an Employee object.</p></li>
+<li data-list-item-id="ee3d5131c0f8e0cefa8c79b3f73d0fa5a"><p data-end="3562" data-start="3366"><strong data-end="3382" data-start="3366">Enable Manager Mapping:</strong> Links each user to their manager in Jira Assets based on Active Directory manager data. For example, if John reports to Sarah in AD, Sarah is set as John’s manager in Jira Assets.</p></li>
+<li data-list-item-id="e1bccd409081e0d7141e06d93a4a41008"><p data-end="3733" data-start="3564"><strong data-end="3590" data-start="3564">Delete Inactive Users:</strong> Controls how inactive users are handled. For example, when enabled, users who leave the organization are permanently removed from Jira Assets.</p></li>
+<li data-list-item-id="e81ba5b1a14be1c61832561ac8bf80c41"><p data-end="3955" data-start="3735"><strong data-end="3798" data-start="3735">Manager Attribute Name (Jira Assets):</strong> Specifies the Jira Assets attribute that stores the manager reference. For example, entering the <strong data-end="3908" data-start="3892">Manager Name</strong> links users to their manager using this field.</p></li>
+</ul>
+<h5><strong data-end="3974" data-start="3957">Provisioning Threshold Settings</strong></h5>
+<ul>
+<li data-list-item-id="e9ff0553d4c3818bcb8fb643230dd5e65"><p data-end="268" data-start="119"><strong data-end="136" data-start="119">Import Limit:</strong> Enter the maximum number of users to be processed in a single run. For example, entering <strong data-end="232" data-start="226">10</strong> processes only includes the first ten users.</p></li>
+<li data-list-item-id="ea16bd7d7faaf8778ee4d42db414132c1"><p data-end="441" data-start="270"><strong data-end="287" data-start="270">Create Limit:</strong> Enter the maximum number of new users that can be created in one run. For example, entering <strong data-end="385" data-start="380">1</strong> creates only one new user, which is useful for testing.</p></li>
+<li data-list-item-id="e7612b7c6936ed2065c31fc37aef25cfc"><p data-end="596" data-start="443"><strong data-end="460" data-start="443">Update Limit:</strong> Enter the maximum number of existing users to update in a single run. For example, entering <strong data-end="563" data-start="558">one</strong> updates only one user at a time.</p></li>
+<li data-list-item-id="e43d1aad3b8c3b717ad8a0cb16cc198e7"><p data-end="756" data-is-last-node="" data-is-only-node="" data-start="598"><strong data-end="615" data-start="598">Delete Limit:</strong> Enter the maximum number of users that can be deleted in one run. For example, entering <strong data-end="709" data-start="704">one</strong> deletes only one inactive user during the run.</p></li>
+</ul>
+<h5><strong>Correlation Settings</strong></h5>
+<ul>
+<li data-list-item-id="e81e7dc8ccd4fa3422b5d93149cb3f353">
+<strong>Source Correlation Attribute:</strong> Select the Active Directory attribute that uniquely identifies each user. For example, selecting <strong>User Principal Name</strong> matches users using their email-style login.</li>
+<li data-list-item-id="ee01c4d9e2fc6d34bcc1f72e8d60cf821">
+<strong>Target Correlation Attribute:</strong> Select the Jira Assets attribute used to identify user records uniquely. For example, selecting <strong>Employee ID</strong> ensures users are matched using the same employee identifier in Jira Assets.</li>
+<li data-list-item-id="e54acf3e78c65c0c69010a5a3fdaa4dca">
+<strong>Condition to Create Employees:</strong> Specify which Active Directory users are allowed to be created in Jira Assets. For example, selecting <strong>All Active Users</strong> creates records only for active employees.</li>
+<li data-list-item-id="ece5590146ff689397bc8931babb76c3d">
+<strong>Condition to Update Employees:</strong> Specify which users are allowed to be updated in Jira Assets. For example, selecting <strong>All Active Users</strong> updates only the details of active employees.</li>
+<li data-list-item-id="efde69a726da1e9769853fdeaa2b29e9a">
+<strong>Condition to Terminate an Employee:</strong> Specify which users can be removed or deactivated in Jira Assets. For example, selecting <strong>All Inactive Users</strong> handles users who are no longer active.</li>
+</ul>
+<h4>Logging Settings </h4>
+<p>Configure the following log settings:</p>
+<ul>
+<li data-list-item-id="ebd93ca3b1a3e281d265a4da0db53ae17">
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ea7f286c993f6537231b1296308546fba">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e51e42319c86be98ef82581849736bc35">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e2fd24cf6ed7c9b2460d6b2a572edf5c0">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="e79765bd9f1af0a08c5131d74d1a3616b">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log.</li>
+<li data-list-item-id="e014f5d49e19cd83f53afba02cf0d5876">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="eb0442524c192803a46adbff65b40c838"><p data-end="583" data-start="502"><strong data-end="527" data-start="502">Store Logs:</strong> Enable storing log data for later review and reporting.</p></li>
+</ul>
+<div><div><div tabindex="-1">
+<div><div data-message-author-role="assistant" data-message-id="1f8b52b1-ed48-4de3-8238-fcf1a97a2a12" data-message-model-slug="gpt-5-2" dir="auto"><div><div>
+<h4>Log Insights</h4>
+<p data-end="76" data-start="17">Configure the following settings to customize log insights:</p>
+<ul>
+<li data-list-item-id="eb1be30003533850561bc609b0d8f65e7"><p data-end="304" data-start="78"><strong data-end="97" data-start="78">Dashboard Name:</strong> Enter the name of the dashboard where log insights will be created or updated. For example, entering <strong data-end="235" data-start="199">AD to Jira Assets – Log Insights</strong> creates a dashboard with this name to display integration analytics.</p></li>
+<li data-list-item-id="e64be32696a938a370be7387381372a05">
+<p data-end="507" data-start="306"><strong data-end="338" data-start="306">Select the Log Detail Level:</strong> Select how much information should be captured in log insights. For example, selecting <strong data-end="442" data-start="426">Full Details</strong> records detailed information for each processed user and action.</p>
+<ul>
+<li data-end="691" data-list-item-id="e0e9b5e3a0e43b42f41a93efa17002db4" data-start="509"><p data-end="691" data-start="511"><strong data-end="528" data-start="511">Summary Only:</strong> Captures only high-level counts and does not include attribute-level details. For example, the dashboard shows the number of records created, updated, or deleted.</p></li>
+<li data-end="874" data-list-item-id="e0e81f85eb3b04cc57656fa1bb7d33938" data-start="693"><p data-end="874" data-start="695"><strong data-end="712" data-start="695">Full Details:</strong> Captures all available attribute-level details for each processed record. For example, user attributes such as name, email, department, and manager are included.</p></li>
+<li data-end="1343" data-list-item-id="e2b6d0e7cb59cabac30f2ed70cae70465" data-start="876">
+<p data-end="1025" data-start="878"><strong data-end="889" data-start="878">Custom:</strong> Allows you to include or exclude specific attributes in log insights. Selecting this option displays the <strong data-end="1015" data-start="995">Attribute Filter</strong> settings.</p>
+<ul>
+<li data-end="1190" data-list-item-id="ed5edc7b405b18f1342ae3e0ce72dc31e" data-start="1028"><p data-end="1190" data-start="1030"><strong data-end="1054" data-start="1030">Included Attributes:</strong> Select the attributes that should appear in the log insights. For example, include <strong data-end="1152" data-start="1138">employeeID</strong>, <strong data-end="1169" data-start="1154">displayName</strong>, and <strong data-end="1189" data-start="1175">department</strong>.</p></li>
+<li data-end="1343" data-list-item-id="e4007c9f83c3f8398d9e8af463b73ade7" data-start="1193"><p data-end="1343" data-start="1195"><strong data-end="1219" data-start="1195">Excluded Attributes:</strong> Select the attributes that should be excluded from the log insights. For example, exclude <strong data-end="1325" data-start="1310">phoneNumber</strong> or <strong data-end="1342" data-start="1329">managerDN</strong>.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e245cb7d65eaee3d80e747f717bad0107"><p data-end="1445" data-is-last-node="" data-is-only-node="" data-start="1345"><strong data-end="1368" data-start="1345">Store Log Insights:</strong> Enable saving log insight data for reporting and analysis.</p></li>
+</ul>
+</div></div></div></div>
+<div> </div>
+<div><h4>Report Settings</h4></div>
+</div></div></div>
+<p data-end="60" data-start="20">Configure the following report settings:</p>
+<ul>
+<li data-list-item-id="ecb8a99e06e95ba82ec6ea5c6be84e1c4"><p data-end="303" data-start="62"><strong data-end="94" data-start="62">Generate Integration Report:</strong> Select to generate a CSV report for each integration run. For example, when enabled, a CSV file is created with details of users processed and the actions performed in Jira Assets (create, update, or delete).</p></li>
+<li data-list-item-id="e6cc6a8e2140d533da265ddb5d4298cb7">
+<p data-end="490" data-start="305"><strong data-end="340" data-start="305">Select the Report Detail Level:</strong> Select how much information should be included in the report. For example, selecting <strong data-end="442" data-start="426">Full Details</strong> includes all mapped user attributes in the CSV.</p>
+<ul>
+<li data-end="668" data-list-item-id="e76ef2eddc913bacc32b81216183f80ed" data-start="492"><p data-end="668" data-start="494"><strong data-end="511" data-start="494">Summary Only:</strong> Includes only overall counts and does not include attribute-level details. For example, the report shows how many records were created, updated, or deleted.</p></li>
+<li data-end="851" data-list-item-id="e6cf387745bb9d6f2b6360550ea058140" data-start="670"><p data-end="851" data-start="672"><strong data-end="689" data-start="672">Full Details:</strong> Includes complete attribute-level details for each processed record. For example, the report includes fields such as name, email, department, title, and manager.</p></li>
+<li data-end="1334" data-is-last-node="" data-list-item-id="eba902f0dbd92866833efd5601b438aae" data-start="853">
+<p data-end="1031" data-start="855"><strong data-end="866" data-start="855">Custom:</strong> Includes or excludes specific attributes in the report. For example, you can generate a report that excludes sensitive fields such as <strong data-end="1011" data-start="1001">mobile</strong> or <strong data-end="1030" data-start="1015">homeAddress</strong>.</p>
+<ul>
+<li data-end="1189" data-list-item-id="e6a2bd85c44272ec44a86474d2403cd6b" data-start="1035"><p data-end="1189" data-start="1037"><strong data-end="1061" data-start="1037">Included Attributes:</strong> Select the attributes that must appear in the report. For example, include <strong data-end="1151" data-start="1137">employeeID</strong>, <strong data-end="1168" data-start="1153">displayName</strong>, and <strong data-end="1188" data-start="1174">department</strong>.</p></li>
+<li data-end="1334" data-is-last-node="" data-list-item-id="ed449cfc9b3fb61bf0144d52e144b9c42" data-start="1193"><p data-end="1334" data-is-last-node="" data-start="1195"><strong data-end="1219" data-start="1195">Excluded Attributes:</strong> Select the attributes that should not appear in the report. For example, exclude <strong data-end="1316" data-start="1301">phoneNumber</strong> or <strong data-end="1333" data-start="1320">managerDN</strong>.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>Notification Settings</h4>
+<ul>
+<li data-list-item-id="e2a54569930ab19cf3c987b85ee52422b"><p data-end="1334" data-is-last-node="" data-start="1195"><strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent</p></li>
+<li data-list-item-id="e59beb49455fc0ac081abca4084cdfca3"><p data-end="1334" data-is-last-node="" data-start="1195"><strong>Notification Domain</strong>: Specify the domain context for the notification emails.</p></li>
+<li data-list-item-id="e5eb909169bc9b5e9467c4cddab86214d"><p data-end="1334" data-is-last-node="" data-start="1195"><strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</p></li>
+<li data-list-item-id="eabe52e6f939051068f9d6576200c0afc"><p data-end="1334" data-is-last-node="" data-start="1195"><strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications</p></li>
+<li data-list-item-id="e3606b0011a8cb37015989d319498a2bb"><p data-end="1334" data-is-last-node="" data-start="1195"><strong>Send Integration Report via Email</strong>: Select to receive email notification with a report for all integration runs.</p></li>
+<li data-list-item-id="e9c6b0430d3cd55b86c091b0f41da044b"><p data-end="1334" data-is-last-node="" data-start="1195"><strong>Notify Aquera Support on Failure</strong>: Enable notifying Aquera Support when the integration fails.</p></li>
+</ul>
+<p data-end="1334" data-is-last-node="" data-start="1195"><strong>Email Report Settings</strong></p>
+<ul>
+<li data-list-item-id="ec6064c4a9208aa79c3b9d88d9537bf21">
+<h5>
+<strong data-end="1955" data-start="1926">Email Report Detail Level: </strong>Select the level of detail to include in email reports.<br/> <strong data-end="333" data-start="323">Custom</strong> lets you choose exactly which attributes appear in the report.</h5>
+<ul>
+<li data-list-item-id="e03d234a0fe70a2ce46fd6798db553918"><p data-end="391" data-start="211"><strong data-end="228" data-start="211">Summary Only:</strong> Includes only overall counts and does not include attribute-level details. For example, the email report shows how many records were created, updated, or deleted.</p></li>
+<li data-list-item-id="e7a6d2fbaabb40655e57cfd643f033fd0"><p data-end="578" data-start="393"><strong data-end="410" data-start="393">Full Details:</strong> Includes complete attribute-level details for each processed record. For example, the email report includes fields such as name, email, department, title, and manager.</p></li>
+<li data-list-item-id="eded58d2fca9485e63ecddf5d48a0471e">
+<p data-end="761" data-start="580"><strong data-end="591" data-start="580">Custom:</strong> Includes or excludes specific attributes in the email report. For example, you can generate an email report that excludes sensitive fields such as mobile or homeAddress.</p>
+<ul>
+<li data-list-item-id="ee5862113f381ab884b8dcf72697e4117"><p data-end="909" data-start="763"><strong data-end="787" data-start="763">Included Attributes:</strong> Select the attributes that must appear in the email report. For example, include employeeID, displayName, and department.</p></li>
+<li data-list-item-id="e3634efc63515a64c597900e18180e9c7"><p data-end="1048" data-is-last-node="" data-is-only-node="" data-start="911"><strong data-end="935" data-start="911">Excluded Attributes:</strong> Select the attributes that should not appear in the email report. For example, exclude phoneNumber or managerDN.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e87a0d2291a1201e76f224aed59c928af"><p data-end="1451" data-is-last-node="" data-is-only-node="" data-start="1069">.<strong data-end="1181" data-start="1136">Include Attribute Values in Email Report:</strong> Enable including actual attribute values in the email report. For example, when enabled, the report shows real user data instead of only summary counts.</p></li>
+</ul>
+<h2 data-end="16" data-start="0">Attribute Map</h2>
+<p data-end="266" data-is-last-node="" data-is-only-node="" data-start="18">The <strong data-end="39" data-start="22">Attribute Map</strong> lets you choose which <strong data-end="98" data-start="62">Active Directory user attributes</strong> should be mapped to <strong data-end="141" data-start="119">Jira Assets fields</strong>. The integration uses these mappings to populate the selected Jira Assets attributes when creating or updating user records.</p>
+<h2>Schedule</h2>
+<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="https://support.aquera.com/hc/en-us/articles/10209078646807" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1>Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/11086740764951" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1>Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="https://support.aquera.com/hc/en-us/articles/11086740764951" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+</div></div>
+  </div>
+</body>
+</html>

@@ -15,7 +15,15 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>How Aquera shares User’s OneDrive with their Manager</h1>
     <p><a href="../index.html">← Back</a></p>
-    _
+    <p>Aquera uses a combination of <strong>Microsoft Graph APIs</strong> and <strong>SharePoint Online PowerShell (PnP)</strong> to grant a manager access to a user’s OneDrive<strong> </strong>securely. The process is outlined below:</p><p><strong>Step 1: Retrieve the tenant’s root SharePoint site.</strong></p><p>Aquera first identifies the customer’s SharePoint tenant by calling the Microsoft Graph API.</p><pre><code>Microsoft Graph API:
+
+GET /sites/root</code></pre><p>This returns the root SharePoint site for the tenant, which Aquera uses to determine the correct SharePoint environment for subsequent operations.</p><p><strong>Step 2: </strong><strong>Connect to SharePoint Online.</strong></p><p>Aquera establishes a secure connection to SharePoint Online using approved credentials.</p><pre><code>PowerShell (PnP) Command:
+
+Connect-PnPOnline -Url &lt;TenantRootSiteUrl&gt; -Credentials &lt;ServiceCredentials&gt;</code></pre><p>This authenticated connection allows Aquera to perform SharePoint administrative actions in the customer’s tenant.</p><p><strong>Step 3: Retrieve the user’s OneDrive site URL.</strong></p><p>Aquera retrieves the OneDrive (MySite) URL associated with the user.</p><pre><code>Microsoft Graph API:
+
+GET /users/{userId}?$select=mySite</code></pre><p>This returns the SharePoint site URL that backs the user’s OneDrive, which is required to manage permissions.</p><p><strong>Step 4: Assign the manager as an owner of the OneDrive site.</strong></p><p>Aquera grants the user’s manager ownership permissions on the OneDrive site.</p><pre><code>PowerShell (PnP) Command:
+
+Set-PnPTenantSite -Url &lt;UserOneDriveSiteUrl&gt; -Owners &lt;ManagerUPN&gt;</code></pre><p>This action adds the manager as an owner of the user’s OneDrive.</p><p> </p><p> </p><p> </p>
   </div>
 </body>
 </html>

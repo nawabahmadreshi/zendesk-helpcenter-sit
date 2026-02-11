@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Aaniie to UKG Ready Employee Shift Synchronization</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Aaniie to UKG Ready Employee Shift Synchronization</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JXVYAE13N6P32H163JQ4FBZJ">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating the synchronization of data across resource types.</p>
+<p>This integration automates the synchronization of employee shift schedules between the Aaniie system and UKG Ready. It ensures that scheduled shifts from Aaniie are accurately reflected in UKG Ready for workforce management, reporting, and compliance purposes. The integration is configurable with built-in reporting and notification capabilities.</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Fetches scheduled shift data from Aaniie within a specified date range.</li>
+<li>Retrieves the relevant schedule, existing shifts, and employee records from UKG Ready.</li>
+<li>Maps each Aaniie shift to a UKG employee using unique identifiers.</li>
+<li>Converts shift times to UKG Ready’s required ISO 8601 format with timezone offset.</li>
+<li>Filters out duplicate shifts already present in UKG Ready.</li>
+<li>Validates shifts to ensure they do not extend beyond the allowed schedule period, and notifies if any are invalid.</li>
+<li>Enriches each shift with the employee’s default cost center and skill information from UKG Ready.</li>
+<li>Prepares and bulk-creates new, validated shifts in UKG Ready.</li>
+<li>Generates a CSV report summarizing the synchronization process.</li>
+<li>Sends notification emails with the report and details to the configured recipients.</li>
+</ul>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Aaniie </strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32201207415447-Aaniie-Configuration-Guide" rel="noopener noreferrer" target="_blank">Aaniie Configuration Guide</a> for instructions on creating the Aaniie application connector and setting up the authentication.</li>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953-UKG-Ready-Configuration-Guide" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for instructions on creating the UKG ready application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<h2 id="integration-setup">Integration Setup</h2>
+<p>This section outlines the configuration and execution process for integrating scheduled shifts from Aaniie with UKG Ready. It describes how to create the integration, define operational parameters, and establish reporting and notification workflows.</p>
+<p>This integration reads scheduled shift data from the Aaniie application and creates corresponding shift records in the UKG Ready application, ensuring workforce schedules are synchronized.</p>
+<h2 id="create-integration">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click <strong>Create Integration</strong>.</li>
+<li>Select <strong>Aaniie to UKG Ready Employee Shift Synchronization</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <em>Aaniie</em> and <em>UKG Ready</em> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Set Up Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p>
+<ul>
+<li>
+<strong>Lookback Period (Days):  </strong>Defines how many days in the past the integration will fetch shifts from Aaniie. For example, entering 30 will include all shifts starting from 30 days ago up to today.</li>
+<li>
+<strong>Forward Lookup Period (Days):  </strong>Specifies how many days into the future the integration will fetch shifts from Aaniie. For example, entering 15 will include all shifts from today up to 15 days in the future.</li>
+<li>
+<strong>Schedule Name: </strong>Identifies the specific schedule in UKG Ready where the shifts will be created.</li>
+<li>
+<strong>Company ID:  </strong>Enter the Company ID for your UKG Ready environment.</li>
+<li>
+<strong>Report Only: </strong>Select to run the integration in report-only mode without creating shifts.</li>
+<li>
+<strong>Send Integration Report via Email:  </strong>If enabled, the integration will email a summary report and details of the run to the specified recipients.</li>
+<li>
+<strong>Enable Integration Report Download</strong>: When enabled, the integration will produce a downloadable CSV file summarizing the results of each run.</li>
+<li>
+<strong>Recipients' Email Addresses</strong>: The email address where reports and notifications about the integration run will be sent.</li>
+</ul>
+<h2 id="attribute-mapping">Attribute Mapping</h2>
+<p>The Aaniie Shifts to UKG Ready integration maps the most commonly used Aaniie shift attributes to the corresponding UKG Ready shift fields. Additionally, mapping for cost center and skill is performed using UKG Ready data.</p>
+<table border="1">
+<thead>
+<tr>
+<th><strong>Aaniie Field</strong></th>
+<th><strong>UKG Ready Field</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Caregiver ID</td>
+<td>Employee External ID</td>
+</tr>
+<tr>
+<td>Begin Date</td>
+<td>Shift Start Date</td>
+</tr>
+<tr>
+<td>Begin Time</td>
+<td>Shift Start Time</td>
+</tr>
+<tr>
+<td>End Date</td>
+<td>Shift End Date</td>
+</tr>
+<tr>
+<td>End Time</td>
+<td>Shift End Time</td>
+</tr>
+<tr>
+<td>(N/A)</td>
+<td>Schedule Name</td>
+</tr>
+<tr>
+<td>(N/A)</td>
+<td>Company ID</td>
+</tr>
+<tr>
+<td>(N/A)</td>
+<td>Cost Centers</td>
+</tr>
+<tr>
+<td>(N/A)</td>
+<td>Skill</td>
+</tr>
+</tbody>
+</table>
+<h1 id="01JQQX8ZJ9C62RPE14W4DTF9PE">Run the Integration</h1>
+<p>The integration can be scheduled to run automatically at customizable intervals. Available frequencies include <strong>15 minutes, 30 minutes, 1 hour, 4 hours, 6 hours, 12 hours, or 24 hours</strong>. You can also enable <strong>recurring executions</strong> to run the integration continuously on your chosen schedule.</p>
+<p>On successful execution, the CSV file will be sent to the specified recipients. In case of integration errors, notifications and reports will also be sent to the email addresses.</p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+  </div>
+</body>
+</html>

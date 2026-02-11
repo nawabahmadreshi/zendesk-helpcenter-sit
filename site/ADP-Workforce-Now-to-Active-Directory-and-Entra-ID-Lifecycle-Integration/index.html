@@ -1,0 +1,494 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now to Active Directory and Entra ID Lifecycle Integration</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now to Active Directory and Entra ID Lifecycle Integration</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KBCRMH54BDHRJ4A159NJ9HQS">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>The integration reads worker and candidate records from <strong data-end="151" data-start="130">ADP Workforce Now. It uses</strong> that data to keep user accounts in <strong data-end="221" data-start="196">Active Directory (AD)</strong> and group memberships in <strong data-end="270" data-start="247">Entra ID (Azure AD)</strong> up to date. It retrieves the selected people from ADP (workers, candidates, or both), then applies configured rules, such as active employees or active full-time employees, to decide which records to process. For each person who meets these rules, the integration looks up an existing Active Directory account using identifiers such as an Employee ID or an email address. </p><p>If no account is found, it creates a new AD user. It adds key fields, including name, login name (sAMAccountName), UPN, email address, department, job title, manager, office location, OU location, and any additional required attributes. If an AD account already exists, the integration compares ADP data with AD data. It updates the AD account when changes are detected, for example, a new title, a different manager, or a move to another department.</p><p>When a worker leaves the company or no longer meets the configured rules, the integration disables the AD account or moves it to a “disabled” or other designated OU so that access matches the worker’s employment status.</p><p data-end="2213" data-is-last-node="" data-is-only-node="" data-start="1328"><strong data-end="1373" data-start="1350">Entra ID (Azure AD)</strong> receives users from AD through directory synchronization. The integration does not create users directly in Entra ID; instead, it manages <strong data-end="1533" data-start="1512">group memberships</strong> for users who already exist there. When <strong>Entra ID Group Management</strong> is enabled, the integration uses the AD identity and the configuration rules to add or remove the corresponding Entra ID user from the correct Azure AD and Microsoft 365 groups. If <strong data-end="1918" data-start="1877">Group Assignment for Active Directory</strong> is enabled, similar group updates are applied to on-premises AD groups. The optional <strong data-end="2031" data-start="2004">Email Write Back to ADP</strong> feature allows the email address created or updated in AD to be written back into ADP Workforce Now. </p><h2 id="h_01K41YQJT00GQAKZB0Y2Q00QVW">Key Functions</h2><p data-end="110" data-start="21">The ADP Workforce Now to Active Directory integration provides the following functions:</p><div><div tabindex="-1"><div><div data-message-author-role="assistant" data-message-id="5da0ecc2-0cdd-4c85-a0c2-b79c2415298c" data-message-model-slug="gpt-5-1" dir="auto"><div><div>
+<ul>
+<li data-list-item-id="ed046f49c39438a304d6fca46c0a0fe63"><p data-end="672" data-start="132"><strong data-end="185" data-start="132">Create user accounts in Active Directory using ADP data: </strong>When a new worker or candidate is added to <strong data-end="254" data-start="233">ADP Workforce Now</strong> and meets the configured criteria (for example, active or active full-time), the integration automatically creates a corresponding user account in <strong data-end="427" data-start="402">Active Directory (AD)</strong>. The new AD account is populated with key details such as name, login name (<strong data-end="522" data-start="504">sAMAccountName</strong>), UPN, email address, department, job title, manager, office location, OU location, and any other mapped attributes (including extension attributes).</p></li>
+<li data-list-item-id="e2ee36192dd0989369102a8fc41864315"><p data-end="1094" data-start="676"><strong data-end="722" data-start="676">Keep existing AD accounts in sync with ADP: </strong>If a worker already has an AD account, the integration compares the worker’s ADP data with AD values on each run. When a difference is found, for example, a change in title, department, manager, or name, the integration updates the existing AD account so that directory information stays aligned with the latest data in ADP Workforce Now.</p></li>
+<li data-list-item-id="e69a98b855adf6f82c1eeeaaf641be301"><p data-end="1529" data-start="1098"><strong data-end="1140" data-start="1098">Handle terminations and removals in AD: </strong>When a worker is terminated in <strong data-end="1197" data-start="1176">ADP Workforce Now</strong> or no longer meets the configured criteria, the integration treats that person as no longer eligible for active access. Based on the configuration, it either disables the corresponding AD account or moves it to a designated OU (such as a disabled-users OU), ensuring that AD access reflects the worker’s current employment status.</p></li>
+<li data-list-item-id="e2f267a5379b78274813824f270dedb07"><p data-end="1962" data-start="1533"><strong data-end="1594" data-start="1533">Use AD as the source for Entra ID and manage groups: </strong>User accounts are created and updated in <strong data-end="1660" data-start="1640">Active Directory </strong>and then synchronized with <strong data-end="1722" data-start="1699">Entra ID (Azure AD)</strong> using directory sync (for example, Azure AD Connect). The integration does <strong data-end="1805" data-start="1798">not</strong> create users directly in Entra ID. Instead, it relies on the AD identity and focuses on managing the user’s Entra ID group memberships after the account becomes available in Azure AD.</p></li>
+<li data-list-item-id="e8c39cd62c4f9446010c1ef1d8a0fbf27"><p data-end="2488" data-start="1966"><strong data-end="2014" data-start="1966">Manage Entra ID (Azure AD) group memberships: </strong>When <strong data-end="2053" data-start="2024">Entra ID Group Management</strong> is enabled, the integration manages <strong data-end="2135" data-start="2090">Azure AD and Microsoft 365 group</strong> memberships for users who have been synchronized from AD into Entra ID. Using the worker’s ADP profile and configured rules, the integration can add or remove these users from Entra ID and Microsoft 365 groups after their AD accounts are created or updated.</p></li>
+<li data-list-item-id="ee35a7b205bef8e14bcfbe720c299eeba"><p data-end="2905" data-start="2492"><strong data-end="2535" data-start="2492">Manage on-premises AD group memberships: </strong>When <strong data-end="2586" data-start="2545">Group Assignment for Active Directory</strong> is enabled, similar group rules are applied directly to on-prem AD groups. Based on ADP data and the configured mappings, the integration adds or removes users from the correct AD security and distribution groups so that group-based access in AD matches the organizational structure and role information stored in ADP.</p></li>
+<li data-list-item-id="e09590d9e1befd249737973b5ad769179"><p data-end="3359" data-is-last-node="" data-start="2909"><strong data-end="2965" data-start="2909">Write email addresses from AD back to ADP: </strong>When email writeback to ADP is enabled, the integration can write email addresses generated or updated in Active Directory back to ADP. For example, when a new account is created or a name change results in a new email, update the corresponding record in ADP Workforce Now. This keeps HR records and directory records aligned, with the same current email address stored in both systems.</p></li>
+</ul>
+<h1 id="h_01K2F6ANZ30WMRWZ3HS0H8MAZN">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li data-list-item-id="e043efba7071be896bae37999d4262180">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access. <br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e96dae823bdf07e1f86a4203233336cd7">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ea54575e30317266e2581ac399419f24f"><p data-end="909" data-start="650"><strong data-end="672" data-start="650">ADP Workforce Now:</strong> Add and configure the ADP Workforce Now connector in the Aquera Admin portal with the appropriate API credentials. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933-ADP-Workforce-Now-Configuration-Guide" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details on creating the connector and setting up authentication.</p></li>
+<li data-list-item-id="ef65887b8ee48ca94affe61a222c3d958"><p data-end="1191" data-is-last-node="" data-start="912"><strong data-end="940" data-start="912">Active Directory (LDAP):</strong> Add and configure the Microsoft Active Directory connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934-Active-Directory-AD-Configuration-Guide" rel="noopener noreferrer" target="_blank">Active Directory Configuration Guide</a> for instructions on creating the connector, setting up authentication, setting up a secure LDAP connection, and providing the required service account credentials.</p></li>
+<li data-end="1716" data-list-item-id="ebcf23ff689c2340d812c3e665df65b7e" data-start="1339"><p data-end="1716" data-start="1341"><strong data-end="1367" data-start="1341">Microsoft 365 Entra ID</strong><br/>Add and configure the Microsoft 365 EntraID connector. This connector is used for managing Entra ID (Azure AD) security groups and Microsoft 365 groups for users synchronized from Active Directory. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711-Microsoft-365-Configuration-Guide" rel="noopener noreferrer" target="_blank">Microsoft 365 Entra ID Configuration Guide</a> for details on app registration, Graph API permissions, and completing tenant consent.</p></li>
+</ul>
+</li>
+</ul>
+<h2 data-end="183" data-start="163" id="h_01KBCXK4Z475G0CJHAFBXQK3BP">Integration Setup</h2>
+<p data-end="343" data-start="185">This section outlines the configuration required to establish integration between ADP Workforce Now and Active Directory, as well as Entra ID, in the Aquera Admin Portal.</p>
+<h3 data-end="367" data-start="345" id="h_01KBCXK4Z4NTG9WD2NW4SJPQ6G">Create Integration</h3>
+<p data-end="423" data-start="369">Perform the following steps to create the integration:</p>
+<ol data-end="992" data-is-last-node="" data-is-only-node="" data-start="425">
+<li data-end="468" data-list-item-id="ee6dc79dd77144a8e22668cd9ad17a98c" data-start="425"><p data-end="468" data-start="428">Log in to the <strong data-end="465" data-start="442">Aquera Admin Portal</strong>.</p></li>
+<li data-end="528" data-list-item-id="e990826c4330b5a7c07b06c828f2d55da" data-start="469"><p data-end="528" data-start="472">In the left navigation panel, select <strong data-end="525" data-start="509">Integrations</strong>.</p></li>
+<li data-end="563" data-list-item-id="eef005e3f6e2045d39a36c507d8fc4492" data-start="529"><p data-end="563" data-start="532">Click <strong data-end="560" data-start="538">Create Integration</strong>.</p></li>
+<li data-end="659" data-list-item-id="e6c472447b934ee26469eef819073ccb2" data-start="564"><p data-end="659" data-start="567">Select <strong data-end="628" data-start="574">ADP Workforce Now to Active Directory and Entra ID</strong> as the integration template.</p></li>
+<li data-end="722" data-list-item-id="e4e392e2fc8fdf31aaceb4e7694d41a06" data-start="660"><p data-end="722" data-start="663">Enter a <strong data-end="679" data-start="671">name</strong> and <strong data-end="699" data-start="684">description</strong> for the integration.</p></li>
+<li data-end="894" data-list-item-id="eed9212e4d19b8b227679bcc19c6e83db" data-start="723">
+<p data-end="796" data-start="726">Select the connector instances that the integration will use:</p>
+<ul data-end="894" data-start="800">
+<li data-end="825" data-list-item-id="e29f5ff92caafd49093b7fa7b6d5116cb" data-start="800"><p data-end="825" data-start="802"><strong data-end="823" data-start="802">ADP Workforce Now (v28)</strong></p></li>
+<li data-end="860" data-list-item-id="e36ed1086ce076b931de63edb4e13de5a" data-start="829"><p data-end="860" data-start="831"><strong data-end="858" data-start="831">Active Directory (LDAP)</strong></p></li>
+<li data-end="894" data-list-item-id="e131476d3794a5c6c5a7093feec4dd00b" data-start="864"><p data-end="894" data-start="866"><strong data-end="892" data-start="866">Microsoft 365 Entra ID</strong></p></li>
+</ul>
+</li>
+<li data-end="992" data-is-last-node="" data-list-item-id="e207ee625cce42a946b47d7018d4ccb56" data-start="895"><p data-end="992" data-is-last-node="" data-start="898">Click <strong data-end="916" data-start="904">Continue</strong>. The <strong data-end="939" data-start="922">Configuration</strong> page is displayed to complete the integration setup.</p></li>
+</ol>
+<div><div tabindex="-1">
+<div><div data-message-author-role="assistant" data-message-id="6a28ece0-77af-427b-b946-1cb04506b0cd" data-message-model-slug="gpt-5-1-thinking" dir="auto"><div><div>
+<h2 data-end="89" data-start="73" id="h_01KBCXNWMQRCYPAQBDMPCTKD43">Configuration</h2>
+<p data-end="236" data-start="91">The <strong data-end="112" data-start="95">Configuration</strong> tab is used to review and customize the behavior of the <strong data-end="235" data-start="169">ADP Workforce Now to Active Directory and Entra ID Integration</strong>.</p>
+<p data-end="303" data-start="238">The following sections are available under the Configuration tab:</p>
+<h3 data-end="321" data-start="305" id="h_01KBCXNWMSXPFP8RF35CM4HCQG">Applications</h3>
+<p data-end="556" data-start="323">The <strong data-end="343" data-start="327">Applications</strong> section lists the application connectors used by the integration. It displays the configured source and target systems and lets you search for, review, and update the selected connector instances.</p>
+<h3 data-end="572" data-start="558" id="h_01KBCXNWMTJ1R0NVCHE5B7XW61">Parameters</h3>
+<p data-end="823" data-start="574">The <strong data-end="592" data-start="578">Parameters</strong> section is used to tailor the integration to a specific use case. It contains configurable options that control how data is read from ADP Workforce Now and how user accounts and groups are managed in Active Directory and Entra ID.</p>
+<h4 data-end="851" data-start="825" id="h_01KBCXNWMVYC5G2CZ1T6QN1TXB">Integration Scenarios</h4>
+<p data-end="1000" data-is-last-node="" data-is-only-node="" data-start="853">Use the <strong data-end="886" data-start="861">Integration Scenarios</strong> area to configure the main functional behavior of the integration. Configure the following integration scenarios:</p>
+</div></div></div></div>
+<ul>
+<li data-list-item-id="e333c7fc085bd6d4744135afc2b01cd1a"><p data-end="529" data-start="137"><strong data-end="174" data-start="137">Enable User LifeCycle Management: </strong>Enables automated creation, update, and deactivation of user accounts in Active Directory based on worker and candidate data from ADP Workforce Now. For example, when a new active worker is added in ADP, a corresponding AD account is created. When a worker is terminated, the related AD account is disabled or moved to a designated OU.</p></li>
+<li data-list-item-id="e15f3033bf9a8a4cefda3d92bc990431a"><p data-end="854" data-start="536"><strong data-end="557" data-start="536">Select User Type: </strong>Defines which ADP records are processed by the integration, such as workers, candidates, or both. For example, when both Workers and Candidates are selected, the integration can provision AD accounts for employees and also prepare accounts for candidates during the hiring process.</p></li>
+<li data-list-item-id="e366b79daeb28e023930d7cf5ce9eab9a"><p data-end="1225" data-start="861"><strong data-end="897" data-start="861">Enable EntraID Group Management: </strong>Enables management of Entra ID (Azure AD) group memberships for users synchronized from Active Directory, based on ADP-driven rules. For example, if a worker’s department changes in ADP, the integration can remove the user from the old department group in Entra ID and add them to the new department group.</p></li>
+<li data-list-item-id="ef436070399d85c5a0fba6c81ab7cc20b"><p data-end="1645" data-start="1232"><strong data-end="1281" data-start="1232">Enable Group Assignment for Active Directory:</strong> Enables automated assignment and removal of on-premises Active Directory group memberships using rules that reference ADP attributes such as department, location, or job role. For example, when a worker moves into the Sales department, the integration can add the user to the “Sales” AD group and remove the user from the previous department group.</p></li>
+<li data-list-item-id="efc5513f554e24dc3d476df793b5bdb79"><p data-end="2033" data-is-last-node="" data-is-only-node="" data-start="1652"><strong data-end="1686" data-start="1652">Enable Email Writeback to ADP: </strong>Ensures that the email address stored in ADP Workforce Now remains consistent with the one in Active Directory by sending email changes from AD to ADP. For example, when a worker’s email address is updated in AD due to a legal name change, the integration updates the corresponding email field in ADP for that worker.</p></li>
+</ul>
+<div>
+<h4 id="h_01K421SEM89261VNA9S1Q7KWBV">General Settings</h4>
+<p>Configure the following general settings:</p>
+</div>
+</div></div>
+<ul>
+<li data-list-item-id="e8ee5ff9619d4daa2832bc5224d94d2a1"><div aria-hidden="true" data-edge="true">
+<strong>Enable Debug Mode</strong>: Select to generate logs outlining data changes that would occur for debugging</div></li>
+<li data-list-item-id="e1162b5f0973d2c7457633de568d71091">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics</li>
+<li data-list-item-id="e7c18902f3db82cdef330a137879fc0ee">
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li data-list-item-id="ed4f894e98c38425ef1c542641c31721e">
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li data-list-item-id="ed0b21f7072a7dd8d1dd71c4eb807b3da">
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them. </li>
+<li data-list-item-id="e1ea7d5489e4d4c64ef146b0abb7dbf59">
+<strong>Enable Notifications: </strong>Select to enable the integration-related notifications.</li>
+</ul>
+<h4 id="h_01KBCZB76XV5N2RY0CEQVD139J">Execution Settings</h4>
+<div><div tabindex="-1"><div><p>Configure the following execution-related settings:</p></div></div></div>
+<div><div tabindex="-1">
+<div><div data-message-author-role="assistant" data-message-id="3521820a-6682-4531-98d0-493c30f6ecf9" data-message-model-slug="gpt-5-1-thinking" dir="auto"><div><div><ul>
+<li data-list-item-id="eb6d3cbd281fbbf3ca1cccbceb6c37dd9"><p data-end="1600" data-start="1002"><strong data-end="1034" data-start="1002">AD User Attributes to Fetch: </strong>Controls which Active Directory attributes are retrieved for each user during sync and provisioning. The list typically includes distinguishedName, objectGUID, objectSid, login attributes (sAMAccountName, userPrincipalName, mail, proxyAddresses), organizational data (company, department, title, manager), and state information (userAccountControl, lastLogonTimestamp), along with any custom attributes. For example, the default list includes extensionAttribute1, allowing the integration to read and write tenant-specific values.</p></li>
+<li data-list-item-id="e3c891bc39b88af0fc4aa857c40875ef3"><p data-end="2104" data-start="1607"><strong data-end="1640" data-start="1607">Delete AD User (Hard Delete): </strong>Determines whether user accounts are permanently removed from Active Directory when deprovisioned, rather than disabled or moved. A hard delete removes the user and its group memberships. For example, when this option is enabled, the integration deletes the corresponding Active Directory user object instead of merely disabling the account.</p></li>
+<li data-list-item-id="e1ab9596423fc51691cf2edfab8c45e95"><p data-end="2603" data-is-last-node="" data-is-only-node="" data-start="2111"><strong data-end="2150" data-start="2111">Condition to Deprovision Candidate: </strong>Defines the logical condition that must be satisfied before a candidate’s AD account is deprovisioned. The condition is evaluated against ADP candidate fields and is typically used to delete accounts only for candidates who are rejected, withdrawn, or inactive for a specified period. For example, a condition can be configured so that <strong data-end="2571" data-start="2502">only candidates with a status of “Rejected” for more than 30 days</strong> have their AD accounts removed.</p></li>
+</ul></div></div></div></div>
+<h3 id="h_01KBES1SN0BST02WTHB0X59H4A">Manage Workers</h3>
+<h4 id="h_01KBD03PNFQS9P6T0XRE8AGSR3">Correlations and Filters</h4>
+<ul>
+<li data-list-item-id="eaa39843b0bc8688e905390fb7ae20fec">
+<strong>Workforce Now Worker Filter</strong>: Determines which ADP worker records are included in the integration, based on employment status. Only workers matching the selected filter are considered for create, update, or delete actions. For example, selecting <strong data-end="1810" data-start="1792">Active Workers</strong> ensures only currently employed workers are processed.</li>
+<li data-list-item-id="e46201baafbafa2cc09511c553e08d4e5">
+<strong>ADP Correlation Attribute</strong>: Specifies the ADP attribute used for identifying the correct worker when matching to an AD account. Common values include Employee Number, Associate ID, or Worker ID.<br/>For example, choosing <strong data-end="2167" data-start="2121">Employee Number / Associate ID / Worker ID</strong> uses the unique numeric identifier from ADP to match the Active Directory.</li>
+<li data-list-item-id="e340e7225581b4ff4dfd2721ef4e769e8">
+<strong>Active Directory Correlation Attribute</strong>: Selects the AD field used to find an existing user account that corresponds to the ADP worker. Typical attributes include Employee Number, sAMAccountName, UPN, or Email. For example, choosing <strong data-end="2532" data-start="2513">Employee Number</strong> matches workers to AD accounts using the employeeNumber attribute.</li>
+</ul>
+<h4 id="h_01KBERW57JPNDEGV7F732G6BEQ">Update Worker</h4>
+<ul>
+<li data-list-item-id="efed85e631c4ec87eb49ba274a991ae4c">
+<strong data-end="2637" data-start="2610">Worker Upsert Condition: </strong>Defines when the integration should create or update a worker’s AD account. This setting controls whether all workers, only active workers, or only active full-time workers should be processed. For example, selecting <strong data-end="2887" data-start="2872">All Workers</strong> allows both active and inactive workers to be created or updated.</li>
+<li data-list-item-id="edf25ca168d379b5b7875c2d1e1679f9e">
+<strong data-end="3009" data-start="2964">Enable Worker Updates in Active Directory: </strong>When enabled, the integration updates AD user records whenever a worker’s profile changes in ADP, such as title, department, or manager.<br/>For example, when a worker’s department changes in ADP, their AD <strong data-end="3243" data-start="3229">department</strong> attribute is updated automatically.</li>
+<li data-list-item-id="e85735fb5f9543bd448c16269a28f703e">
+<strong data-end="3336" data-start="3290">Enable Worker Deletion in Active Directory: </strong>Allows the integration to delete AD user accounts when workers meet a configured termination or removal condition in ADP. For example, when a worker’s ADP record meets a <strong data-end="3539" data-start="3524">termination</strong> rule, the integration deletes the corresponding AD account.</li>
+<li data-list-item-id="e1829c1650b31e58fa3cbb12a186d2e25">
+<strong data-end="3636" data-start="3610">Map Manager for Worker: </strong>Synchronizes the manager listed in ADP to the manager attribute in Active Directory, maintaining accurate reporting relationships. For example, when a worker receives a new manager in ADP, the integration updates the <strong data-end="3885" data-start="3871">manager's DN</strong> in AD.</li>
+</ul>
+<h3 id="h_01KBES2DKDXJ2J4NV76YE4TVHE">Manage Candidates</h3>
+<ul>
+<li data-list-item-id="eca7747a45e159445d843fe3f966c775f"><p data-end="261" data-start="0"><strong>Candidate Application Lookback (Days)</strong>: Defines how many days back the integration looks at the application submission date when selecting candidates from ADP. For example, <strong data-end="178" data-start="172">30</strong> processes only candidates whose applications were submitted in the last 30 days.</p></li>
+<li data-list-item-id="e5df5d441bff64f0b3330d1ffc7c04cee"><p data-end="523" data-start="263"><strong>Candidate Application Status Filter</strong>: Controls which application statuses qualify a candidate for inclusion in the sync. For example, selecting <strong data-end="431" data-start="407">Pre-Hire not started</strong> and <strong data-end="464" data-start="436">Background check cleared</strong> includes only candidates who are in those hiring stages.</p></li>
+<li data-list-item-id="e16d9c3eb2fa1abe1037ab7439c131016"><p data-end="814" data-start="525"><strong>Candidate Removal Status Filter</strong>: Identifies application statuses indicating a candidate should no longer retain an AD account. For example, selecting <strong data-end="688" data-start="676">Rejected</strong> and <strong data-end="717" data-start="693">Marked for Rejection</strong> removes or disables AD accounts for candidates who did not move forward in the hiring process.</p></li>
+<li data-list-item-id="eec6705909ad379f6467409b9b25a886e"><p data-end="1094" data-start="816"><strong>Map Candidate Manager</strong>: Copies the hiring manager from ADP into the candidate’s AD record to maintain reporting relationships. For example, when a candidate is assigned to a manager in ADP, the integration writes that manager's name to the <strong data-end="1061" data-start="1050">manager</strong> attribute in Active Directory.</p></li>
+<li data-list-item-id="e34e808db71981586cdc5bfa75d375661"><p data-end="1336" data-start="1096"><strong>ADP Correlation Attribute (Candidate)</strong>: Specifies which ADP field uniquely matches a candidate to an AD account. For example, using <strong data-end="1250" data-start="1236">Person OID</strong> ensures that each candidate is matched using a stable, system-generated identifier.</p></li>
+<li data-list-item-id="eae39bb573124b9f8ffaa8cee9cbfd6d9"><p data-end="1606" data-start="1338"><strong>Active Directory Correlation Attribute (Candidate)</strong>: Specifies which AD field is used to find the matching AD account for a candidate. For example, selecting <strong data-end="1510" data-start="1495">Employee ID</strong> matches candidates to AD users whose <strong data-end="1562" data-start="1548">employeeId</strong> attribute equals the value stored in ADP.</p></li>
+<li data-list-item-id="ef5aff4d047b85ed5f8715eca1385db55"><p data-end="1852" data-start="1608"><strong>Rejected Candidate Action</strong>: Defines what happens to the candidate’s AD account when ADP marks the candidate as rejected. For example, choosing <strong data-end="1769" data-start="1750">Disable Account</strong> keeps the account for audit purposes but prevents the candidate from signing in.</p></li>
+<li data-list-item-id="ed7d57b80a3e8537bf57a4db867fa69bb"><p data-end="2203" data-is-last-node="" data-is-only-node="" data-start="1854"><strong>Inherit Manager Division and Department</strong>: Automatically uses the hiring manager’s division and department when those values are not present on the candidate in ADP. For example, if the candidate’s record has no department, the integration assigns the department from the manager’s profile so the AD account still has a valid organizational placement.</p></li>
+<li data-list-item-id="e5f28a17cf86601aefd9f7c049e6cab77"><p data-end="2203" data-is-last-node="" data-is-only-node="" data-start="1854"><strong>Ignore Manually Created Candidates: </strong>Skip the candidates that were created manually and not by the integration. For example, if a candidate was added directly in <strong data-end="257" data-is-only-node="" data-start="250">ADP</strong> instead of through this integration, the candidate will be skipped.</p></li>
+</ul>
+<h4 id="h_01KC102VB2RE2246G5FZ1QSJSM">Active Directory Group Assignment</h4>
+<ul>
+<li data-list-item-id="ecb7dfa08f772a6b78b1f51f8fe13d19b">
+<strong>Sync Group Membership on Update</strong>: Controls whether the integration should remove users from AD groups that no longer match their current ADP attributes and add them to any newly applicable groups. This setting ensures that group membership always reflects the user’s current role, department, or location. For example, if an employee transfers from Finance to Human Resources, enabling this option removes the user from Finance-Security and assigns the user to HR-Security, keeping their access aligned with their new role.</li>
+<li data-list-item-id="ee23c02c331eeaaf84d7fcadbce211547">
+<strong>Remove Group Membership on Deactivation or Deletion</strong>: Specifies whether all AD group memberships should be removed when a user account is deactivated or deleted. This ensures that users who leave the organization, or are no longer active, cannot retain access to systems protected by group-based permissions. For example, when a worker is terminated and their AD account is disabled, enabling this option ensures the user is removed from all groups.</li>
+</ul>
+</div></div>
+<h4 id="h_01KC143Y4H5PD3NDP77H96PPWE">EntraID Group Management</h4>
+<ul>
+<li data-list-item-id="e9db1de5de42aa232d9f656e1bc01691e">
+<strong>Correlation Attribute from Entra ID</strong>: Defines which Entra ID user field is used to match users with Active Directory. For example, selecting User Principal Name (UPN) matches users based on their UPN, such as jane.doe@company.com.</li>
+<li data-list-item-id="e08c20f84f638c37c5c222344f469fa66">
+<strong>Correlation Attribute from Active Directory</strong>: Specifies which AD attribute is used to identify the corresponding AD account when syncing Entra ID group membership. For example, choosing SAMAccountName allows matching a user like jd123 between AD and Entra ID.</li>
+<li data-list-item-id="e37198095755a563943220e949e475617">
+<strong>Remove Users from Entra ID Groups on Update</strong>: Determines whether the integration should remove users from Entra ID groups that no longer match their updated information. For example, if a user moves from <strong data-end="212" data-start="203">Sales</strong> to <strong data-end="227" data-start="216">Finance</strong>, this option removes them from all Sales groups and keeps only the appropriate Finance groups.</li>
+<li data-list-item-id="e4fc2a8eb27ceb46adc5b3c179bd3aaf5">
+<strong>Add Disabled AD Users to Entra ID Groups</strong>: Determines whether disabled AD accounts should still be added to the appropriate Entra ID groups. For example, if a contractor’s AD account is disabled but still needs to remain in a compliance group, enabling this option ensures the membership is still applied.</li>
+</ul>
+<h4 id="h_01KC1ESTVV12GGSYFYF1TVQD0M">Update User</h4>
+<ul><li data-list-item-id="ecb88b089659aeca43ae609d5f881c718">
+<strong>Update AD User Attributes</strong>: Keeps existing AD user accounts in sync with ADP by updating mapped fields such as name, job title, department, manager, and email whenever they change.<br/>For example, if ADP shows that a worker’s title changes from Sales Associate to Sales Manager, this option updates the same user’s title in AD.<ul>
+<li data-list-item-id="e3786ff9bc92cb010918218fef32fa4fb">
+<strong>Update Common Name (CN) and Distinguished Name (DN</strong>): Renames the AD object so that both the Common Name (CN) and the full Distinguished Name (DN) reflect the person’s updated name. The DN represents the object’s complete path in Active Directory, including its CN, organizational units (OU), and domain. For example, if Barbara Jane changes her last name to Barbara Miller, the integration updates the AD Distinguished Name (DN) from CN=Barbara Jane,OU=Employees,OU=Users,DC=company,DC=com to CN=Barbara Miller,OU=Employees,OU=Users,DC=company,DC=com.</li>
+<li data-list-item-id="ef4ae3b367d8c91b9cb0f47134efc57e3">
+<strong>Update User Principal Name (UPN)</strong>: <span>Updates the user’s sign-in name when the naming rule or the person’s name changes. For example, if the UPN format is </span><a href="mailto:first.last@company.com"><span>first.last@company.com</span></a><span> and a worker’s last name changes from Jane to Miller, this option changes the UPN from barbara</span><a href="mailto:john.smith@company.com"><span>.jane@company.com</span></a><span> to barbara</span><a href="mailto:john.miller@company.com"><span>.miller@company.com</span></a><span>.</span>
+</li>
+<li data-list-item-id="eb272525c6ac06f2b06482b9b3027859f">
+<strong>Update Primary Email Address (mail)</strong>: <span>Updates the primary SMTP address in AD to match the current email address defined by the integration. For example, if a user moves to a new regional domain and their email changes from barbara</span><a href="mailto:john.smith@us.company.com"><span>.jane@us.company.com</span></a><span>, to barbara</span><a href="mailto:john.smith@us.company.com"><span>.jane</span></a><a href="mailto:john.smith@eu.company.com"><span>@eu.company.com</span></a><span> this option updates the mail attribute to the new address.</span>
+</li>
+<li data-list-item-id="ea6f672e1e4d04f7a69669f44269896ed">
+<strong>Update sAMAccountName (Legacy Logon Name)</strong>: Updates the older Windows login name when a user’s name changes and ensures the new login name remains unique in the domain. For example, if your standard is first initial + last name and a worker’s name changes from Barbara Jane to Barbara Miller, this option changes the sAMAccountName from bjane to bmiller.</li>
+</ul>
+</li></ul>
+<h4 id="h_01KC1GM7JZVM56KVVB0AW08EWW">Password Policy Settings</h4>
+<ul>
+<li data-list-item-id="e2d0cbe11d0a19809f88c43cefcee89ed">
+<strong>Generate Password</strong>: Enable the creation of a password for each newly provisioned AD user. For example, when a new employee is added in ADP, the system generates a secure password instead of requiring manual entry.</li>
+<li data-list-item-id="e87ba917cafb06ba530b8ec1cd0cf57a9">
+<strong>Password Generation Mode</strong>: Select how passwords should be generated for user accounts. <br/>The following are the avalible aptions: <ul><li data-list-item-id="e9c93dbd6e2af003679d11d32476859c9">
+<strong>Custom Password Policy</strong>: Generate passwords using configurable rules, including complexity, length, and allowed characters.<ul>
+<li data-list-item-id="e6b74291296e035120bef05ddde46bc5c">
+<strong>Password Type</strong>: Enable to define the level of password complexity that will be used during password generation. For example, selecting Advanced produces a password with mixed-case letters, numbers, and special characters, while selecting Basic produces a password that follows minimal-complexity rules.</li>
+<li data-list-item-id="eb7dc8233b5581fa17bc4a32b425f4f55">
+<strong>Allowed Special Characters</strong>: Specifies which special characters may be used when generating passwords under the Advanced complexity option. For example, entering @#$%^&amp;* restricts the generator to use only those characters in the password.</li>
+<li data-list-item-id="e3813f4eec327da29424ff5d47146445c">
+<strong>Password Length</strong>: Determines the total number of characters included in the generated password. For example, setting the value to 12 ensures all new passwords contain exactly 12 characters.</li>
+<li data-list-item-id="e382885432fc263e412547f6e3cc281b0">
+<strong data-end="155" data-start="119">AI-Generated Passphrase Password</strong><br/>Automatically generate secure passphrases using AI, without manually setting password rules. For example, the AI can generate a password composed of several unrelated words, combined with numbers and symbols.<ul>
+<li data-list-item-id="e29ec9c453e032c4bef32b56c42397dc9"><p data-end="644" data-start="398"><strong data-end="432" data-start="398">Passphrase Generation Settings: </strong>Control how AI creates passphrase passwords, including structure and required elements. For example, you can require a specific number of words or enforce the use of uppercase letters and special characters.</p></li>
+<li data-list-item-id="e18485e5f05b39f5b6c5be10fbdaab5e3">
+<p data-end="644" data-start="398"><strong data-end="686" data-start="648">Enter your Prompt: </strong>Enter instructions on how the AI generates the passphrase password. For example, request a passphrase with 4–5 random English words and at least one number followed by a symbol.</p>
+<ul>
+<li data-list-item-id="eb2651a3a4da00894f6b3606d9b7a3fa8"><p data-end="1060" data-start="859"><strong data-end="872" data-start="859">Code View: </strong>Switch to a code-based view to edit the password generation logic directly instead of using plain text instructions. For example, advanced users can fine-tune the generation behavior.</p></li>
+<li data-list-item-id="eaf8ec9e52f9140c13e9a2d49726d85f1"><p data-end="1060" data-start="859"><strong data-end="1084" data-start="1064">Password Preview: </strong>View sample passphrase passwords generated using the current instructions. For example, this helps you verify the password format before applying it.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e0632c1b324d930f0bbe7fe176f7d0eb7"><p data-end="1433" data-start="1242"><strong data-end="1264" data-start="1242">Preview: </strong>Generate and review sample passwords based on the current settings and instructions. For example, use this to confirm the passwords meet your security requirements.</p></li>
+<li data-list-item-id="ea70b50aebd5adc745e538e24223701c1"><p data-end="1639" data-start="1437"><strong data-end="1465" data-start="1437">Advanced Preview Options: </strong>Show additional preview details to better understand how passphrase passwords are generated. For example, this can help with troubleshooting or fine-tuning instructions.</p></li>
+</ul>
+</li></ul>
+</li>
+</ul>
+<h4 id="h_01KF2KTKDW02D8KAXNH46THQKH">Debug Settings</h4>
+<ul>
+<li data-list-item-id="efb16a6ced1403e36c25074b2605eb41f">
+<strong>Enable Testing Mode:</strong> Select to process data in a controlled test environment rather than in live production. For example, when testing is enabled, a candidate created in ADP is sent through the AD provisioning flow but uses test routing instead of creating a real AD account.</li>
+<li data-list-item-id="e9d38384c45e9086135f6fc082a1966e0">
+<strong>Test Candidate Email:</strong> Specify the email address used for end-to-end testing of the ADP-to-AD candidate sync when <strong>Manage Candidates</strong> is enabled. For example, entering <a href="mailto:testuser@example.com">testuser@example.com</a> sends all candidate test records to that test inbox during trial runs.</li>
+<li data-list-item-id="e5439f589cc3943ec6cbbe79f066976b9">
+<strong>Test Worker ID (ADP Associate)</strong>: Use an ADP worker or associate ID for testing lookups and mappings during test syncs. This ID is used only in test runs to validate AD field mappings. <strong>Note</strong>: Do not use a real or active associate ID in production.</li>
+</ul>
+<h4 id="h_01KC3DJWXP3PP4H5JRT6CCV8Z8">Naming Policy Settings </h4>
+<h5 id="h_01KF35CN3A1XQ0PP3DZHTQGG0R">Generate sAMAccountName</h5>
+<ul>
+<li data-list-item-id="ea5b88b7e70cf8abb1fe44acc75219566">
+<strong>Define sAMAccountName Rules:</strong> Define the rules used to generate the user’s sAMAccountName. Enter the naming logic in the prompt below to control format, casing, and duplicate handling.</li>
+<li data-list-item-id="e44d40c3decb5cc169073d93ef8b70b7f">
+<strong>Generate sAMAccountName (Prompt):</strong> Enter instructions that describe how the sAMAccountName should be generated. For example, specify lowercase names with numbers added for duplicates.<ul>
+<li data-list-item-id="e30a6399e3c9c86604a615d7c2fccf39f">Code View: Switch to a code-based view to edit the sAMAccountName generation logic directly. For example, advanced users can adjust the logic in code.</li>
+<li data-list-item-id="e20bfce6d7bb4c5f30c4b07bafdfb90e9">Analyse and Preview: Generate and review sample sAMAccountName values based on the current prompt. For example, confirm that <strong>barbarajane</strong> is generated as expected.</li>
+</ul>
+</li>
+<li data-list-item-id="e7f5026183c30be0aa0cf49123af4e187">
+<strong>Preview:</strong> Review sample sAMAccountName values generated from the current prompt. For example, preview results like <strong>barbarajane</strong>, <strong>barbarajane1</strong>, and <strong>barbarajane2</strong>.<ul><li data-list-item-id="e9ea3f3bbc872b83583d3e7131cfb8789">Advanced Preview Options: Display additional preview details to better understand how values are generated. For example, view multiple variations created during duplicate handling.</li></ul>
+</li>
+</ul>
+<h5 id="h_01KF2NC2X1F05GBSTZX9YNNVQT">Generate Common Name (CN)</h5>
+<ul>
+<li data-list-item-id="e913710bbe4c229aa4b992d005673465e">
+<strong>Common Name (CN) Generation Method</strong>: Specifies whether the CN should be copied from an existing attribute or generated using a custom naming rule. For example, selecting Use sAMAccountName as CN creates CN values like jsmith, while choosing Use Policy to Generate CN allows full-name formats such as John Smith.</li>
+<li data-list-item-id="e33a17d391142bedc36079963b33d7f49">
+<strong>Generate CN (Prompt)</strong>: Provides the rule that defines how CN values are constructed. The system uses this rule to generate unique names and resolve duplicates when needed. For example, entering <em>Use FirstName + LastName</em> generates CN values such as <em>Barbara Jensen</em>.<ul>
+<li data-list-item-id="eba30540c7ab8532b12e75b5cb128b3a5">Code View: Switch to a code-based view to edit the CN generation logic directly. For example, advanced users can adjust how first and last names are combined.</li>
+<li data-list-item-id="eef00ce3d32a4aad95a577798393270e7">Analyse and Preview: Select to generate and analyze sample Common Name (CN) values using the current rules and prompt.</li>
+</ul>
+</li>
+<li data-list-item-id="e11c19a53c4d178060307d95e143eae8a">
+<strong>Preview</strong>: Displays sample CN values generated by your naming rules so you can confirm the output format before enabling the policy. For example, if your rule uses first name plus last name, previews may display BarbaraJaneJenson1, BarbaraJaneJenson2, and so on.<ul><li data-list-item-id="e8cb23bbf30ae9d758e9ab4b38817fe40">Advanced Preview Options: Display additional preview details to better understand how CN values are generated.</li></ul>
+</li>
+</ul>
+<p>Email Generation </p>
+<ul>
+<li data-list-item-id="e4fb542d5058e1f97d0b143920c33e494">
+<strong>Generate Email using</strong>: Select how the email prefix (the part before @) should be generated. For example, selecting <strong>sAMAccountName</strong> creates <a href="mailto:barbarajane@company.com">barbarajane@company.com</a><ul>
+<li data-list-item-id="ef126fc04b035f9d177beac7849feddbd">
+<strong>sAMAccountName</strong>: Select to generate the email prefix from the user’s sAMAccountName, such as barbarajane.</li>
+<li data-list-item-id="e68b95b588bcc321afa2f28a2482c7eef">
+<strong>UserPrincipalName (UPN)</strong>: Select to generate the email address from the user’s UPN, such as <a href="mailto:barbarajane@company.com">barbarajane@company.com</a>.</li>
+<li data-list-item-id="e0d968f04ed4399cdd61fbda0ab8e05a4">
+<strong>Common Name (CN)</strong>: Select to generate the email prefix from the user’s Common Name (CN), such as <a href="mailto:barbarajane@company.com">barbarajane@company.com</a>
+</li>
+<li data-list-item-id="ec98d7922814304cad8f156fcb26ea358">
+<strong>Custom Rules (Prompt)</strong>: Select to generate the email prefix using custom rules provided in the prompt.</li>
+</ul>
+</li>
+<li data-list-item-id="e3ef5e11f8722a98ee3693713dc18951e">
+<strong>Email Generation Rules:</strong> Select how email generation rules are defined before entering the prompt.<ul>
+<li data-list-item-id="eb470361f113f277e08262bb4ca0f799d">
+<strong>Enter your prompt</strong>: Select instructions that describe how the email prefix should be generated.<ul>
+<li data-list-item-id="e1c5c902a214b8830e16e9ebb7fbb5b3a">Code View: Select to switch to a code-based view to edit the email generation logic.</li>
+<li data-list-item-id="ecb8042b58b5d6a6f9f36ed3afcf5f04a">Analyse and Preview: Select to generate and analyze sample values to understand how email prefixes are created.</li>
+</ul>
+</li>
+<li data-list-item-id="e3c8be51971c85742cf4ba1e85039551d">
+<strong>Preview</strong>: Select to generate and review sample email prefixes based on the current settings and prompt.<ul><li data-list-item-id="eecdbaa87860d7fd5dbbe07332b0a558a">Advanced Preview Options: Select to display additional preview details for generated email values.</li></ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><span data-token-index="0">Generate User Principal Name</span></p>
+<ul>
+<li data-list-item-id="e33396c777e3ca61f7a042b2170b32551">
+<strong>Generate User Principal Name (UPN) using</strong>: Select how the user’s UPN will be generated. For example, you can generate it from an existing attribute or from custom rules.<ul><li data-list-item-id="e47392e017c6fc8b159b6b8525226402d">
+<strong>sAMAccountName</strong>: Select to generate the UPN prefix from the user’s sAMAccountName. For example, barbarajane becomes <a href="mailto:barbarajane@company.com">barbarajane@company.com</a>.</li></ul>
+</li>
+<li data-list-item-id="e70aa269ce77b09ca05b7232ee67fe357">
+<strong>Use Custom Rules to Generate UPN</strong>: Select to generate the UPN prefix using custom rules defined in the prompt below. For example, you can build prefixes from first and last name with numbers added for duplicates.</li>
+<li data-list-item-id="ec4b3decd1a79f8c3f1b534247bf8f516">
+<strong>UPN Generation Rules</strong>: Select how UPN generation rules are defined before entering the prompt. For example, rules can follow the same pattern as email prefixes.<ul><li data-list-item-id="edebfa773e84b6e533172257965ecd1e4">
+<strong>Enter your prompt</strong>: Select instructions that define how the UPN prefix should be generated. For example, generate barbarajane first, then barbarajane1 or barbarajane2 if duplicates exist.<ul>
+<li data-list-item-id="ed64e2e5cc25c3329e048d1d0aeccb2c2">
+<strong>Code View</strong>: Select to switch to a code-based view to edit the UPN generation logic. For example, advanced users can fine-tune how prefixes are constructed.</li>
+<li data-list-item-id="ee10c55f55fa3d19e05acd6d238580b2c">
+<strong>Analyse and Preview</strong>: Select to generate and analyze sample UPN values to understand formatting and duplicate handling. For example, see how barbarajane changes when a duplicate is found.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="edcdafb39c7bdb17e6b20ff3d424af422">
+<strong>Preview</strong>: Select to generate and review sample UPN prefix values using the current rules and prompt. For example, preview barbarajane, barbarajane1, and barbarajane2.<ul><li data-list-item-id="efaaed2cdf05abc785683091905fe168d">
+<strong>Advanced Preview Options</strong>: Select to display additional preview details for generated UPN values. For example, review alternate generation attempts.</li></ul>
+</li>
+</ul>
+<h5 id="h_01KF2SS6P6HV2H2DSXX5Y55NJJ">Generate Proxy Address </h5>
+<ul>
+<li data-list-item-id="e035fe0b5a42e5759f59b1ee6bead0c06">
+<strong>Use UPN as Proxy Address</strong>: Select to use the user’s User Principal Name (UPN) as the proxy address when creating or updating the user. For example, if the UPN is <a href="mailto:barbarajane@company.com">barbarajane@company.com</a>, that value is added as a proxy address.</li>
+<li data-list-item-id="e8e18e66b4610cd6f96007cadb2ba04b2">
+<strong>Use Email Address as Proxy Address</strong>: Select to use the user’s email address as the proxy address in Active Directory. For example, if the email is <a href="mailto:barbarajane@company.com">barbarajane@company.com</a>, the same value is added to the proxyAddresses attribute for mail routing and identification.</li>
+</ul>
+<h4 id="h_01KF2SYFHS5XE0V3VPDKBK9Z3C">Log Settings</h4>
+<p>Configure the following log settings:</p>
+<ul><li data-list-item-id="e10ce6dc0006eae7f58ce7a737a92903f">
+<strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e2fe8a8f335b8faa78f67a65192c633a9">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e839b8457b3fd930fceaed9f61fe189b8">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li></ul>
+<h4 id="h_01KC5YKDMWPXWYS4J9GSRAYWRS">Log Insights Settings </h4>
+<p>Configure the following log insights settings:</p>
+<ul><li data-list-item-id="ede492600252bcaa4e7b87d9176bc2402">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li></ul>
+<h3 id="h_01KF35GDEN08FE4757TPWBZZ9P">Report Settings</h3>
+<p>Configure the following report settings:</p>
+<ul><li data-list-item-id="e2d9672e574afd91391e831db3d9d3afc">
+<strong>Report Detail Level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eab07f42e842a81b5dd3e10cdf77aa811">
+<strong>Summary</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="eaed552f94c570dd8dc0994727bbdcd95">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li></ul>
+<h4 id="h_01KC621XWV4P9MTHMNNVZFG354">Notification Settings</h4>
+<ul>
+<li data-list-item-id="e64dd547be2fa56735cf27b4cfa84c63a">
+<strong>Notify on Successful Execution</strong>: Select to send an email when the integration completes successfully. For example, receive a confirmation email after users are created or updated.</li>
+<li data-list-item-id="e138e5f530e39164310774064f54c33ad">
+<strong>Notify on Failed Execution</strong>: Select to send an email when the integration fails. For example, receive an alert if user provisioning fails.</li>
+<li data-list-item-id="e69010ef19abb1d60056d61476118b1a6">
+<strong>Recipients for EntraID Group Sync Notifications</strong>: Enter email addresses that should receive notifications for EntraID group assignment and writeback activities. For example, add <a href="mailto:admin@company.com"><span>admin@company.com</span></a> to the monitor group sync results.</li>
+<li data-list-item-id="e90a1e5511450136cddd1c20ec03c4784">
+<strong>Enable Password Change Notifications</strong>: Select to send notifications when a user's password is created or updated. For example, trigger an email when a new user is provisioned with an initial password.</li>
+<li data-list-item-id="ed4cbdafbb8fc79d8923519009df2d7ef">
+<strong>Notify Manager of Password Changes</strong>: Select to notify the user’s manager when the user’s password is generated or changed. For example, the manager receives an email after an employee’s password reset.</li>
+<li data-list-item-id="efe16331adb6e0074f29f474280a53d1e">
+<strong>Additional Recipients for Password Notifications</strong>: Enter additional email addresses that should receive password change notifications. For example, include<span> </span><a href="mailto:itsecurity@company.com"><span>itsecurity@company.com</span></a> so the security team is informed.</li>
+<li data-list-item-id="eff5527e2e3672d680522840e25b07e49">
+<strong>AD Attributes Included in Password Notifications</strong>: Select which Active Directory user attributes should be included in password notification emails. For example, include sAMAccountName, Department, or Manager.</li>
+</ul>
+<p>Success Notifications</p>
+<ul>
+<li data-list-item-id="ec44766e071d9ca8e5345acfac83a1d79">
+<strong>Success Notification Recipients</strong>: Enter email addresses that should receive success notification emails. For example, add <a href="mailto:admin@company.com">admin@company.com</a> to receive success reports.</li>
+<li data-list-item-id="e529697f8552154e2aa7251ecfe03dbb0">
+<strong>Success Notification CC</strong>: Enter email addresses to include as CC for success notifications. For example, include teamlead@company.com.</li>
+<li data-list-item-id="e5651a831e4aaa0f70cf4428864298358">
+<strong>Success Email Subject</strong>: Enter the subject line used for success notification emails. For example, ADP to AD Success Notification.</li>
+<li data-list-item-id="efd63018da57f0e0ccf09f57623fa31db">
+<strong>Success Email Body</strong>: Enter the message content sent when the integration completes successfully. For example, include a brief summary of the run and next steps.</li>
+</ul>
+<p>Failure Notifications</p>
+<ul>
+<li data-list-item-id="eb72359eb0f820e1a87e2a4bd765297dd">
+<strong>Failure Notification Recipients</strong>: Enter email addresses that should receive failure notification emails. For example, add support@company.com<br/>to receive failure alerts.</li>
+<li data-list-item-id="edd7ecf7d61e975aab09a64fb5028dfe7">
+<strong>Failure Notification CC</strong>: Enter email addresses to include as CC for failure notifications. For example, include itadmin@company.com.</li>
+<li data-list-item-id="e2942b137b64a21346082631f4625f2c3">
+<strong>Failure Email Subject</strong>: Enter the subject line used for failure notification emails. For example, ADP to AD Failure Notification.</li>
+<li data-list-item-id="e24a613d47fee6e1eb044ea9f4a6befb4">
+<strong>Failure Email Body</strong>: Enter the message content sent when the integration fails. For example, include error details and troubleshooting guidance.</li>
+</ul>
+<h2 id="h_01KF30N1HFTDRY8CRX479A2R78">Candidate Group Assignment Rules</h2>
+<div><div tabindex="-1"><div><div data-message-author-role="assistant" data-message-id="7a84b606-3a14-469a-a78b-09c2044fa05f" data-message-model-slug="gpt-5-1-thinking" dir="auto"><div><div>
+<p>The Candidate Group Assignment Rules tab controls how candidates created from ADP job applications are assigned to Active Directory (AD) and Microsoft Entra ID (Azure AD) groups when their accounts are created. These rules are evaluated only for candidates (not workers) and are applied during initial account provisioning.</p>
+<h3 id="h_01KF35KQ54CQCWFPC23Y7DAP11">AD Candidate Group Rules</h3>
+<p>The AD Candidate Group Rules section determines which on-premises Active Directory groups a candidate is added to. Each rule checks candidate details from ADP, such as Division or Location, and assigns matching candidates to one or more AD groups.</p>
+<p>These rules are evaluated from top to bottom. When a candidate matches a rule, they are added to the AD groups listed in that rule. If no rule matches, a Default rule assigns the candidate to a fallback group, ensuring no candidate is left unassigned.</p>
+<p>Consider the following example:</p>
+<ul>
+<li data-list-item-id="e2034da7dc615634641b7f81f56ef8eed">
+<strong>Rule 1</strong>: If Division = ATL_Robinson, assign the candidate to ATL_Candidates_AD</li>
+<li data-list-item-id="e173f1d46281030a6f4ce9cb677dea53c">
+<strong>Rule 2</strong>: If Division = ARZ_Robinson, assign the candidate to ARZ_Candidates_AD</li>
+<li data-list-item-id="e873ae873c222780fbb1d9736a1f84de3">
+<strong>Default Rule</strong>: Assign all other candidates to General_Candidates_AD</li>
+</ul>
+<p>Result:</p>
+<ul>
+<li data-list-item-id="eb0fb11e51fcbb2bd4e88fcdefa6ac97f">A candidate with Division ATL_Robinson is added to ATL_Candidates_AD group.</li>
+<li data-list-item-id="e2076d8a6e0c79b9595eef5b42b2f6357">A candidate with Division ARZ_Robinson is added to ARZ_Candidates_AD group.</li>
+<li data-list-item-id="e953d9b1f1327d9b28739e2daa18390e2">Any other candidate is added to General_Candidates_AD group.</li>
+</ul>
+<h3 id="h_01KF35KQ55972CGKDRX6CQPDZR">Entra Candidate Group Rules</h3>
+<p>The <strong>Entra Candidate Group Rules</strong> section controls how candidates are assigned to <strong>Microsoft Entra ID (Azure AD) groups</strong>. Each rule evaluates candidate attributes from ADP and maps matching candidates to one or more Entra ID groups during account creation. When a candidate meets the rule conditions, they are automatically added to the configured Entra ID groups.</p>
+<p>A <strong>Default rule</strong> can be configured to ensure candidates are still assigned to an Entra ID group when no specific rule matches.</p>
+<p>Consider the following example:</p>
+<ul>
+<li data-list-item-id="e88cf4aaf284519590a5fe2875cf9104d">
+<strong>Rule</strong>: If <strong>Division = ATL_Robinson</strong>, assign the candidate to the <strong>ATL_Candidates_Entra</strong> group.</li>
+<li data-list-item-id="ec14384696bf35a45571d1e2253830189">
+<strong>Default Rule</strong>: Assign all other candidates to <strong>All_Candidates_Entra</strong> group.</li>
+</ul>
+<p>Result:</p>
+<ul>
+<li data-list-item-id="e5fa12929365bcfe6647c90caa80a8f4e">A candidate with <strong>Division ATL_Robinson</strong> is added to <strong>ATL_Candidates_Entra</strong> group.</li>
+<li data-list-item-id="e78aab08ddf36bd75bf2a2921dd4d6336">Any other candidate is added to <strong>All_Candidates_Entra</strong> group.</li>
+</ul>
+<h3 id="h_01KF35KQ58CPAV4B5DNVPJ84Q2">Worker Group Assignment Rules</h3>
+<p>The <strong>Worker Group Assignment Rules</strong> tab controls how <strong>workers (employees)</strong> are automatically assigned to <strong>Active Directory (AD)</strong> and <strong>Microsoft Entra ID (Azure AD)</strong> groups during <strong>ADP worker syncs</strong>.</p>
+<p>These rules apply when a person is treated as a <strong>worker</strong>, including:</p>
+<ul>
+<li data-list-item-id="ebaa88824ba8d63b3a4d92a6433d0cde2">New hires synced as workers.</li>
+<li data-list-item-id="e6f8c08a3b6a0fb8b501dc3c32762884b">Existing employees whose information changes in ADP.</li>
+</ul>
+<p>These rules ensure that workers always have the <strong>correct group memberships</strong> based on their <strong>latest ADP data</strong>.</p>
+<h3 id="h_01KF35KQ585YWBFNZ0J3870FCN">AD Worker Group Rules</h3>
+<p>The <strong>AD Worker Group Rules</strong> section determines which <strong>on-premises Active Directory groups</strong> a worker is added to. Each rule checks worker attributes from ADP, such as <strong>Division</strong>, <strong>Department</strong>, or <strong>Custom Fields</strong>, and assigns matching workers to one or more AD groups.</p>
+<p>The rules are evaluated <strong>from top to bottom</strong>. When a worker matches a rule, they are automatically added to the AD groups listed in that rule. If no rule matches, a <strong>Default rule</strong> assigns the worker to a fallback AD group, ensuring no worker is left without group access.</p>
+<p>These rules are applied during <strong>every worker sync</strong>, so group memberships can change over time as worker attributes in ADP change. If a person was first created as a candidate and later becomes a worker, the system keeps the same account and updates the group memberships based on the worker rules.</p>
+<p>Consider the following example:</p>
+<ul>
+<li data-list-item-id="ecac5a9b91de2f0143c1e176de67849bd">
+<strong>Rule 1</strong>: If <strong>Division = ARZ_Robinson</strong> and <strong>Custom Field = Warranty</strong>, assign the worker to <strong>ARZ_Warranty_AD group.</strong>
+</li>
+<li data-list-item-id="e7834551441ad63235e8baffc5b5e9fb2">
+<strong>Default Rule</strong>: Assign all other workers to <strong>General_Workers_AD</strong> group.</li>
+</ul>
+<p>Result:</p>
+<ul>
+<li data-list-item-id="e3708d2c198de3595cbc601b2e482ee2b">A worker with the Division <strong>ARZ_Robinson</strong> and Warranty field set is added to the <strong>ARZ_Warranty_AD</strong> group.</li>
+<li data-list-item-id="e8c7bcba403b0341470d0705d00d07626">All other workers are added to <strong>General_Workers_AD</strong>
+</li>
+</ul>
+<h3 id="h_01KF35KQ5A94M4RV0VH9R1CBM8">Entra Worker Group Rules</h3>
+<p>The <strong>Entra Worker Group Rules</strong> section controls how workers are assigned to <strong>Microsoft Entra ID (Azure AD) groups</strong> during worker syncs. Each rule evaluates worker attributes from ADP and assigns matching workers to one or more Entra ID groups. When a worker meets the rule conditions, they are automatically added to the specified Entra ID groups.</p>
+<p>A <strong>Default rule</strong> can be configured to ensure workers still receive Entra ID group assignments when no specific rule matches.</p>
+<p>Consider the following example:</p>
+<ul>
+<li data-list-item-id="efc52e5f248a6306bb8fec788d9b4098e">
+<strong>Rule</strong>: If <strong>Custom Field = Warranty</strong>, assign the worker to <strong>Warranty_Workers_Entra</strong> group.</li>
+<li data-list-item-id="e083304ec60040bb5c1e06fa59734191c">
+<strong>Default Rule</strong>: Assign all other workers to the <strong>All_Workers_Entra</strong> group.</li>
+</ul>
+<p>Result:</p>
+<ul>
+<li data-list-item-id="ea222847650d38885aefbeb4553bdac14">Workers with the <strong>Warranty</strong> field set are added to the <strong>Warranty_Workers_Entra</strong> group.</li>
+<li data-list-item-id="e19c7bc4881cf66f039e1c9b2686eabd5">All other workers are added to the <strong>All_Workers_Entra</strong> group.</li>
+</ul>
+<p>The Attribute Map section shows how Dayforce attributes are mapped to Active Directory attributes. These mappings determine which Dayforce fields are used to create or update the corresponding Active Directory fields.</p>
+<p>You can review and modify the source and target attributes as needed to support your business requirements. Any changes you make here will directly affect how user data flows from Dayforce to Active Directory during provisioning and updates.</p>
+<h3 id="h_01KF35KQ5BEHN5HXF0K10PJT7T">Active Directory OU Rules</h3>
+<p>The <strong>Active Directory OU Rules</strong> tab controls how candidates and workers are placed into <strong>Organizational Units (OUs)</strong> in Active Directory during account creation and updates. Each rule evaluates user attributes from ADP and assigns matching users to a specific Active Directory OU. When a user meets the rule conditions, their account is created in or moved to the specified OU.</p>
+<p>A <strong>Default rule</strong> can be configured to ensure users are still placed into an OU when no specific rule matches.</p>
+<p>Consider the following example:</p>
+<p><strong>Rule:</strong> If Worker Status = Active and Division = ATL_Robinson, assign the user to OU=John,DC=aqueralabs,DC=com.</p>
+<p><strong>Default Rule:</strong> Assign all other users to OU=Default,DC=aqueralabs,DC=com.</p>
+<p><strong>Result:</strong></p>
+<ul>
+<li data-list-item-id="e69cbadf4e6b015474c1c670de2b1de24">Active users in the ATL_Robinson division are placed in the John OU.</li>
+<li data-list-item-id="e46aefca64421d6d4f291fc3b1f225008">All other users are placed in the ****Default OU.</li>
+</ul>
+<p>These rules ensure that both new and existing users are always located in the correct Active Directory OU based on their latest ADP data, keeping the directory structure organized and consistent.</p>
+<h3 id="h_01KF35KQ5C8D0WS7X2BANT4CNV">Rule Behavior</h3>
+<ul>
+<li data-list-item-id="e4e99936de93d2a75a89081852437e358">
+<strong>Add Row</strong> allows you to add multiple attribute values within the same rule that all map to the same target.</li>
+<li data-list-item-id="e8bc7a4ec9a1e6aa5ac5eec736f2f440b">
+<strong>Add New Rule</strong> allows you to create a separate rule with its conditions and target assignment.</li>
+<li data-list-item-id="e68689cb59d35ecfbb21282fdf89f7c5f">
+<strong>Switch to Expression</strong> allows you to define advanced logic using expressions when simple attribute matching is not sufficient.</li>
+<li data-list-item-id="ebb30fe1aab07b360856cdeaec0ead26a">
+<strong>Rule Order</strong> is important. Rules are evaluated from top to bottom, and the <strong>Default</strong> rule is applied only when no other rule matches.</li>
+</ul>
+<h2 data-end="263" data-start="247" id="h_01KF353V9MQRK8PSJR60C5M9DN">Attribute Map</h2>
+<p data-end="559" data-start="265">The <strong data-end="286" data-start="269">Attribute Map</strong> section shows how <strong data-end="342" data-start="321">ADP Workforce Now</strong> attributes are mapped to corresponding attributes in <strong data-end="410" data-start="385">Active Directory (AD)</strong> and <strong data-end="448" data-start="415">Microsoft Entra ID (Azure AD)</strong>. These mappings determine which ADP fields are used to create or update user attributes in each target system.</p>
+<p data-end="820" data-start="561">You can review and modify the source and target attribute mappings to meet your business requirements. Any changes made in this section directly affect how user data flows from ADP to Active Directory and Entra ID during user provisioning and ongoing updates.</p>
+<h2 id="h_01KF353SX36HM336G2107Q3Z7P">Tables </h2>
+<p>The Tables tab contains reference tables used by the integration to apply conditional logic during user provisioning and updates. These tables allow you to manage lookup-based decisions without hardcoding values into rules. Each table stores structured data that can be referenced by rules across the integration, such as email domain selection or exclusion lists.</p>
+<h4 id="h_01KF35850PGYTFGBXNJNBJ2EPF">Active Directory User Email Domain Table</h4>
+<p>This table defines which email domain to use when creating a new Active Directory user, based on company or business entity information from ADP.</p>
+<p>For example, users belonging to Company C1 can be created with the email domain @aquera.com, while users from Company C2 can be created with @aqueralabs.com. During user creation, the integration looks up this table and automatically assigns the correct email domain based on the user’s ADP data.</p>
+<h4 id="h_01KF358YPVJ75VPZKAPA2MWGAC">Candidate Emails to Ignore</h4>
+<p>This table lists candidate email addresses along with a flag indicating whether each candidate should be excluded from integration processing.</p>
+<p>If a candidate’s email appears in this table and is marked to be ignored, the integration skips creating or updating that candidate’s account in Active Directory and Entra ID. This is useful for excluding manually created accounts, test users, or specific candidates that should not be processed.</p>
+<h2 id="h_01KF359K4PMY6TFXA4V9GYVYJJ">Schedule</h2>
+</div></div></div></div></div></div>
+<p>Integrations can be scheduled to run automatically at your chosen time interval. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+<p data-end="2159" data-start="1882"> </p>
+</div></div></div></div></div></div>
+  </div>
+</body>
+</html>

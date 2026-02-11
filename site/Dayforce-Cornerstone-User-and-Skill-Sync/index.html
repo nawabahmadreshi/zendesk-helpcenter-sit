@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce ↔ Cornerstone User and Skill Sync</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce ↔ Cornerstone User and Skill Sync</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide covers the end-to-end tasks in setting up the Dayforce to Cornerstone integration to sync the Employees resource of Dayforce to the Users resource of Cornerstone.</p>
+<p>This integration helps you sync user data from Dayforce to Cornerstone and skills data from Cornerstone to Dayforce.</p>
+<p>To identify user records across both systems, the integration uses the <strong>Employee number</strong>, <strong>Employee ID</strong>, <strong>Login ID</strong>, or<strong> XRefCode</strong> attribute value from <strong>Dayforce. </strong>It matches it to the <strong>userName</strong> in the <strong>Cornerstone</strong> as a correlation attribute.</p>
+<h2 id="h_01K3G7T9PRSVP03A05VT4ZGAVF">Key Functionalities</h2>
+<ul>
+<li data-end="250" data-start="96">
+<p data-end="250" data-start="98">The integration first checks the type of run it should perform (full, incremental, or report-only) and which syncs are enabled (users, skills, or both).</p>
+</li>
+<li data-end="422" data-start="251">
+<p data-end="422" data-start="253">It gathers data from Dayforce and downloads all employee records at once in a single export file. From Cornerstone, it retrieves the necessary user or skill data.</p>
+</li>
+<li data-end="535" data-start="423">
+<p data-end="535" data-start="425">It aligns the records from both systems and identifies what is new, changed, inactive, or already matches.</p>
+</li>
+<li data-end="773" data-start="536">
+<p data-end="773" data-start="538">For users, the integration creates new employees in Cornerstone if an employee exists in Dayforce but not in Cornerstone. It updates records in Cornerstone if details have changed in Dayforce. It deactivates users in Cornerstone if the employee is inactive in Dayforce. Furthermore, it skips the record if no changes are required.</p>
+</li>
+<li data-end="955" data-start="774">
+<p data-end="955" data-start="776">For skills, the integration adds new skills in Dayforce if a skill exists in Cornerstone but not in Dayforce. It updates the skill in Dayforce if the skill details are different. It removes the skill from Dayforce if the skill no longer exists in Cornerstone. Furthermore, it skips the record if everything already matches.</p>
+</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Dayforce</strong>: Ensure that you configure version 25 or above of the Dayforce connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for more details.</li>
+<li>
+<strong>Cornerstone Core HR</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4414156583319" rel="noopener noreferrer" target="_blank">Cornerstone Core HR Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li>
+<strong>Required Permissions</strong>: </li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured to push Employees data from Dayforce to Cornerstone.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select Dayforce ↔ Cornerstone User and Skill Sync.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your Dayforce and Cornerstone connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K3JTM08B9VSCKW5YNJWTFDMN">Integration Scenarios</h4>
+<ul>
+<li>
+<strong>Enable user sync</strong>: Updates Cornerstone with employee information from Dayforce.</li>
+<li>
+<strong>Enable skill sync</strong>: Updates Dayforce with employee skills from Cornerstone.</li>
+</ul>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Global Settings</h4>
+<p>Configure the following global settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Incremental Mode</strong>: Select this option to sync only the records that have changed since the last run, rather than all records.</li>
+<li>
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li>
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+</ul>
+<h4 id="h_01K3JTM08CSFQA0STEFPTA6MAH">User Settings</h4>
+<ul>
+<li data-end="415" data-start="254">
+<strong data-end="271" data-start="254">Import Limit:</strong> Enter the maximum number of employee records to process in a single sync run. For example, set <strong data-end="374" data-start="367">500</strong> to stop after the first 500 employees.</li>
+<li data-end="595" data-start="417">
+<strong data-end="435" data-start="417">Source Filter:</strong> Select which employees to include for syncing. For example, choose <strong data-end="520" data-start="503">All Employees</strong> to include every employee, or <strong data-end="570" data-start="551">Specific Groups</strong> to filter by criteria.</li>
+<li data-end="777" data-start="597">
+<strong data-end="618" data-start="597">Employee Numbers:</strong> Enter the specific employee numbers to include when Source Filter is set accordingly. For example, enter <strong data-end="732" data-start="724">2069</strong> and <strong data-end="745" data-start="737">2081</strong> to sync only those employees.</li>
+<li data-end="1008" data-start="779">
+<strong data-end="800" data-start="779">Create Condition:</strong> Select the rule that determines when new employees are created in Cornerstone. For example, choose <strong data-end="917" data-start="900">Always Create</strong> to add all new employees or <strong data-end="964" data-start="946">Only If Active</strong> to restrict creation to active employees.</li>
+<li data-end="1210" data-start="1010">
+<strong data-end="1038" data-start="1010">Active Status Overrides:</strong> Enter additional employee statuses to treat as active during integration. For example, include <strong data-end="1147" data-start="1134">Maternity</strong> or <strong data-end="1171" data-start="1151">Leave of Absence</strong> so those employees are still synced.</li>
+<li data-end="1400" data-start="1212">
+<strong data-end="1233" data-start="1212">Update Condition:</strong> Select the rule that determines when existing employees are updated in Cornerstone. For example, choose <strong data-end="1355" data-start="1338">Always Update</strong> to update every matched employee each run.</li>
+</ul>
+<p>User Correlation Settings</p>
+<ul>
+<li>
+<p data-end="1614" data-start="1439"><strong data-end="1474" data-start="1439">Dayforce Field for Correlation:</strong> Select the unique Dayforce field used to match employees with Cornerstone records. For example, use <strong data-end="1593" data-start="1575">EmployeeNumber</strong> or <strong data-end="1611" data-start="1597">EmployeeId</strong>.</p>
+</li>
+<li>
+<p data-end="1614" data-start="1439"><strong data-end="1654" data-start="1616">Cornerstone Field for Correlation:</strong> Select the unique Cornerstone field used to match employees with Dayforce records. For example, use <strong data-end="1769" data-start="1755">externalId</strong>, <strong data-end="1783" data-start="1771">userName</strong>, or <strong data-end="1804" data-start="1788">primaryEmail</strong>.</p>
+</li>
+</ul>
+<h4 id="h_01K04B51EEX43EAV95YABBP3F5">Reporting Settings</h4>
+<p>Configure the following settings to customize the report:</p>
+<ul>
+<li>
+<strong data-end="258" data-start="227">Select Report Detail Level:</strong> Select the desired level of report detail from the dropdown menu.<br data-end="327" data-start="324"/>The following are the available options:
+<ul>
+<li data-end="473" data-start="371">
+<p data-end="473" data-start="373"><strong data-end="390" data-start="373">Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</p>
+</li>
+<li data-end="532" data-start="474">
+<p data-end="532" data-start="476"><strong data-end="493" data-start="476">Full Details:</strong> All attribute details are displayed.</p>
+</li>
+<li data-end="590" data-start="533">
+<p data-end="590" data-start="535"><strong data-end="546" data-start="535">Custom:</strong> Includes or excludes selected attributes. <span>The following options only appear when the report detail level is set to </span><strong data-end="685" data-start="675">Custom</strong><span>.</span></p>
+<ul>
+<li data-end="590" data-start="533">
+<p data-end="590" data-start="535"><span></span><strong data-end="711" data-start="690">Attribute Filter:</strong><span> Controls which attributes are included or excluded in the report.</span></p>
+<ul>
+<li data-end="590" data-start="533">
+<p data-end="590" data-start="535"><strong data-end="1177" data-start="1153">Included Attributes:</strong> Select the attributes to include in the CSV report.</p>
+</li>
+<li data-end="590" data-start="533">
+<p data-end="590" data-start="535"><strong data-end="1258" data-start="1234">Excluded Attributes:</strong> Select the attributes to exclude from the CSV report.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="h_01K3R332TKGSRDBQ8TN7YTD4X3">Skills Settings</h4>
+<ul>
+<li>
+<p data-end="307" data-start="154"><strong data-end="172" data-start="154">Source Filter:</strong> Select which skills from the source system should be included. For example, choose <strong data-end="270" data-start="256">All Skills</strong> to bring in every available skill.</p>
+</li>
+<li>
+<p data-end="307" data-start="154"><strong data-end="330" data-start="309">Create Condition:</strong> Define when new skills should be created in the destination system. For example, set to <strong data-end="443" data-start="419">Always Create Skills</strong> to add every new skill found in the source.</p>
+</li>
+<li>
+<p data-end="307" data-start="154"><strong data-end="512" data-start="491">Update Condition:</strong> Define when existing skills should be updated in the destination system. For example, set to <strong data-end="630" data-start="606">Always Update Skills</strong> to update all matching skills.</p>
+</li>
+<li>
+<p data-end="307" data-start="154"><strong data-end="693" data-start="665">Import Limit:</strong> Specify the maximum number of skills to import during each sync. For example, set to <strong data-end="786" data-start="779">500</strong> to import up to 500 skills per sync run.</p>
+</li>
+</ul>
+<p>Skills Corelation Settings</p>
+<ul>
+<li>
+<p data-end="2746" data-start="2598"><strong data-end="2633" data-start="2598">Dayforce Field for Correlation:</strong> Select the unique Dayforce field used to match skills with Cornerstone. For example, use <strong data-end="2743" data-start="2723">transc_object_id</strong>.</p>
+<p data-end="2891" data-start="2748"><strong data-end="2786" data-start="2748">Cornerstone Field for Correlation:</strong> Select the unique Cornerstone field used to match skills from Dayforce. For example, use <strong data-end="2888" data-start="2876">XRefCode</strong>.</p>
+</li>
+</ul>
+<h4 id="h_01K0PGWJSDXT2R47JVRVF1X192">Log Insights Settings</h4>
+<p>Configure the following log insight settings:</p>
+<ul>
+<li data-end="316" data-start="147">
+<strong data-end="185" data-start="147">Select the Log Insights Detail Level:</strong> Select the desired level of detail from the dropdown menu on the analytics dashboard.<br data-end="274" data-start="271"/>The following are the available options:
+<ul>
+<li data-end="420" data-start="318">
+<p data-end="420" data-start="320"><strong data-end="337" data-start="320">Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</p>
+</li>
+<li data-end="479" data-start="421">
+<p data-end="479" data-start="423"><strong data-end="440" data-start="423">Full Details:</strong> All attribute details are displayed.</p>
+</li>
+<li data-end="537" data-start="480">
+<p data-end="537" data-start="482"><strong data-end="493" data-start="482">Custom:</strong> Includes or excludes selected attributes. <span>The following option only appears when the log insights level is set to </span><strong data-end="635" data-start="625">Custom</strong><span>.</span></p>
+<ul>
+<li data-end="537" data-start="480">
+<p data-end="537" data-start="482"><span></span><span></span><strong data-end="661" data-start="640">Attribute Filter:</strong><span> Controls which attribute details are included or excluded in the analysis.</span></p>
+<ul>
+<li data-end="537" data-start="480">
+<p data-end="537" data-start="482"><span></span><strong data-end="1106" data-start="1082">Included Attributes:</strong><span> Select the attributes to include in the insights.</span></p>
+</li>
+<li data-end="537" data-start="480">
+<p data-end="537" data-start="482"><span></span><strong data-end="1185" data-start="1161">Excluded Attributes:</strong> Select the attributes to exclude from the insights.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="537" data-start="482">
+<strong>Show Attribute Values for Each Event</strong> (requires consent to store event data temporarily): Select to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+<h4 id="h_01K0PGWJSDQBPT1BZ25EAQGNYR">Logging Settings</h4>
+<p>Configure the following logging settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>:  Select the desired log detail level from the dropdown menu. <br/>The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attributes. The following option only appears when the dashboard detail level is set to <strong data-end="475" data-start="465">Custom</strong>.<br/>
+<ul>
+<li>
+<strong>Attribute Filter</strong>: controls which event attributes are included or excluded.   
+<ul>
+<li>
+<strong>Included Attributes</strong>: Include only selected attributes in the log.</li>
+<li>
+<strong>Excluded Attributes</strong>: Include all attributes except the selected ones in the log.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> option.</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select this checkbox to generate logs that outline data changes, enabling debugging.</li>
+<li>
+<strong>Display History in Logs</strong>: Shows the history of changes for each attribute in the logs.</li>
+</ul>
+<h4 id="h_01K0EPNYJEHDW4TQRTN6PXT579">Notification Settings</h4>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li>
+<strong>Notify Admin Via Email</strong>: Check to send email notifications to all admins.
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Admin Email Subject:</strong> Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li>
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+</ul>
+</li>
+<li>
+<strong>Notify Employees via Email</strong>: Check to send email notifications to all employees.
+<ul>
+<li>
+<strong>Employees Email Subject:</strong> Enter the content that must be used as the email subject for sending email notifications to the employees</li>
+<li>
+<strong>Employees Email Notification Template: </strong>Enter the content that must be used as the email body for all employee email notifications.</li>
+</ul>
+</li>
+<li>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a CSV report for all integration runs.</li>
+</ul>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

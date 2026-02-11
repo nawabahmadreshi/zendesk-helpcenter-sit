@@ -1,0 +1,248 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UKG Ready to Verkada Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>UKG Ready to Verkada Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J46AGRGR00VNTVGR0PNNPBGG">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p>
+<p>This guide outlines how employee data is synchronized between UKG Ready and Verkada. It also controls HR changes, including new hires, updates, terminations, and group assignments.</p>
+<p>To identify user records across both systems, the integration uses the <strong>accountId</strong> and <strong>employeeId </strong>attributes from <strong>UKG Ready</strong> and matches them to the <span><strong>external ID</strong></span> in <strong>Verkada</strong> as a correlation attribute.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The <strong>UKG Ready</strong> to <strong>Verkada</strong> integrations provide the following functions:</p>
+<ul>
+<li>
+<p>Creates Verkada users from UKG Ready hires, using mapped details such as name and email.</p>
+</li>
+<li>
+<p>Updates the Verkada user records when their UKG Ready information changes.</p>
+</li>
+<li>
+<p>Deactivates Verkada users when the UKG Ready termination status changes.</p>
+</li>
+<li>
+<p>Assigns Verkada users to groups using UKG Ready cost centre information.</p>
+</li>
+</ul>
+<h1 id="h_01J46AGRGRQPVRAPETC1V9F4Q4">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953-UKG-Ready-Configuration-Guide" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for details.</li>
+<li>
+<strong>Verkada</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32706274942487-Verkada-Configuration-Guide" rel="noopener noreferrer" target="_blank">Verkada Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>The integration must be configured to push employee-related data from UKG Ready to the user-related data in Verkada.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select<strong> UKG Ready Employees to Verkada Users</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your UKG Ready and Verkada connector instances.</li>
+<li>Click <strong>Continue</strong>. The <a href="#h_01JN5Q19FSJ3NNQNPP7CVJG1NQ">Configuration</a> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JN5Q19FSJ3NNQNPP7CVJG1NQ">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4>
+<p>Configure the following integration scenarios:</p>
+<ul>
+<li>
+<strong>Enable User Lifecycle Management</strong>: Select to enable user provisioning and perform incremental updates.</li>
+<li>
+<span><strong>Enable Group Management</strong></span>: Select to assign users to groups based on their cost centre.</li>
+</ul>
+<h4 id="01K7KH1QR6T870THMGWCKHQBR6">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode: </strong>Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Incremental Mode: </strong>Select to run the integration in incremental mode.</li>
+<li>
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select to generate logs outlining data changes that would occur for debugging.</li>
+<li>
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+</ul>
+<h3 id="01K593846FCRSW60E8KGDZ0K4A">Manage Users</h3>
+<p>The <strong>Manage Users</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="01KG6V7E3QCKF5KKQM50BP966N">User Provisioning Settings</h4>
+<p>Configure the following source settings:</p>
+<ul>
+<li>
+<strong><span>Create User</span></strong>: Select to allow the integration to create a new user in the target application.</li>
+<li>
+<strong>Update User</strong>: Select to allow the integration to update an existing user in the target application.</li>
+<li>
+<strong>Deactivate User</strong>: Select to allow the integration to deactivate a user from the target application.</li>
+<li>
+<strong>Report ID For Sync</strong>: Enter the report ID that includes employee details to be used for syncing.</li>
+<li>
+<strong><span>Source Field for Correlation</span></strong><span>: Select the source attribute for correlation from the dropdown menu. </span>The available options are<strong> Account ID</strong><span> and </span><strong>Employee ID.</strong>
+</li>
+<li>
+<strong>Users to be Excluded from Sync</strong>: Enter a comma-separated list of user email addresses to exclude them from sync.</li>
+<li>
+<strong>Create Condition</strong>: Select a condition from the dropdown menu to determine when users are created.</li>
+<li>
+<strong>Update Condition</strong>: Select a condition from the dropdown menu to determine when users are updated.</li>
+<li>
+<strong>Deactivate Condition</strong>: Select a condition from the dropdown menu to determine when users are deactivated.</li>
+</ul>
+<h4 id="01KGEFXJ0NP2KWWAQFAGMQZVP1">User Provisioning Threshold Settings</h4>
+<ul>
+<li>
+<strong>Create Limit</strong>: Specify the maximum number of user records that can be created in the target application during a single integration run.</li>
+<li>
+<strong>Update Limit</strong>: Specify the maximum number of user records that can be updated in the target application during a single integration run.</li>
+<li>
+<strong>Delete Limit</strong>: Specify the maximum number of user records that can be deleted from the target application during a single integration run.</li>
+</ul>
+<h3 id="01K7KM6APQ9ZWW4JN2C674MK85">Debug Settings</h3>
+<p>The <strong>Debug Settings</strong> section enables you to customize the user integration settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Source Filter</strong>: Select the UKG Ready attribute to filter users while retrieving from UKG Ready. The available options are<strong> Account ID</strong> and <strong>Employee ID.</strong>
+</li>
+<li>
+<strong>Source Filter Value</strong>: Enter the value of the selected source filter.</li>
+<li>
+<strong>Import Limit</strong>: Specify the maximum number of user records that can be imported in the target application during a single integration run.</li>
+</ul>
+<h3 id="01K5TXWEG9QVYTG8WCYTN8SJ58">Log Settings</h3>
+<p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter<span>*</span></strong> drop-down menu with the following options:<br/>
+<ul>
+<li>
+<strong>Included Attributes<span>*</span></strong>: Select the attributes to be included in the log.</li>
+<li>
+<strong>Excluded Attributes<span>*</span></strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K7KMZYADP89DYDHZ14HFXWFG">Report Settings</h3>
+<p>The <strong>Report Settings</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Select the Report Detail Level<span>*</span></strong>: Select the desired report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter<span>*</span></strong> drop-down menu with the following options:<br/>
+<ul>
+<li>
+<strong>Included Attributes<span>*</span></strong>: Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes<span>*</span></strong>: Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K5TY2F66RQRGHM0D3B23C2S3">Notification Settings</h3>
+<p>The <strong>Notifications</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K590A2A1BYH4AWAHFRW5GTB7">Notification Settings</h4>
+<p>Configure the following settings for the notification:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li>
+<strong>Email Subject on Successful Integration Execution</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
+<li>
+<strong>Email Subject on Failed Integration Execution</strong>: Enter the content that must be used as the email subject in the notifications sent for integration errors.</li>
+<li>
+<strong>Send Failure Email to SRE</strong>: Select to automatically send an email to the SRE team in the event of an integration failure.</li>
+<li>
+<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution</li>
+<li>
+<strong>Email Body on Failed Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for integration errors</li>
+</ul>
+<h3 id="01K5TY3EN4QF917HX732APHYFT">Log Insights</h3>
+<p>The <strong>Log Insights</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="01K569PKN27NBSABKQXE5NKYJG">Log Insights Settings</h4>
+<p>Configure the following settings to customize the log insights:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+<li>
+<strong>Save CSV Report</strong>: Select to save the CSV sync report to your Aquera dashboard.</li>
+</ul>
+<h2 id="h_01K1FFN4CQHAHMKW3SACGA7YMW">Attribute Map</h2>
+<p>The Attribute Map tab in <strong>UKG Ready</strong> to <strong>Verkada</strong> Synchronization defines the default <strong>UKG Ready</strong> attributes that are mapped to the <strong>Verkada</strong> attributes.</p>
+<h2 id="01JVC7QW1983644JGH2WGK8FWX">Tables</h2>
+<p>In the Tables tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically at your chosen time frame. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+<p>.</p>
+<p> </p>
+<p><!-- notionvc: 8d8d863f-7980-4501-9169-dd75fae02799 --></p>
+<ul>
+<li> </li>
+</ul>
+<h4 id="h_01K10JE4QGKBER9XJ4E9VVB0KB"><!-- notionvc: ea7f7a0e-6adf-4c71-8f9d-da4be97461f8 --></h4>
+  </div>
+</body>
+</html>

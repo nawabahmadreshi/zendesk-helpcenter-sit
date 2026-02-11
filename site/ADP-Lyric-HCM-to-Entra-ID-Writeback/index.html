@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Lyric HCM to Entra ID Writeback</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Lyric HCM to Entra ID Writeback</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p><span>This integration helps write back the <strong>Email</strong> and <strong>Business Phone</strong> from Entra ID to the ADP Lyric HCM system.</span></p>
+<p><span>To identify user records across both systems, the integration uses the <strong>employee ID</strong> attribute from <strong>Entra ID</strong> and matches it to the <strong>associate ID</strong> in the <strong>ADP Lyric HCM</strong> as a correlation attribute.</span></p>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<strong>Entra ID</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32091350086423-Entra-ID-Configuration-Guide" rel="noopener noreferrer" target="_blank">Entra ID Configuration Guide</a> for details.</li>
+<li>
+<strong>ADP Lyric HCM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/22834578048919-ADP-Lyric-HCM-Configuration-Guide" rel="noopener noreferrer" target="_blank">ADP Lyric HCM Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p><span>This section outlines how the integration must be configured to push user-related data from Entra ID to worker-related data from ADP Lyric HCM.</span></p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>ADP Lyric HCM to Entra ID Integration</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <strong>ADP Lyric HCM</strong> and <strong>Entra ID</strong> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable the integration-related notifications.</li>
+<li>
+<strong>Enable Full Sync</strong>: Select this checkbox to enable full sync.<br/><strong>Note</strong>: When enabled, the integration script ensures that employee contact information remains consistent across Microsoft Entra ID and ADP Lyric HCM. It retrieves user data from Entra ID using either a full synchronization or incremental updates with delta tokens, then matches each user to the corresponding employee in ADP Lyric using the employee ID.
+<p>After matching, the script compares the email addresses and business phone numbers in both applications. Based on this comparison, it determines whether to create new contact records, update existing ones, delete outdated information, or skip data that has not changed. The required updates are then applied by calling ADP Lyric APIs to update the employee records.</p>
+</li>
+</ul>
+<h4 id="h_01K04B51EEX43EAV95YABBP3F5">Log Settings</h4>
+<p>Configure the following settings to customize the logs:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level<span>*</span></strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter<span>*</span></strong> drop-down menu with the following options:<br/>
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes to be included in the log.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select this checkbox to generate logs outlining data changes that would occur for debugging.<span></span>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+<h4 id="01K562FDFPFSS8YHKC4B7XXPF8">Report Settings</h4>
+<p>Configure the following settings to customize the report:</p>
+<ul>
+<li>
+<strong>Select the Report Detail Level<span>*</span></strong>: Select the desired report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter<span>*</span></strong> drop-down menu with the following options:<br/>
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+<li>
+<strong>Enable Integration Report Download</strong>: Select this checkbox to allow downloading the integration report.</li>
+</ul>
+<h4 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h4>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li>
+<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+<li>
+<strong>Email Body on Failed Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for integration errors.</li>
+<li>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for all integration runs.</li>
+<li>
+<strong>Notify Admin Via Email</strong>: Check to send email notifications to all admins.</li>
+</ul>
+<h4 id="01K569PKN27NBSABKQXE5NKYJG">Log Insights Settings</h4>
+<p>Configure the following settings to customize the log insights:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level<span>*</span></strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter<span>*</span></strong> drop-down menu with the following options:<br/>
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes to be included in the log insights.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log insights.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p><span>The Attribute Map tab in ADP Lyric HCM to Entra ID Writeback defines the Entra ID attributes that are mapped to the ADP Lyric HCM attributes for syncing Email and Business Phone.</span></p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span><span></span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

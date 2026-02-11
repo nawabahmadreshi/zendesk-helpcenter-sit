@@ -1,0 +1,484 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Greenhouse Recruiting Candidates to Microsoft 365 User Creation</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Greenhouse Recruiting Candidates to Microsoft 365 User Creation</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JV6ZXVHFHSJWTMM6Z0DB0RE9">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types.</p>
+<p>This integration automates the creation of <em>Microsoft 365 (MS 365)</em> user accounts based on new hires or updates from <em>Greenhouse Recruiting</em>. It maps candidate data to Microsoft user attributes, securely generates temporary passwords, creates the user via Microsoft Graph API, and provides detailed reporting and notification mechanisms for success and failure cases. Debugging and audit trails are supported via logs, CSV reports, and optional dashboards.</p>
+<p>The integration is triggered when a candidate's status changes in Greenhouse Recruiting, such as when a candidate is hired.</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Listens for new hire events from <em>Greenhouse Recruiting</em> and receives candidate data payloads.</li>
+<li>Generates a secure temporary password following a configurable password policy.</li>
+<li>Creates a new Microsoft 365 user account using the Microsoft Graph API with the mapped data and temporary password.</li>
+<li>Handles success by logging the event, generating CSV reports, sending success notification emails, and writing data to the dashboard, if enabled.</li>
+<li>Handles failure by logging errors, generating failure CSV reports, sending failure notification emails, and writing failure data to the dashboard, if enabled.</li>
+<li>Sends detailed notification emails to managers or admins with user credentials and integration status.</li>
+<li>Produces audit-ready CSV reports capturing all relevant user data, operation results, timestamps, and error details.</li>
+<li>Enables dashboard analytics to monitor integration outcomes via dashboards.</li>
+</ul>
+<p><strong>Note</strong>: You must set up webhooks in the Greenhouse Recruiting application to send the candidate hire events to this Aquera integration. Refer to the <a href="#h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</a> for details.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Greenhouse Recruiting</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/10462467749911-Greenhouse-Recruiting-Configuration-Guide" rel="noopener noreferrer" target="_blank">Greenhouse Recruiting Configuration Guide</a> for instructions on creating the Greenhouse Recruiting application connector and setting up the authentication.</li>
+<li>
+<strong>Microsoft 365</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711-Microsoft-365-Configuration-Guide" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for instructions on creating the Microsoft 365 application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details the configuration process for integrating Greenhouse Recruiting candidates with Microsoft 365 user accounts. It covers creating the integration, mapping candidate data fields to users in MS 365, and configuring event-driven triggers to create Microsoft 365 users whenever a new hire event occurs in Greenhouse Recruiting. The process includes secure password generation, user attribute mapping, automated account creation, and comprehensive reporting and notification to ensure a transfer of new hire information from Greenhouse Recruiting to Microsoft 365.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Greenhouse Recruiting Candidates to Microsoft 365 Users</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your<em> Greenhouse Recruiting Candidates</em> and <em>Microsoft 365</em> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h3 id="h_01JV91GD60Y8AGETNYSTFFZSDD">Set Up Parameters</h3>
+<p>The <strong>Parameters</strong> section contains essential parameters that determine how the integration operates. Each setting is crucial in customizing the integration's behavior to meet your organization's needs.</p>
+<ul>
+<li>
+<strong>Enable Integration Report Download</strong>: Allows downloading the integration report as a CSV file for each run.</li>
+<li>
+<strong>Report Only</strong>: Generates a report of the data changes that would occur without actually updating any user records.</li>
+<li>
+<strong>Debug Mode</strong>: Produces detailed logs of integration activity to assist with troubleshooting.</li>
+<li>
+<strong>Enable Dashboard Generation</strong>: Sends integration results to a dashboard for visual analysis and monitoring.</li>
+<li>
+<strong>Send Integration Report via Email</strong>: Sends a CSV report of each integration run to designated recipients.</li>
+<li>
+<strong>Recipients' Email Addresses</strong>: A comma-separated list of email addresses to receive integration notifications and reports.</li>
+<li>
+<strong>Email Subject</strong>: The subject line is used for all integration notification emails.</li>
+<li>
+<strong>Email Body on Successful Integration Execution</strong>: Messages are included in notification emails when user creations or updates succeed.</li>
+<li>
+<strong>Email Body on Failed Integration</strong>: Messages are included in notification emails when user creation or updates fail.</li>
+<li>
+<strong>Password Policy</strong>: Defines password requirements, including minimum length and allowed special characters.</li>
+<li>
+<strong>Password Length</strong>: Minimum number of characters required for user passwords.</li>
+<li>
+<strong>Allow Special Characters in Password</strong>: Special characters permitted in user passwords (e.g., !@#$%^&amp;*).</li>
+<li>
+<strong>Activate Account</strong>: Determines whether new user accounts are active immediately upon creation</li>
+<li>
+<strong data-renderer-mark="true">Assign License to User</strong>: Enables user access to specific products and services.</li>
+<li>
+<strong>Event Type</strong>: Event that triggers the integration, such as <strong>hire_candidate</strong>.</li>
+<li>
+<strong>Domain Principal Name</strong>: Domain used for user principal names (e.g., &lt;&gt;@yourcompany.onmicrosoft.com).</li>
+<li>
+<strong>Assign License to User: </strong>Assign licenses to users to enable access to specific products and services.</li>
+</ul>
+<h3 id="h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</h3>
+<p>You need to set up the event triggers to receive candidate hire events from the Greenhouse Recruiting application and run the integration.</p>
+<ol>
+<li>In the <strong>Trigger</strong> section, click <strong>Event</strong>.</li>
+<li>Select the <em>Greenhouse Recruiting</em> connector configured in your Aquera Admin tenant in the <strong>Event Source</strong> drop-down.<br/>The <strong>URL</strong> field displays the endpoint URL to which Greenhouse Recruiting must send the candidate hire events. When configuring the webhooks, this URL must be configured in the Greenhouse Recruiting application. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01ESN6XGCPQRMFGWGTMB3YVH03">Setting Up Webhooks in Greenhouse Recruiting</a> section in the <a href="../Greenhouse-Recruiting-Candidates-to-ADP-Workforce-Now-Workers/#h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</a> for details.</li>
+<li>Click <strong>Create Token</strong> to generate a token. Save this token securely.</li>
+</ol>
+<h1 id="h_01JSFY1EKJ37S3KXHZFANB2NAW">Attribute Mapping</h1>
+<p>The Greenhouse Recruiting Candidates to Microsoft 365 user provisioning maps the commonly used Greenhouse Recruiting and Microsoft 356 user attributes.</p>
+<p>The following are the API attributes that are mapped by default:</p>
+<table border="1" id="1fbe6fe2-6a16-8063-a030-ea305fd6e149">
+<tbody>
+<tr id="1fbe6fe2-6a16-80b0-8b80-cb017432dac4">
+<td id="F?xo"><strong>Source (Greenhouse)</strong></td>
+<td id="JGcK"><strong>Destination (Microsoft 365)</strong></td>
+</tr>
+<tr id="1fbe6fe2-6a16-80e4-a120-c74c2706a1e9">
+<td id="F?xo">person.first_name</td>
+<td id="JGcK">givenName</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8082-8ee2-cb8d5f0ab56c">
+<td id="F?xo">person.last_name</td>
+<td id="JGcK">surname</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80af-a7fb-e573049a1b8c">
+<td id="F?xo">person.email_addresses.value</td>
+<td id="JGcK">mail</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80a6-b242-dc2277289d75">
+<td id="F?xo">person.email_addresses.value </td>
+<td id="JGcK">mailNickname, userPrincipalName</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8069-b77e-e963e43f103a">
+<td id="F?xo">person.title</td>
+<td id="JGcK">jobTitle</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80a3-bf11-f7033a0ccd58">
+<td id="F?xo">Generated password</td>
+<td id="JGcK">passwordProfile.password</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80ab-8026-fa48e2423c16">
+<td id="F?xo">givenName + surname</td>
+<td id="JGcK">displayName</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80d4-a8c8-f8ae754489c1">
+<td id="F?xo">person.phone_numbers.value</td>
+<td id="JGcK">mobilePhone</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8069-9836-cbfaa08bb13e">
+<td id="F?xo">accountEnabled (default true)</td>
+<td id="JGcK">accountEnabled</td>
+</tr>
+<tr id="1fbe6fe2-6a16-800c-b3c6-c57b1b414aeb">
+<td id="F?xo">candidate.job.departments.name</td>
+<td id="JGcK">department</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80db-bda9-cb6baa6a50c0">
+<td id="F?xo">candidate.job.offices.name</td>
+<td id="JGcK">officeLocation</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8016-8960-d4a9f208a743">
+<td id="F?xo">person.phone_numbers[1].value</td>
+<td id="JGcK">businessPhones</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8001-aacf-e16f1b39a16c">
+<td id="F?xo">person.custom_fields.country.value</td>
+<td id="JGcK">country</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8031-b454-c17a0d2c6c0c">
+<td id="F?xo">person.custom_fields.city.value</td>
+<td id="JGcK">city</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8086-b7a7-d0a137c2e1fc">
+<td id="F?xo">person.custom_fields.state.value</td>
+<td id="JGcK">state</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8079-ace9-ca0eafaef10b">
+<td id="F?xo">person.custom_fields.postal_code.value</td>
+<td id="JGcK">postalCode</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80d0-891a-ed3017bc1344">
+<td id="F?xo">event.organization_name</td>
+<td id="JGcK">companyName</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80a6-898b-f3c06ee74df9">
+<td id="F?xo">person.custom_fields.employee__.value</td>
+<td id="JGcK">employeeId</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80aa-b684-c9149a1ecb7e">
+<td id="F?xo">candidate.custom_fields.language.value</td>
+<td id="JGcK">usageLocation</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80d8-8aa9-dc88fb6c7b1d">
+<td id="F?xo">
+<p>event.payload.application.offer.</p>
+<p>custom_fields.buddy_manager___.value.email</p>
+</td>
+<td id="JGcK">manager@odata.bind</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01JSBG7ZE97RPMVK7Q1QAY0SHT">Greenhouse Recruiting Candidate Attributes</h2>
+<p>The following table lists the Greenhouse Recruiting application UI field name, UI path, the corresponding Greenhouse Recruiting API attribute, and the description:<br/><strong>Note</strong>: You can select any candidate from the Candidate list. For example, if you select Jon Doe, the UI path will be <strong>Candidates</strong> &gt; <strong>Jon Doe</strong> &gt; <strong>Jon Doe's Details</strong>.</p>
+<table border="1" id="1fbe6fe2-6a16-805e-af65-e7701fe33032">
+<tbody>
+<tr id="1fbe6fe2-6a16-807f-b682-eb9d3e3fe850">
+<td id="_pRD"><strong>Greenhouse Recruiting UI Field Name</strong></td>
+<td id="\_nw"><strong>Application UI Path</strong></td>
+<td id="RZ=c"><strong>API Attribute</strong></td>
+<td id="^rOB"><strong>Description</strong></td>
+</tr>
+<tr id="1fbe6fe2-6a16-802b-aa13-dce313f4ac22">
+<td id="_pRD">Name</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details</td>
+<td id="RZ=c">person.first_name, person.last_name</td>
+<td id="^rOB">Candidate’s first and last names as entered in Greenhouse.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80d0-b838-c0899489f8d6">
+<td id="_pRD">Last Name</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details</td>
+<td id="RZ=c">person.last_name</td>
+<td id="^rOB">Candidate’s last name used for identification and communication.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8098-8862-da92d38d983d">
+<td id="_pRD">Email Address (work)</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details </td>
+<td id="RZ=c">person.email_addresses.value</td>
+<td id="^rOB">Candidate’s primary work email address used for correspondence and login.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-804b-b1a7-f564fa616175">
+<td id="_pRD">Email Address (home)</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Email Address</td>
+<td id="RZ=c">person.email_addresses.value</td>
+<td id="^rOB">Candidate’s personal/home email address for alternative contact.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8018-a9a1-e73ac876fccb">
+<td id="_pRD">Current Job Title</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) </td>
+<td id="RZ=c">person.title</td>
+<td id="^rOB">Candidate’s current job title or position applied for.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-800a-873b-c6f48c4d1a83">
+<td id="_pRD">Generated password</td>
+<td id="\_nw">N/A</td>
+<td id="RZ=c">N/A</td>
+<td id="^rOB">Password generated for the candidate’s account creation in the target system.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8029-b801-c8fe893f3626">
+<td id="_pRD">Name (for display)</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details </td>
+<td id="RZ=c">givenName + surname</td>
+<td id="^rOB">Full name used for display purposes in applications.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8033-9b87-c96a79af5968">
+<td id="_pRD">Phone number (Home)</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details </td>
+<td id="RZ=c">person.phone_numbers.value</td>
+<td id="^rOB">Candidate’s home phone number. Index 0 represents the home phone in the phone numbers array.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-804a-95d2-d3afcc56e3fc">
+<td id="_pRD">accountEnabled</td>
+<td id="\_nw">N/A</td>
+<td id="RZ=c">accountEnabled</td>
+<td id="^rOB">Indicates whether the candidate’s account is active/enabled in the system.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80a6-ace4-c665c1011412">
+<td id="_pRD">Department</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Additional details</td>
+<td id="RZ=c">candidate.job.departments.name</td>
+<td id="^rOB">Department or team the candidate is associated with or applying to.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80bb-9737-c12d1c245ae3">
+<td id="_pRD">Office Location</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Additional details </td>
+<td id="RZ=c">candidate.job.offices.name</td>
+<td id="^rOB">The office location related to the candidate’s position or job.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-806c-9cce-d852d93272bb">
+<td id="_pRD">Phone number (Work)</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details </td>
+<td id="RZ=c">person.phone_numbers.value</td>
+<td id="^rOB">Candidate’s work phone number. Index 1 represents the work phone in the phone numbers array.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8014-89f4-db6a43735187">
+<td id="_pRD">Country</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Additional details </td>
+<td id="RZ=c">person.custom_fields.country.value</td>
+<td id="^rOB">Candidate’s country of residence or work location.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80cd-b3be-dcc6e01ee07e">
+<td id="_pRD">City</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Additional details </td>
+<td id="RZ=c">person.custom_fields.city.value</td>
+<td id="^rOB">City where the candidate resides or will be working.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8049-8ec0-d6dc1d9f2002">
+<td id="_pRD">State</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Additional details &gt; State</td>
+<td id="RZ=c">person.custom_fields.state.value</td>
+<td id="^rOB">State or province of the candidate’s address.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-801e-8478-fb3a9a14ae6b">
+<td id="_pRD">Postal Address</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Additional details </td>
+<td id="RZ=c">person.custom_fields.postal_code.value</td>
+<td id="^rOB">Postal or ZIP code associated with the candidate’s address.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80d9-9f0b-c71dfc802000">
+<td id="_pRD">Organization Name</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details </td>
+<td id="RZ=c">event.organization_name</td>
+<td id="^rOB">Name of the organization or company related to the candidate’s application.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8097-9b45-e346e3f765e7">
+<td id="_pRD">Employee Number</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Additional details </td>
+<td id="RZ=c">person.custom_fields.employee__.value</td>
+<td id="^rOB">Unique employee number or identifier assigned to the candidate.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80d6-80a5-f2bc19367b2d">
+<td id="_pRD">Language</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Additional details </td>
+<td id="RZ=c">candidate.custom_fields.language.value</td>
+<td id="^rOB">Candidate’s preferred language for communication.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8016-8b0d-eb9398619530">
+<td id="_pRD">Is a Manager?</td>
+<td id="\_nw">Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Additional details </td>
+<td id="RZ=c">
+<p>event.payload.application.offer.custom_fields.</p>
+<p>buddy_manager___.value.email</p>
+</td>
+<td id="^rOB">Indicates if the candidate holds a managerial position, which is used to assign managerial roles or reporting lines.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01JSBJA583BC7BPFVC313CWJG0">Microsoft 365 Users</h2>
+<p>The following table lists the Microsoft 365 application UI field name, UI path, the corresponding API attribute, and the description:</p>
+<table border="1" id="1fbe6fe2-6a16-8055-8728-f7e3e4058f24" width="1005">
+<tbody>
+<tr id="1fbe6fe2-6a16-80e9-9244-d75c2b3cd5c5">
+<td id="gpoa"><strong>Microsoft 365 UI Field Name</strong></td>
+<td id="zPsu"><strong>UI Path</strong></td>
+<td id="W&lt;ev"><strong>API Attribute</strong></td>
+<td id="zJV\"><strong>Description</strong></td>
+</tr>
+<tr id="1fbe6fe2-6a16-803a-a4b6-dc424bbd603a">
+<td id="gpoa">Name (First name)</td>
+<td id="zPsu" rowspan="6">
+<br/>Home &gt; Users &gt; Click any {{User}} from the list &gt; (Click Edit properties) &gt; All </td>
+<td id="W&lt;ev">givenName</td>
+<td id="zJV\">The user's first or given name as entered in Microsoft 365.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8022-be37-f2e1d3aafde9">
+<td id="gpoa">Last name</td>
+<td id="W&lt;ev">surname</td>
+<td id="zJV\">The user's family or last name.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8066-9964-faa8e2536f16">
+<td id="gpoa">Email</td>
+<td id="W&lt;ev">mail</td>
+<td id="zJV\">The primary email address associated with the user account.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80bd-bd95-fa94fd81bbc3">
+<td id="gpoa">Mail nickname</td>
+<td id="W&lt;ev">mailNickname</td>
+<td id="zJV\">The alias or nickname used for the user's email address.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8007-8644-c300d742a944">
+<td id="gpoa">User principal name</td>
+<td id="W&lt;ev">userPrincipalName</td>
+<td id="zJV\">The user’s login name in Microsoft 365, usually in email format (e.g., <a href="mailto:user@domain.com">user@domain.com</a>).</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8030-9cab-f10bb1b357c7">
+<td id="gpoa">Job Title</td>
+<td id="W&lt;ev">jobTitle</td>
+<td id="zJV\">The user's job title or position within the organization.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8073-9ba7-d28edbae5095">
+<td id="gpoa">Password</td>
+<td id="zPsu">N/A</td>
+<td id="W&lt;ev">passwordProfile.password</td>
+<td id="zJV\">The password assigned to the user account (used during account creation or reset).</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8010-93ed-ed2a4a652028">
+<td id="gpoa">Display name</td>
+<td id="zPsu" rowspan="11">Home &gt; Users &gt; Click any {{User}} from the list &gt; (Click Edit properties) &gt; All <br/><br/>
+</td>
+<td id="W&lt;ev">displayName</td>
+<td id="zJV\">The full name displayed for the user across Microsoft 365 services.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8061-9118-c4de7567d453">
+<td id="gpoa">Mobile phone</td>
+<td id="W&lt;ev">mobilePhone</td>
+<td id="zJV\">The user's mobile phone number.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80f0-81b3-d54819c27fa1">
+<td id="gpoa">Account enabled</td>
+<td id="W&lt;ev">accountEnabled</td>
+<td id="zJV\">Indicates whether the user account is active (enabled) or disabled.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-80db-9904-e26887a1a7c7">
+<td id="gpoa">Department</td>
+<td id="W&lt;ev">department</td>
+<td id="zJV\">The department within the organization to which the user belongs.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-803e-a8c4-cd18c6871504">
+<td id="gpoa">Office location</td>
+<td id="W&lt;ev">officeLocation</td>
+<td id="zJV\">The physical office location or site of the user.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-804d-89e8-e0f09f54b949">
+<td id="gpoa">Business phone</td>
+<td id="W&lt;ev">businessPhones</td>
+<td id="zJV\">The user's business or work phone number.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8017-886e-ee5181b76df9">
+<td id="gpoa">Country or region</td>
+<td id="W&lt;ev">country</td>
+<td id="zJV\">The country or region associated with the user’s address or work location.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-809b-8a4e-f1b22d3f7194">
+<td id="gpoa">City</td>
+<td id="W&lt;ev">city</td>
+<td id="zJV\">The city portion of the user's address.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8055-a933-f0bdb5e8b53c">
+<td id="gpoa">State or province</td>
+<td id="W&lt;ev">state</td>
+<td id="zJV\">The state or province portion of the user's address.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8088-acf5-dbdabbf16372">
+<td id="gpoa">Zip or Postal Code</td>
+<td id="W&lt;ev">postalCode</td>
+<td id="zJV\">The postal or ZIP code portion of the user's address.</td>
+</tr>
+<tr id="1fbe6fe2-6a16-8066-bc80-ec7f4cf7b481">
+<td id="gpoa">Company name</td>
+<td id="W&lt;ev">companyName</td>
+<td id="zJV\">The name of the company or organization the user is associated with.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="01JQQX8ZJ9C62RPE14W4DTF9PE">Run the Integration</h1>
+<p>The integration is triggered when a candidate in Greenhouse Recruiting is hired. Upon receiving this event, it processes the data and creates a corresponding user account in Microsoft 365.</p>
+<p>Once a new employee is successfully created, the integration sends confirmation emails to HR. If any issues arise during the process, such as missing information or system errors, the integration automatically retries and sends urgent alerts to notify the relevant teams.</p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<h1 id="h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</h1>
+<h2 id="h_01ESN6XGCPQRMFGWGTMB3YVH03">Setting Up Webhooks in Greenhouse Recruiting</h2>
+<p id="h_01HHC42H2XCK08HVK2G9A6Y6DE">This section details how to set up webhooks in the Greenhouse Recruiting application to send the candidate hire events to the Aquera integration for processing.</p>
+<ol>
+<li>Log in to the Greenhouse Recruiting application.</li>
+<li>Click the <em>Configure</em> icon on the navigation bar.</li>
+<li>Click <strong>Dev Center</strong> on the left navigation pane and click <strong>Webhooks</strong>.</li>
+<li>Enter the following fields to configure your new webhook:
+<ul>
+<li>
+<strong>Name this webhook</strong>: Enter the name that specifies what the webhook is being used for. For example, <em>Aquera Integration</em>
+</li>
+<li>
+<strong>When</strong>: Select the event, <em>Candidate has been hired</em>, from this drop-down list.</li>
+<li>
+<strong>Endpoint URL</strong>: Copy the URL from the<strong> Trigger </strong>section on the <em>Greenhouse Recruiting Candidates to the Freshservice</em> integration setup page of the Aquera Admin portal and paste it in this field. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details.</li>
+<li>
+<strong>Secret key</strong>: Enter the token generated in the <strong>Trigger </strong>section on the <em>Greenhouse Recruiting Candidates to Freshservice </em>integration setup page of the Aquera Admin portal. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details.</li>
+<li>
+<strong>Deactivated?</strong>: Make sure that the <em>No</em> option is selected.<br/><img alt="GHRNew1.png" src="./assets/f9aa397f2b4ad1ef.bin"/>
+</li>
+</ul>
+</li>
+<li>Click <strong>Advanced Settings</strong> and then provide the <strong>Basic Authorization Credentials,</strong> where the token generated in the Aquera Admin portal must be provided as the password for authentication. The username can be any random string. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details on obtaining the token.<br/><img alt="GHRNew2.png" src="./assets/c8b6589eec8570b5.bin"/>
+</li>
+<li>Click <strong>Create webhook</strong> to complete the webhook setup.</li>
+</ol>
+<p>When you create a new webhook, Greenhouse Recruiting will ping the Aquera endpoint to verify the connection is working. If the ping is accepted successfully, the webhook will be created. If the ping is unsuccessful, Greenhouse Recruiting will save the configuration but deactivate the webhook.</p>
+<p><strong>Note</strong>: If the webhook is deactivated automatically because the endpoint ping failed, scroll down to the <strong>Edit Webhook</strong> section and edit the webhook configuration to fix the error. After you have fixed the configuration issue, make sure that you set the <strong>Deactivated?</strong> option to <em>No</em>.</p>
+  </div>
+</body>
+</html>

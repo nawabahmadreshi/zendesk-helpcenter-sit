@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UKG Ready to Okta Reconciliation</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>UKG Ready to Okta Reconciliation</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JXVS7T3QACXE44C3GGM6V6RA">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types.</p>
+<p>The integration between UKG Ready Employees and Okta Users automates the management of user accounts in Okta based on the employee lifecycle events, such as hiring, re-hiring, and termination, recorded in the UKG Ready. It continuously synchronizes employment status changes, ensuring that Okta accounts are activated or deactivated as needed.</p>
+<p>It does not create new Okta accounts, but it exclusively manages the activation and deactivation of existing users in response to the lifecycle events.</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Retrieves employee data from UKG Ready using a specified report ID and company information.</li>
+<li>Fetches all user accounts from Okta, including both active and de-provisioned users.</li>
+<li>Matches Okta users to UKG employees using the employee ID as a unique identifier.</li>
+<li>For each matched user:</li>
+<li>Determines if the user should be activated (hired or re-hired) or deactivated (terminated) in Okta, based on employment dates and time zone.</li>
+<li>Schedules activation at the start of the hire/rehire date and deactivation at the end of the termination date, respecting the employee's local time zone.</li>
+<li>Identifies Okta users who are not found in UKG Ready and flags them for deactivation (configurable via parameters).</li>
+<li>Supports exemptions for specific employee IDs, limiting or preventing deactivation for those users.</li>
+<li>Optionally limits the number of deactivations per run, based on configuration settings.</li>
+<li>Generates a detailed CSV report summarizing all actions taken (activated, deactivated, skipped, not found, etc.), including updated Okta statuses, if configured.</li>
+<li>Sends the integration report via email to designated recipients if email settings are provided.</li>
+</ul>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Admin Access to Okta:</strong> You must have admin access to your Okta instance. You can visit the Okta portal to get access to an Okta instance.</li>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal to integrate with Okta:
+<ul>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953">UKG Ready Configuration Guide</a> for details.</li>
+<li>
+<strong>Okta</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360039119053-Okta-Configuration-Guide" rel="noopener noreferrer" target="_blank">Okta Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li>
+<strong>Create a Custom Report in UKG Ready with a Specific Set of Columns</strong>: For this integration, to retrieve a specific set of data from UKG Ready, a custom report has to be created that includes the following list of columns. <br/><img alt="Cust Rpt.png" height="323" src="./assets/332d7494d8723550.bin" width="444"/><br/>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953-UKG-Ready-Configuration-Guide#h_01HD5Z3BSFA5H7NP4JMBNZPMP8" rel="noopener noreferrer" target="_blank">Creating Custom Report</a> section of the UKG Ready Configuration guide for the procedure.</li>
+</ul>
+<h1 id="h_01JWQMQ3DE8DQT4RGE076FQPQA">Integration Setup</h1>
+<p>This section explains how to configure the integration between UKG Ready and Okta for automated user lifecycle management. It covers creating the integration, setting up parameters, and the process for enabling scheduled synchronization of employee status changes from UKG Ready to Okta.</p>
+<p>The integration activates existing Okta users at the beginning of their hire or rehire date and deactivates them at the end of their termination date, using employee data from UKG Ready. The integration determines activation and deactivation timing for each user according to their employment dates in UKG Ready, ensuring these actions occur at the correct local time for the employee’s assigned time zone.</p>
+<h2 id="h_01JWQNKWT7KMW2BKNJK7X8FSM4">Create Integration</h2>
+<p>Follow these steps to configure the UKG Ready to Okta integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to the <strong>Integrations</strong> section in the left panel.</li>
+<li>Click <strong>Create</strong> Integration.</li>
+<li>Select <strong>UKG Ready to Okta Reconciliation</strong>.</li>
+<li>Enter a name and description for the integration.</li>
+<li>Select your <em>UKG Ready</em> and <em>Okta</em> connector instances.</li>
+<li>Click <strong>Continue</strong> to proceed to the configuration.</li>
+</ol>
+<h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Set Up Parameters</h3>
+<p>The <strong>Parameters</strong> section contains essential parameters that determine how the integration operates. Each setting is crucial in customizing the integration's behavior to meet your organization's needs.</p>
+<ul>
+<li>
+<strong>Company Name or Company ID</strong>: Refers to the name or unique identifier of the company in UKG Ready, which is used for retrieving employee and time zone data.</li>
+<li>
+<strong>Employee IDs Excluded from Deactivation</strong>: Specifies the list of employee IDs that will not be deactivated in Okta, even if they are marked as terminated in UKG Ready.</li>
+<li>
+<strong>Deactivation Limits</strong>: Provides a restriction on the number of user deactivations allowed in a single integration run as a safety measure.</li>
+<li>
+<strong>Maximum Allowable Deactivations</strong>: Sets the maximum number of user deactivations permitted per integration run when Deactivation Limits are enabled.</li>
+<li>
+<strong>Enable Integration Report Download</strong>: Allows downloading the integration report in CSV format.</li>
+<li>
+<strong>Report Only</strong>:  Generates a report outlining the data changes that would occur without implementing them.</li>
+<li>
+<strong>Report ID</strong>: The unique identifier of the UKG Ready report used to fetch employee data.</li>
+<li>
+<strong>Recipients' Email Addresses</strong>: The email addresses of the recipients to whom the email notifications will be sent.</li>
+<li>
+<strong>Deactivate Missing Users:</strong> Deactivates the Okta users not found in the latest UKG Ready report.</li>
+<li>
+<strong>Email Subject</strong>: The subject line used for all integration report emails.</li>
+<li>
+<strong>Email Body</strong>: The message content used as the body for all integration report emails.</li>
+</ul>
+<h2 id="h_01JXVM1J4N7VZ94NXYHA7YCQTK">Attribute Mapping</h2>
+<p>The integration retrieves employee data from UKG Ready by specifying a report ID and company information. It also collects all user accounts from Okta, including those that are active or de-provisioned, ensuring a proper view of user and employee statuses.</p>
+<p>The integration uses the employee ID as the unique identifier to match Okta users with UKG employees. This comparison ensures accurate association between user records. Using this mapping, user statuses in Okta are synchronized with the latest employment data from UKG Ready.</p>
+<ul>
+<li>For each matched user, the integration evaluates key employment events recorded in UKG Ready, such as Hire and Rehire.</li>
+<li>Activation in Okta is scheduled at the start of the hire or rehire date, based on the employee’s local time zone.</li>
+<li>Deactivation in Okta is scheduled at the end of the termination date, also according to the employee’s local time zone.</li>
+<li>The Time Zone is considered to ensure that granting or revoking access occurs at the appropriate local time for each user.</li>
+<li>Users present in Okta but not found in the UKG Ready are identified and may be flagged for deactivation, depending on configuration settings. The integration supports exemptions for specific employee IDs, allowing administrators to limit or prevent deactivation for designated users. </li>
+</ul>
+<h1 id="01JQQX8ZJ9C62RPE14W4DTF9PE">Run the Integration</h1>
+<p>The integration can be scheduled to run automatically at customizable intervals. Available frequencies include <strong>15 minutes, 30 minutes, 1 hour, 4 hours, 6 hours, 12 hours, or 24 hours</strong>. You can also enable <strong>recurring executions</strong> to run the integration continuously on your chosen schedule.</p>
+<p>On successful execution, the CSV file will be sent to the specified recipients. In case of integration errors, notifications and reports will also be sent to the email addresses.</p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<p> </p>
+<p><span></span><span>.</span></p>
+  </div>
+</body>
+</html>

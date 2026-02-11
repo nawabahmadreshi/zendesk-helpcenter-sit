@@ -1,0 +1,598 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP iHCM Users to Active Directory Users with ServiceNow Approvals</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP iHCM Users to Active Directory Users with ServiceNow Approvals</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating the synchronization of data across resource types. This guide covers the end-to-end process of setting up a script synchronization to sync the <em>Users</em> resource of ADP iHCM to the <em>Users</em> resource of Active Directory based on approvals from ServiceNow.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>ADP iHCM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/16804103956759">ADP iHCM Configuration Guide</a> for details.</li>
+<li>
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934">Active Directory (AD) Configuration Guide</a> for details.</li>
+<li>
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854">ServiceNow Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</h1>
+<p>This section details how the synchronization must be configured to allow data push from ADP iHCM to Active Directory based on approvals from ServiceNow.</p>
+<h2 id="h_01J8MAB1RM5R4JMD53CEQ1E1R1">Architecture Overview</h2>
+<p>When a user is created in ADP iHCM, Aquera checks if the user is already present in Active Directory. If the user is not present, Aquera checks if there is an existing ticket for the user in ServiceNow. The following actions take place based on the presence of a ServiceNow ticket:</p>
+<ul>
+<li>If there is an existing ticket for the user in ServiceNow, Aquera checks the ticket's status. The user is synced to Active Directory when the ticket is in <em>Resolved</em> status.</li>
+<li>If a matching ticket is not found in ServiceNow, Aquera creates a ticket for the user in ServiceNow and assigns it to the approver. The user is synced to Active Directory when the ticket is in <em>Resolved</em> status.</li>
+</ul>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Script Synchronization</h2>
+<p>Perform the following steps to create a new script synchronization:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> from the left side panel.</li>
+<li>Click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>ADP iHCM Users to Active Directory Users with ServiceNow Approvals</strong>.</li>
+<li>Enter a name and a description for the synchronization.</li>
+<li>Select your ADP iHCM, Active Directory, and ServiceNow connector instances.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the synchronization.</li>
+</ol>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h2>
+<p>The<strong> ADP iHCM Users to Active Directory Users with ServiceNow Approvals </strong>template script maps the commonly used ADP iHCM and Active Directory attributes. You can customize it based on your use case.<br/>The following are the attributes that are mapped by default:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>ADP iHCM Script Expression</strong></td>
+<td><strong>Active Directory Script Expression</strong></td>
+</tr>
+<tr>
+<td>adpUser.userName</td>
+<td>adUser.userName</td>
+</tr>
+<tr>
+<td>adpUser.active</td>
+<td>adUser.active</td>
+</tr>
+<tr>
+<td>adpUser.name.givenName</td>
+<td>adUser.name.givenName</td>
+</tr>
+<tr>
+<td>adpUser.name.familyName</td>
+<td>adUser.name.familyName</td>
+</tr>
+<tr>
+<td>adpUser.name.middleName</td>
+<td>adUser.name.middleName</td>
+</tr>
+<tr>
+<td>adpUser.name.formatted</td>
+<td>adUser.name.formatted</td>
+</tr>
+<tr>
+<td>adpUser.emails[0].value</td>
+<td>adUser.emails[0].value</td>
+</tr>
+<tr>
+<td>adpUser.emails[0].type</td>
+<td>adUser.emails[0].type</td>
+</tr>
+<tr>
+<td>adpUser.emails[0].primary</td>
+<td>adUser.emails[0].primary</td>
+</tr>
+<tr>
+<td>adpUser.phoneNumbers[0].value</td>
+<td>adUser.phoneNumbers[0].value</td>
+</tr>
+<tr>
+<td>adpUser.phoneNumbers[0].type</td>
+<td>adUser.phoneNumbers[0].type</td>
+</tr>
+<tr>
+<td>adpUser.addresses[0].streetAddress</td>
+<td>adUser.addresses[0].streetAddress</td>
+</tr>
+<tr>
+<td>adpUser.addresses[0].locality</td>
+<td>adUser.addresses[0].locality</td>
+</tr>
+<tr>
+<td>adpUser.addresses[0].country</td>
+<td>adUser.addresses[0].country</td>
+</tr>
+<tr>
+<td>adpUser.addresses[0].type</td>
+<td>adUser.addresses[0].type</td>
+</tr>
+<tr>
+<td>adpUser.addresses[0].primary</td>
+<td>adUser.addresses[0].primary</td>
+</tr>
+<tr>
+<td>adpUser.title</td>
+<td>adUser.title</td>
+</tr>
+<tr>
+<td>adpUser["urn:ietf:params:scim:<br/>schemas:extension:enterprise:2.0:User"].employeeNumber</td>
+<td>adUser["urn:ietf:params:scim:<br/>schemas:extension:enterprise:2.0:User"].employeeNumber</td>
+</tr>
+<tr>
+<td>adpUser["urn:ietf:params:scim:<br/>schemas:extension:enterprise:2.0:User"].manager.value</td>
+<td>adUser.["urn:ietf:params:scim:<br/>schemas:extension:enterprise:2.0:User"].manager.value</td>
+</tr>
+<tr>
+<td>adpUser["urn:ietf:params:scim:<br/>schemas:extension:enterprise:2.0:User"].manager.$ref</td>
+<td>adUser["urn:ietf:params:scim:<br/>schemas:extension:enterprise:2.0:User"].manager.$ref</td>
+</tr>
+<tr>
+<td>adpUser["urn:ietf:params:scim:schemas:ian:2.0:User"].workerID</td>
+<td>adUser["urn:ietf:params:scim:schemas:ian:2.0:User"].employeeID</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01HXV5081PWKBEKH540JBRRMQM">ADP iHCM User Attributes</h2>
+<p>Refer to the following table for the ADP iHCM user attributes:</p>
+<table border="1" width="978">
+<tbody>
+<tr>
+<td><strong><span>Name</span></strong></td>
+<td><strong><span>Description</span></strong></td>
+<td><strong><span>Data Type</span></strong></td>
+<td><strong><span>Example Values</span></strong></td>
+<td><strong><span><span>Mutability</span></span></strong></td>
+</tr>
+<tr>
+<td>
+<div>
+<div>userName</div>
+</div>
+</td>
+<td>A unique identifier for the user</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>bjensen</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>active</div>
+</div>
+</td>
+<td>Indicates if the user's account is active</td>
+<td>
+<div>
+<div>boolean</div>
+</div>
+</td>
+<td>true/false</td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>name.givenName<span>*</span>
+</td>
+<td>The given name, or the first name of the user</td>
+<td>string</td>
+<td>Barbara</td>
+<td>immutable</td>
+</tr>
+<tr>
+<td>name.familyName<span>*</span>
+</td>
+<td>The family name, or the last name of the user</td>
+<td>string</td>
+<td>Jensen</td>
+<td>immutable</td>
+</tr>
+<tr>
+<td>
+<div>name.middleName</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>The middle name of the user</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div>
+<div>string</div>
+</div>
+</div>
+</div>
+</td>
+<td>Jane</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>name.formatted</td>
+<td>The full name of the user, formatted for display purpose</td>
+<td>string</td>
+<td>Ms.Barbara Jensen</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>emails[].value</td>
+<td>The email ID of the user</td>
+<td>string</td>
+<td>bjensen@example.com</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>emails[].type</td>
+<td>The type of email ID of the user</td>
+<td>string</td>
+<td>work</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>emails[].primary</td>
+<td>Indicates if the email ID is the primary contact preference of the user</td>
+<td>boolean</td>
+<td>true/false</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>phoneNumbers[].value</td>
+<td>The phone number of the user</td>
+<td>string</td>
+<td>+44 079 3077 7235</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>phoneNumbers[].type</td>
+<td>
+<p>The type of phone number of the user <br/><strong>Notes</strong>:</p>
+<ul>
+<li>The supported values are <em>home</em>, <em>mobile-home</em>, <em>mobile-work</em>, <em>mobileHome</em>, <em>mobileWork</em>, and <em>work</em>.</li>
+<li>The user can only be created by the type mobileHome.</li>
+</ul>
+</td>
+<td>string</td>
+<td>mobileHome</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>addresses[].streetAddress<span>*</span>
+</td>
+<td>The full street address of the user which can include house number, street name, P.O. box, and multi-line extended street address information</td>
+<td>string</td>
+<td>67 Boroughbridge Road</td>
+<td>immutable</td>
+</tr>
+<tr>
+<td>addresses[].locality<span>*</span>
+</td>
+<td>The city or the locality of the user</td>
+<td>string</td>
+<td>Bishopbriggs</td>
+<td>immutable</td>
+</tr>
+<tr>
+<td>addresses[].country<span>*</span>
+</td>
+<td>The country of the user</td>
+<td>string</td>
+<td>United Kingdom</td>
+<td>immutable</td>
+</tr>
+<tr>
+<td>addresses[].type<span>*</span>
+</td>
+<td>
+<p>The type of address of the user<br/><strong>Notes</strong>:</p>
+<ul>
+<li>The supported values are <em>dependant</em>, <em>forwarding</em>, <em>holiday</em>, <em>home</em>, <em>home-legal</em>, <em>home-work</em>, <em>homeLegal</em>, <em>homeWork</em>, <em>relations</em>, <em>weekday</em>, <em>weekend</em>, and <em>work</em>.</li>
+<li>While creating a user, the legal addresses will be considered as the user's primary address. If the legal address is not provided, the first address in the address array will be considered the user's primary address.</li>
+</ul>
+</td>
+<td>string</td>
+<td><em>home-legal</em></td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>addresses[].primary<span>*</span>
+</div>
+</div>
+</td>
+<td>Indicates if the address is the primary address preference of the user</td>
+<td>boolean</td>
+<td>true/false</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>title<span>*</span>
+</div>
+</div>
+</td>
+<td>The title of the user in the organization</td>
+<td>string</td>
+<td>Vice President</td>
+<td>immutable</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>employeeNumber</div>
+</div>
+</td>
+<td>The employee number of the user</td>
+<td>string</td>
+<td>IN22876</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>manager.value</td>
+<td>The ID of the manager of the user</td>
+<td>string</td>
+<td>12342</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>manager.$ref</td>
+<td>
+<p>The URI of the manager of the user</p>
+</td>
+<td>
+<div>
+<div>reference</div>
+</div>
+</td>
+<td>
+<p>Users/12342</p>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>workerID<span>*</span>
+</td>
+<td>The worker ID</td>
+<td>string</td>
+<td> </td>
+<td>immutable</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01J7J8PJMMQ03F0EAVX6TSNR0P">Active Directory User Attributes</h2>
+<p>Refer to the following table for the Active Directory user attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><span><strong>Name</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+<td><span><strong>Data Type</strong></span></td>
+<td><span><strong>Example Values</strong></span></td>
+<td><strong><span>Mutability</span></strong></td>
+</tr>
+<tr>
+<td>userName<span>*</span>
+</td>
+<td>
+<p>A unique identifier for the user.</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>Ensure to provide the userName with a length of less than 20 characters due to the Active Directory limitation for the userName. Otherwise, the user account will not be created in Active Directory.</li>
+<li>The domain name must not be provided along with the username.</li>
+</ul>
+</td>
+<td>string</td>
+<td>G3BTQN3928ATVNBR</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>active</td>
+<td>Indicates whether the user account is active.</td>
+<td> boolean</td>
+<td> true or false</td>
+<td>readWrite </td>
+</tr>
+<tr>
+<td>name.givenName</td>
+<td>The given name or the first name of the user.</td>
+<td>string</td>
+<td>Barbara</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.middleName</td>
+<td>The middle names of the user.</td>
+<td>string</td>
+<td>Jane </td>
+<td> readWrite</td>
+</tr>
+<tr>
+<td>name.familyName</td>
+<td>The family name or the last name of the user.</td>
+<td>string</td>
+<td>Jensen</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.formatted</td>
+<td>The full name, including all middle names, titles, and suffixes as appropriate, formatted for display.</td>
+<td>string</td>
+<td>Ms. Barbara J Jensen, III </td>
+<td>
+<div>
+<div>readOnly</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>emails[].value</td>
+<td>The email ID of the user.</td>
+<td>string</td>
+<td>bjensen@example.com</td>
+<td>readWrite </td>
+</tr>
+<tr>
+<td>emails[].primary</td>
+<td>Indicates whether the email ID is the primary contact preference of the user. </td>
+<td>boolean</td>
+<td>true or false</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>emails[].type<span>*</span>
+</td>
+<td>Indicates the type of email ID of the user. <br/><strong>Note</strong>: This is only required if emails[].value is specified.</td>
+<td>
+<div>
+<div>string</div>
+</div>
+</td>
+<td>work</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>phoneNumbers[].type</td>
+<td> Type of Phone Number</td>
+<td>string</td>
+<td> "work", "mobile-work"</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>phoneNumbers[].value</td>
+<td>Phone Number </td>
+<td>string</td>
+<td>+&lt;001&gt;-&lt;96&gt;-&lt;9620890000&gt; { (003)} </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>addresses[].streetAddress </td>
+<td> The street address of the user.</td>
+<td>string</td>
+<td>Plainsboro lower </td>
+<td>readWrite </td>
+</tr>
+<tr>
+<td>addresses[].locality </td>
+<td> The city of the user.</td>
+<td>string</td>
+<td> Plainsboro</td>
+<td>readWrite </td>
+</tr>
+<tr>
+<td>addresses[].country</td>
+<td>
+<p>The country of the user.</p>
+<p><strong>Note</strong>: The country value should only have 2 characters, for example, <strong>US</strong> for the United States and <strong>SE</strong> for Sweden.</p>
+</td>
+<td>string</td>
+<td>US</td>
+<td>readWrite </td>
+</tr>
+<tr>
+<td>addresses[].type</td>
+<td>The type of address of the user.</td>
+<td>string</td>
+<td>work or home assigned </td>
+<td>readWrite </td>
+</tr>
+<tr>
+<td>addresses[].primary</td>
+<td>Indicates whether the address is the preferred address of communication of the user. </td>
+<td>boolean</td>
+<td>true or false </td>
+<td>readWrite </td>
+</tr>
+<tr>
+<td>title</td>
+<td>The title of the user in the organization.<br/><br/>
+</td>
+<td>string</td>
+<td>developer </td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>employeeNumber</td>
+<td>The employee number of the user. </td>
+<td>string</td>
+<td>
+<p>QVEDZF53K</p>
+</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>manager.value</td>
+<td>The Manager ID of the user.</td>
+<td>string</td>
+<td>12342</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>manager.$ref</td>
+<td>
+<p>The URI of the manager of the user</p>
+</td>
+<td>
+<div>
+<div>reference</div>
+</div>
+</td>
+<td>
+<p>Users/12342</p>
+</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>employeeID</div>
+</div>
+</td>
+<td>The employee ID</td>
+<td>string</td>
+<td> </td>
+<td>readWrite</td>
+</tr>
+</tbody>
+</table>
+<h1 id="01J7J8NZBQRC3RCB2QF01GPYG9">Run Script Synchronization</h1>
+<p>You can set event or schedule triggers to run the script synchronization. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01HTM4C4A80M67Y1EP5SJWTAV1" rel="noopener noreferrer" target="_blank">Executing a Synchronization</a> section.</p>
+<p>After the script synchronization is successfully executed, Aquera syncs the users created in ADP iHCM as users in Active Directory based on the approval in ServiceNow.</p>
+  </div>
+</body>
+</html>

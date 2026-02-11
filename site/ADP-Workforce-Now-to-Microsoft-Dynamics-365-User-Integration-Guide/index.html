@@ -1,0 +1,235 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now to Microsoft Dynamics 365 User Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now to Microsoft Dynamics 365 User Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J46AGRGR00VNTVGR0PNNPBGG">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide outlines the process for setting up an integration to generate a CSV report containing payroll journal entries and employee data from your ADP Workforce Now to Microsoft Dynamics 365 Business Central. The CSV report is then shared with the specified recipients via email.</p>
+<p><span>Prerequisites</span></p>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li>
+<strong>Microsoft Dynamics 365</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/18360122783639" rel="noopener noreferrer" target="_blank">Microsoft Dynamics 365 Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines the configuration required to send the generated CSV file to the designated users via email and to display the integration results on the dashboard. It covers creating the integration, configuring system preferences, scheduling the integration to run, and distributing the generated CSV to the designated users. </p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>ADP Workforce Now Workers to Microsoft Dynamics 365</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your ADP Workforce Now and Entra ID connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JSP42NYMFNXEC80XYQFYYMVV">Configuration</h2>
+<p>The <strong>Parameters</strong> section under <strong>Configuration</strong> enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p>
+<ul>
+<li>
+<strong>Report Only</strong>: Select this checkbox to generate a report that shows the data that would be changed, without actually making those changes. This setting can be selected for the first integration instance to identify any issues. You can clear this selection after verifying the report and confirming the expected result.</li>
+<li>Generate Integration Report: Select the checkbox to generate the integration report.</li>
+<li>
+<strong>Enable Dashboard Generation: </strong>Select to analyze the integration results in a dashboard.</li>
+<li>
+<strong>Debug Mode: </strong>Select to generate logs outlining data changes that would occur for debugging.</li>
+<li>
+<strong>Target Time Zone</strong>: </li>
+<li>
+<strong>Send Email Notifications</strong>: Select to enable sending the email notifications.</li>
+<li>
+<strong>Send Integration Report via Email</strong>: <span>Select to receive email notification with a CSV report for all integration runs.</span>
+</li>
+<li>
+<strong>Recipients' Email Address: </strong>Enter the CSV report's recipient email address. It accepts single or comma-separated addresses and must follow valid email formatting to ensure delivery. Incorrect values may result in a failed distribution of the report.</li>
+<li>
+<strong>Email Subject on Successful Integration Execution</strong>: <span>Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</span>
+</li>
+<li>
+<strong>Email Subject on Failed Integration Execution</strong>: <span>Enter the content that must be used as the email subject in the notifications sent for an unsuccessful integration execution.</span>
+</li>
+<li><span><strong>Manager Filter Condition</strong>: Enter the manager's ID to filter employees.</span></li>
+<li><span><strong>Pay Cycle Frequency</strong>: Select the pay cycle frequency from the dropdown menu.</span></li>
+<li><span><strong>Pay Cycle Day</strong>: <span>Select the pay cycle day from the dropdown menu.</span></span></li>
+</ul>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h2>
+<p>The<strong> ADP Workforce Now Workers to Microsoft Dynamics 365 </strong>template maps the attributes to generate a CSV report containing payroll journal entries.</p>
+<p>There are four use cases:</p>
+<ol>
+<li>Employee punch-in and punch-out data is found. </li>
+<li>Employee punch-in data is available, but punch-out data is not. Then the last punch-out data for the day is considered.</li>
+<li>Employee punch-in data is not found, but punch-out data is found. Such instances are ignored.</li>
+<li>Multiple punch-in and punch-out data are found. Then the first punch-in and last punch-out data for the day are considered.</li>
+</ol>
+<p>The following are the core user attributes that are mapped by default:</p>
+<table>
+<tbody>
+<tr>
+<td><strong>ADP Workforce Now API Attributes</strong></td>
+<td><strong>Target Attribute (Clock-In)</strong></td>
+</tr>
+<tr>
+<td>punchInTime</td>
+<td>
+<p>StartDate (UTC converted to target timezone)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>associateOID</p>
+</td>
+<td>
+<p>Worker (mapped from empid to D365)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>punchInTime (HH:MM:SS)</p>
+</td>
+<td>
+<p>StartTime (seconds since midnight)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>constant</p>
+</td>
+<td>
+<p>JourRegType = SignIn</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>constant</p>
+</td>
+<td>
+<p>StampType = Work</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>constant</p>
+</td>
+<td>
+<p>ActOprID = Clockin</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>punchInTime (full)</p>
+</td>
+<td>
+<p>ProfileDate</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Metadata: manager.associateOID, punchTime, username</p>
+</td>
+<td>
+<p>Used in logs, CSV report, OpenSearch</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<table>
+<tbody>
+<tr>
+<td><strong>ADP Workforce Now API Attributes</strong></td>
+<td><strong>Target Attribute (Clock-Out)</strong></td>
+</tr>
+<tr>
+<td>
+<p>punchOutTime</p>
+</td>
+<td>
+<p>StopDate (UTC converted to target timezone)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>associateOID</p>
+</td>
+<td>
+<p>Worker (same as Clock-In)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>punchOutTime (HH:MM:SS)</p>
+</td>
+<td>
+<p>StartTime and StopTime (seconds since midnight)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>constant</p>
+</td>
+<td>
+<p>JourRegType = SignOut</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>constant</p>
+</td>
+<td>
+<p>StampType = Work</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>constant</p>
+</td>
+<td>
+<p>ActOprID = Clockout</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Metadata: manager.associateOID, punchTime, username</p>
+</td>
+<td>
+<p>Used in logs, CSV report, OpenSearch</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><span>Download CSV Report</span></p>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Run Integration</h1>
+<p>You can set up an event or schedule triggers to execute the integration. For further details, refer to the <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p>
+<p>Once the integration is successfully executed, Aquera syncs the workers created in ADP Workforce Now as users in Entra ID.</p>
+  </div>
+</body>
+</html>

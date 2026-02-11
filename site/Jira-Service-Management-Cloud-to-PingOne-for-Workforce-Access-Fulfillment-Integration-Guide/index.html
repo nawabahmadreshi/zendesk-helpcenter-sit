@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Jira Service Management Cloud to PingOne for Workforce Access Fulfillment Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Jira Service Management Cloud to PingOne for Workforce Access Fulfillment Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide describes the setup involved in the integration for synchronizing the user's privileges from Jira Service Management Cloud to the user groups in PingOne for Workforce.</p><p>To identify the matching user records across both systems, the integration reads one of the following fields in the tickets from <strong>Jira Service Management Cloud </strong>and matches it against the <em>email</em> or <em>username</em> attribute in <strong>PingOne for Workforce, </strong>based on your integration configuration:</p><ul>
+<li data-list-item-id="e0d7d25c9b26f5fee8518c1643c95e35a">Email address</li>
+<li data-list-item-id="e505e40c52da8488feee2463af24561bc">Corporate email address</li>
+</ul><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <em>Jira Service Management Cloud to PingOne for Workforce Access Fulfillment</em> integration performs the following functions:</p><ul>
+<li data-list-item-id="e618ef663c111194e8fa335e6eb75439c">Retrieves all the tickets in a specific status that belong to a specific project and work type from Jira Service Management Cloud</li>
+<li data-list-item-id="e79133df78990e975b491e0de553d6a41">Reads the email address or the corporate email address of the user from each ticket</li>
+<li data-list-item-id="e5f942438314366b766d28c0d471a29e7">Identifies a user with the matching email address or username in PingOne for Workforce, as per your configuration</li>
+<li data-list-item-id="ec1e8830114004b539a3f6bbd9da5e986">Reads the privileges of the user from the Jira ticket and updates the user's group information in the PingOne for Workforce with those privileges.</li>
+<li data-list-item-id="e51871b6066577d9d1b39c952e5f6f0cb">Transition the ticket to a specific status, based on your configuration</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e56fa2206af4700e55563cfce3147813a">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e88d008771f75570ac8d1b44afd726475">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:<ul>
+<li data-list-item-id="e01e90cd2f1390deff46cc0990a5798d8">
+<strong>PingOne for Workforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360045142273" rel="noopener noreferrer" target="_blank">PingOne for Workforce Configuration Guide</a> for details.</li>
+<li data-list-item-id="e0fcb40ab21b753912e0c74ebd3a90dee">
+<strong>Jira Service Management Cloud</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/13840676724631" rel="noopener noreferrer" target="_blank">Jira Service Management Cloud Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured for granting access to users in PingOne for Workforce, based on their privileges available in Jira Service Management Cloud.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e70d15341fcbe0d2edbb8633cbd1bcc2d">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e008fff8262503d940125a15ceb64055e">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e915b4750c876dda5a7fbb1e4aee52c71">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ec5a282502a931fb8f9482093f1d28f70">Select <strong>Jira Cloud to PingOne for Workforce Access Fulfillment</strong>.</li>
+<li data-list-item-id="e1cdf85f587730acf2f05b0a0b833a920">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e04cb31a1856e5d15ce1803134288d7f8">Select your <strong>PingOne for Workforce</strong> and <strong>Jira Service Management Cloud</strong> connector instances.</li>
+<li data-list-item-id="e1413869527c2ff1c087556cb381350ca">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the PingOne for Workforce and Jira Service Management Cloud application connectors used for the integration. You can change the application instances used by the integration, if required.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K3FXP30JFYJ0END55WSMTMTP">Integration Features</h4><p>Enable the integration features via this section.</p><ul><li data-list-item-id="eaf93f99aabe67acfdd8dc84879391e93">
+<strong>Enable Manage Access</strong>: Select this checkbox to manage access fulfillment. This is a mandatory setting. <br/><strong>Note</strong>: The <strong>Manage Access</strong> section is displayed only when you select this checkbox.</li></ul><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4><p>Configure the following general settings, based on your requirements:</p><ul>
+<li data-list-item-id="e9e5df268b9552578d3b583e82bb20886">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e784bfc4b3dee7f535dba81fd6738a086">
+<strong>Enable Notifications</strong>: Select this checkbox to enable email notifications related to the integration. The <strong>Notifications</strong> section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="ef51c64e8bb79fab9c6d569fce4e2ff05">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.</li>
+<li data-list-item-id="e159db9a5e61e071a5621418e97781a7b">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. The <strong>Log Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="e7cd43d43980990655dc7b53757b677ba">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. The <strong>Report Settings</strong> section will be displayed only when this checkbox is selected.</li>
+</ul><h4 id="h_01K33R1ZPW74QQS8E9Q5JSJ2DM">PingOne Environment</h4><p>Select the specific PingOne environment that must be used in the integration.</p><p><strong>Note</strong>: Make sure that you click the <em>Refresh</em> icon next to the parameter field to refresh the values populated in the field.  Otherwise, you will see only the values that are available by default in the integration template.</p><ul><li data-list-item-id="eb51dbf01fc9bea77307ca48f32ba44ca">
+<strong>Select PingOne Environment ID</strong>: Select the PingOne Environment ID from the dropdown, where the user's group information has to be updated. For example, <strong>Administrators</strong>.<br/><strong>Note</strong>: Whenever you change the environment ID, make sure that the corresponding client ID (as the username) and client secret (as the password) are also updated in the PingOne for Workforce connector to enable authentication and update group information. </li></ul><h3 id="h_01K3G0YJ3YRE5R5XXF0AK6QM3N">Manage Access</h3><p>Set the configurations related to the access fulfillment.</p><p><strong>Note</strong>: Make sure that you click the <em>Refresh</em> icon next to each parameter field in the <strong>Manage Access</strong> section to refresh the values populated in those fields. Otherwise, you will see only the values that are available by default in the integration template.</p><h4 id="h_01K3G10XGHNRYXNTFRVCPH0MT9">Access Requirement Fulfillment</h4><p>Configure the following access fulfillment settings:</p><ul>
+<li data-list-item-id="e831c5daced8e47aaaf779631fb7e9964">
+<strong>Project Name</strong>: Select the Jira project from which the tickets need to be retrieved. For example, <em>Integration</em>
+</li>
+<li data-list-item-id="e5c9ec460e8cd402eee3651c020405fec">
+<strong>Work Type</strong>: Select the type of tickets that need to be retrieved. For example, select <em>Joiner</em> to retrieve only the joiner tickets.</li>
+<li data-list-item-id="eb2b5ec1aef7952313fa1a9a69a1b8526">
+<strong>Ticket Pickup Status</strong>: Select the status of the tickets that must be retrieved by the integration for processing. For example, select <em>Open</em> to retrieve all the tickets of <em>Open</em> status.</li>
+<li data-list-item-id="e95948c797b5122a49ce4df3f132286af">
+<strong>Post-Update Status</strong>: Select the status to which a ticket must be transitioned after the user's privileges are successfully updated in PingOne. Select <em>None</em> if you do not want the ticket status to be changed.<br/><strong>Note</strong>: The user privileges are not updated and the ticket status will not be changed in the following scenarios:<ul>
+<li data-list-item-id="e1ba75419425be2698f9fa9d45ccedf19">No matching user is found in PingOne</li>
+<li data-list-item-id="eb1bc971ca0a080e145e291f6fdfffabe">Multiple matching user records are found in PingOne</li>
+</ul>
+</li>
+</ul><h4 id="h_01K35A8BW0AFVC2DSAZHQQXN72">Correlation Field Settings</h4><p>Configure the following fields to define how users from Jira tickets are matched with user accounts in PingOne:</p><ul>
+<li data-list-item-id="eadd1cf57469106c66b764b107fcd4049">
+<strong>Jira Correlation Field</strong>: Select the Jira ticket field that must be used for identifying a user. For example, <em>Corporate email address</em>.</li>
+<li data-list-item-id="e404a07fb48a84d3154ec68895fce8764">
+<strong>PingOne Correlation Field</strong>: Select the corresponding target attribute in PingOne for Workforce against which the <strong>Jira Correlation Field</strong> value will be matched to find the user. For example, <em>email</em>
+</li>
+</ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h3><p>Configure the following settings for email notifications:</p><ul>
+<li data-list-item-id="eee31578c3612da313712217fd4e886c4">
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications on integration runs will be sent.</li>
+<li data-list-item-id="ed84a3aaacfd8c3a07ad3a63923ce9a0f">
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+</ul><p><strong>Note</strong>: The following counts are displayed in a tabular format in the email body:</p><ul>
+<li data-list-item-id="e4ae8c7680109950586ae30c17e3353de">Total number of Jira tickets retrieved</li>
+<li data-list-item-id="ea36ac8d61286313e72d93fe1eb40400c">Successful user group updates</li>
+<li data-list-item-id="ea91ba0ef4ed2d03a28d7f479ac0eb4b4">Failed user group updates</li>
+<li data-list-item-id="ecd36259fe7a65dadff0c68eae1e44318">Skipped users</li>
+<li data-list-item-id="e4db7d24fd774c00dd84de121929e4c96">Users not found in PingOne</li>
+<li data-list-item-id="e57fcfac6402ddf7911664cbfefacc288">Duplicate users found in PingOne</li>
+</ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Log Settings</h3><p>Configure the following settings to customize the integration logs:</p><ul><li data-list-item-id="e0fc4076a94c52adda53fd60b6bb72ab1">
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ed6964bbb9fd392cc7587e9a389876254">
+<strong>Summary</strong>: Only the count of operations is displayed in the logs.</li>
+<li data-list-item-id="ed30f0fc0abce0d7036848a35e05784ed">
+<strong>Full</strong>: In addition to the count of operations, the logs also display the transaction status, the ticket details, the groups assigned and removed from users, and the ticket transition status.</li>
+</ul>
+</li></ul><p><strong>Note</strong>: The following counts are displayed in the logs:</p><ul>
+<li data-list-item-id="e7a5396eface74e79fed80eff34742c8b">Total number of Jira tickets retrieved</li>
+<li data-list-item-id="e36e24f7ea6e54b6888cad5ee08401439">Successful user group updates</li>
+<li data-list-item-id="ee79f7f622685e268073cc6f8e783d129">Failed user group updates</li>
+<li data-list-item-id="e563bb0272c0241ecf5e85d8786da2570">Skipped users</li>
+<li data-list-item-id="ef15c55cb908332ff20018085b3193838">Users not found in PingOne</li>
+<li data-list-item-id="e10f9cc9c4ba26fa38da5682a57a20652">Duplicate users found in PingOne</li>
+</ul><h3 id="h_01K3GPJYYR98WRPQPMPX05B48E">Report Settings</h3><p>The CSV report will be sent as an attachment with the email notifications if the notification settings are enabled. The report can also be downloaded by navigating to the <strong>Execution Timeline</strong> panel and clicking <strong>Download Report</strong>.</p><p>Configure the following settings to customize the CSV report:</p><ul><li data-list-item-id="e75ee1c832bd796253f1f6636d1c0874e">
+<strong>Select the Report Detail Level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e4984c04eb31feeb169da945acce12bac">
+<strong>Summary</strong>: Only the count of operations is displayed in the report.</li>
+<li data-list-item-id="ebfe2bfd0e768ce7a94b3b6f29bc0be32">
+<strong>Full</strong>: The report displays the transaction status, ticket details, groups assigned and removed from users, and the ticket transition status.</li>
+</ul>
+</li></ul><h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2><p>The <strong>Attribute Map</strong> controls what attribute value from Jira must be updated to the group attribute in  PingOne. By default, the integration is configured to update <strong>Privileges</strong> values from Jira Service Management Cloud to the group attribute in PingOne for Workforce. </p><p>Modify the source attributes, if required, based on your use case.</p><p><strong data-stringify-type="bold">Note</strong>: The update to the Jira issue description will occur only when <strong data-stringify-type="bold">Ignore Description Update</strong> is set to <strong data-stringify-type="bold">false. </strong>If <strong data-stringify-type="bold">Ignore Description Update</strong> is <strong data-stringify-type="bold">true</strong>, the description will be skipped during the update.</p><p><img height="1475" src="./assets/e7a9ef5b1ddf713c.bin" width="2949"/></p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

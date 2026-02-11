@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Jira Cloud to Active Directory Access Fulfillment Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Jira Cloud to Active Directory Access Fulfillment Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide describes how to configure the integration so that a user is assigned to a group in Active Directory by synchronizing the user’s group name from Jira Service Management Cloud.</p>
+<p>To identify the matching user records across both systems, the integration reads one of the custom fields in the tickets from Jira Service Management Cloud and matches it against <strong>sAMAccountName</strong>, <strong>userPrincipalName</strong>, or <strong>employeeNumber</strong> in Active Directory.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The <em>Jira Cloud to Active Directory Access Fulfillment</em> integration performs the following functions:</p>
+<ul>
+<li>Retrieves all the tickets in a specific status that belong to a specific project and work type from Jira Service Management Cloud.</li>
+<li>Reads the custom user field from each ticket to identify the associated user.</li>
+<li>Identifies a corresponding user with the matching field in Active Directory, as per your configuration.</li>
+<li>Reads the group name(s) associated with the user from the Jira ticket's custom field and updates the user's group memberships in Active Directory accordingly, ensuring they receive the appropriate privileges.</li>
+<li>Transition the ticket to a specific status, based on your configuration.</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
+<li>
+<strong>Jira Service Management Cloud</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/13840676724631" rel="noopener noreferrer" target="_blank">Jira Service Management Cloud Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured so that users are automatically added to Active Directory groups and granted access, based on the group name(s) provided in Jira Service Management Cloud.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Jira Cloud to Active Directory Access Fulfillment</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <strong>Active Directory</strong> and <strong>Jira Service Management Cloud</strong> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The Applications section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K3FXP30JFYJ0END55WSMTMTP">Integration Scenarios</h4>
+<p>Configure the following integration scenario:</p>
+<ul>
+<li>
+<strong>Enable Access Fulfillment Management</strong>: Select this checkbox to manage access fulfillment. <br/><strong>Note</strong>: The<strong> Access</strong> <strong>Management </strong>section is displayed only when you select this checkbox.</li>
+</ul>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4>
+<p>Configure the following general settings, based on your requirements:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes.<br/><strong>Note</strong>: The <strong>Log Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report.<br/><strong>Note</strong>: The <strong>Report Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable the integration-related notifications.<br/><strong>Note</strong>: The <strong>Notification</strong> <strong>Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.<br/><strong>Note</strong>: The <strong>Log Insights</strong> Settings section will be displayed only when this checkbox is selected.</li>
+</ul>
+<h3 id="h_01K3G0YJ3YRE5R5XXF0AK6QM3N">Access Management</h3>
+<p>Set the configurations related to the access fulfillment.</p>
+<p><strong>Note</strong>: Make sure that you click the <em>Refresh</em> icon next to each parameter field in the<strong> Access Management</strong> section to refresh the values populated in those fields. Otherwise, you will see only the values that are available by default in the integration template.</p>
+<h4 id="h_01K3G10XGHNRYXNTFRVCPH0MT9">Access Fulfillment Settings</h4>
+<p>Configure the following access fulfillment settings:</p>
+<ul>
+<li>
+<strong>Project Name</strong>: Select the Jira project from which the tickets need to be retrieved. For example, <em>My Team.</em>
+</li>
+<li>
+<strong>Work Type</strong>: Select the type of tickets that need to be retrieved. For example, select <em>Task</em> to retrieve only the task tickets.</li>
+<li>
+<strong>Ticket Pickup Status for Access Fulfillment</strong>: Select the status of the tickets that must be retrieved by the integration for processing. For example, select <em>Open</em> to retrieve all the tickets of <em>Open</em> status.</li>
+</ul>
+<h4 id="h_01K35A8BW0AFVC2DSAZHQQXN72">Correlation Field Settings</h4>
+<p>Configure the following fields to define how users from Jira tickets are matched with user accounts in Active Directory:</p>
+<ul>
+<li>
+<strong>Source Correlation Attribute</strong>: Select the Jira ticket field that must be used for identifying a user. For example, <em>ADCorrelation.</em>
+</li>
+<li>
+<strong>Target Correlation Attribute</strong>: Select the corresponding target attribute in Active Directory against which the <strong>Source Correlation Attribute</strong> value will be matched to find the user. For example, <em>userPrincipalName.</em>
+</li>
+</ul>
+<h4 id="h_01K5XJZ0MJC9VVHWK9FEJS4JH5">Group Settings</h4>
+<p>Configure the following group settings:</p>
+<ul>
+<li>
+<strong>Group Names Field</strong>: Select the custom field in the Jira ticket that contains the user's group information.</li>
+</ul>
+<h4 id="h_01K5XK8Y6D30KNPQ05NTP60KP1">Post Access Fulfillment Settings</h4>
+<p>Configure the following post-access fulfillment settings:</p>
+<ul>
+<li>
+<strong>Post Access Fulfillment Ticket Status</strong>: Select the status to which a ticket must be transitioned after the user's group assignment is successfully updated in Active Directory. Select <em>None</em> if you do not want the ticket status to be changed.<br/><strong>Note</strong>: The user group assignment is not updated, and the ticket status will not be changed in the following scenarios:
+<ul>
+<li>No matching user is found in Active Directory</li>
+<li>Multiple matching user records are found in Active Directory</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01K04B51EEX43EAV95YABBP3F5">Log Settings</h3>
+<p>Configure the following settings to customize the integration logs:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following is the available option:<br/>
+<ul>
+<li>
+<strong>Full</strong>: In addition to the count of operations, the logs also display the transaction status, the ticket details, the groups assigned and removed from users, and the ticket transition status.</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01K5XW0W8XHA2ZARVMN2CJYGP3">Report Settings</h3>
+<p>Configure the following report settings:</p>
+<ul>
+<li>
+<strong>Enable Integration Report Download</strong>: Select this checkbox to allow downloading the integration report as a CSV file.</li>
+</ul>
+<h3 id="01K5XVFZRJYTGXBGXBVCAGA4HN">Notification Settings</h3>
+<p>Configure the following settings for email notifications:</p>
+<h4 id="h_01K5XVKH5DGERZ18Y4CRV7AFPE">Email Notification Settings On Successful Integration</h4>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
+<li>
+<strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li>
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+<li>
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a report for all integration runs.<br/><strong>Note</strong>: This option will be displayed only when the <strong>Enable Report Generation </strong>checkbox is selected under <strong>Parameters</strong> &gt; <strong>General Settings</strong>.</li>
+</ul>
+<h4 id="01K5XVWQNN75NQN35SMMECXP21">Email Notification Settings On Integration Failure</h4>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent in case the integration fails.</li>
+<li>
+<strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li>
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The <strong>Attribute Map</strong> determines which attributes and their values should be updated in Jira when the ticket status changes after the successful assignment of the user to the group. Depending on your workflow, sometimes when you change the ticket status after the users' group assignment is completed, the system prompts you to provide additional details, such as <em>Resolution</em>, <em>Comment</em>, etc. You can update those attributes through the integration.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

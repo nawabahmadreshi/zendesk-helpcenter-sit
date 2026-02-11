@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Jira to Entra ID Contractor Management Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Jira to Entra ID Contractor Management Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide outlines the process of synchronizing the contractor's lifecycle from Entra ID to Jira Service Management Cloud for the selected work type. This integration ensures that all contractor lifecycle events in Entra ID are accurately tracked and managed within the Jira system for seamless operational workflows.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The <strong>Jira to Entra ID Contractor Management</strong> integration provides the following functions:</p>
+<ul>
+<li>
+<strong>Contractor Creation</strong>: The contractor onboarding tickets are retrieved from Jira Service Management and can be filtered by project, issue type, and approval status to identify new user creation requests. Then the corresponding users are created in Entra ID.</li>
+<li>
+<strong>Contractor Extension Ticket Creation</strong>: The contractor's tenure is extended by creating an extension ticket in Jira Service Management, which specifies how many days before the contract end date this ticket must be created. </li>
+<li>
+<strong>Contractor Extension</strong>: The contractor's tenure is extended based on the end-date calculated as per the extension ticket.</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Jira</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/13840676724631" rel="noopener noreferrer" target="_blank">Jira Service Management Cloud Configuration Guide</a> for details.</li>
+<li>
+<strong>Entra ID</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32091350086423" rel="noopener noreferrer" target="_blank">Entra ID Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured to push the JIRA ticket from Jira Service Management Cloud to Entra ID. </p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to "<strong>Integrations"</strong> from the left-side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Jira to Entra ID Contractor</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your Jira and Entra ID connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4>
+<p>Select <strong>Enable Contractor's Lifecycle Management</strong> to display the <strong>Select Operations</strong> dropdown menu. Select one of the following operations (use case) from the dropdown menu:</p>
+<ul>
+<li>Contractor Creation</li>
+<li>Contractor Extension Ticket Creation</li>
+<li>Contractor Extension</li>
+</ul>
+<h4 id="h_01K591CVY4H0XNHQ9SF2Y7PHHW">General Settings</h4>
+<p>Configure the following global settings:</p>
+<ul>
+<li>
+<strong>Jira Timezone</strong>: Select the Jira timezone from which the contractor data is being retrieved.</li>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li>
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select to visualize integration-related metrics.</li>
+<li>
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Incremental Mode</strong>: Select to run the integration in incremental mode.</li>
+</ul>
+<h4 id="h_01K56EHTHTWR2ZA7WXBTBDY9PH">Contractor Creation</h4>
+<p>Configure the following contractor creation settings:</p>
+<ul>
+<li>
+<strong>Jira Ticket Key</strong>: Enter the Jira ticket key to retrieve the onboarding ticket.</li>
+<li>
+<strong>Jira Project Name</strong>: Select the Jira project name from the dropdown menu to retrieve the onboarding tickets.</li>
+<li>
+<strong>Jira Work Type</strong>: Select the Jira work type from the dropdown menu to retrieve the onboarding tickets.</li>
+<li>
+<strong>Request Type to Fetch Onboarding Tickets</strong>: Select the request type from the dropdown menu to retrieve the onboarding tickets.<br/><strong>Note</strong>: This checkbox is displayed based on the chosen Jira project and work type.</li>
+<li>
+<strong>Jira Ticket Status</strong>: Select the Jira status from the dropdown menu to retrieve the onboarding tickets.</li>
+<li>
+<strong>Auto Close After Contractor Creation</strong>: Select to automatically close the Jira ticket once the contractor has been created in Entra ID.</li>
+<li>
+<strong>Jira Ticket Closure Status</strong>: Select the Jira ticket closure status that will be applied when closing the Jira ticket.</li>
+</ul>
+<h4 id="h_01K5BCVSY7VKR4ZH3FWTP149XG">Password Policy Settings</h4>
+<p>Configure the following password policy settings:</p>
+<ul>
+<li>
+<strong>Password Policy Type</strong>: Select the password policy type from the dropdown menu that will be used to create the contractor's initial password.</li>
+<li>
+<strong>Permitted Character Types</strong>: Select the permitted character types for the password creation from the dropdown menu.</li>
+<li>
+<strong>Generate Contractor's Login Password</strong>: Select to generate a random password for the contractor's login.<br/><strong>Note</strong>: This checkbox is displayed when you select <em>Generate Random Password</em> from the <strong>Password Policy Type</strong> dropdown menu.</li>
+<li>
+<strong>Password Length</strong><span>: Enter the maximum permissible password length.</span>
+</li>
+<li>
+<strong>Permitted Special Characters</strong>: Enter the special characters without spaces that are permitted for usage in the password.</li>
+<li>
+<strong>Send Initial Password to Administrator</strong>: Select to send the initial login password for the contractor to the administrator.</li>
+</ul>
+<h4 id="h_01K5BCW0ZNDR92MSP5C4J76KG3">Extension Settings</h4>
+<p>This section is displayed and required, whether you select <em>Contractor Extension Ticket Creation</em> or <em>Contractor Extension from the </em><strong>Select Operations</strong> dropdown menu under the <strong>Integration Scenarios</strong> section. Configure the following extension settings:</p>
+<ul>
+<li>
+<strong>Jira Project Name</strong>: Select the Jira project name from the dropdown menu to retrieve the contractor tickets.</li>
+<li>
+<strong>Jira Work Type</strong>: Select the Jira work type from the dropdown menu to retrieve the contractor tickets.</li>
+<li>
+<strong>Select the Jira Field for Correlation</strong>: Select the Jira field from the dropdown menu to map the Jira attribute with the Entra ID attribute for user identification.</li>
+<li>
+<strong>Select the Entra ID Field for Correlation</strong>: Select the Jira field from the dropdown menu to map the Entra ID attribute with the Jira attribute for user identification.</li>
+</ul>
+<h4 id="extension-ticket-creation-settings">Extension Ticket Creation Settings</h4>
+<p>Configure the following contractor extension ticket creation settings:</p>
+<ul>
+<li>
+<strong>Employee ID in Entra ID</strong>: Enter the employee ID in Entra ID to retrieve the contractors.</li>
+<li>
+<strong>Number of Days Before Contractor's Expiry</strong>: Enter the number of days before the contractor's expiration date to retrieve the contractors.</li>
+</ul>
+<p>Contractor Extension</p>
+<p>Configure the following contractor extension settings:</p>
+<ul>
+<li>
+<strong>Jira Ticket Key</strong>: Enter the Jira ticket key to retrieve the contractor ticket.</li>
+<li>
+<p><strong>Select the Jira Field for Approving Contractor Extension</strong>: Select the Jira field from the dropdown menu to check the approval status of the contractor extension ticket.</p>
+</li>
+<li>
+<p><strong>Select the Jira Field Type</strong>: Select the Jira field type from the dropdown menu for the Jira field you selected above.</p>
+</li>
+<li>
+<strong>Jira Field Value</strong>: Select the value for the Jira field you selected above, which will be regarded as 'Approved' for the contractor ticket.<br/><strong>Note</strong>: This field is displayed when you select <em>Jira Dropdown</em> from the <strong>Select the Jira Field Type</strong> dropdown menu.</li>
+<li>
+<strong>Jira Field Text</strong>: Enter the value for the Jira field you have selected above, which will be regarded as 'Approved' for the contractor ticket.<br/><strong>Note</strong>: This field is displayed when you select <em>Jira Text Field</em> from the <strong>Select the Jira Field Type</strong> dropdown menu.</li>
+<li>
+<p><strong>Auto Close After Contractor Extension</strong>: Select to automatically close the Jira ticket once the contractor's tenure has been extended in Entra ID.</p>
+</li>
+<li>
+<strong>Jira Ticket Closure Status</strong>: Select the Jira ticket closure status that will be applied when closing the Jira ticket.</li>
+</ul>
+<h4 id="h_01K0PGWJSDWRPH0DRX23RJ5DDJ">Advanced Settings</h4>
+<p>Configure the following advanced setting:</p>
+<p><strong>Entra ID Employee Import Limit</strong>: Enter the maximum number of employees to retrieve for the Jira ticket creation in a single sync.</p>
+<h4 id="h_01K5B9GJR5WJC9QV3H2ST1XP57">Report Settings</h4>
+<p>Configure the following report generation setting:</p>
+<p><strong>Enable Integration Report Download</strong>: Select this checkbox to allow downloading the integration report in CSV format.</p>
+<h4 id="h_01K0EPNYJEHDW4TQRTN6PXT579">Notification Settings</h4>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li>
+<ul>
+<li>
+<strong>Admin's Email Addresses: </strong>Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a CSV report for all integration runs.</li>
+<li>
+<strong>Send Reminder Emails for Contractor Expiration</strong>: Select to send the reminder emails before the contractor's expiration date.</li>
+<li>
+<strong>Select the Reminder Email Schedule</strong>: Select the number of days from the dropdown menu to send reminder emails before the contractor's expiration date.</li>
+</ul>
+</li>
+</ul>
+<h4 id="h_01K2FEN3MN7FM9KPXHRSHHFNSH">Analytics Settings</h4>
+<p>Configure the following analytics setting:</p>
+<p><strong>Generate Log Insights</strong>: Select to visualize integration-related metrics in a dashboard.</p>
+<h4 id="h_01K0PGWJSDQBPT1BZ25EAQGNYR">Log Settings</h4>
+<p>Configure the following logging settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details<br/>If you select <em><strong>Custom</strong></em>, the <strong>Attribute Filter dropdown</strong> menu is displayed. Select <em>Included Attributes</em> or <em>Excluded Attributes</em> from the dropdown menu to display the corresponding field.</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> option.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The <strong>Jira to Entra ID Contractor Management</strong> integration maps the attributes from Jira and Entra ID. The attributes displayed in this section depend on the type of synchronization the integration supports:</p>
+<ul>
+<li>
+<strong>Extension Ticket</strong>: For creating a ticket to extend the contractor's tenure, the integration uses Entra ID attributes as the source and maps them to the corresponding Jira Service Management attributes as the target.</li>
+<li>
+<strong>Contractor Creation</strong>: To create a contractor in Entra ID, the integration utilizes Jira Service Management attributes as the source and maps them to the corresponding Entra ID attributes as the target.</li>
+<li>
+<strong>End Date Update</strong>: To extend a contractor's tenure in Entra ID, the integration utilizes Jira Service Management attributes as the source and maps them to the corresponding Entra ID attributes as the target.</li>
+</ul>
+<p>Only the source attributes can be modified, as needed, to align with your specific use case.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+<p> </p>
+<p> </p>
+  </div>
+</body>
+</html>

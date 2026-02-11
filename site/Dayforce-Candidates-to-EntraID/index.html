@@ -1,0 +1,1182 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce Candidates to EntraID</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce Candidates to EntraID</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01K5TV3BMSGPCSW36S4FVD5DBC">Overview</h1>
+<p>The Aquera platform enables scalable, automated data management across enterprise applications. Through seamless integrations, it helps organizations eliminate manual processes, ensure consistency, and optimize workflows across complex IT infrastructures.</p>
+<p>This integration connects Dayforce with EntraID to automate end-to-end user lifecycle management. It continuously monitors candidate status changes in Dayforce, such as new hires or declined applicants, and synchronizes those changes with EntraID. When the integration is triggered, it queries Dayforce reports and retrieves candidate details. For hire-ready candidates, it creates new user accounts while verifying that no duplicate accounts are created. For declined candidates, it locates matching EntraID accounts by email and removes access to ensure they are no longer able to log in.</p>
+<p data-end="726" data-start="99">In this integration, the Candidate ID in Dayforce is correlated with the Employee ID stored in Entra ID (extension attribute). When a candidate is hired, the Candidate ID in Dayforce becomes the official Employee ID in Dayforce, and this remains correlated with the same Employee ID in Entra ID.</p>
+<p data-end="726" data-start="99">If a candidate has declined the offer, the Candidate ID in Dayforce is matched with the Employee ID in Entra ID to remove or disable the user.<br/>In a rehire scenario, a new Candidate ID in Dayforce is again correlated with the Employee ID in Entra ID according to company policy.</p>
+<h2 id="h_01K5V216660PXMSET89EG5XFGA">Key Functions</h2>
+<p data-end="146" data-start="19">This Dayforce to EntraID integration automates identity lifecycle management with the following primary capabilities:</p>
+<ul data-end="1476" data-start="148">
+<li data-end="473" data-start="148">
+<p data-end="473" data-start="150">Collects candidate information from Dayforce reports based on configured application status values. It clones, filters, and generates datasets for each status, waits for dataset completion, and retrieves candidate records while keeping only those with valid electronic contact details.</p>
+</li>
+<li data-end="473" data-start="148">Collects candidate information from Dayforce reports based on selected application status values. It creates and filters data for each status, and then retrieves candidate records, keeping only those with valid contact details.</li>
+<li data-end="732" data-start="474">
+<p data-end="732" data-start="476">For hire-ready candidates, the integration checks Entra ID to prevent duplicates, flattens and cleans Dayforce data, maps attributes to the Entra ID user schema, and creates new Entra ID accounts.</p>
+</li>
+<li data-end="912" data-start="733">
+<p data-end="912" data-start="735">Identifies declined candidates, verifies their presence in EntraID via email, and deletes the corresponding accounts to remove access.</p>
+</li>
+<li data-end="1202" data-start="913">
+<p data-end="1202" data-start="915">Generates a CSV report covering created, skipped, and deleted records and applying inclusion or exclusion filters. These reports can be emailed to administrators.</p>
+</li>
+</ul>
+<h2 id="h_01K5V25MV9JWTCG4CS5RPDA8VX">Prerequisites</h2>
+<p data-end="123" data-start="21">The following are the prerequisites:</p>
+<ul data-end="1046" data-start="125">
+<li data-end="544" data-start="125">
+<p data-end="544" data-start="127"><strong data-end="172" data-start="127">Tenant Account in the Aquera Admin Portal: </strong>You need an active Aquera tenant with administrator privileges to manage the integration. Register for a tenant at <a data-end="340" data-start="290" href="https://admin.aquera.io" rel="noopener" target="_new">https://admin.aquera.io</a><span aria-hidden="true"></span>. <br/><strong>Note</strong>: If your organization operates in the EU region, use <a data-end="450" data-start="394" href="https://admin.eu.aquera.io" rel="noopener" target="_new">https://admin.eu.aquera.io</a><span aria-hidden="true"></span>. Contact your Aquera account manager to obtain tenant access if you do not already have it.</p>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin Portal for the integration:
+<ul data-end="1046" data-start="721">
+<li data-end="868" data-start="721">
+<p data-end="868" data-start="723"><strong data-end="745" data-start="723">Dayforce: </strong>Ensure you add and configure the Dayforce (v28) connector in the Aquera Admin portal. Refer to the <a>Dayforce Configuration Guide</a> for instructions on creating the Dayforce application connector and setting up the authentication.</p>
+</li>
+<li>
+<strong>Microsoft 365</strong>: Ensure you add and configure the Microsoft 365 (Client Credentials) connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/16828093288727-Microsoft-365-Client-Credentials-Configuration-Guide" rel="noopener noreferrer" target="_blank">Microsoft 365 (Client Credentials) Configuration Guide</a> for instructions on creating the Microsoft 365 (Client Credentials) application connector and setting up the basic authentication.</li>
+</ul>
+</li>
+<li>
+<strong data-end="1328" data-start="1299">Create Candidate Report: </strong>Create or have access to a Dayforce candidate analytics report that the integration can query for status changes. To create candidate report, see the <a href="#h_01K6D9458MNC1FCP1F05RC3P59">Creating Candidate Report</a> section. The report must also include the required attributes listed in the <a href="#h_01K6MS9V5D4KXH90F4V8C167TD">Mandatory Attributes for Integration</a> section.</li>
+<li>
+<p data-end="162" data-start="136" id="h_01K6D8X0VK39G1KQXSD4N64FTR"><strong>Dayforce Permissions</strong>: Before setting up the integration, ensure that the correct permissions are enabled in Dayforce to retrieve the candidate data from the application as well as the report. Refer to the following sections for the required permissions:</p>
+<ul data-end="1046" data-start="125">
+<li><a href="#h_01K8TKEAZVQFSXSSNABJ4QRKVE" rel="noopener noreferrer" target="_blank">Permissions Required for Application Access to Candidate and Recruiting Data</a></li>
+<li><a href="#h_01K8TKEAZVQFSXSSNABJ4QRKVE" rel="noopener noreferrer" target="_blank">Permissions for Fetching the Candidate and Recruiting Report</a></li>
+</ul>
+</li>
+</ul>
+<p>These prerequisites ensure the Aquera platform can authenticate to both Dayforce and EntraID, allowing the integration to retrieve candidate data and manage user accounts.</p>
+<h1 id="h_01K8TKWQDSZ2N1TFG7AENN1JSH">Integration Setup</h1>
+<p>The<strong data-end="68" data-start="34"> Dayforce to EntraID </strong>integration automatically synchronizes candidate data from Dayforce into Entra ID.</p>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> on the left panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <em><strong>Dayforce Candidates to EntraID</strong>.</em> <br/>The <strong>Create New Integration</strong> pop-up window is displayed.</li>
+<li>Enter the name and a description for the integration.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> tab of the integration setup page is displayed.</li>
+<li>Click <strong>Create</strong> to add the <em><strong>Dayforce Candidates to EntraID</strong></em> integration.</li>
+</ol>
+<h1 id="h_01K2F6B803S2KACS8J7SDAK7ZQ">Configuration</h1>
+<p>On the <strong>Configuration</strong> page, the following sections are displayed:</p>
+<h2 id="h_01K2F6BDEHHGSYSM92F7MNBNV9">Applications</h2>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to edit, remove, and refresh these application connectors.</p>
+<h2 id="h_01K2F6BM75NA07BYVFX5C44SCK">Parameters</h2>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p>
+<h4 id="h_01K9VEDMX6TR3P8SHQXTGE3138">Integration Scenarios</h4>
+<p>The following are the integration scenarios:</p>
+<ul>
+<li>
+<strong>Enable Candidate Management</strong>: Sync eligible Dayforce candidates to Entra ID as user accounts.</li>
+<li>
+<strong>Manage Candidate Accounts in Entra ID</strong>: Choose what action this integration should perform for matching candidates in Entra ID.</li>
+<li>
+<strong>Create/Terminate in Entra ID</strong>: Create Entra ID accounts for qualifying candidates and terminate their accounts when they no longer meet the criteria (for example, when the application is declined or closed).</li>
+</ul>
+<h4 id="h_01K9VEDR3BNK7BQK24H8JJREM8">General Settings</h4>
+<p>Configure the following settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select to generate logs that outline the data changes that would occur during debugging.</li>
+<li>
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li>
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications</li>
+<li>
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+<li>
+<strong>Enable Full Sync</strong>: Select to run each sync in full sync mode, processing all matching source records every time instead of only records that changed since the last run.</li>
+</ul>
+<h4 id="h_01K9VEDWED2JABA521F7MD2AA4">Manage Candidates </h4>
+<p>Configure the following settings to manage candidates:</p>
+<p id="h_01K9VEHWWGBTAKR1DN0FVME4KW"><strong>Source Filter Settings</strong></p>
+<ul>
+<li>
+<strong>Report Name</strong>*: Enter the name of the Dayforce report used to fetch candidate data. For example, enter Example<strong> Entra Candidates, </strong>which is the custom report created for this sync.</li>
+<li>
+<p data-end="274" data-start="127"><strong data-end="150" data-start="127">Regex for Location:</strong> Filters candidates by matching their location values against a regular expression to include or exclude specific locations.</p>
+</li>
+<li>
+<p data-end="274" data-start="127"><strong data-end="300" data-start="276">Default Domain Name:</strong><span> Appends the specified domain to the username when creating new Entra ID user accounts.</span></p>
+</li>
+</ul>
+<p><strong>Provisioning Settings</strong></p>
+<ul>
+<li>
+<strong>Create Condition</strong>*: Select the candidate statuses used to decide when to create Entra ID user accounts. For example, select <strong>OFFERED</strong>, <strong>NEW</strong>, and <strong>INPROGRESS</strong> to show only accounts for active candidates in the hiring process.</li>
+<li>
+<strong>Enable Account Deletion Upon Declined Status</strong>: Select to remove Entra ID users when their linked candidate status is set to declined. For example, enable this to automatically remove accounts when candidates move to <strong>DECLINED</strong> or <strong>NOT HIRED</strong> in Dayforce.</li>
+<li>
+<strong>Deletion Condition</strong>: Select the candidate statuses used to decide which Entra ID accounts are eligible for deletion. For example, choose <strong>All Declined Candidates</strong> if every declined status should trigger deletion, or pick a narrower status if only certain declined outcomes should remove accounts.</li>
+</ul>
+<p id="h_01K9VEHWWGZQNXC9HFX2NNPE81"><strong>Provisioning Threshold</strong></p>
+<ul>
+<li>
+<strong>Create Limit</strong>: Set the maximum number of user accounts the integration can create or attempt to create in a single run. The skipped candidates are not counted. For example, you can set the <strong>Create limit</strong> to 50, validate the configuration, then increase it once you confirm the sync is working as expected.</li>
+<li>
+<strong>Delete Limit</strong><span>: Set the maximum number of user accounts the integration can delete or attempt to delete in a single run. For example, set </span><strong>Delete Limit</strong><span> to </span><strong>25</strong><span> so that even if something is misconfigured, only a limited number of accounts can be removed per execution.</span>
+</li>
+</ul>
+<p data-end="179" data-start="120"><strong>Correlation Settings</strong></p>
+<ul>
+<li>
+<strong>Entra ID attribute for Dayforce candidate/employee ID</strong>: Select the Entra ID user attribute used to store the Dayforce Candidate ID or Employee ID so that the users are matched between Dayforce and Entra ID. </li>
+<li>
+<strong>Entra ID attribute for Dayforce employee number</strong>: Select the Entra ID user attribute used to store the Dayforce employee number.<br/><strong>Note</strong>: Click to reload the latest Entra ID attributes so any new or changed fields appear in the list. For example, click <strong data-end="135" data-start="124">Refresh</strong> after you add a new custom attribute in Entra ID to have it appear in the dropdown.</li>
+</ul>
+<h4 id="h_01K9XW31QAG1FD5R9P4H4A3A30">Account Policy Settings</h4>
+<p>Configure the following settings to set the account policies:</p>
+<ul>
+<li>
+<strong>Generate Password:</strong> Select how passwords are created for new user accounts. The following are the options available:
+<ul>
+<li>
+<strong>Auto-Generate Password:</strong> Generates a password for new accounts.</li>
+<li>
+<strong>Configure Password Policy:</strong> Set your own password length and character rules.
+<ul>
+<li>
+<strong>Password Length</strong>: Enter the number of characters for generated passwords. For example, enter <strong>12</strong> to create 12-character passwords.</li>
+<li>
+<strong>Allowed Characters:</strong> Select which character types the password can include. For example, select <strong>Include Uppercase</strong>, <strong>Include Lowercase</strong>, <strong>Include Numbers</strong>, and <strong>Include Special Characters</strong> to create strong mixed-character passwords.</li>
+<li>
+<strong>Allowed Special Characters:</strong> Enter the special characters allowed in passwords. For example, keep the default list if your target system supports symbols like **!. @ # $ % ^ &amp; ***</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Generate User Principal Name (UPN)</strong>: Select how to create the UPN for new users. Generate UPN by entering the prompt.
+<ul>
+<li>
+<strong>UPN Generation prompt</strong>: Enter the prompt for generating the UPN. The following is the sample text to generate the example UPN:<br/>
+<div>
+<pre><code>Generate three username outputs using the following rule:
+Take the first name, and create three variants by taking its first 1 letter, 2 letters, and 3 letters respectively.
+If a space occurs in first name or last name then just remove that space.
+Take the surname and truncate it to a maximum of 8 characters.
+Combine the first name letters with the truncated surname to form three usernames.
+Must be in upperCase.      </code></pre>
+<div><!-- Copy button will be dynamically created here --></div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<strong>Code View</strong>: Toggles between the generated code and the prompt text.</li>
+<li>
+<strong>Analyse and Preview</strong>: Click to generate and view sample UPN values in the Preview section. </li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Generate Email:</strong> Select how email addresses are created for new accounts.The following are the options available:
+<ul>
+<li>
+<ul>
+<li>
+<strong>Use UserPrincipalName (UPN) as Email:</strong> Select to use the UPN value as the email name.</li>
+<li>
+<strong>Use Email Policy Prompt to Generate Email:</strong> Select to generate the email name using the prompt.</li>
+</ul>
+</li>
+<li>
+<strong>Email Policy Prompt</strong>: Enter the prompt for generating the email. The following is the sample text to generate the example UPN:<br/>
+<div>
+<pre><code>Generate three username outputs using the following rule:<br/>Take the first name, and create three variants by taking its first 1 letter, 2 letters, and 3 letters respectively.<br/>If a space occurs in first name or last name then just remove that space.<br/>Take the surname and truncate it to a maximum of 8 characters.<br/>Combine the first name letters with the truncated surname to form three usernames.<br/>Must be in lowerCase.
+</code></pre>
+<div><!-- Copy button will be dynamically created here --></div>
+<div>
+<ul>
+<li>
+<strong>Code View</strong>: Toggles between the generated code and the prompt text.</li>
+<li>
+<strong>Analyse and Preview</strong>: Click to generate and view sample UPN values in the Preview section. </li>
+</ul>
+</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong data-end="918" data-start="892">Registered Domain Name</strong><br data-end="921" data-start="918"/>Enter the domain to use for email addresses. For example, enter <strong>example.com</strong> to generate emails like barbara@example.com</li>
+</ul>
+<h4 id="h_01K9XXGHH8FJJ2EPRKYWT294Q1">Report Settings</h4>
+<p>Configure the following settings to customize the report:</p>
+<ul>
+<li>
+<strong>Show Attribute Values for Each Event:</strong> Select to populate the attribute values when choosing the Full Details or Custom option.</li>
+<li>
+<strong>Enable Report Download</strong>: Select to allow users to download generated reports.</li>
+<li>
+<strong>Select Report Detail Level:</strong> Select the desired level of report detail from the dropdown menu.The following are the available options:
+<ul>
+<li>
+<strong>Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details:</strong> All attribute details are displayed.</li>
+<li>
+<strong>Custom:</strong> Includes or excludes selected attributes. The following options only appear when the report detail level is set to <strong>Custom</strong>.
+<ul>
+<li>
+<strong>Attribute List</strong>: Select the attributes to apply the filter to in log details. For example, select <strong>displayName</strong>, <strong>surname</strong>, and <strong>accountEnabled</strong> if you only want these attributes to appear in the logs.</li>
+<li>
+<strong>Attribute Filter:</strong> Controls which attributes are included or excluded in the report.
+<ul>
+<li>
+<strong>Included Attributes:</strong> Select the attributes to include in the CSV report.</li>
+<li>
+<strong>Excluded Attributes:</strong> Select the attributes to exclude from the CSV report.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="h_01K2F6CD8RKHQSX6BRPJFBWES0">Log Settings</h4>
+<p>Configure the following logging settings:</p>
+<ul>
+<li>
+<strong>Show Attribute Values for Each Event:</strong> Select to populate the attribute values when choosing the Full Details or Custom option.</li>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attributes. The following option only appears when the dashboard detail level is set to <strong>Custom</strong>.
+<ul>
+<li>
+<strong>Attribute Filter</strong>: controls which event attributes are included or excluded.
+<ul>
+<li>
+<strong>Included Attributes</strong>: Include only selected attributes in the log.</li>
+<li>
+<strong>Excluded Attributes</strong>: Include all attributes except the selected ones in the log.</li>
+</ul>
+</li>
+<li>
+<strong>Attribute List</strong>: Select the attributes to apply the filter to in log details. For example, select <strong>displayName</strong>, <strong>surname</strong>, and <strong>accountEnabled</strong> if you only want these attributes to appear in the logs.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="h_01K6DBBGCFTWG3JX5SP2C8T4TE">Notification Settings</h4>
+<p>Configure the following settings for email notifications:</p>
+<p><strong>Integration Report Settings</strong></p>
+<ul>
+<li>
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a report for all integration runs.</li>
+<li>
+<strong>Select the Notification Report Detail Level</strong>: Choose how much detail to include in the CSV file attached to notification emails:
+<ul>
+<li>
+<strong>Summary Only:</strong> Attach a CSV with only summary information and key totals.</li>
+<li>
+<strong>Full Details:</strong> Attach a CSV with all available fields for each record.</li>
+<li>
+<strong>Custom</strong>: Show or hide specific attributes in the report. The options below are only available when the report detail level is set to <strong>Custom</strong>.
+<ul>
+<li>
+<strong>Attribute Filter</strong>: controls which event attributes are included or excluded.
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes that should appear in the CSV report.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes that should not appear in the CSV report.</li>
+</ul>
+</li>
+<li>
+<strong>Attribute List</strong>: Select the attributes to apply the filter to in log details. For example, select <strong>displayName</strong>, <strong>surname</strong>, and <strong>accountEnabled</strong> if you only want these attributes to appear in the logs.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Email Notification Settings</strong></p>
+<ul>
+<li>
+<strong>Send Email Alerts:</strong> Select when to send email alerts. For example, select <strong>Success Event</strong> and <strong>Failure Event</strong> to send emails for both outcomes. <strong>Note</strong>: The following sections appear only when <strong>Success Event</strong> and <strong>Failure Event a</strong>re selected in the Send Email Alerts field.</li>
+</ul>
+<p><strong>Success Email Alert</strong></p>
+<ul>
+<li>
+<ul>
+<li><strong>Recipients' Email Addresses: Enter the email addresses of the recipients to whom the email notifications will be sent.</strong></li>
+<li>
+<strong>Cc Recipients:</strong> Enter the email addresses of recipients who should receive a copy of the email.<strong>Email Subject: Enter the content that must be used as the email subject. Fo</strong>r example, <strong>Dayforce to Entra ID Report</strong>.</li>
+<li>
+<strong>Email Body:</strong> Enter the content that must be used as the email body for all email notifications. For example, explain that the Dayforce to Entra ID report is attached for review.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Failure Email Alert</strong></p>
+<ul>
+<li>
+<ul>
+<li><strong>Recipients' Email Addresses: Enter the email addresses of the recipients to whom the email notifications will be sent.</strong></li>
+<li>
+<strong>Cc Recipients:</strong> Enter the email addresses of recipients who should receive a copy of the email.</li>
+<li>
+<strong>Email Subject: Enter the content that must be used as the email subject. Fo</strong>r example, <strong>Dayforce to Entra ID Report</strong>.</li>
+<li>
+<strong>Email Body:</strong> Enter the content that must be used as the email body for all email notifications. For example, Dayforce to Entra ID report is attached for review.</li>
+</ul>
+</li>
+</ul>
+<p><!-- notionvc: 97ae4247-248d-407f-bef0-e70e40019006 --></p>
+<p><!-- notionvc: 7ead9b52-75bc-41cc-bef1-2ddcf94bbc32 --></p>
+<h1 id="h_01K62WHC9HCCXXGMBN1YD1NZGK">Attribute Mapping</h1>
+<p data-end="950" data-start="0">The Dayforce to EntraID integration maps candidate data from the Dayforce report to the exact fields required by Entra ID. Each mandatory attribute in the report<strong data-end="335" data-start="312"> </strong>is paired with a matching Entra ID property to create a complete user record. </p>
+<p data-end="950" data-start="0">The Candidate's status controls whether an account is enabled or disabled, while the name fields are combined to populate attributes such as <strong data-end="579" data-start="564">displayName</strong>, <strong data-end="594" data-start="581">givenName</strong>, and <strong data-end="611" data-start="600">surname</strong>. The primary email address is also split to generate both the <strong data-end="726" data-start="710">mailNickname</strong> and the <strong data-end="756" data-start="735">userPrincipalName</strong>, ensuring a unique login name. Default values, such as a temporary password with a forced reset at first sign-in, can be assigned so that every account starts with the correct security posture.</p>
+<p data-end="1649" data-is-last-node="" data-is-only-node="" data-start="952">Since the mapping references the required candidate report directly, it ensures that every hire-ready candidate is provisioned in Microsoft Entra ID with validated identity details. At the same time, declined applicants are removed.</p>
+<h1 id="h_01KE9K5GSK270WYMMTJ4KZHW18">Tables</h1>
+<p>The Tables tab enables you to update specific data of a resource in a target application during integration runs when that data is missing in the source application from which the resource data is retrieved.</p>
+<p data-end="650" data-start="398">In the <strong data-end="429" data-start="405">Dayforce to Entra ID</strong> integration, tables are commonly used to derive values, such as <strong data-end="517" data-start="493">email or UPN domains, </strong>based on source attributes like <strong data-end="572" data-start="550">candidate location</strong>, when the source system does not directly provide the required target value.</p>
+<p data-end="740" data-start="697">Each table consists of <strong data-end="739" data-start="720">key–value pairs</strong>:</p>
+<ul data-end="967" data-start="741">
+<li data-end="849" data-start="741">
+<p data-end="849" data-start="743">The <strong data-end="761" data-start="747">key (Name)</strong> represents a value from Dayforce (e.g., a location or operating company).</p>
+</li>
+<li data-end="967" data-start="850">
+<p data-end="967" data-start="852">The <strong data-end="865" data-start="856">value</strong> represents the corresponding value to apply in Entra ID (for example, an email domain).</p>
+</li>
+</ul>
+<p data-end="1205" data-start="969">During user creation, the integration looks up the source value in the table and applies the mapped value to the Entra ID user attribute. If no matching key is found, the integration falls back to the configured <strong data-end="1204" data-start="1181">Default Domain Name</strong>.</p>
+<h2 data-end="1231" data-start="1212" id="h_01KE9J91KMYQS0VZA38JDS2YRB">Available Tables</h2>
+<h3 data-end="1261" data-start="1233" id="h_01KE9J91KMC68FBV8GSV3SW9P2">Location To Domain Table</h3>
+<p data-end="1420" data-start="1263">This table maps a candidate’s <strong data-end="1322" data-start="1293">location or company value</strong> from Dayforce to the <strong data-end="1359" data-start="1344">domain name</strong> used when generating Entra ID usernames and email addresses. For example, if the candidate’s location is <strong data-end="1497" data-start="1468">Maxwell Services</strong> and the table maps this value to <strong data-end="1554" data-start="1531">maxwellservices.net</strong>, the integration creates a user with a UPN such as <strong>barbara@maxwellservices.net</strong>.</p>
+<p data-end="1420" data-start="1263">You can click the table row to open the <strong data-end="1689" data-start="1673">Update Table</strong> window. Each row in the table represents one location-to-domain mapping.</p>
+<h2 data-end="1794" data-start="1769" id="h_01KE9JXR47N55S5V5CTRJQ4XSW">Managing Table Entries</h2>
+<p data-end="1899" data-start="1796">You can add or update table entries using the following options, depending on the integration use case:</p>
+<ol>
+<li data-end="1912" data-start="1901" id="h_01KE9JXR475XEE1GWW8YNWEEKP">
+<strong>Add Row</strong>: Click <strong data-end="1930" data-start="1919">Add Row</strong> to manually add a mapping by specifying a <strong data-end="1981" data-start="1973">Name</strong> (source value) and a <strong data-end="2012" data-start="2003">Value</strong> (target value).</li>
+<li data-end="2044" data-start="2030" id="h_01KE9JXR47SDTKJ0CA3KWN6Q8G">
+<strong>Upload CSV</strong>: Click <strong data-end="2065" data-start="2051">Upload CSV</strong> to bulk upload mappings using a CSV file. The CSV file must contain exactly two columns with the headers <strong data-end="2181" data-start="2173">NAME</strong> and <strong data-end="2195" data-start="2186">VALUE</strong>.</li>
+</ol>
+<h2 data-end="2211" data-start="2203" id="h_01KE9JXR477CWB604Z7NPE7PKE">Notes</h2>
+<ol data-end="2469" data-start="2213">
+<li data-end="2263" data-start="2213">
+<p data-end="2263" data-start="2215">Each <strong data-end="2247" data-start="2220">key name must be unique</strong> within a table.</p>
+</li>
+<li data-end="2334" data-start="2264">
+<p data-end="2334" data-start="2266">Key names can include letters, numbers, and most special characters.<br/>The following characters are <strong data-end="2383" data-start="2366">not supported</strong> in key names:</p>
+<ul>
+<li>/ (forward slash)</li>
+<li>\ (backslash)</li>
+<li>" (double quotes)</li>
+</ul>
+</li>
+<li>
+<span>Click </span><strong data-end="2485" data-start="2477">Save</strong><span> to apply and store the changes.</span>
+</li>
+</ol>
+<h1 id="h_01K2F6D9Z78A59AB3KVE88H9G4">Schedule</h1>
+<p>Integrations can be scheduled to run automatically based on your chosen time frame. Refer to <a>Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01K2F6DEXBP5A1KHTZSA3FMCQV">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a>User Action on Integrations</a> guide.</p>
+<h2 id="h_01K2F6DMW23YJJ84ZW61QNFA00">Additional Options</h2>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a>User Actions on Integrations</a> for further details.</p>
+<h1 id="h_01K6DA5S7RW3ZAKNHTAWBJZNSE">Appendix </h1>
+<h2 data-end="405" data-start="373" id="h_01K8TAT51GD6WTHVN3STMPVVYD">Permissions Required for Fetching the Candidate and Recruiting Report</h2>
+<p data-end="649" data-start="407">The integration requires specific Dayforce role permissions to access the Candidate Report, read its columns, and retrieve candidate data. After creating the Candidate Report, configure these permissions for the integration user account. The permissions are assigned at the role level and allow the integration to fetch the report and its data successfully.</p>
+<p data-end="649"><strong data-end="155" data-start="146">Note:</strong> The <strong data-end="183" data-start="160">Feature permissions</strong> set in the <em data-end="205" data-start="195">Features</em> tab control access to report details and columns, while the <strong data-end="295" data-start="266">Authorization permissions</strong> set in the <em data-end="323" data-is-only-node="" data-start="307">Authorizations</em> tab control access to the actual data.</p>
+<h3 id="h_01K8TGZKB7G6W079HTZAEXJTF9">Access the Integration Role</h3>
+<p>Perform the following steps:</p>
+<ol>
+<li>Log in to your <strong>Dayforce</strong> instance.</li>
+<li>Click the <strong>hamburger menu</strong> (☰) and scroll down to <strong>System Admin</strong>.</li>
+<li>Expand <strong>System Admin</strong> and Click <strong>Roles</strong>.</li>
+<li> Select &lt;Your_Role_Name&gt;, and ensure the following:</li>
+</ol>
+<p>In the <strong>Features tab</strong>, assign the following features to your role:</p>
+<p data-end="983"><!-- notionvc: f1f8190c-c195-41e4-a7e1-1a542bcd141c --></p>
+<h4 data-end="1521" id="h_01K8TG1ST1GG3FYK5V8NA2QPF5">Analytics </h4>
+<table data-end="2148" data-start="533">
+<thead data-end="571" data-start="533">
+<tr data-end="571" data-start="533">
+<th data-col-size="md" data-end="552" data-start="533"><strong data-end="551" data-start="535">Feature Path</strong></th>
+<th data-col-size="md" data-end="571" data-start="552"><strong data-end="569" data-start="554">Description</strong></th>
+</tr>
+</thead>
+<tbody data-end="2148" data-start="611">
+<tr data-end="695" data-start="611">
+<td data-col-size="md" data-end="625" data-start="611">Analytics</td>
+<td data-col-size="md" data-end="695" data-start="625">Grants access to the top-level Analytics module for data insights.</td>
+</tr>
+</tbody>
+</table>
+<h4 data-end="455" data-start="433" id="h_01K8TEAE549HWCQBK4MHCWTGX1">HCM Anywhere</h4>
+<div>
+<div tabindex="-1">
+<table data-end="1984" data-start="549">
+<thead data-end="587" data-start="549">
+<tr data-end="587" data-start="549">
+<th data-col-size="md" data-end="568" data-start="549"><strong data-end="567" data-start="551">Feature Path</strong></th>
+<th data-col-size="md" data-end="587" data-start="568"><strong data-end="585" data-start="570">Description</strong></th>
+</tr>
+</thead>
+<tbody data-end="1984" data-start="627">
+<tr data-end="687" data-start="627">
+<td data-col-size="md" data-end="646" data-start="627"><strong data-end="645" data-start="629">HCM Anywhere</strong></td>
+<td data-col-size="md" data-end="687" data-start="646">Grants access to HCM Anywhere module.</td>
+</tr>
+<tr data-end="769" data-start="688">
+<td data-col-size="md" data-end="730" data-start="688">HCM Anywhere → Analytics Data Connector</td>
+<td data-col-size="md" data-end="769" data-start="730">Enables analytics data connections.</td>
+</tr>
+<tr data-end="875" data-start="770">
+<td data-col-size="md" data-end="820" data-start="770">HCM Anywhere → Analytics Data Connector → OData</td>
+<td data-col-size="md" data-end="875" data-start="820">Provides access to OData endpoints for report data.</td>
+</tr>
+<tr data-end="958" data-start="876">
+<td data-col-size="md" data-end="906" data-start="876">HCM Anywhere → Web Services</td>
+<td data-col-size="md" data-end="958" data-start="906">Enables API access to web services for integrations.</td>
+</tr>
+<tr data-end="1045" data-start="959">
+<td data-col-size="md" data-end="1008" data-start="959">HCM Anywhere → Web Services → Delete Documents</td>
+<td data-col-size="md" data-end="1045" data-start="1008">Allows deletion of document data.</td>
+</tr>
+<tr data-end="1141" data-start="1046">
+<td data-col-size="md" data-end="1102" data-start="1046">HCM Anywhere → Web Services → Delete Employee HR Data</td>
+<td data-col-size="md" data-end="1141" data-start="1102">Allows deletion of HR data via API.</td>
+</tr>
+<tr data-end="1244" data-start="1142">
+<td data-col-size="md" data-end="1199" data-start="1142">HCM Anywhere → Web Services → Delete Payroll Elections</td>
+<td data-col-size="md" data-end="1244" data-start="1199">Allows deletion of payroll election data.</td>
+</tr>
+<tr data-end="1346" data-start="1245">
+<td data-col-size="md" data-end="1302" data-start="1245">HCM Anywhere → Web Services → Delete Payroll Time Data</td>
+<td data-col-size="md" data-end="1346" data-start="1302">Allows deletion of payroll time entries.</td>
+</tr>
+<tr data-end="1493" data-start="1347">
+<td data-col-size="md" data-end="1425" data-start="1347">HCM Anywhere → Web Services → Patch/Post Candidate and Job Application Data</td>
+<td data-col-size="md" data-end="1493" data-start="1425">Enables posting and updating candidate and job application data.</td>
+</tr>
+<tr data-end="1622" data-start="1494">
+<td data-col-size="md" data-end="1563" data-start="1494">HCM Anywhere → Web Services → Patch/Post Candidate Assessment Data</td>
+<td data-col-size="md" data-end="1622" data-start="1563">Enables posting and updating candidate assessment data.</td>
+</tr>
+<tr data-end="1745" data-start="1623">
+<td data-col-size="md" data-end="1686" data-start="1623">HCM Anywhere → Web Services → Patch/Post Candidate Screening</td>
+<td data-col-size="md" data-end="1745" data-start="1686">Allows posting or updating candidate screening results.</td>
+</tr>
+<tr>
+<td>HCM Anywhere → Web Services → Patch/Post Configuration Data</td>
+<td> </td>
+</tr>
+<tr data-end="1874" data-start="1746">
+<td data-col-size="md" data-end="1819" data-start="1746">HCM Anywhere → Web Services → Patch/Post HireRight Candidate Screening</td>
+<td data-col-size="md" data-end="1874" data-start="1819">Allows posting HireRight background screening data.</td>
+</tr>
+<tr>
+<td>HCM Anywhere → Web Services → Patch/Post HR Bulk Job</td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<h4 data-end="2011" data-start="1991" id="h_01K8TEAE542GRDM6T6YGXTTVH9">Recruiting</h4>
+<div>
+<div tabindex="-1">
+<div>
+<div tabindex="-1">
+<table data-end="5061" data-start="366">
+<thead data-end="404" data-start="366">
+<tr data-end="404" data-start="366">
+<th data-col-size="md" data-end="385" data-start="366"><strong data-end="384" data-start="368">Feature Path</strong></th>
+<th data-col-size="md" data-end="404" data-start="385"><strong data-end="402" data-start="387">Description</strong></th>
+</tr>
+</thead>
+<tbody data-end="5061" data-start="444">
+<tr data-end="502" data-start="444">
+<td data-col-size="md" data-end="459" data-start="444">Recruiting</td>
+<td data-col-size="md" data-end="502" data-start="459">Grants access to the Recruiting module.</td>
+</tr>
+<tr data-end="578" data-start="503">
+<td data-col-size="md" data-end="526" data-start="503">Recruiting → Actions</td>
+<td data-col-size="md" data-end="578" data-start="526">Provides access to candidate management actions.</td>
+</tr>
+<tr data-end="686" data-start="579">
+<td data-col-size="md" data-end="634" data-start="579">Recruiting → Actions → Assign Candidates to Job Reqs</td>
+<td data-col-size="md" data-end="686" data-start="634">Allows assigning candidates to job requisitions.</td>
+</tr>
+<tr data-end="788" data-start="687">
+<td data-col-size="md" data-end="739" data-start="687">Recruiting → Actions → Background Screening Order</td>
+<td data-col-size="md" data-end="788" data-start="739">Enables ordering background screening checks.</td>
+</tr>
+<tr data-end="868" data-start="789">
+<td data-col-size="md" data-end="831" data-start="789">Recruiting → Actions → Candidate Hire</td>
+<td data-col-size="md" data-end="868" data-start="831">Grants access to hire candidates.</td>
+</tr>
+<tr data-end="998" data-start="869">
+<td data-col-size="md" data-end="953" data-start="869">Recruiting → Actions → Candidate Hire → Candidate Hire Form (Position Management)</td>
+<td data-col-size="md" data-end="998" data-start="953">Allows editing position-based hire forms.</td>
+</tr>
+<tr data-end="1091" data-start="999">
+<td data-col-size="md" data-end="1050" data-start="999">Recruiting → Actions → Candidate Hire → New Hire</td>
+<td data-col-size="md" data-end="1091" data-start="1050">Enables creation of new hire records.</td>
+</tr>
+<tr data-end="1222" data-start="1092">
+<td data-col-size="md" data-end="1165" data-start="1092">Recruiting → Actions → Candidate Hire → New Hire (Position Management)</td>
+<td data-col-size="md" data-end="1222" data-start="1165">Enables new hire setup for position-based management.</td>
+</tr>
+<tr data-end="1315" data-start="1223">
+<td data-col-size="md" data-end="1263" data-start="1223">Recruiting → Candidate Offer Status</td>
+<td data-col-size="md" data-end="1315" data-start="1263">Allows access to candidate offer status updates.</td>
+</tr>
+<tr data-end="1395" data-start="1316">
+<td data-col-size="md" data-end="1356" data-start="1316">Recruiting → Candidate Sourcing SSO</td>
+<td data-col-size="md" data-end="1395" data-start="1356">Enables candidate sourcing via SSO.</td>
+</tr>
+<tr data-end="1529" data-start="1396">
+<td data-col-size="md" data-end="1472" data-start="1396">Recruiting → Candidate Status Mapping – Allow Backwards Status Movement</td>
+<td data-col-size="md" data-end="1529" data-start="1472">Allows backward changes in candidate status workflow.</td>
+</tr>
+<tr data-end="1597" data-start="1530">
+<td data-col-size="md" data-end="1564" data-start="1530">Recruiting → Decline Candidates</td>
+<td data-col-size="md" data-end="1597" data-start="1564">Enables declining candidates.</td>
+</tr>
+<tr data-end="1694" data-start="1598">
+<td data-col-size="md" data-end="1647" data-start="1598">Recruiting → Decline Candidates → Mass Decline</td>
+<td data-col-size="md" data-end="1694" data-start="1647">Allows mass-decline of multiple candidates.</td>
+</tr>
+<tr data-end="1776" data-start="1695">
+<td data-col-size="md" data-end="1730" data-start="1695">Recruiting → I-9 Screening Order</td>
+<td data-col-size="md" data-end="1776" data-start="1730">Enables access to I-9 screening workflows.</td>
+</tr>
+<tr data-end="1853" data-start="1777">
+<td data-col-size="md" data-end="1816" data-start="1777">Recruiting → Internal Candidate Hire</td>
+<td data-col-size="md" data-end="1853" data-start="1816">Allows hiring internal employees.</td>
+</tr>
+<tr data-end="1921" data-start="1854">
+<td data-col-size="md" data-end="1880" data-start="1854">Recruiting → Send Email</td>
+<td data-col-size="md" data-end="1921" data-start="1880">Enables sending emails to candidates.</td>
+</tr>
+<tr data-end="2008" data-start="1922">
+<td data-col-size="md" data-end="1965" data-start="1922">Recruiting → Send Pre-Hire Questionnaire</td>
+<td data-col-size="md" data-end="2008" data-start="1965">Allows sending pre-hire questionnaires.</td>
+</tr>
+<tr data-end="2086" data-start="2009">
+<td data-col-size="md" data-end="2047" data-start="2009">Recruiting → Candidate Management</td>
+<td data-col-size="md" data-end="2086" data-start="2047">Grants access to candidate records.</td>
+</tr>
+<tr data-end="2169" data-start="2087">
+<td data-col-size="md" data-end="2121" data-start="2087">Recruiting → Candidate Matching</td>
+<td data-col-size="md" data-end="2169" data-start="2121">Enables matching candidates to job openings.</td>
+</tr>
+<tr data-end="2254" data-start="2170">
+<td data-col-size="md" data-end="2198" data-start="2170">Recruiting → Candidates</td>
+<td data-col-size="md" data-end="2254" data-start="2198">Allows access to candidate profiles and information.</td>
+</tr>
+<tr data-end="2378" data-start="2255">
+<td data-col-size="md" data-end="2321" data-start="2255">Recruiting → Candidates → Add New Candidate in Talent Community</td>
+<td data-col-size="md" data-end="2378" data-start="2321">Allows adding new candidates to the talent community.</td>
+</tr>
+<tr data-end="2458" data-start="2379">
+<td data-col-size="md" data-end="2422" data-start="2379">Recruiting → Candidates → All Candidates</td>
+<td data-col-size="md" data-end="2458" data-start="2422">Displays all candidate profiles.</td>
+</tr>
+<tr data-end="2546" data-start="2459">
+<td data-col-size="md" data-end="2502" data-start="2459">Recruiting → Candidates → Assessment Tab</td>
+<td data-col-size="md" data-end="2546" data-start="2502">Enables access to candidate assessments.</td>
+</tr>
+<tr data-end="2648" data-start="2547">
+<td data-col-size="md" data-end="2604" data-start="2547">Recruiting → Candidates → Communications Tab → Email</td>
+<td data-col-size="md" data-end="2648" data-start="2604">Allows sending candidate email messages.</td>
+</tr>
+<tr data-end="2755" data-start="2649">
+<td data-col-size="md" data-end="2713" data-start="2649">Recruiting → Candidates → Communications Tab → SMS Messages</td>
+<td data-col-size="md" data-end="2755" data-start="2713">Allows sending candidate SMS messages.</td>
+</tr>
+<tr data-end="2875" data-start="2756">
+<td data-col-size="md" data-end="2821" data-start="2756">Recruiting → Candidates → Jobs Applied For Tab → Job Details</td>
+<td data-col-size="md" data-end="2875" data-start="2821">Enables viewing candidate job application details.</td>
+</tr>
+<tr data-end="2971" data-start="2876">
+<td data-col-size="md" data-end="2925" data-start="2876">Recruiting → Candidates → Questionnaires Tab</td>
+<td data-col-size="md" data-end="2971" data-start="2925">Grants access to candidate questionnaires.</td>
+</tr>
+<tr data-end="3046" data-start="2972">
+<td data-col-size="md" data-end="3004" data-start="2972">Recruiting → Job Requisitions</td>
+<td data-col-size="md" data-end="3046" data-start="3004">Allows access to job requisition data.</td>
+</tr>
+<tr data-end="3148" data-start="3047">
+<td data-col-size="md" data-end="3094" data-start="3047">Recruiting → Job Requisitions → Activity Tab</td>
+<td data-col-size="md" data-end="3148" data-start="3094">Enables activity tracking within job requisitions.</td>
+</tr>
+<tr data-end="3237" data-start="3149">
+<td data-col-size="md" data-end="3200" data-start="3149">Recruiting → Job Requisitions → All Requisitions</td>
+<td data-col-size="md" data-end="3237" data-start="3200">Displays all requisition records.</td>
+</tr>
+<tr data-end="3340" data-start="3238">
+<td data-col-size="md" data-end="3291" data-start="3238">Recruiting → Job Requisitions → Assessment Results</td>
+<td data-col-size="md" data-end="3340" data-start="3291">Enables viewing candidate assessment results.</td>
+</tr>
+<tr data-end="3454" data-start="3341">
+<td data-col-size="md" data-end="3404" data-start="3341">Recruiting → Job Requisitions → Background Screening Results</td>
+<td data-col-size="md" data-end="3454" data-start="3404">Enables viewing background screening outcomes.</td>
+</tr>
+<tr data-end="3591" data-start="3455">
+<td data-col-size="md" data-end="3540" data-start="3455">Recruiting → Job Requisitions → Background Screening Results → Adjudication Status</td>
+<td data-col-size="md" data-end="3591" data-start="3540">Allows reviewing screening adjudication status.</td>
+</tr>
+<tr data-end="3691" data-start="3592">
+<td data-col-size="md" data-end="3648" data-start="3592">Recruiting → Job Requisitions → I-9 Screening Results</td>
+<td data-col-size="md" data-end="3691" data-start="3648">Grants access to I-9 screening details.</td>
+</tr>
+<tr data-end="3791" data-start="3692">
+<td data-col-size="md" data-end="3748" data-start="3692">Recruiting → Job Requisitions → Job Requisition Forms</td>
+<td data-col-size="md" data-end="3791" data-start="3748">Grants access to requisition templates.</td>
+</tr>
+<tr data-end="3936" data-start="3792">
+<td data-col-size="md" data-end="3888" data-start="3792">Recruiting → Job Requisitions → Job Requisition Forms → Job Requisition (Position Management)</td>
+<td data-col-size="md" data-end="3936" data-start="3888">Allows position management for requisitions.</td>
+</tr>
+<tr data-end="4040" data-start="3937">
+<td data-col-size="md" data-end="3996" data-start="3937">Recruiting → Job Requisitions → Job Requisitions Reports</td>
+<td data-col-size="md" data-end="4040" data-start="3996">Enables running job requisition reports.</td>
+</tr>
+<tr data-end="4158" data-start="4041">
+<td data-col-size="md" data-end="4101" data-start="4041">Recruiting → Job Requisitions → View Scheduled Interviews</td>
+<td data-col-size="md" data-end="4158" data-start="4101">Grants access to view scheduled candidate interviews.</td>
+</tr>
+<tr data-end="4258" data-start="4159">
+<td data-col-size="md" data-end="4202" data-start="4159">Recruiting → Job Requisitions → Overview</td>
+<td data-col-size="md" data-end="4258" data-start="4202">Allows overview access to job requisition summaries.</td>
+</tr>
+<tr data-end="4361" data-start="4259">
+<td data-col-size="md" data-end="4312" data-start="4259">Recruiting → Job Requisitions → Recruiter Insights</td>
+<td data-col-size="md" data-end="4361" data-start="4312">Provides recruiter insights for requisitions.</td>
+</tr>
+<tr data-end="4460" data-start="4362">
+<td data-col-size="md" data-end="4414" data-start="4362">Recruiting → Job Requisitions → Recruiting Search</td>
+<td data-col-size="md" data-end="4460" data-start="4414">Enables searching within job requisitions.</td>
+</tr>
+<tr data-end="4544" data-start="4461">
+<td data-col-size="md" data-end="4493" data-start="4461">Recruiting → Talent Community</td>
+<td data-col-size="md" data-end="4544" data-start="4493">Allows access to the talent community features.</td>
+</tr>
+<tr data-end="4643" data-start="4545">
+<td data-col-size="md" data-end="4596" data-start="4545">Recruiting → Talent Community → All Requisitions</td>
+<td data-col-size="md" data-end="4643" data-start="4596">Displays all requisitions in the community.</td>
+</tr>
+<tr data-end="4725" data-start="4644">
+<td data-col-size="md" data-end="4691" data-start="4644">Recruiting →  Talent Pools</td>
+<td data-col-size="md" data-end="4725" data-start="4691">Grants access to talent pools.</td>
+</tr>
+<tr data-end="4863" data-start="4726">
+<td data-col-size="md" data-end="4815" data-start="4726">Recruiting → Talent Pools → Edit Properties for Shared Talent Pools</td>
+<td data-col-size="md" data-end="4863" data-start="4815">Enables editing shared talent pool settings.</td>
+</tr>
+<tr data-end="4942" data-start="4864">
+<td data-col-size="md" data-end="4896" data-start="4864">Recruiting → Report Library</td>
+<td data-col-size="md" data-end="4942" data-start="4896">Grants access to saved and custom reports.</td>
+</tr>
+<tr data-end="5061" data-start="4943">
+<td data-col-size="md" data-end="5007" data-start="4943">Recruiting → Report Library → &lt;dayforce to EntraID&gt;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<h4 data-end="318" data-start="274" id="h_01K8TF92W7W8B369S0BKVZDB5M">Reporting and Analytics</h4>
+<div>
+<div tabindex="-1">
+<table data-end="1987" data-start="457">
+<thead data-end="495" data-start="457">
+<tr data-end="495" data-start="457">
+<th data-col-size="md" data-end="476" data-start="457"><strong data-end="475" data-start="459">Feature Path</strong></th>
+<th data-col-size="md" data-end="495" data-start="476"><strong data-end="493" data-start="478">Description</strong></th>
+</tr>
+</thead>
+<tbody data-end="1987" data-start="535">
+<tr data-end="614" data-start="535">
+<td data-col-size="md" data-end="563" data-start="535">Reporting and Analytics</td>
+<td data-col-size="md" data-end="614" data-start="563">Grants access to reporting and analytics tools.</td>
+</tr>
+<tr data-end="708" data-start="615">
+<td data-col-size="md" data-end="653" data-start="615">Reporting and Analytics → Reporting</td>
+<td data-col-size="md" data-end="708" data-start="653">Provides access to report management and execution.</td>
+</tr>
+<tr data-end="802" data-start="709">
+<td data-col-size="md" data-end="765" data-start="709">Reporting and Analytics → Reporting → Classic Reports</td>
+<td data-col-size="md" data-end="802" data-start="765">Enables access to legacy reports.</td>
+</tr>
+<tr data-end="932" data-start="803">
+<td data-col-size="md" data-end="868" data-start="803">Reporting and Analytics → Reporting → Historical Employee Data</td>
+<td data-col-size="md" data-end="932" data-start="868">Allows access to historical employee records within reports.</td>
+</tr>
+<tr data-end="1036" data-start="933">
+<td data-col-size="md" data-end="991" data-start="933">Reporting and Analytics → Reporting → Report Designer</td>
+<td data-col-size="md" data-end="1036" data-start="991">Grants access to create and edit reports.</td>
+</tr>
+<tr data-end="1152" data-start="1037">
+<td data-col-size="md" data-end="1111" data-start="1037">Reporting and Analytics → Reporting → Report Designer → Dataset Builder</td>
+<td data-col-size="md" data-end="1152" data-start="1111">Allows building datasets for reports.</td>
+</tr>
+<tr data-end="1270" data-start="1153">
+<td data-col-size="md" data-end="1229" data-start="1153">Reporting and Analytics → Reporting → Report Designer → Delete any Report</td>
+<td data-col-size="md" data-end="1270" data-start="1229">Enables deletion of existing reports.</td>
+</tr>
+<tr data-end="1423" data-start="1271">
+<td data-col-size="md" data-end="1369" data-start="1271">Reporting and Analytics → Reporting → Report Designer → Report Row Level Security Configuration</td>
+<td data-col-size="md" data-end="1423" data-start="1369">Allows configuration of row-level report security.</td>
+</tr>
+<tr data-end="1527" data-start="1424">
+<td data-col-size="md" data-end="1479" data-start="1424">Reporting and Analytics → Reporting → Report Queue</td>
+<td data-col-size="md" data-end="1527" data-start="1479">Grants access to the report execution queue.</td>
+</tr>
+<tr data-end="1650" data-start="1528">
+<td data-col-size="md" data-end="1609" data-start="1528">Reporting and Analytics → Reporting → Report Queue → View all Reports in Queue</td>
+<td data-col-size="md" data-end="1650" data-start="1609">Allows viewing all report executions.</td>
+</tr>
+<tr data-end="1759" data-start="1651">
+<td data-col-size="md" data-end="1711" data-start="1651">Reporting and Analytics → Reporting → Scheduled Reports</td>
+<td data-col-size="md" data-end="1759" data-start="1711">Enables creating and scheduling report runs.</td>
+</tr>
+<tr data-end="1864" data-start="1760">
+<td data-col-size="md" data-end="1833" data-start="1760">Reporting and Analytics → Reporting → Scheduled Reports → Distribution</td>
+<td data-col-size="md" data-end="1864" data-start="1833">Allows report distribution.</td>
+</tr>
+<tr>
+<td>Reporting and Analytics → Reporting → Scheduled Reports → Distribution → Use my Security Settings</td>
+<td>Allows using security settings.</td>
+</tr>
+<tr data-end="1987" data-start="1865">
+<td data-col-size="md" data-end="1924" data-start="1865">Reporting and Analytics → Reporting and Analytics Home</td>
+<td data-col-size="md" data-end="1987" data-start="1924">Provides home access to analytics and reporting dashboards.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<div tabindex="-1"></div>
+</div>
+<h3 data-end="1559" data-start="1523" id="h_01K8TAT51GM5T9EB2K19A8ASN0">Set Authorization Permissions</h3>
+<div>
+<div tabindex="-1">
+<strong>Note</strong><span>: The integration role must have View (read) access for the following entries:</span>
+</div>
+</div>
+<table border="0" cellpadding="0">
+<thead>
+<tr>
+<td><strong>Feature Name</strong></td>
+<td><strong>Access Type</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Employee Personal Information</td>
+<td rowspan="40">Read</td>
+<td>Allows reading employee profile information.</td>
+</tr>
+<tr>
+<td>Employee Contact Information</td>
+<td>Allows viewing employee contact details such as phone, email, and address.</td>
+</tr>
+<tr>
+<td>Pay Information</td>
+<td>Provides access to employee pay and compensation details.</td>
+</tr>
+<tr>
+<td>Employee HR Policy Information</td>
+<td>Allows viewing HR policy information associated with the employee.</td>
+</tr>
+<tr>
+<td>Employee Status Information</td>
+<td>Provides access to employee status details (active, terminated, leave, etc.).</td>
+</tr>
+<tr>
+<td>Employee Pay Information</td>
+<td>Allows viewing detailed payroll information, including pay groups and pay rates.</td>
+</tr>
+<tr>
+<td>Employee Badge Information</td>
+<td>Grants visibility to employee badge and ID card information.</td>
+</tr>
+<tr>
+<td>Employee Team Information</td>
+<td>Provides access to team or group assignments for the employee.</td>
+</tr>
+<tr>
+<td>Employee Number</td>
+<td>Grants visibility to unique employee ID numbers.</td>
+</tr>
+<tr>
+<td>Schedule data</td>
+<td>Allows viewing schedule-related data such as assigned shifts.</td>
+</tr>
+<tr>
+<td>Employee Timesheet Data</td>
+<td>Provides access to employee timesheet entries and recorded hours.</td>
+</tr>
+<tr>
+<td>Employee Pay Adjustments</td>
+<td>Allows viewing of manual pay adjustments applied to employees.</td>
+</tr>
+<tr>
+<td>User Information</td>
+<td>Provides access to user account information linked to the employee.</td>
+</tr>
+<tr>
+<td>Rejected Raw Clock Entries</td>
+<td>Enables access to rejected clock-in/clock-out records.</td>
+</tr>
+<tr>
+<td>Recruiting: Job Posting</td>
+<td>Grants read access to job postings.</td>
+</tr>
+<tr>
+<td>Recruiting: Job Requisition</td>
+<td>Allows access to job requisition details.</td>
+</tr>
+<tr>
+<td>Recruiting: Candidate Profile</td>
+<td>Enables viewing candidate profile information.</td>
+</tr>
+<tr>
+<td>Employee Personal Information XrefCode</td>
+<td>Provides access to employee cross-reference codes.</td>
+</tr>
+<tr>
+<td>Employee Contact Information - Personal</td>
+<td>Allows viewing employees' personal (non-work) contact information.</td>
+</tr>
+<tr>
+<td>Employee Profile - Security Settings - Roles</td>
+<td>Grants access to the security roles assigned to an employee.</td>
+</tr>
+<tr>
+<td>Employee Profile - Security Settings - Pay Code Groups</td>
+<td>Allows viewing pay code group security settings on the employee profile.</td>
+</tr>
+<tr>
+<td>Employee Profile - Security Settings - Pay Group Admin</td>
+<td>Provides access to security settings related to pay group administration.</td>
+</tr>
+<tr>
+<td>Employee Profile - Security Settings - SSO Logins</td>
+<td>Allows viewing the employee's SSO login settings and linked accounts.</td>
+</tr>
+<tr>
+<td>Reporting Relationship Keys</td>
+<td>Grants access to reporting structure and relationship key data.</td>
+</tr>
+<tr>
+<td>Employee Key Information</td>
+<td>Provides access to key employment dates and milestone information.</td>
+</tr>
+<tr>
+<td>Employee Properties</td>
+<td>Allows viewing employee property fields.</td>
+</tr>
+<tr>
+<td>Recruiting: Additional Job Requisition Users &amp; User Groups</td>
+<td>Enables access to job requisition user and group information.</td>
+</tr>
+<tr>
+<td>Employee Learning Data</td>
+<td>Allows viewing employee course enrollments and learning plans.</td>
+</tr>
+<tr>
+<td>Employee Skill Information</td>
+<td>Provides access to skills and competencies recorded for the employee.</td>
+</tr>
+<tr>
+<td>Employee Profile - Work - Availability</td>
+<td>Allows viewing the employee’s work availability (days and hours).</td>
+</tr>
+<tr>
+<td>Employee Profile - Work - Work Contract</td>
+<td>Provides access to work contract details, including contract type and hours.</td>
+</tr>
+<tr>
+<td>Employee Hours Information</td>
+<td>Grants visibility to summarized employee work hours.</td>
+</tr>
+<tr>
+<td>Recruiting: Additional Job Requisition Assessment</td>
+<td>Provides access to requisition assessment data.</td>
+</tr>
+<tr>
+<td>Employee Profile - Confidential Information - Ethnicity</td>
+<td>Provides access to ethnicity information stored as confidential demographic data.</td>
+</tr>
+<tr>
+<td>Employee Profile - Confidential Information - Veteran Status</td>
+<td>Provides access to veteran status information.</td>
+</tr>
+<tr>
+<td>Payroll Import - Payroll Elections</td>
+<td>Allows viewing payroll election records imported for employees.</td>
+</tr>
+<tr>
+<td>Forms - Employee Pay Information</td>
+<td>Grants employees read access to pay-related form information.</td>
+</tr>
+<tr>
+<td>Forms - Employee Status Information</td>
+<td>Grants employees read access to status-related form information.</td>
+</tr>
+<tr>
+<td>Employee Profile - Confidential Information - Gender</td>
+<td>Provides access to confidential gender information.</td>
+</tr>
+<tr>
+<td>Recruiting: Job Requisition - Number Of Openings</td>
+<td>Allows viewing the total number of open job positions on a requisition.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01K8TH4GTX8WJS2YS2R1FXWGX3">Verify Role Configuration</h3>
+<p>The role must be saved and verified after enabling the permissions.</p>
+<p>Perform the following steps:</p>
+<ol>
+<li>Log in as the integration user and navigate to <strong>Reporting</strong> to ensure the <strong>Candidate Report</strong> is visible and executable.</li>
+<li>Confirm that the report includes all required fields (e.g., Candidate ID, Status, Hire Date) and updates dynamically when new candidates or changes occur.</li>
+</ol>
+<p>With the correct permissions in place, the Dayforce to Entra ID integration can:</p>
+<ul>
+<li>Fetch the <strong>report name</strong> defined in the integration parameters.</li>
+<li>Retrieve the <strong>column names</strong> dynamically to map candidate attributes.</li>
+<li>Fetches the <strong>real-time candidate data</strong> for provisioning, updates, and deactivations in Entra ID.</li>
+</ul>
+<p><strong>Note</strong>: The report name in Dayforce must match exactly with the name configured in the Aquera integration parameters; a mismatch will prevent data retrieval.</p>
+<h3 id="h_01K9SAZF7D05D7KWVD3SQK6WF2">Set Web Services Field-Level Access</h3>
+<p>The following table lists the specific Human Resources RESTful web services that must have Read access enabled for the integration to work (i.e., to read employment status and export employee data/results).</p>
+<table>
+<thead>
+<tr>
+<th>Web Services Fields</th>
+<th>Access Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RESTful Services &gt; Human Resources</td>
+<td rowspan="5">Read</td>
+<td>Allows read access to all selected Human Resources web services.</td>
+</tr>
+<tr>
+<td>RESTful Services &gt; Human Resources &gt;Employee</td>
+<td>Allows read access to the core Employee web service.</td>
+</tr>
+<tr>
+<td>RESTful Services &gt; Human Resources &gt; EmployeeEmploymentStatus</td>
+<td>Allows web services to read an employee's employment status (active, terminated, on leave, etc.).</td>
+</tr>
+<tr>
+<td>RESTful Services &gt; Human Resources &gt;EmployeeExportBackgroundJobStatus</td>
+<td>Allows reading background job status details for employee export processes.</td>
+</tr>
+<tr>
+<td>RESTful Services &gt; Human Resources &gt; EmployeeExportBulkResponse</td>
+<td>Allows reading bulk response data for employee export operations.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01K6D9458MNC1FCP1F05RC3P59">Creating Candidate Report </h2>
+<p>The Dayforce to Entra ID integration requires a candidate report in Dayforce that includes specific fields and configurations. This report serves as the primary data source for provisioning, updating, and deactivating users.</p>
+<p>The report must include required fields and a manageable number of columns. The accuracy and consistency of this report are crucial for transitioning candidate statuses into user records in EntraID.</p>
+<p>Perform the following steps to create the report:</p>
+<ol>
+<li>Log in to your <strong>Dayforce</strong> instance.</li>
+<li>Navigate to <strong>Reporting.</strong>
+</li>
+<li>Select <strong>Create</strong> <strong>&gt;</strong> <strong>Report From Topic</strong> and Select <strong>Recruiting</strong> <strong>&gt;</strong> <strong>Add Topic</strong>.</li>
+<li>Add the following required fields: <br/>
+<ul>
+<li>Candidate Display Name</li>
+<li>Candidate First Name</li>
+<li>Candidate Last Name</li>
+<li>Preferred Given Name</li>
+<li>Candidate Id</li>
+<li>Employee Employee Id</li>
+<li>Job Id</li>
+<li>Contact Method</li>
+<li>Contact Type Group Reference code</li>
+<li>Application Status Last Modified Timestamp</li>
+<li>Application Status Group Reference Code</li>
+<li>Hire Date</li>
+<li>Location Name<br/>These fields are mandatory for the integration to work properly.<br/><strong>Note</strong>: Keep the report size under 24–25 columns total to avoid performance issues.</li>
+</ul>
+</li>
+<li>Save the Report with your preferred name.<br/><strong>Note:</strong> This exact name must later be provided in the integration parameters.</li>
+<li>Test the Report by generating it to verify that it is correct.<br/><strong>Note</strong>: Verify that all required fields are present and that candidate statuses are displayed accurately. Also, verify that the report updates as new candidates are added or their statuses change.<br/><strong>Note</strong><span>: For the sample candidate report structure, see the </span><a href="#h_01K6DA5S7RW3ZAKNHTAWBJZNSE">Appendix</a><span> section. </span>
+</li>
+</ol>
+<h2 id="h_01K8TKEAZVQFSXSSNABJ4QRKVE">Permissions Required for Application Access to Candidate and Recruiting Data</h2>
+<p>The following permissions allow the application to access, read, and process candidate and recruiting data required for provisioning and updates.</p>
+<p>Perform the following steps:</p>
+<ol>
+<li>
+<ol>
+<li data-end="613" data-start="564">Go to <strong data-end="610" data-start="570">Recruiting Setup → Client Properties</strong>.</li>
+<li data-end="692" data-start="617">Set the following properties to <strong data-end="657" data-start="649">True</strong> (they are <strong data-end="677" data-start="668">False</strong> by default):</li>
+</ol>
+</li>
+</ol>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li> <span><strong>Indeed Integration</strong>: True<br/><img src="./assets/15a7c58d55a8a125.bin"/><br/></span>
+</li>
+<li>
+<span><strong>ShareThisEnabled</strong>: True<br/><img src="./assets/e93b3c79c9efec26.bin"/></span><span></span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 data-end="292" data-start="254" id="h_01K6MS9V5D4KXH90F4V8C167TD">Mandatory Attributes for Integration</h2>
+<table>
+<thead>
+<tr>
+<th><strong>Column Name</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Candidate Display Name</td>
+<td>The display name refers to the candidate’s full formatted name.</td>
+</tr>
+<tr>
+<td>Candidate First Name</td>
+<td>The first name specifies the candidate’s given name.</td>
+</tr>
+<tr>
+<td>Candidate Last Name</td>
+<td>The last name specifies the candidate’s family name.</td>
+</tr>
+<tr>
+<td>Preferred Given Name</td>
+<td>The preferred given name refers to the candidate’s chosen or alternative given name.</td>
+</tr>
+<tr>
+<td>Candidate Id</td>
+<td>The candidate ID refers to the unique identifier for the candidate.</td>
+</tr>
+<tr>
+<td>Employee Employee Id</td>
+<td>The employee ID specifies the identifier assigned to an employee after they are hired.</td>
+</tr>
+<tr>
+<td>Job Id</td>
+<td>The unique identifier of the job requisition the candidate applied for.</td>
+</tr>
+<tr>
+<td>Contact Method</td>
+<td>The contact method refers to the candidate’s contact information, including their address, phone number, and email.</td>
+</tr>
+<tr>
+<td>
+<p>Contact Type Group Reference Code</p>
+<p> </p>
+</td>
+<td>The contact type group specifies the type of contact information provided, such as Primary Residence or Work Email.</td>
+</tr>
+<tr>
+<td>
+<p>Application Status Last Modified Timestamp</p>
+</td>
+<td>
+<p>The timestamp refers to the date and time when the candidate’s application status was last updated.</p>
+</td>
+</tr>
+<tr>
+<td>Application Status Group Reference Code</td>
+<td>The group reference code specifies the reference value for the candidate’s application status, such as HIRED or OFFERED.</td>
+</tr>
+<tr>
+<td>Hire Date</td>
+<td>The hire date indicates the date on which the candidate was initially hired.</td>
+</tr>
+<tr>
+<td>Location Name </td>
+<td>
+<div>
+<article data-scroll-anchor="true" data-testid="conversation-turn-16" data-turn="assistant" data-turn-id="request-WEB:16ee5640-c0cd-4f13-8da3-b985df660617-7" dir="auto" tabindex="-1">
+<div>
+<div tabindex="-1">
+<div>
+<div data-message-author-role="assistant" data-message-id="806a7fa6-96e0-4143-bf50-1293a774bfdb" data-message-model-slug="gpt-5-2" dir="auto">
+<div>
+<div>
+<p data-end="409" data-is-last-node="" data-is-only-node="" data-start="84">Specifies the location or company value from Dayforce that is used as the lookup key in the Location to Domain table.</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div></div>
+</div>
+</div>
+</div>
+</article>
+</div>
+<div aria-hidden="true" data-edge="true"></div>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<div></div>
+<p> </p>
+  </div>
+</body>
+</html>

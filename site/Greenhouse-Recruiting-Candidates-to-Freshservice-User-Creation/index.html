@@ -1,0 +1,459 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Greenhouse Recruiting Candidates to Freshservice User Creation</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Greenhouse Recruiting Candidates to Freshservice User Creation</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JVC42RMFEG313DVJM3S2N72Q">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types.</p>
+<p>This integration connects Greenhouse Recruiting with Freshservice to automate the creation of a user account in Freshservice whenever a candidate’s status changes to Hired in Greenhouse Recruiting. The integration primarily creates a new user in Freshservice who is assigned the role of a requester. <br/><br/>This integration performs the following tasks:</p>
+<ul>
+<li>Listens for a <strong>candidate hired</strong> event from Greenhouse Recruiting and initiates integration upon detection.</li>
+<li>Extracts the new hire's personal and job-related data from Greenhouse Recruiting, including name, contact information, department assignments, office location, and manager details.</li>
+<li>Maps Greenhouse candidate fields to Freshservice user fields, ensuring data like first name, last name, primary and secondary emails, job title, phone numbers, address, language, and custom fields are correctly assigned.</li>
+<li>Converts Greenhouse department names to Freshservice department IDs and updates user records accordingly.</li>
+<li>Translates Greenhouse office location names into corresponding Freshservice location IDs.</li>
+<li>Obtains the Freshservice agent ID for the reporting manager using their email address and updates user records accordingly.</li>
+<li>Upon successful user creation, the logs a confirmation message with relevant details.</li>
+<li>Creates a timestamped CSV report entry with complete user data.</li>
+<li>Sends confirmation emails to the administrator and hiring manager with new user details.</li>
+<li>When enabled, record the successful transaction with payloads and status in OpenSearch for auditing.</li>
+<li>If user creation fails, logs detailed error messages and creates a timestamped failure entry in the CSV report.</li>
+<li>Email the administrator and hiring manager about the failure, including error details.</li>
+</ul>
+<p><strong>Note</strong>: You must set up webhooks in the Greenhouse Recruiting application to send the candidate hire events to this Aquera integration. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</a> for details.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Greenhouse Recruiting</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/10462467749911" rel="noopener noreferrer" target="_blank">Greenhouse Recruiting Configuration Guide</a> for instructions on creating the Greenhouse Recruiting application connector and setting up the authentication.</li>
+<li>
+<strong>Freshservice</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360011194413-Freshservice-Configuration-Guide" rel="noopener noreferrer" target="_blank">Freshservice Configuration Guide</a> for instructions on creating the Freshservice application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Permissions to set up Webhooks in Greenhouse Recruiting</strong>: Ensure you have permission to set up Webhooks in Greenhouse Recruiting to send the candidate hire events to the Aquera integration. </p>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details the configuration process for integrating Greenhouse Recruiting with Fresh service. It covers creating the integration, configuring system preferences, and setting up event-driven triggers to automate the transfer of new hire data from Greenhouse recruiting to Freshservice for user creation.</p>
+<p>This integration reads the data of a newly hired candidate from the Greenhouse Recruiting application and creates a corresponding user in the Freshservice application.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Greenhouse Recruiting Candidates to Freshservice</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <em>Greenhouse Recruiting</em> and <em>Freshservice</em> connector instances.</li>
+<li>
+<span>Click <strong>Continue</strong>. The </span><strong>configuration </strong>appears to set up the integration.</li>
+</ol>
+<h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Set Up Preferences</h3>
+<p>The <strong>Preferences</strong> section contains essential parameters that determine how the integration operates. Each setting is crucial in customizing the integration's behavior to meet your organization's needs.</p>
+<ul>
+<li>
+<strong>Trigger Event</strong>: Defines the specific events in Greenhouse Recruiting that will activate or trigger the integration.</li>
+<li>
+<strong>Admin Email Address</strong>: The designated email address that receives all system notifications, alerts, and reports related to the integration.</li>
+<li>
+<strong>Agent Email Address</strong>: The email address of the agent responsible for this integration.</li>
+<li>
+<strong>Email Subject</strong>: The title or summary displayed in the recipient’s inbox that describes the content of the email notification.</li>
+<li><span><strong>Email Body on Successful Integration Execution</strong>: Predefined template or content used in emails sent upon successfully completing the integration process.</span></li>
+<li>
+<strong>Email Body on Failed Integration</strong><span>: Predefined template or content used in emails sent when the integration encounters errors or fails to execute successfully.</span>
+</li>
+<li>
+<strong>Enable Integration Report Download: </strong>A<strong><span>llows generation of integration results in CSV format.</span></strong>
+</li>
+<li>
+<strong>Enable Dashboard Generation</strong>: <span>Monitors integration performance and analyzes trends through customizable graphical dashboards.</span>
+</li>
+<li>
+<strong>Report Only</strong>: Select to only generate a report of the changes made in Okta without applying them. If not selected, the integration will make changes in Freshservice.</li>
+<li>
+<strong>Debug Mode</strong><span>: Enables detailed logging and monitoring to assist in troubleshooting by providing comprehensive information about each step of the integration process.</span>
+</li>
+</ul>
+<h3 id="h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</h3>
+<p>You need to set up the event triggers to receive candidate hire events from the Greenhouse Recruiting application and run the integration.</p>
+<ol>
+<li>In the <strong>Trigger</strong> section, click <strong>Event</strong>.</li>
+<li>In the <strong>Event Source</strong> drop-down, select the Greenhouse Recruiting connector that you have configured in your Aquera Admin tenant.<br/>The <strong>URL</strong> field displays the endpoint URL to which Greenhouse Recruiting must send the candidate hire events. This URL must be configured in the Greenhouse Recruiting application when configuring the webhooks. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01ESN6XGCPQRMFGWGTMB3YVH03">Setting Up Webhooks in Greenhouse Recruiting</a> section in the <a href="../Greenhouse-Recruiting-Candidates-to-ADP-Workforce-Now-Workers/#h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</a> for details.</li>
+<li>Click <strong>Create Token</strong> to generate a token. Save this token securely.</li>
+</ol>
+<h1 id="h_01JSFY1EKJ37S3KXHZFANB2NAW">Attribute Mapping</h1>
+<p>The Greenhouse Recruiting Candidates to Freshservice users onboarding ticket integration maps the commonly used Greenhouse Recruiting and Freshservice attributes.</p>
+<p>The following are the API attributes that are mapped by default:</p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td><strong>Greenhouse Recruiting Candidate Attribute </strong></td>
+<td><strong>Freshservice User Creation Attribute</strong></td>
+</tr>
+<tr>
+<td>candidate.first_name</td>
+<td>first_name</td>
+</tr>
+<tr>
+<td>candidate.last_name</td>
+<td>last_name</td>
+</tr>
+<tr>
+<td>candidate.email_addresses.value</td>
+<td>email</td>
+</tr>
+<tr>
+<td>candidate.email_addresses.value</td>
+<td>secondary_emails</td>
+</tr>
+<tr>
+<td>candidate.phone_numbers.work</td>
+<td>phone</td>
+</tr>
+<tr>
+<td>candidate.phone_numbers.mobile</td>
+<td>mobile_phone</td>
+</tr>
+<tr>
+<td>candidate.jobs.title</td>
+<td>job_title</td>
+</tr>
+<tr>
+<td>candidate.departments </td>
+<td>department_ids</td>
+</tr>
+<tr>
+<td>candidate.office_location</td>
+<td>location_id</td>
+</tr>
+<tr>
+<td>candidate.manager.email</td>
+<td>reporting_manager_id</td>
+</tr>
+<tr>
+<td>candidate.address.street</td>
+<td>address.street</td>
+</tr>
+<tr>
+<td>candidate.address.city</td>
+<td>address.city</td>
+</tr>
+<tr>
+<td>candidate.address.state</td>
+<td>address.state</td>
+</tr>
+<tr>
+<td>candidate.address.zip</td>
+<td>address.zip</td>
+</tr>
+<tr>
+<td>candidate.language </td>
+<td>language</td>
+</tr>
+<tr>
+<td>Custom Greenhouse candidate fields </td>
+<td>Custom Freshservice user fields</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01JSBG7ZE97RPMVK7Q1QAY0SHT">Greenhouse Recruiting Candidate Attributes</h2>
+<p>The following table lists the Greenhouse Recruiting application UI field name, UI path, the corresponding Greenhouse Recruiting API attribute, and the description:<br/><strong>Note</strong>: You can select any candidate from the Candidate list. For example, if you select Jon Doe, the UI path will be <strong>Candidates</strong> &gt; <strong>Jon Doe</strong> &gt; <strong>Jon Doe's Details</strong>.</p>
+<table border="1">
+<tbody>
+<tr>
+<td>
+<p><strong>Greenhouse Recruiting</strong></p>
+<p><strong>UI Field Name</strong></p>
+</td>
+<td><strong>Application UI Path</strong></td>
+<td><strong>API Attribute</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>
+<p><span>Name</span></p>
+</td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt;  Name </span></td>
+<td>candidate.first_name, candidate.last_name</td>
+<td><span>First and last name of the candidate</span></td>
+</tr>
+<tr>
+<td>
+<p><span>Email Address</span></p>
+<p><span>(Work)</span></p>
+</td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details&gt; Email Address</span></td>
+<td>candidate.email_addresses.value</td>
+<td><span>The primary email address of the candidate</span></td>
+</tr>
+<tr>
+<td>
+<p><span>       Email Address </span></p>
+<p><span>        (Personal)</span></p>
+</td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Email Address</span></td>
+<td>candidate.email_addresses.value</td>
+<td>Secondary email address of the candidate.</td>
+</tr>
+<tr>
+<td>
+<p><span>Current Job Title &amp; Company</span></p>
+</td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Current Job Title &amp; Company</span></td>
+<td>candidate.phone_numbers.work</td>
+<td><span>Job title of the position held by the candidate.</span></td>
+</tr>
+<tr>
+<td>
+<p>Phone number</p>
+<p>(Mobile)</p>
+</td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Phone number</span></td>
+<td>candidate.phone_numbers.mobile</td>
+<td><font size="2">The mobile number of the candidate.</font></td>
+</tr>
+<tr>
+<td>
+<p><span>Job Title</span></p>
+</td>
+<td><span>Candidates &gt; (Click any Candidate's name) &gt; Additional details &gt; Job Title</span></td>
+<td>candidate.jobs.title</td>
+<td>The job title of the candidate.</td>
+</tr>
+<tr>
+<td><span>Department</span></td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt;Additional details &gt; Department</span></td>
+<td>candidate.departments </td>
+<td>The department the candidate belongs to within the company.</td>
+</tr>
+<tr>
+<td><span>Company Location</span></td>
+<td><span>Candidates &gt; (Click any Candidate's name) &gt;Additional details  &gt; Company Location</span></td>
+<td>candidate.office_location</td>
+<td>The company location of the candidate.</td>
+</tr>
+<tr>
+<td>Buddy Manager</td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt; Offer &gt; Buddy Manager</span></td>
+<td>candidate.manager.email</td>
+<td>The reporting manager of the candidate. </td>
+</tr>
+<tr>
+<td>
+<p><span>Street</span></p>
+</td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt;Additional details &gt; Street</span></td>
+<td>candidate.address.street</td>
+<td>The street address component of the candidate’s address.</td>
+</tr>
+<tr>
+<td>City</td>
+<td>
+<span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details</span> &gt;Additional details &gt; City </td>
+<td>candidate.address.city</td>
+<td>
+<p>The city component of the candidate’s address.</p>
+</td>
+</tr>
+<tr>
+<td>State</td>
+<td><span>Candidates &gt; (Click any Candidate's name) &gt;Additional details &gt; State</span></td>
+<td>candidate.address.state</td>
+<td>
+<p>The state or region component of the candidate’s address.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td>Postal Code</td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt;Additional details &gt; postal Code </span></td>
+<td>candidate.address.zip</td>
+<td>The postal or ZIP code component of the candidate’s address.</td>
+</tr>
+<tr>
+<td>Language</td>
+<td><span>Candidates &gt; (Click any Candidate's name) from the list &gt; {{Candidate's}} Details &gt;Additional details &gt; Language </span></td>
+<td>candidate.language </td>
+<td>The candidate’s preferred language</td>
+</tr>
+<tr>
+<td>Custom</td>
+<td>- </td>
+<td>Custom Greenhouse candidate fields </td>
+<td>    -</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01JSBJA583BC7BPFVC313CWJG0">Freshservice Users</h2>
+<p>The following table lists the Freshservice application UI field name, UI path, the corresponding API attribute, and the description:</p>
+<table border="1">
+<tbody>
+<tr>
+<th>Freshservice UI Field Name</th>
+<th>UI Path</th>
+<th>API Attribute</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>Name </td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; First name</td>
+<td>first_name</td>
+<td>Full name of the user.</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Last Name</td>
+<td>last_name</td>
+<td>The department where the user is working.</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Requester Details &gt; Email</td>
+<td>email</td>
+<td>The work phone number of the user.</td>
+</tr>
+<tr>
+<td>Email </td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Requester Details &gt; Email</td>
+<td>secondary_emails</td>
+<td>The mobile phone number of the user.</td>
+</tr>
+<tr>
+<td>Work Phone</td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Additional Information &gt; Work Phone</td>
+<td>phone</td>
+<td>The work phone of the user.</td>
+</tr>
+<tr>
+<td>Mobile Phone </td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Additional Information &gt; Mobile Phone</td>
+<td>mobile_phone</td>
+<td>The mobile phone of the user.</td>
+</tr>
+<tr>
+<td>Job Title </td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Job Title</td>
+<td>job_title</td>
+<td>The job title of the user.</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+<p>Department</p>
+</td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Additional Information &gt;  Department</td>
+<td>department_ids</td>
+<td>The department to which the user belongs.</td>
+</tr>
+<tr>
+<td>Location </td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Additional Information &gt; Location</td>
+<td>location_id</td>
+<td>The assigned office location of the user.</td>
+</tr>
+<tr>
+<td>Reporting Manager</td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Additional Information &gt; Reporting Manager</td>
+<td>reporting_manager_id</td>
+<td>The reporting manager of the user.</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Address </td>
+<td>address.street</td>
+<td>The street component of the candidate’s physical address</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>
+<br/>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Address</td>
+<td>address.city</td>
+<td>The city component of the candidate’s physical address</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>
+<br/>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Address</td>
+<td>address.state</td>
+<td>The state component of the candidate’s physical address</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>
+<br/>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Address</td>
+<td>address.zip</td>
+<td>The postal or ZIP code component of the physical address.</td>
+</tr>
+<tr>
+<td>Language </td>
+<td>Admin &gt; User Management &gt; Requesters &gt; Select any User &gt; Profile&gt; Additional Information &gt; Language</td>
+<td>language</td>
+<td>The preferred language of the user.</td>
+</tr>
+<tr>
+<td>Custom Fields</td>
+<td>- </td>
+<td>Custom Freshservice user fields</td>
+<td>- </td>
+</tr>
+</tbody>
+</table>
+<h1 id="01JQQX8ZJ9C62RPE14W4DTF9PE">Run the Integration</h1>
+<p>The integration runs when a candidate in the Greenhouse Recruiting application is hired. It processes the event received from Greenhouse Recruiting and creates a user in the Freshservice application.</p>
+<p>When a new employee is successfully created, the integration sends confirmation emails to HR. If any issues occur during the setup (like missing information or system errors), the integration retries to send urgent alerts about the problem.</p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<h1 id="h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</h1>
+<h2 id="h_01ESN6XGCPQRMFGWGTMB3YVH03">Setting Up Webhooks in Greenhouse Recruiting</h2>
+<p id="h_01HHC42H2XCK08HVK2G9A6Y6DE">This section details how to set up webhooks in the Greenhouse Recruiting application to send the candidate hire events to the Aquera integration for processing.</p>
+<ol>
+<li>Log in to the Greenhouse Recruiting application.</li>
+<li>Click the <em>Configure</em> icon on the navigation bar.</li>
+<li>Click <strong>Dev Center</strong> on the left navigation pane and click <strong>Webhooks</strong>.</li>
+<li>Enter the following fields to configure your new webhook:
+<ul>
+<li>
+<strong>Name this webhook</strong>: Enter the name that specifies what the webhook is being used for. For example, <em>Aquera Integration</em>
+</li>
+<li>
+<strong>When</strong>: Select the event, <em>Candidate has been hired</em>, from this drop-down list. </li>
+<li>
+<strong>Endpoint URL</strong>: Copy the URL from the<strong> Trigger </strong>section on the <em>Greenhouse Recruiting Candidates to the Freshservice</em> integration setup page of the Aquera Admin portal and paste it in this field. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details.</li>
+<li>
+<strong>Secret key</strong>: Enter the token generated in the <strong>Trigger </strong>section on the <em>Greenhouse Recruiting Candidates to Freshservice </em>integration setup page of the Aquera Admin portal. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details.</li>
+<li>
+<strong>Deactivated?</strong>: Make sure that the <em>No</em> option is selected.<br/><img alt="GHRNew1.png" src="./assets/954a4ccfb3573bd8.bin"/>
+</li>
+</ul>
+</li>
+<li>Click <strong>Advanced Settings</strong> and then provide the <strong>Basic Authorization Credentials,</strong> where the token generated in the Aquera Admin portal must be provided as the password for authentication. The username can be any random string. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details on obtaining the token.<br/><img alt="GHRNew2.png" src="./assets/5f7bb97496ee61ff.bin"/>
+</li>
+<li>Click <strong>Create webhook</strong> to complete the webhook setup.</li>
+</ol>
+<p>When you create a new webhook, Greenhouse Recruiting will ping the Aquera endpoint to verify the connection is working. If the ping is accepted successfully, the webhook will be created. If the ping is unsuccessful, Greenhouse Recruiting will save the configuration but deactivate the webhook.</p>
+<p><strong>Note</strong>: If the webhook is deactivated automatically because the endpoint ping failed, scroll down to the <strong>Edit Webhook</strong> section and edit the webhook configuration to fix the error. After you have fixed the configuration issue, make sure that you set the <strong>Deactivated?</strong> option to <em>No</em>.</p>
+  </div>
+</body>
+</html>

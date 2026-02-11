@@ -1,0 +1,354 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Salesforce to Active Directory Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Salesforce to Active Directory Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01K4VQP7EP4P6SXM7M6TQN8XKJ">Overview </h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide outlines the Salesforce to Active Directory integration for creating and updating contract staff user accounts, ensuring that contract workers in Salesforce are accurately maintained in Active Directory.</p>
+<p>To identify user records across both systems, the integration uses the <strong>Employee ID</strong> attribute from <strong>Salesforce</strong> and matches it to the <strong>Employee Number</strong> in the <strong>Active Directory</strong> as a correlation attribute.</p>
+<h2 id="h_01K41YQJT00GQAKZB0Y2Q00QVW">Key Functions</h2>
+<p data-end="1128" data-start="880">The <strong>Salesforce</strong> to <strong>Active Directory</strong> integrations provide the following functions:</p>
+<ul>
+<li>Creates new Active Directory user accounts from Salesforce users based on configured naming rules, base distinguished names (DNs), password policies, and attribute mappings.</li>
+<li>Updates the Active Directory entries of existing users when mapped Salesforce attributes change, including profile details, contact information, department or job changes, and optional manager and group membership updates.</li>
+</ul>
+<h1 id="h_01K2F6ANZ30WMRWZ3HS0H8MAZN">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<strong>Salesforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360009663913-Salesforce-Configuration-Guide" rel="noopener noreferrer" target="_blank">Salesforce Configuration Guide</a> for details.</li>
+<li>
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934-Active-Directory-AD-Configuration-Guide" rel="noopener noreferrer" target="_blank">Active Directory Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01K4VR82PMZ74SB8XEH52WM96T">Integration Setup</h1>
+<p data-end="168" data-start="25">This section outlines how the integration must be configured to push <strong>user data</strong> from <strong>Salesforce</strong> to <strong>Active Directory</strong>.</p>
+<h2 data-end="194" data-start="170" id="h_01K94HP47CT71FHBPSSZ9JF4GR">Create Integration</h2>
+<p data-end="252" data-start="196">Perform the following steps to create the integration:</p>
+<ol data-end="922" data-is-last-node="" data-is-only-node="" data-start="254">
+<li data-end="297" data-start="254">Log in to the Aquera Admin portal.</li>
+<li data-end="363" data-start="298">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-end="398" data-start="364">Click <strong data-end="395" data-start="373">Create Integration</strong>.</li>
+<li data-end="491" data-start="399">Select <strong data-end="460" data-start="409">Salesforce to Active Directory</strong> as the integration template.</li>
+<li data-end="578" data-start="492">Enter a name and a description for the integration.</li>
+<li data-end="725" data-start="579">Select your <strong data-end="460" data-start="409">Salesforce</strong> and your <strong data-end="708" data-start="669">Active Directory</strong> connector instances.</li>
+<li data-end="922" data-is-last-node="" data-start="726">Click <strong data-end="747" data-start="735">Continue. </strong>The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K4VRSDA5P0T0JE5XZZ5HS76N">Integration Scenarios</h4>
+<p>Configure the following integration scenarios:</p>
+<ul>
+<li>
+<strong>Enable Salesforce Object LifeCycle Management</strong>: Select to enable Salesforce object provisioning and perform incremental updates. When selected, this option enables the following settings:
+<ul>
+<li>
+<strong>Select Object Type<span>*</span></strong>: Select the object type from the drop-down menu.</li>
+</ul>
+</li>
+</ul>
+<h4 id="h_01K421SEM89261VNA9S1Q7KWBV">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Debug Mode</strong>: Select to generate logs outlining data changes that would occur for debugging.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+<li>
+<strong>Enable Logging</strong>: Select to generate logs that outline data changes.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li>
+<strong>Enable Notifications</strong>: Select to enable notifications related to integration.</li>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+</ul>
+<h3 id="h_01K4W4EFX81YEQ52GB2ZS3J422">Manage sObjects</h3>
+<p>Configure the following sObjects management settings:</p>
+<ul>
+<li data-end="620" data-start="353">
+<p data-end="620" data-start="355"><strong data-end="392" data-start="355">Source Field for Correlation:</strong> Select the Salesforce attribute for correlation from the dropdown menu.</p>
+</li>
+<li data-end="882" data-start="624">
+<p data-end="882" data-start="626"><strong data-end="667" data-start="626">Target Field for Correlation:</strong> Select the Active Directory attribute for correlation from the dropdown menu.</p>
+</li>
+<li>
+<strong>Create Salesforce Objects in Active Directory</strong>: Select to automatically create corresponding Active Directory objects whenever new records are added in Salesforce. If disabled, new Salesforce records will not create objects in AD.</li>
+<li>
+<strong>Update Salesforce Mapped Objects in Active Directory</strong>: Select to automatically update existing Active Directory objects when mapped Salesforce records are modified. If disabled, changes in Salesforce will not be updated in AD.</li>
+</ul>
+<h3 id="h_01KDQAFJ3FMSSKHFG4FDNHH1G3">User Update</h3>
+<p><span>Configure the following user update settings:</span></p>
+<ul>
+<li>
+<strong>Enable Critical AD Attribute Updates: </strong>Select to modify critical Active Directory attributes, such as Common Name, Email ID, User Principal Name, and SAM Account Name. If disabled, accidental changes could not affect the user's identity or access.<span></span>
+<ul>
+<li>
+<strong>Update CN (rename DN): </strong>Select to rename the user's Common Name (CN) in Active Directory and update the Distinguished Name (DN).</li>
+<li>
+<strong>Update UPN (User Principal Name): </strong>Select to update the user's logon name (UPN), which is created by combining the user's first and last name with the UPN suffix, for example, jane.doe@example.com. </li>
+<li>
+<strong>Update Primary Email: </strong>Select to update the user's primary email address in Active Directory, for example, jane.doe@example.com. </li>
+<li>
+<strong>Update sAMAccountName: </strong>Select to update the legacy logon (sAMAccountName). It must be unique within the domain and is limited to 20 characters.</li>
+</ul>
+</li>
+</ul>
+<h3 data-end="3158" id="01K973S8HT3RKTMNDDBW21XRHS"><span>Password Policy</span></h3>
+<p><span>Configure the following password policy settings:</span></p>
+<ul>
+<li>
+<p data-end="2507" data-start="2269"><strong data-end="2291" data-start="2269">Generate Password: </strong> Select to generate a random password.<br/><strong>Note</strong>: It is mandatory to enable this checkbox to customize the password settings.</p>
+<ul data-end="2881" data-start="2513">
+<li data-end="2711" data-start="2513">
+<p data-end="2711" data-start="2515"><strong data-end="2533" data-start="2515">Password Type<span>*</span>:</strong> Select the desired password complexity level from the drop-down menu. The following are the available options:</p>
+<ul data-end="2881" data-start="2513">
+<li data-end="2711" data-start="2513">
+<strong>Basic</strong>: Includes uppercase letters, lowercase letters, and digits.</li>
+<li data-end="2711" data-start="2513">
+<strong>Advanced</strong>: Includes uppercase letters, lowercase letters, digits, and special characters.
+<ul data-end="2881" data-start="2513">
+<li><span><strong> Allowed Special Characters</strong>: Enter the set of special characters permitted in a user's password.</span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="2881" data-start="2717">
+<p data-end="2881" data-start="2719"><strong data-end="2739" data-start="2719">Password Length: </strong><span>Enter the maximum permissible password length.</span></p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K5RAXMQQAWTTT5GM0YKX2RKZ">Insights Settings</h3>
+<p>Configure the following insights settings:</p>
+<ul>
+<li>
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+</ul>
+<h3 data-end="3158" id="01KG1NK7Q4XBD0VS9KC08G62HG"><span>Naming Policy</span></h3>
+<p><span>Configure the following naming policy settings:</span><span></span></p>
+<h4 id="h_01KDQAFJ3FAF7Q26QK8217T4KF"><span>Generate sAMAccountName</span></h4>
+<ul>
+<li>
+<p><strong>Enter Your Prompt to Create sAMAccountName</strong>: Enter your policy to generate the sAMAccountName. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote>
+<p><em>Generate 4–5 samAccountName options using the following rules: </em></p>
+<p>Start with the first letter of the first name followed by the full last name to form the base samAccountName.</p>
+<p>If that samAccountName is already taken, append a numeric suffix (such as 1, 2, or 3) to generate additional options.</p>
+<p>Convert all characters to lowercase, remove spaces and special characters from both first and last names, and limit the final samAccountName to a maximum of 20 characters.</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: Alexander, <strong>Last Name</strong>: Johnson), the generated samAccountName values are ajohnson, ajohnson1, ajohnson2, ajohnson3, and ajohnson4, as displayed under the <strong>Preview</strong> section. To view the default name values, turn on the <strong>Advanced Preview Options</strong> toggle.</p>
+<p><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated sAMAccountName values will appear in the <strong>Preview</strong> section.</p>
+<h4 id="h_01KDQAFQ3PA4VWE3CG2GCZQHTN">Generate Common Name (CN)</h4>
+<ul>
+<li>
+<strong>Generate Common Name</strong>: Select an option to generate the user’s common name from the dropdown. The following are the available options:
+<ul>
+<li>
+<strong>Use sAMAccountName as CN</strong>: Select to use the sAMAccountName generated from the <strong>Generate sAMAccountName</strong> section as the common name.</li>
+<li>
+<strong>Use Policy to Generate CN</strong>: Select to define a custom policy for generating the common name. When selected, this option enables the following settings:
+<ul>
+<li>
+<strong>Enter Your Prompt to Create a Common Name</strong>: Enter your policy to generate the common name. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:<br/>
+<blockquote>
+<p>Generate up to six CN values using the following rules:</p>
+<p>Build the base CN as "Firstname Lastname" or "Firstname Middlename Lastname" when a middle name is provided.</p>
+<p>For each name part, capitalize the first character and make all remaining characters lowercase (e.g., "James Edward Smith").</p>
+<p>Escape or remove special characters to ensure validity.</p>
+<p>If the base CN exists, generate additional variants by appending numbers 1 through 5 directly at the end (e.g., James Edward Smith1, James Edward Smith2).</p>
+</blockquote>
+<p><strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: James, <strong>Middle Name</strong>: Edward, <strong>Last Name</strong>: Smith), the generated common name values are James Edward Smith, James Edward Smith1, and James Edward Smith2, as displayed under the <strong>Preview</strong> section. To view the default name values, turn on the <strong>Advanced Preview Options</strong> toggle.<br/><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name, middle name, and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated common name values will appear in the <strong>Preview</strong> section.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="h_01KDQAFWVJNKJ88SP24PC77K5K">Generate Email</h4>
+<ul>
+<li>
+<strong>Generate Email</strong>: Select an option to generate the user's email ID from the dropdown. The following are the available options:
+<ul>
+<li>
+<strong>Use sAMAccountName as Email</strong>: Select to use the sAMAccountName generated from the <strong>Generate sAMAccountName</strong> section to generate an email.</li>
+<li>
+<strong>Use UserPrincipalName as Email</strong>: Select to use the user principal name generated from the <strong>Generate</strong> <strong>UserPrincipalName (UPN)</strong> section to generate an email.</li>
+<li>
+<strong>Use Different Policy to Generate Email</strong>: Select to define a custom policy for generating the email. When selected, this option enables the following settings:
+<ul>
+<li>
+<strong>Enter Your Prompt to Create an Email</strong>: Enter your policy to generate an email, excluding the domain. For example, enter the following prompt and click <strong>Analyze and Preview</strong>: <br/>
+<blockquote>
+<p>Generate at least 5 unique email prefixes (no domain) using firstname, middlename (if available), and lastname:</p>
+<p>First attempt: first letter of firstname + full lastname (e.g., ajohnson).</p>
+<p>Second attempt: If middlename exists, first letter of firstname + first letter of middlename + full lastname (e.g., amjohnson).</p>
+<p>Subsequent retries: Append numbers 1-5 to the primary attempt (e.g., ajohnson1 through ajohnson5 if no middlename, or amjohnson1-5 otherwise).</p>
+<p>Always convert the output to lowercase, remove all spaces and special characters, and use the shortest valid prefixes first.<br/>Example input: firstname = “Alexander”, middlename = “Michael”, lastname = “Johnson”.</p>
+</blockquote>
+<strong>Preview: </strong>Based on the prompt and the default input (First Name: Alexander, Middle Name: Michael, Last Name: Johnson), the generated email prefixes are ajohnson, amjohnson, ajohnson1, ajohnson2, and ajohnson3, as displayed under the Preview section. To view and adjust the default name values used for generating these prefixes, turn on the Advanced Preview Options toggle.<br/><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name, middle name, and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated email prefix values will appear in the <strong>Preview</strong> section.</li>
+</ul>
+</li>
+<li>
+<strong>Use Common Name as Email</strong>: Select to use the common name generated from the <strong>Generate Common Name (CN)</strong> section to generate an email.</li>
+</ul>
+</li>
+</ul>
+<h4 id="h_01KDQAG2K93ZZQSWSP3W07TAZW">Generate UserPrincipalName (UPN)</h4>
+<ul>
+<li>
+<strong>Generate User Principal Name</strong>: Select an option to generate the user's UPN from the dropdown. The following are the available options:
+<ul>
+<li>
+<strong>Use sAMAccountName as UPN</strong>: Select to use the sAMAccountName generated from the <strong>Generate sAMAccountName</strong> section as the user principal name.</li>
+<li>
+<strong>Use Different Policy to Generate UPN</strong>: Select to define a custom policy for generating the user principal name. When selected, this option enables the following settings:
+<ul>
+<li>
+<strong>Enter Your Prompt to Create a UPN</strong>: Enter your policy to generate the User Principal Name (UPN). For example, enter the following prompt and click <strong>Analyze and Preview</strong>:<br/>
+<blockquote>
+<p>Generate 5 UPN prefix outputs using the following rules:</p>
+<p>First attempt: Combine the first letter of the first name with the full last name.</p>
+<p>Second attempt: If a middle name exists, use the first letter of the first name + first letter of the middle name + full last name.</p>
+<p>If no middle name exists, append numbers 1 through 4 to the first attempt (e.g., ajohnson1, ajohnson2).</p>
+<p>Convert all characters to lowercase, remove spaces and special characters.</p>
+<p>Limit total length as needed and return only the prefix (no domain).</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: Alexander, <strong>Middle Name</strong>: Michael, <strong>Last Name</strong>: Johnson), the generated user principal name prefixes are ajohnson, amjohnson, amjohnson1, amjohnson2, and amjohnson3, as displayed under the <strong>Preview</strong> section. To view and adjust the default name values used for generating these prefixes, turn on the <strong>Advanced Preview Options</strong> toggle.</p>
+<p><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name, middle name, and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated user principal name values will appear in the <strong>Preview</strong> section.</p>
+<h4 id="h_01KDQAKH0G9GSE538YRZH8DPM7">Generate proxyAddress</h4>
+<ul>
+<li>
+<strong>Use UPN as Proxy Address: </strong>Select to assign the UPN as the proxy address.</li>
+<li>
+<strong>Use Email Address as Proxy Address: </strong>Select to assign the Email Address as the proxy address.</li>
+</ul>
+<h3 data-end="3158" id="h_01KEBGZBYPKRGZTH8J856G3CK9"><span>Debug Mode</span></h3>
+<p><span>Configure the following debug mode settings:</span></p>
+<ul>
+<li>
+<span><strong>Debug Mode</strong>: Select to enable debug mode.</span>
+<ul>
+<li>
+<p><strong>Source Filter</strong>: Select the Salesforce attribute to filter the user while retrieving from Salesforce.</p>
+</li>
+<li>
+<strong>Source Filter Value</strong>: Provide the value for the selected source filter.</li>
+</ul>
+</li>
+</ul>
+<h3 id="01KG1NKRZVAF590JG2XJ1ZD53D">Log Settings</h3>
+<p>Configure the following log &amp; insights settings:</p>
+<ul>
+<li>
+<strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01JZ7GJ97ZX233WAF2MGX9PFME">Report Settings</h3>
+<p>Configure the following report settings:</p>
+<ul>
+<li>
+<strong>Report Detail Level: </strong> Select the desired report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K5XVFZRJYTGXBGXBVCAGA4HN">Notification Settings</h3>
+<p>Configure the following settings for email notifications:</p>
+<h4 id="h_01K9750G1WVCA080W3BF2A4RY4">Notification Template Settings</h4>
+<p>Configure the following settings for the notification template:</p>
+<ul>
+<li>
+<strong>Enable Password Notification: </strong>Select to enable notification when a user's password is created or updated.</li>
+<li>
+<strong>Send Password Change Notification to Manager</strong>: Select to send a notification to the user’s manager when the user changes their password.</li>
+<li>
+<strong>Send Password Change Notification to Additional Recipient</strong>: Select to send a notification to the additional recipient when the user changes their password.</li>
+<li>
+<strong>Send Email Notification for Success</strong>: Select to enable notification for successful integration.</li>
+<li>
+<strong>Send Email Notification for Failure</strong>: Select to enable notification for failed integration.</li>
+</ul>
+<h4 id="01KFD1AMVYPNY4PY2ZB7A64VGC">Successful Integration Notification Settings</h4>
+<p>Configure the following settings for the successful integration notification:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Recipients' Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li>
+<strong>Email Subject on Successful Integration Execution</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
+<li>
+<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+</ul>
+<h4 id="h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failed Integration Notification Settings</h4>
+<p>Configure the following settings for the successful integration notification:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Recipients' Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li>
+<strong>Email Subject on Failed Integration Execution</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li>
+<strong>Email Body on Failed Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The Attribute Map tab in <strong>Salesforce</strong> to <strong>Active Directory</strong> Synchronization defines the default <strong>Salesforce</strong> attributes that are mapped to the <strong>Active Directory</strong> attributes.</p>
+<h2 id="h_01K06FVR3HY5TQCJK1AC2W07CZ">Tables</h2>
+<p>In the Tables tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span><span></span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

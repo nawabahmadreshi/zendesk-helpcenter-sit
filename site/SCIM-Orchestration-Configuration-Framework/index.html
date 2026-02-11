@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SCIM Orchestration Configuration Framework</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>SCIM Orchestration Configuration Framework</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h3 id="jump-to">Jump To</h3>
+<pre><em><span>1. <a href="#h_01EJAN3YKH92K5BG8B0QXT6PEN" target="_self">Introduction to SCIM Orchestration</a></span></em><br/><em><span>2. <a href="#h_01EJAN46C9D3XD5C443KW3KKWN" target="_self">Layout</a></span></em><br/><em><span>3. <a href="#h_01EJAN4FNVX1CCXQS2R6RH9Z37" target="_self">Expressions</a></span></em><br/><em><span>4. <a href="#h_01EJAN4VMHWHR8Q5XDP68QQWJE" target="_self">SCIM Expression Extensions</a></span></em><br/><em><span>5. <a href="#h_01EJAN565H1FR1F26W10NF30QR" target="_self">Configuration</a></span></em><br/><em><span>6. <a href="#h_01EJAN5GJQK7Q9MQ90RTKH4Z47" target="_self">Attribute Mapping</a></span></em><br/><em><span>7. <a href="#h_01EJAN5SQHG482ZRKXN9FEJ73H" target="_self">Tables</a></span></em><br/><em><span>8. <a href="#h_01EJAN63YF6V1GMXRTMTQA5A50" target="_self">Group Rules</a></span></em><br/><em><span>9. <a href="#h_01EJAN6E27WMWZX2PMK21FMX2P" target="_self">Schedules</a></span></em></pre>
+<h1 id="h_01EJAN3YKH92K5BG8B0QXT6PEN">Introduction to SCIM Orchestration</h1>
+<p>The Aquera SCIM Orchestration Configuration Framework provides a common basis for the configuration of many of Aquera's orchestrations. These include SCIMToSCIM, SCIM Batch Import, Message Listener, and more. The framework balances configuration simplicity with maximal flexibility.</p>
+<h1 id="h_01EJAN46C9D3XD5C443KW3KKWN">Layout</h1>
+<p>The layout of orchestrations that are members of the SCIM Orchestration family share a common look and feel in Aquera Admin. There is a configuration tab, with the subset fields that are meaningful to the individual orchestration, and Attribute Map, Tables, and Group Rules tabs which are common to all orchestrations.</p>
+<h1 id="h_01EJAN4FNVX1CCXQS2R6RH9Z37">Expressions</h1>
+<p>Many fields accept expressions, which evaluate to true, false, or actual value. Aquera has developed JavaScript SCIM extensions designed to ease Orchestration configuration. Each field defined later in this document clearly indicates if it takes an expression. Knowledge of rudimentary JavaScript is highly beneficial to the configuration task, and knowledge of the specific usage of the source and destination SCIM fields is also important. You will see that Aquera will automatically layout a good starting point based on your specific source and destination applications, and then you will complete the configuration and test it before going live.</p>
+<h1 id="h_01EJAN4VMHWHR8Q5XDP68QQWJE">SCIM Expression Extensions</h1>
+<p>SCIM Extensions are defined here and discussed more completely later. These extensions are relevant in the context of one source record and one destination record, as is the case for the Configuration tab match expression, Attribute Map, and Group Rules.</p>
+<p>SOURCE -&gt; replaced with the SOURCE record object, example: SOURCE.userName<br/>DEST -&gt; replaced with the DEST record object, example: DEST.userName<br/>scimArray[type] -&gt; replaced with the specific array entry where scimArray.type == type, example: SOURCE.emails[work]<br/>%USEC -&gt; replaced with a number string which makes the result unique, useful only in Attribute Maps, example: name.givenName + name.familyName + "%USEQ"<br/>%ATTEMPT -&gt; replaced with empty string on updates, replaced with the creation attempt number, starting at one, on creation, useful only in Atrribute Maps, example: name.givenName + name.middleName.slice(0, %ATTEMPT) + name.familyName<br/>TABLE.tableName[name] -&gt; replaced with the value associated with name as defined in the Tables tab; example: TABLE.titles[SOURCE.title]</p>
+<h1 id="h_01EJAN565H1FR1F26W10NF30QR">Configuration</h1>
+<p>Configuration section is designed to Add the Basic Details, Creation of E-Mail Details, Deactivation of E-Mail Details and Advanced details of the Orchestration.</p>
+<h1 id="h_01EJAN5GJQK7Q9MQ90RTKH4Z47">Attribute Mapping</h1>
+<p><span>Attribute mapping is done between source and target. The mapping simplifies the process of executing the CRUD operations on the attributes, as the changes made to the source attribute will automatically get reflected at the target once the mapping is completed and the changes are saved.</span></p>
+<h1 id="h_01EJAN5SQHG482ZRKXN9FEJ73H">Tables</h1>
+<p>Tables were designed as a mechanism to simplify the mapping process. It is possible to achieve Table functionality in pure JavaScript, but the resulting expressions can be large, unwieldy, and fragile. Tables are created as a set of name/value pairs, and they make it straightforward to map an attribute based on one of many names. Tables are defined in the Tables tab, and they are referenced from within a mapping in the Attribute Map tab using the TABLE SCIM extension.</p>
+<h1 id="h_01EJAN63YF6V1GMXRTMTQA5A50">Group Rules</h1>
+<p>The Group Rules tab facilitates the mapping of group membership. Rules can be created using basic conditions, or they can be created using the full capabilities of JavaScript SCIM Extensions. Each entry defines a set of groups that a user will be included in the destination should the expression evaluate to true. Destination SCIM group display names are used in all group rules.</p>
+<h1 id="h_01EJAN6E27WMWZX2PMK21FMX2P">Schedule</h1>
+<p>Once the orchestration is completed, updates reflecting the changes made at the source in the target can be automated. Users can select a schedule for the data refresh from the time slots given under 'Schedule'. If there are no data changes, the user can opt for Never. Depending on the frequency with which the data changes are made, the automation can be done from once every 20 minutes to once in 2 hours.</p>
+<p> </p>
+  </div>
+</body>
+</html>

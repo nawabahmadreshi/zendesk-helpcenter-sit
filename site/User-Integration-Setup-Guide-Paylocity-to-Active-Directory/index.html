@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User Integration Setup Guide - Paylocity to Active Directory</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>User Integration Setup Guide - Paylocity to Active Directory</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01GK3PHEQJ2CXQCGH4ED5J3FE8">Overview</h1><p>This guide covers the end-to-end tasks involved in setting up a synchronization to sync users in Paylocity with Active Directory.</p><p>The following tasks are involved in setting up the synchronization from Paylocity to Active Directory:</p><ul>
+<li data-list-item-id="e397261baa9df25415ffaa3a0ca4437d0"><a href="#h_01F6EH0MBC837JQFE5ZJRW7P94" target="_self">Configuring Applications in Aquera Admin</a></li>
+<li data-list-item-id="e96c35f5c62dfbb7d1b6431a39fa6cbaa"><a href="#h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</a></li>
+<li data-list-item-id="eb64779eae6659470a9a5445789910d8f"><a href="#h_01F6EH144YSHC99KVTGPC8D65M">Running the Synchronization</a></li>
+</ul><h1 id="h_01F6EH0MBC837JQFE5ZJRW7P94">Configuring Applications in Aquera Admin</h1><p>The following applications must be added and configured in the Aquera Admin console:</p><ul>
+<li data-list-item-id="ecdd5dddbec2aa2ac73902ea9d9d7d02a">Paylocity. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360014901433" rel="noopener noreferrer" target="_blank">Paylocity Configuration Guide</a> for details.</li>
+<li data-list-item-id="e2eb9da85d433bd73aa95266455c537df">Active Directory. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory Configuration Guide</a> for details.</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</h1><p>This section details how the user synchronization must be configured to allow data push from Paylocity to Active Directory. </p><p>It also describes the various analyses to be performed and the important points to be considered before setting up the user synchronization.</p><h2 id="h_01GK3PJ5ZTQT1FKE2ZGXB0XB0Y">Considerations</h2><ul>
+<li data-list-item-id="ebe52d1dddc95b248c561e82b3eb9d4c9">A naming convention for the User Principal Name (UPN) in the Active Directory</li>
+<li data-list-item-id="e9db585c463d828893f070f11c46e1019">A naming convention for the SAM Account Name in the Active Directory</li>
+<li data-list-item-id="e9547be55708146c83ee4947813193aa7">Fields currently populated in the Active Directory</li>
+<li data-list-item-id="ef17f4d7695a49d2cbf8ec0e0377eb07f">The username can be retrieved from the Paylocity system</li>
+<li data-list-item-id="e8f678d4be327ed8197d372f427cf80d6">The criteria for matching a user record from Paylocity with that in the Active Directory.</li>
+</ul><h2 id="h_01GK3PJAZHT18TWDP33MSNHHD6">General Analysis Steps</h2><p>Before setting up the synchronization, the following analyses need to be done:</p><ul>
+<li data-list-item-id="eb6e1d07abcb26a9fdbdc5159820f6918">Fill out the<a href="https://support.aquera.com/hc/article_attachments/4415220608663" target="_self"> attached mapping template</a> for mapping Paylocity attributes to Active Directory attributes.</li>
+<li data-list-item-id="e1c3f59c7b7c67baf97461c1d564bfa4e">Expression language can be used in the mapping to create UPNs and SAM Account Names without duplicates or errors. In the expressions, you can use inbuilt methods such as <strong>toNormalizedDiacritics</strong>() and <strong>toSAMAccountName</strong>() for this purpose. You can also use the keywords such as <strong>%ATTEMPT, %USEQ, SEQUENCENUMBER</strong> to avoid duplicates. For details, refer to the <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Synchronization Expressions - Keywords, Methods, and Functions Guide</a>.</li>
+<li data-list-item-id="e6c16db6993c3333d52e33787e3dd468c">Define the logical OU mapping rules for user containers.</li>
+</ul><p>For detailed analyses of Paylocity users and the users/groups in Active Directory using scripts, refer to the <a href="#h_01F6EGQ8TRT9E064C1YJVS653G" target="_self">Appendix</a>.</p><p>You can also analyze the user's data using the <strong>Reports</strong> option in the <strong>Data</strong> tab of the <strong>Applications</strong> page in the Aquera Admin console. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4411279965463" rel="noopener noreferrer" target="_blank">User Reports Guide</a> for details.</p><h2 id="h_01GK3PJG572XJ2X9JYY9PX1CGH">Building a Synchronization</h2><p>This section describes how to set up synchronization using the User Synchronization method.</p><ul><li data-list-item-id="e92b29a5d0cd0f5c6036c01669f01b12c">
+<strong>User Synchronization</strong> - In this synchronization, set <em>Paylocity</em> as the <strong>Source Application</strong> and <em>Active Directory</em> as the <strong>Target Application</strong>. Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Synchronization Setup Guide</a> for details on the synchronization configurations.</li></ul><p>You can set the following configurations in the user synchronization:</p><ul>
+<li data-list-item-id="e6de16b71440da7fdd9762cc1e5d7949a">Set the <strong>Admin Email Options</strong> to receive email notifications for success/failures during the synchronization run.</li>
+<li data-list-item-id="e1447b10f2ef849703c9897b48f6465f4">Set the email list of the IT admin or manager to receive user creation notification emails and user deactivation notification emails.</li>
+<li data-list-item-id="e0e57e085bc8e4c6739858482e28e607a">Use tables for creating lookup tables based on location and department values from the source.</li>
+<li data-list-item-id="e378605d04e565292d9dea15c4db3f4ff">Enable Group management if Aquera has to manage the groups and group assignment rules based on your group analysis. Set the group names in the restriction list for scoping of the groups which would be managed by Aquera.</li>
+</ul><p>Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Synchronization Setup Guide</a> for details on the synchronization configurations.</p><p><strong>Note</strong>: For the custom attributes from the source system, the custom fields are not displayed automatically for the Active Directory in the Attribute Mapping page. You must manually add the Active Directory custom fields to the Attribute Mapping page and complete the mapping.</p><h3 id="h_01G2MCT423GNZKQN0RS2CTFK60">Synchronization Scenarios</h3><p>This section details the synchronization scenarios.</p><h4 id="h_01GK1TQMH4YB70PMFT3H3TWXRR"><strong>Creating a user of type NORMAL_ACCOUNT in the Active Directory</strong></h4><p>To create a user of type NORMAL_ACCOUNT in Active Directory, set the attributes mapping as follows:</p><p>Enter <strong>"512"</strong> as the source attribute expression and map it to the <strong>[IAN].userAccountControl </strong>attribute of AD. Set the mapping criterion as <em>Map on Create</em>.</p><p><img alt="Map.png" src="./assets/0c784ee74000c84f.bin"/></p><p><strong>Note</strong>: <em>512</em> is the decimal value corresponding to the <em>NORMAL_ACCOUNT</em> property flag in Active Directory. For all property flags and the corresponding decimal values, refer to the <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties#list-of-property-flags" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p><h4 id="h_01GK3PJW6C63H11QH30DQSS1P2"><strong>Escaping Special Characters in OUs and DNs for Active Directory</strong></h4><p>To escape any special characters in OUs and DNs in the expressions, use a double-backslash before the special character. For example, if the OU name is<em> #Terminated</em>, mention it in the expression as \\<em>#Terminated</em>. </p><p><em><strong>DEST[IAN].distinguishedName.split(",")[0] + ",OU=\\#Terminated, DC=local"</strong></em></p><p>Double-backslash must be introduced before any of the following special characters:</p><figure><table><tbody>
+<tr>
+<td>Comma</td>
+<td>,</td>
+</tr>
+<tr>
+<td>Backslash character</td>
+<td>\</td>
+</tr>
+<tr>
+<td>Pound sign (hash sign)</td>
+<td>#</td>
+</tr>
+<tr>
+<td>Plus sign</td>
+<td>+</td>
+</tr>
+<tr>
+<td>Less than symbol</td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td>Greater than symbol</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>Semicolon</td>
+<td>;</td>
+</tr>
+<tr>
+<td>Double quote (quotation mark)</td>
+<td>"</td>
+</tr>
+<tr>
+<td>Equal sign</td>
+<td>=</td>
+</tr>
+<tr>
+<td>Leading or trailing spaces</td>
+<td> </td>
+</tr>
+</tbody></table></figure><h4 id="h_01GK3PK2QA6B2WQ0HKAWGF8HZV"><strong>Prompting for Password Change at Login</strong></h4><p>To make it mandatory for the new users in Active Directory to change their password on their first login, map the Active Directory attribute <strong>pwdLastSet</strong> to <strong>"0"</strong> with the mapping option of <strong>Map on create</strong> only. If this mapping is not done and users sign into their account for the first time, it will not prompt them to change their password.</p><p><img alt="Screenshot_2022-06-09_at_12.14.28_PM.png" src="./assets/bda770bec5869def.bin"/></p><p>To prompt the existing users also for a password reset, set the mapping option as <strong>Map on Create and Update</strong>.</p><h4 id="h_01GK1CGW9HV1R3WFS69YDC3JW6"><strong>Requirements to Set User Password</strong></h4><p>Active Directory requires a secure LDAPS (LDAP over SSL) connection to set or change user passwords. This is an Active Directory’s security requirement. Random generation of passwords when creating new users does not work without the use of LDAPS. Also, setting the password through attribute mapping requires a secure LDAPS connection.</p><p><strong>Note:</strong> If the connection is not secured (non-SSL), Active Directory does not allow you to update the user password. </p><p>Active Directory imposes strength requirements on the password and the requirements vary from one instance to another.</p><h1 id="h_01F6EH144YSHC99KVTGPC8D65M">Running the Synchronization</h1><ul>
+<li data-list-item-id="efb92f4be16f08de5eac0f2ce6fa4dc3f">Enter the matching expression to match the source records with the destination records.</li>
+<li data-list-item-id="e20bd9f0e17736b1ac232189d7dc5ee44">Run the synchronization in<em> Report Only</em> mode and determine if the correct data is updated in the Active Directory. If the data is not correctly updated, change the matching expression to correctly match users and/or update the data, for example, employeeNumber, in the Active Directory.</li>
+<li data-list-item-id="e5d8a7714eea9e5baf17e407f2a5a2e53">Increment the <strong>Update Limit</strong> (maximum number of records to be updated in a single run) for each run in <strong>Report Only</strong> mode to ensure that the records are updated correctly when the records count is more.</li>
+<li data-list-item-id="ee97c86e60dd6ecd2299dc48fd8ec266c">Based on your analysis and considerations,<ul>
+<li data-list-item-id="ee909aea88e130716b4458a1099644f77">Translate the logical maps to the Aquera attribute maps for the fields</li>
+<li data-list-item-id="ea0c3e1109e3c8d086f60d4951ea5630d">Translate the logical OU/container locations into tables and expressions</li>
+<li data-list-item-id="e8e0a293bf7207f207baeee3b2e3a8d20">Translate the logical group assignment rules into Aquera rules</li>
+</ul>
+</li>
+<li data-list-item-id="e6698fd784084c8079a5de8e051493070">Modify the attributes mapping and repeat the process until the data is correctly updated.</li>
+<li data-list-item-id="ea3fd86eece3fe425cc728145a8cb617f">Monitor the synchronization logs thoroughly to ensure that no errors are encountered. Modify the synchronization configurations to fix any errors.</li>
+<li data-list-item-id="e352cd0165d46221200e7ba7266248116">Once all users are synced, user creations and updates are based on the incremental changes in Paylocity.</li>
+</ul><h1 id="h_01F6EGQ8TRT9E064C1YJVS653G">Appendix</h1><p>This section provides the scripts that may be used by the <strong>Customer Support</strong> team to analyze the existing users in Paylocity and Active Directory before setting up the synchronization. It also provides the script to analyze the existing groups of users in Active Directory.</p><p>This document explains how analyses can be done using a script synchronization. In script synchronization, add <em>Paylocity</em> and <em>Active Directory</em> applications and set the corresponding variable names. In the script, the variable names must be used to refer to the applications.<br/>For details on configuring the script synchronization, refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Synchronization Setup using Scripts Guide</a>.</p><p>A few sample scripts are provided here for your reference. The scripts may vary based on your use case and the attributes to be retrieved for analysis.</p><h2 id="h_01GK3PQTVHK56578V20A1N8R8T">Analyzing the Users in Paylocity </h2><p>Use the below sample script in a script synchronization for generating a report from Paylocity for analysis of username, user title, work location, and department. The work location and department are mapped to IAN attributes.</p><pre data-stringify-type="pre"><code>const ENT = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User";
+let employees = payloc.getUsers();
+for (let employee of employees) 
+{
+    log.info(employee.userName + ',' + employee.active + ',' + 
+    employee.title + ',' + employee[IAN].worklocation + ',' + 
+    employee[IAN].costCenter1);
+}</code></pre><h2 id="h_01GK3PR1SG6J0HFG7BECHKT1K5">Analyzing the Users in Active Directory</h2><p>Use the below sample script in a script synchronization for generating a report from Active Directory for analysis of user domain, status, and so on.</p><pre><code>log.info('AD ID,AD ACTIVE,AD EMPNO,AD GIVENNAME,AD FAMILYNAME,AD USERNAME,AD SAMACCOUNT,AD DN');
+
+for (let user of AD.getUsers()) {
+
+    log.info('"'
+
+    + user.id + '","'
+
+    + user.active + '","'
+
+    + (user[ENT] &amp;&amp; user[ENT].employeeNumber || '') + '","'
+
+    + user.name.givenName + '","'
+
+    + user.name.familyName + '","'
+
+    + user.userName + '","'
+
+    + user[IAN].sAMAccountName + '","'
+
+    + user[IAN].distinguishedName.split(',').slice(1).join(',') + '"');
+
+}</code></pre><h2 id="h_01GK3PR7EM2F79W6452ADYA3QV">Analyzing the Groups in Active Directory</h2><p>Use the below script to analyze the groups of existing users in the Active Directory.</p><pre data-stringify-type="pre"><code>let ad_users = AD.getUsers();
+let users_length = 0;
+let ad_users_length = ad_users.length;
+let i = 0;
+let total = users_length &gt; ad_users_length ? users_length : ad_users_length;
+log.info('AD ID,GROUP NAME');
+for (i = 0; i &lt; total; i++) {
+    let groups = ad_users[i].groups;
+    if (groups) {
+        for (let group of groups) {
+            log.info(ad_users[i].userName + ',' + group.display);
+        }
+    }
+}</code></pre>
+  </div>
+</body>
+</html>

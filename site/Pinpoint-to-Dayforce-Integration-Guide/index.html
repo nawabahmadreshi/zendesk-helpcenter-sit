@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pinpoint to Dayforce Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Pinpoint to Dayforce Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide describes the Pinpoint-to-Dayforce onboarding integration, which automatically creates Dayforce employee records for hired candidates when an <strong>Onboarding Process Step is configured. </strong>The available configuration options are <strong>Background Check</strong>, <strong>Diversity and Inclusion</strong>, <strong>Handbook</strong>, <strong>Policies and Documentation</strong>.</p><p>The integration identifies eligible onboarding applications in Pinpoint and transfers the required data to Dayforce to generate corresponding employee records.</p><p><span>To identify candidate records across both systems, the integration uses the </span><strong>Social Security Number</strong><span> attribute from <strong>Pinpoint. </strong>It matches it to the </span><strong>Social Security Number</strong><span> in <strong>Dayforce</strong> as a correlation attribute.</span></p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <strong>Pinpoint</strong> to <strong>Dayforce</strong> integration provides the following functions:</p><ul>
+<li data-list-item-id="e36b657eba074bc3df1e667698cc29f66">Fetches onboarding applications from Pinpoint for the selected onboarding step, Diversity and Inclusion.</li>
+<li data-list-item-id="e5ce801412d2405a13a4ec8300566abef">Collects candidate and job details, then filters candidates who are ready to move forward based on their onboarding stage.</li>
+<li data-list-item-id="e32fb69b3d5b6369ace9611abf3da142f">Converts Pinpoint candidate data into the format required by Dayforce.</li>
+<li data-list-item-id="e1f993ee4a18acd91fc529f926b3541af">Checks whether the employee already exists in Dayforce before creating a new record.</li>
+<li data-list-item-id="e994fe08c8c0903ce605c0d4cf65837ef">Creates new employee records in Dayforce, following the configured limit for the number of records that can be created at once..</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ea01f44554b4c66763b9e44bc1c6be291">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="efa254692d5acbfd166640d511f777e79">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e4a4ca30ee62c0e4b217ab71b3be00523">
+<strong>Pinpoint</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/17731752333335-Pinpoint-Configuration-Guide" rel="noopener noreferrer" target="_blank">Pinpoint Configuration Guide</a> for details.</li>
+<li data-list-item-id="ef4b5f7d5da45627430875e7ae62a8601">
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853-Dayforce-Configuration-Guide" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p><span>This section outlines how the integration must be configured to push candidate data from Pinpoint to Dayforce</span>.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="eda510e553f7bcf465fe9e4df192d5be3">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e8882b6e10db7de2b6a76712a0ec6e9d0">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ee3b121d4a11e61107393867ae2b08dbe">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e3e575ebbe1c528a71b7224245fec32da">Select <strong>Pinpoint to Dayforce Integration</strong>.</li>
+<li data-list-item-id="e151ce8b076c4f0bdcc5a26eff070e29d">Enter a name and a description for the integration.</li>
+<li data-list-item-id="eb555fd0224c83b84230eea2e84cd3f0d">Select your <strong>Pinpoint</strong> and <strong>Dayforce</strong> connector instances.</li>
+<li data-list-item-id="e1b2fbbdd0b28c4813861f1d23b5cbae4">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="01KA8TBN66ASJ6DYBGX3E72QD9">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4><p>Configure the following settings to customize the integration scenarios:</p><ul><li data-list-item-id="e562e4cc1aff62094997e35634408e2b0">
+<strong>Enable Candidate Management</strong>: Select to enable candidate management. </li></ul><h4 id="01K58KGRFJFDDRZ1K0M7N1EAMM">General Settings</h4><p>Configure the following options to customize the general settings:</p><ul>
+<li data-list-item-id="e24ca04dbc582ae2f85fb7a7df0add1f2">
+<strong>Enable Report-Only Mode: </strong>Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="ef8d4e5b3f6c410d1627f3f877f219822">
+<strong>Enable Incremental Mode</strong>: Select to run the integration in incremental mode.</li>
+<li data-list-item-id="e8179321e168d1b31800b3d749ca874ab">
+<strong>Enable Debug Mode</strong>: Select to run the integration for debugging purposes.</li>
+<li data-list-item-id="e913e4af860e0a7f5b673a4e53e28e9cd">
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li data-list-item-id="e95bc2e9bb888b515974d23a2efab3f38">
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+<li data-list-item-id="eef7ceb4fc84d55a291ea19e4935b197c">
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li data-list-item-id="e66baa31701e0743bed6daac6ed1bcea7">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+</ul><h3 id="01K593846FCRSW60E8KGDZ0K4A">Manage Candidate</h3><p>The <strong>Manage Candidate</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="01K591478RGFF9S1Q14MD7NDS7">Create Condition</h4><p>Configure the following settings to customize the condition:</p><ul><li data-list-item-id="ef764d96dfed0bfa41e5de09119393328">
+<strong>Onboarding Process Step</strong>: Select the onboarding process step from the dropdown menu. The available options are <strong>Background Check</strong>, <strong>Diversity and Inclusion</strong>, <strong>Handbook</strong>, <strong>Policies and Documentation</strong>.</li></ul><h4 id="01KAAWQ15MRKTV8Q2KH06QQDQC">Correlation Settings</h4><p>Configure the following settings to customize the correlation:</p><ul>
+<li data-list-item-id="ecf0332b79ed387c29b167ee27e471dd9">
+<strong>Source Field for Correlation</strong>: Select the source field for correlation, for example, <strong>Social Security Number</strong>.</li>
+<li data-list-item-id="ee67c05b7959cc70b50caf73026b97b32">
+<strong>Target Field for Correlation</strong>: Select the target field for correlation, for example, <strong>Social Security Number</strong>.</li>
+</ul><h4 id="01KAAWZG1JB11GETRH1S1HBNAX">Provisioning Threshold Settings</h4><p>Configure the following settings to customize the provisioning threshold:</p><ul><li data-list-item-id="ef603babcc656e5bc280616533722f6b5">
+<strong>Apply Create Limit</strong>: Select to apply the create limit.<ul><li data-list-item-id="edb14b1889dd64af3a12fd59ed742cf19">
+<strong>Create Limit</strong>: Specify the maximum number of candidate records that can be created in the target application during a single integration run.</li></ul>
+</li></ul><h3 id="01K5TXWEG9QVYTG8WCYTN8SJ58">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="e28d97f31035692a4bb95d7108b71f744">
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e8433b85bd6ff88d12811f0a864c4a23e">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e3fa2fac88c1e291dd396c3bc3a586401">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ee264d01580b14aa0bac1e6717b9c108e">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="ef77f140876355049150d488aa2cf85f9">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log.</li>
+<li data-list-item-id="ed58483e3aeef28296ed4093a5af9d893">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ef926dd45e13cc87e73e34edae951ada6">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul><h3 id="01KAB3SKTZ0RFBAC7X1PRRGZZZ">Debug Mode</h3><p>The <strong>Debug Mode</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul><li data-list-item-id="e5e435a6d583d57b45faf2cf398c66480">
+<span><strong>Source Filter</strong></span>: Determines how candidate records are filtered from the source system before onboarding processing begins. For example, choosing a specific filter restricts onboarding to only candidates that meet the defined criteria, while choosing no filter allows all candidates to be processed.<ul>
+<li data-list-item-id="e29fcdd10ba4c4c2dfd2c0ebe02ec1cc7">
+<p data-end="867" data-start="556"><strong>Onboarding Application ID</strong>: Filters candidates based on a specific onboarding application identifier from the source system. For example, entering <strong data-end="711" data-start="702">55117</strong> ensures that only candidates associated with onboarding application ID <strong data-end="792" data-start="783">55117</strong> are included in the onboarding flow, and all other candidates are ignored.</p>
+<ul><li data-list-item-id="edeb5c9937886c63f6e80b4f87f005c6d"><p data-end="867" data-start="556"><strong>Source Filter Value</strong>: Specifies the exact onboarding application identifier that candidate records must match to be included in the onboarding flow. For example, entering <strong data-end="1339" data-start="1330">55117</strong> ensures that only candidates associated with the onboarding application ID <strong data-end="1420" data-start="1411">55117</strong> are processed, while all other candidates are ignored.</p></li></ul>
+</li>
+<li data-list-item-id="edcf08e2c86827ef65e6c8868c3caf04b"><p data-end="1222" data-start="889"><strong>Custom</strong>: Allows filtering candidates based on a custom source attribute defined in the integration configuration. For example, you can filter candidates using a custom field such as <strong data-end="1087" data-start="1067">sourceSystemCode</strong>, <strong data-end="1109" data-start="1089">jobRequisitionId</strong>, or any other attribute exposed by the source, so that only candidates matching that custom value are processed.</p></li>
+<li data-list-item-id="eec6b2fe26c88e702b7f952c164be9007"><p data-end="1505" data-start="1242"><strong>None</strong>: Disables source-based filtering so that all incoming candidate records are considered for onboarding. For example, selecting <strong data-end="1381" data-start="1373">None</strong> means every candidate received from the source system will be processed, regardless of application ID or custom attributes.</p></li>
+</ul>
+</li></ul><h3 id="01K5TY2F66RQRGHM0D3B23C2S3">Notifications</h3><p>The <strong>Notifications</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K9750G1WVCA080W3BF2A4RY4">Successful Integration Notification</h4><p>Configure the following settings for the successful integration notification:</p><ul>
+<li data-list-item-id="ec558eee9220ab7260b7d1c3e922a6fe7">
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="eae64ab9f0c64e8086d1622d45a1c080a">
+<strong>Recipients' Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent</li>
+<li data-list-item-id="e19f76109854d9ac7dbd0ba9d31cdaa3d">
+<strong>Email Subject on Successful Integration Execution</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution</li>
+<li data-list-item-id="e1bbb16dd1ebe746db2a6c14d5fd6de24">
+<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution</li>
+</ul><h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4><p>Configure the following settings for the notification reports:</p><ul>
+<li data-list-item-id="eefb22073b15f9d4716f23b046df09986">
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a CSV report for all integration runs. When this checkbox is selected, the Notification Report Settings section is displayed, allowing you to customize the notification report. If the checkbox is not selected, the email is sent without a CSV report attachment.</li>
+<li data-list-item-id="e50b1298bed78a56ed5116c9d1229cc97">
+<strong>Select the Notification Report Detail Level</strong>: Select the desired notification report detail level. The following are the available options:<ul>
+<li data-list-item-id="e1bd772966d5cc0855b728211f2854d27">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e40fd5dbe11e7d2d93b0d5220fb96d658">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e0bb9d16f4c562c3ac5a861426b9efcb1">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="ee925c761c61fea067e79da42979e99dd">
+<strong>Included Attributes</strong>: Select the attributes to be included in the notification report.</li>
+<li data-list-item-id="e319f9b7c7b409b884e566a7438c56c98">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the notification report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ead4ca266aa36b1882a95b317a4d8b1dc">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul><h3 id="01K5TY1G8QTYYA129P3KWESN2C">Report Settings</h3><p>The <strong>Report Settings</strong> section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="e7141372a61d5e949c2223a1d13e1a426">
+<strong>Select the Report Detail Level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eb9da5d92cb4725d039b2ecd46722ed6b">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e217f909fcc525d1e0416d414f07ddf47">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ee8d8bdad0312bbd46c8cd833b8bd703b">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="ee93a2a2eeda3759d92e29662969d2109">
+<strong>Included Attributes</strong>: Select the attributes to be included in the report.</li>
+<li data-list-item-id="e9109d24f0a97c918a40df9d9e0f03195">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ef419ba1348dece67d5c81a5092dcf15a">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insight Settings</h3><p>The <strong>Log Insight Settings</strong> section enables you to customize the integration log insight settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="ee1c6158d1e6d6ff3aee60d2b91ce3d39">
+<strong>Dashboard Name: </strong>Enter the dashboard name for log insights.</li>
+<li data-list-item-id="e09aa6e984851c83b2d4e053d39e72cdf">
+<strong>Select the Log Detail Level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e024355c661c0e8686832d6053da04d82">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="eed44eb61a8d494dd685cf5d9041c8898">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ed698cb4b507541437910a5d644acfa0d">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="e70cd8b8fadb89e81054b33cc2aeacc1b">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log insights.</li>
+<li data-list-item-id="e4b5bde76fc9c6e2e73ef37e8684491c5">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log insights.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e269759ff5a7d8e53d9aa164204b010b6">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">XRefCode Rules</h2><p>The <strong>XRefCode Rules</strong> section defines how cross-reference codes (XRefCodes) are assigned and managed during the <strong>Pinpoint to Dayforce integration</strong>. These rules ensure that candidate records from Pinpoint are accurately mapped to corresponding values in Dayforce.</p><p>XRefCode codes are <strong>assigned</strong> when new candidate applications are transferred. They also manage field changes, ensuring mapping accuracy and preventing duplicate or invalid XRefCode assignments.</p><p>Perform the following steps to create a new XRefCode rule:</p><ol>
+<li data-list-item-id="e9ff6fdfeba6567934cbfb1a2fd2d5dfc">Click <strong>Add New Rule</strong> to create a new XRefCode rule. <br/>The following fields are displayed:<br/><img alt="Pinpoint_to_Dayforce_1.png" height="602" src="./assets/9dffb312bb028d22.bin" width="2712"/><ol>
+<li data-list-item-id="e7cbd682c4bb427760ca281fb0f70338b">Click <strong>Choose Attribute</strong> to view the list of available <strong>Pinpoint candidate attributes</strong>.</li>
+<li data-list-item-id="effee6b1b23f8ad7b827068a465f8befe">Use the search bar to locate the attribute you want to use as a condition for the rule.<br/><img alt="Pinpoint_to_Dayforce_2.png" height="732" src="./assets/8528f270a4323439.bin" width="1430"/>
+</li>
+<li data-list-item-id="eeb2b31c4271ba5d0eff300884aa9287f">Select the required attribute and configure its value to define the rule condition.</li>
+<li data-list-item-id="ec2f80ff04e13c9a212b40da549a61c49">Only candidates meeting this condition are included under the XRefCode rule.</li>
+<li data-list-item-id="e8791eac0ba73f72abe0bf825d363f3c4">If multiple attributes and values are specified, the integration applies an <strong>AND</strong> condition between them. For example, to satisfy the rule criteria, a candidate must belong to both the specified <strong>Division</strong> (ACME and Hooli) and the <strong>Department</strong> (Engineering).<br/><img alt="Pinpoint_to_Dayforce_3.png" height="296" src="./assets/b6a0a0cce0046d64.bin" width="2578"/>
+</li>
+<li data-list-item-id="ee8e5517b64fb3f9db4df84f87dea4362">Select Under <strong>Pay Type</strong>, select one or more <strong>Dayforce groups</strong> to which candidates meeting the rule condition should be assigned. The list displays all available groups from the <strong>target Dayforce application</strong>.</li>
+</ol>
+</li>
+<li data-list-item-id="eb8b6250b7ec216f381912caf9574966b">Click Add Row to add another condition and XRefCode rule for the same Dayforce attribute.<br/><img alt="Pinpoint_to_Dayforce_4.png" height="540" src="./assets/4333b1a1486ee71f.bin" width="2578"/>
+</li>
+<li data-list-item-id="eb62cff5788447c67e938d4980bb7bb1b">Click to delete a row by using the delete icon at the right end of the row:<br/><img alt="Pinpoint_to_Dayforce_5.png" height="590" src="./assets/5ec52889e5974b9c.bin" width="2578"/>
+</li>
+<li data-list-item-id="e1623c1892be3019243a5a304b79db749"> Click Switch to Expression to write a JavaScript expression and set the condition. <br/><img alt="Pinpoint_to_Dayforce_6.png" height="752" src="./assets/54cc47d7356d01a5.bin" width="2674"/>
+</li>
+</ol><p><strong>Note</strong>: You can configure XRefCode rules in the same way for additional Dayforce entities, including: Pay Class, Pay Group, Department, Contact Information Types, Employment Status Reasons,  Employment Statuses, Org Units, Jobs, Positions, Countries, Location, Roles, and Cultures.</p><h2 id="h_01KC15BBW7VM3TXVTH7W8GHAP3">Attribute Map</h2><p>The Attribute Map tab in Pinpoint to Dayforce Synchronization defines the default Pinpoint attributes that are mapped to the Dayforce attributes.</p><h2 id="01JVC7QW1983644JGH2WGK8FWX">Tables</h2><p>In the Tables tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p><h2 id="h_01KAE0J82WXSXC89S42MJFC15D">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically at your chosen interval. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span><span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

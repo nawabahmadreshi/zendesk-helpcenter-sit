@@ -1,0 +1,547 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bulk Synchronization V1 Orchestration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Bulk Synchronization V1 Orchestration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview</h1>
+<p>This user guide explains how you can set up a <em>Bulk Synchronization</em> orchestration in Aquera Admin.</p>
+<p>In<em> Bulk Synchronization</em> orchestration, all modified/new user records are updated as a batch to the target application using a single PUT operation, as per the defined orchestration schedule. The user data are sent to the target system as an array of user records. The <em>Bulk Synchronization</em> orchestration can be configured only if the target application supports bulk/batch import of data. </p>
+<p>The following are some of the applications that support batch import: <em>TigerConnect</em>, <em>SumTotal</em>, <em>Flaik.</em></p>
+<h3 id="jump-to">Jump to</h3>
+<pre><a href="#h_01F1HR60XC9QMSNZ27WGB2GWH8" target="_self">Setting Up the Bulk Synchronization Orchestration</a><br/>  <a href="#h_01F1HR6SYVET1MNDHA9E6G0TVF" target="_self">Creating the Orchestration</a><br/>    <a href="#h_01EZA56Y42W6PYT30MAC9TBWV6" target="_self">Configuration</a><br/>    <a href="#h_01EZA579V8NBAKB6Z4MSD9BNEX" target="_self">Mapping of Attributes</a><br/>    <a href="#h_01EZA57SGB3NZ500RNK5BVDXX6" target="_self">Scheduling the Orchestration Run</a><br/><a href="#h_01F7WQZ2EQZ97PG1GE379YM9XJ" target="_self">Filtering Data</a><br/>  <a href="#h_01F84KX1NBD4J2BBYCF8HJN47H" target="_self">Attribute Operators</a><br/>  <a href="#h_01F84KXB4TZ5H3KA75ECXKAK61" target="_self">Logical Operators</a><br/>  <a href="#h_01F84KXK250Z99KB4ZG078M3AK" target="_self">Grouping Operators</a><br/>  <a href="#h_01F84KXTSVSGQ4FBTB08KJJMPY" target="_self">Using Data Values</a></pre>
+<h1 id="h_01F1HR60XC9QMSNZ27WGB2GWH8">Setting Up the Bulk Synchronization Orchestration</h1>
+<p>This procedure describes how to set up the <em>Bulk Synchronization</em> orchestration. To explain the process, we consider<strong> Active Directory</strong> as the <strong>Source</strong> application and <strong>SumTotal</strong> as the <strong>Target</strong> application. </p>
+<h3 id="prerequisites">Prerequisites</h3>
+<p>Make sure that the source (Active Directory) and target (SumTotal) applications are added and configured correctly in Aquera Admin, before creating the orchestration.</p>
+<h2 id="h_01F1HR6SYVET1MNDHA9E6G0TVF">Creating the Orchestration</h2>
+<ol>
+<li value="1">Log in to the Aquera Admin console.</li>
+<li value="2">Navigate to <strong>Orchestrations</strong> and click<strong> Create Orchestration</strong>. The <strong>Add Orchestration</strong> pop-up window is displayed.
+<p><img alt="Bulk_Sync_Sel.png" height="636" src="./assets/37657f1bd4dad446.png" width="371"/></p>
+</li>
+<li value="3">Enter a name for the orchestration in the <strong>Orchestration Name</strong> field, for example, <em>AD_SumTotal</em>.</li>
+<li value="4">Select <strong>Bulk Synchronization</strong> from the <strong>Scheduled</strong> tab of the pop-up window.</li>
+<li value="5">Click <strong>Done</strong>. The <strong>Add Orchestration</strong> page is displayed with the various fields and tabs to configure the orchestration.
+<p><img alt="Bulk_Sync_Conf.png" src="./assets/942395601fd30c9c.png"/></p>
+</li>
+</ol>
+<p> </p>
+<p>The following procedures are involved in the<em> Bulk Synchronization</em> orchestration setup:</p>
+<ul>
+<li><a href="#h_01EZA56Y42W6PYT30MAC9TBWV6" target="_self">Configuration</a></li>
+<li><a href="#h_01EZA579V8NBAKB6Z4MSD9BNEX" target="_self">Mapping of Attributes</a></li>
+<li><a href="#h_01EZA57HHFYXW0XVGJC7FA15DH" target="_self">Including Source Attribute Values Using Tables</a></li>
+<li><a href="#h_01EZA57SGB3NZ500RNK5BVDXX6" target="_self">Scheduling the Orchestration Run</a></li>
+</ul>
+<h3 id="h_01EZA56Y42W6PYT30MAC9TBWV6">Configuration</h3>
+<ol>
+<li value="1">Enter the following details on the <strong>Configuration</strong> tab, as required:
+<table border="1" width="866">
+<tbody>
+<tr>
+<td><span><strong>Field</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td colspan="2"><strong>Basic Details</strong></td>
+</tr>
+<tr>
+<td>Source Application</td>
+<td>
+<p>Select the source application from where the data of users must be retrieved. The added and modified user data are retrieved from this application as part of the orchestration.</p>
+<p><img alt="Source.png" src="./assets/3d0fb0c837615771.png"/></p>
+</td>
+</tr>
+<tr>
+<td>
+<div>Target Application</div>
+</td>
+<td>
+<p>Select the target application to which the bulk (batch) data of modified users are updated as part of the orchestration. The target application must support bulk import of data.</p>
+<p><img alt="Target.png" src="./assets/ae401e55a5f50df9.png"/></p>
+</td>
+</tr>
+<tr>
+<td>Report Only</td>
+<td>Select this checkbox to generate a report that shows the data that would be changed, without actually making those changes. This can be selected for the first instance of orchestration to identify any issues. You can clear this selection after verifying the report and confirming that the result is as expected.</td>
+</tr>
+<tr>
+<td>Admin Email List</td>
+<td>
+<p>The administrative email addresses to which notifications on this orchestration have to be sent. Multiple email addresses must be separated by comma.</p>
+<p><img alt="Admin_Email.png" src="./assets/aef32fa1192b6c4a.png"/></p>
+</td>
+</tr>
+<tr>
+<td>Incremental Mode</td>
+<td>Select this checkbox to run the orchestration in incremental mode. In this mode, the start timestamp of the last run orchestration is always captured, and the source records that have been added or modified after this timestamp will only be considered for the next orchestration. </td>
+</tr>
+<tr>
+<td>Incremental Mode Initial Timestamp</td>
+<td>
+<p>The timestamp that must be considered when you run the orchestration in incremental mode for the first time. The source records that were added or modified after this timestamp will only be considered for the first incremental run of orchestration.</p>
+<p>The timestamp has to be entered with the time zone designator (TZD) in the format, <br/><em>YYYY-MM-DDThh:mm:ss.sTZD</em></p>
+<p> Example: <span><em>2020-06-18T08:30z,</em> <em>2020-06-18T01:30-0700</em></span></p>
+<p><img alt="Timestamp.png" src="./assets/867b64cd6bb11b45.png"/> </p>
+</td>
+</tr>
+<tr>
+<td>Import Limit</td>
+<td>
+<p>The maximum number of user records that are allowed to be imported to the target application during a single run of the orchestration. Set this field to <em>unlimited</em> if you do not want to limit the number of imported records.</p>
+<p>The limit can be set accordingly to verify and debug the source-to-target mapping condition.</p>
+</td>
+</tr>
+<tr>
+<td>Source SCIM Filter</td>
+<td>
+<p>The expression that can be used for filtering the users during import, if required. This field is primarily used to verify the user data by filtering a user from the source system.</p>
+<p>Example: CON:<em>userName eq "bjensen@example.com"</em></p>
+<p>For details on the operators and the syntax that must be used for filtering the data, refer to the <a href="#h_01F7WQZ2EQZ97PG1GE379YM9XJ" target="_self">Filtering Data</a> section.</p>
+</td>
+</tr>
+<tr>
+<td>Map Manager</td>
+<td>Select this checkbox to map users' managers from source to target. The manager attributes in the user objects are used for mapping.</td>
+</tr>
+<tr>
+<td>Update Limit</td>
+<td>The maximum number of user records that are allowed to be updated in the target application during a single run of the orchestration. Set this field to <em>unlimited</em> if you do not want to limit the number of records.</td>
+</tr>
+<tr>
+<td>Match Expression</td>
+<td>The expression, which has to be used to identify the target record that matches a source record. This expression can be given only if the target connector supports GET operation.</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Creation Email Details</strong></td>
+</tr>
+<tr>
+<td>Send New User's Manager Email</td>
+<td>Select this checkbox to send an e-mail notification to the manager when a new user is created in the target application as part of the orchestration.</td>
+</tr>
+<tr>
+<td>Creation Distribution List</td>
+<td>The email addresses to which an e-mail notification has to be sent when a new user is created in the target application as part of the orchestration. Multiple e-mail addresses must be separated by comma.</td>
+</tr>
+<tr>
+<td>Creation Email Subject</td>
+<td>The subject line to be used in the e-mail notification that will be sent when a user is created in the target application. For example, <em>New Employee</em>.</td>
+</tr>
+<tr>
+<td>Creation Email Body</td>
+<td>
+<p>The template that has to be used for the body of the notification e-mail, which will be sent when a new user is created in the target application. The target attributes can be included in the template to add any details of the created user in the e-mail body.</p>
+<p>For example:<br/><em>name : {{name.givenName}} {{name.familyName}}</em></p>
+<p><em>email : {{emails[work].value}}</em></p>
+<p><em>username : {{userName}}</em></p>
+<p><em>password : {{password}}</em></p>
+<p><em>manager: {(ENT.manager.displayName}}</em></p>
+<p><em>department: {{IAN.userDepartment}}</em></p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Deactivation Email Details</strong></td>
+</tr>
+<tr>
+<td><span>Send Deactivated User's Manager Email</span></td>
+<td>Select this checkbox to send an e-mail notification to the manager when a user is deactivated in the target application as part of the orchestration.</td>
+</tr>
+<tr>
+<td>Deactivation Distribution List</td>
+<td>The email addresses to which an e-mail notification has to be sent when a user is deactivated in the target application as part of the orchestration. Multiple e-mail addresses must be separated by comma.</td>
+</tr>
+<tr>
+<td>Deactivation Email Subject</td>
+<td>The subject line to be used in the e-mail notification that will be sent when a user is deactivated in the target application. For example, <em>Deactivated Employee</em>.</td>
+</tr>
+<tr>
+<td>Deactivation Email Body</td>
+<td>
+<p>The template that has to be used for the body of the notification e-mail, which will be sent when a user is deactivated in the target application. The target attributes can be included in the template to add any details of the deactivated user in the e-mail body.</p>
+<p>For example:<br/><em>name : {{name.givenName}} {{name.familyName}}</em></p>
+<p><em>email : {{emails[work].value}}</em></p>
+<p><em>username : {{userName}}</em></p>
+<p><em>manager: {(ENT.manager.displayName}}</em></p>
+<p><em>department: {{IAN.userDepartment}}</em></p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Advanced Details</strong></td>
+</tr>
+<tr>
+<td>Phone Number Formatting</td>
+<td>
+<p>The standard format to which the phone numbers of users must be converted during the orchestration process. The valid values are:</p>
+<ul>
+<li>
+<strong>disabled</strong>: By default, the conversion of phone numbers to a specific format is disabled.</li>
+<li>
+<strong>automatic</strong>: </li>
+<li>
+<strong>E164</strong>: The E.164 international telephone numbering format is <span><em>+ &lt;country code&gt; &lt;subscriber number including area code&gt;</em>.</span>
+</li>
+<li>
+<strong>INTERNATIONAL</strong>: International format</li>
+<li><span><strong>NATIONAL,country=US</strong>: The format that is being followed in a nation. You must replace <span>US</span> with the appropriate country code.</span></li>
+</ul>
+<p><span><strong>Note</strong>: The automatic formatting does not work when you write to ADP. To set the international phone number format of +1-xxx-xxxxx during the orchestration, set the field value as </span><strong>INTERNATIONAL,template=+.-...-.......</strong></p>
+</td>
+</tr>
+<tr>
+<td>Report Mode</td>
+<td>
+<p>The logging mode of orchestration details. This setting controls the level of details to be captured in the orchestration logs. The valid values are listed below in the order based on the level of details captured in the logs:</p>
+<ul>
+<li>normal</li>
+<li>minimal</li>
+<li>verbose</li>
+<li>debug</li>
+</ul>
+<p>You can start with the <em>normal</em> or <em>minimal</em> mode for the log details. In case you want to have a detailed analysis of what is happening in the orchestration, you can switch to the <em>verbose</em> or <em>debug</em> mode.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li value="2">Click <strong>Create</strong> to create the orchestration.</li>
+</ol>
+<h3 id="h_01EZA579V8NBAKB6Z4MSD9BNEX">Mapping of Attributes</h3>
+<ol>
+<li value="1">Click the <strong>Attribute Map</strong> tab.
+<p>The default mapping of SCIM attributes from source to target application is displayed on the page. The source attributes are listed on the left side and the target attributes on the right side of the page.</p>
+<p><img alt="DEf_Attr_Map.png" src="./assets/915d59b22098a68d.png"/></p>
+<p><span>The mapping simplifies the process of executing Create, Update, and Delete operations, as the changes made to a source attribute will automatically be reflected in the mapped target attribute when the orchestration runs. The source attribute has to be edited in accordance with the target attribute. </span></p>
+<p>The following actions can be performed in this tab, as per the requirements:</p>
+<ul>
+<li>Search for a user from the source application by entering the userId or userName attribute value to get a preview of the values that are mapped to the target attributes.
+<p><img alt="Search_User.png" height="163" src="./assets/4ad836787aa46b04.png" width="406"/></p>
+<p>The user data is loaded corresponding to each source attribute. This can be done to ensure that the mapping is done in such a way that the values from the source are mapped to the right target SCIM attributes. </p>
+</li>
+<li>Search and filter Core, Enterprise, and custom (IAN) attributes from the target attributes list by the attribute name. 
+<p><img alt="Search_Attrib.png" src="./assets/0de6ba7ad6737685.png"/></p>
+</li>
+<li>Set the right mapping option for a source attribute.
+<p>You can specify if the mapping of an attribute is to be done for create and update operations, for create operation only, or for update operation only. You can also choose not to map a source SCIM attribute at all.</p>
+<p><img alt="Map_cond.png" src="./assets/5308429e12c6a901.png"/></p>
+</li>
+<li>Click <strong>Add Row to Map</strong> at the end of the attribute mapping list to add a new row to set an attribute mapping.</li>
+</ul>
+</li>
+<li value="2">Click <strong>Save Changes</strong> after the source to target attribute mapping is completed.</li>
+</ol>
+<h4 id="using-expressions-in-attribute-map"><strong>Using Expressions in Attribute Map</strong></h4>
+<p>When you set the attribute mapping, you can also write expressions to perform few operations on the attribute values from the source system.  These expressions can contain variables, attribute names, methods, and functions. Aquera provides few inbuilt methods and functions that can be used in the expressions. </p>
+<p>You can either write the expression directly in the source attribute field or click the <strong>Expand</strong> icon in the field to write a long expression.</p>
+<p><img alt="Expand.png" src="./assets/651682f062226a44.png"/></p>
+<p>The <strong>Edit Expression</strong> window is displayed where you can write a long expression.</p>
+<p><img alt="Edit_Exp.png" height="318" src="./assets/b820bc4f338f9843.png" width="620"/></p>
+<p>When the orchestration runs, the methods and functions in the expressions are performed on that source attribute's values and the resulting values are updated in the target application.</p>
+<p>For details on the keywords, inbuilt methods and functions provided by Aquera, refer to <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener" target="_blank">Orchestration - Expressions</a>.</p>
+<p> </p>
+<h3 id="h_01EZA57HHFYXW0XVGJC7FA15DH">Including Source Attribute Values Using Tables</h3>
+<p><span>Tables can be used to create custom source attributes, and POST (sync) them to the target application. Tables are used when a source attribute is empty or a particular data is not sent from the source, and the user wants to update a value to the corresponding target attribute.</span></p>
+<p><span>Scenario 1</span></p>
+<p><span>If the hire date of employees is not available in the source attribute and the user wants the hire date to be posted in the target application for all those employees, you can add a table containing the hire date value in the orchestration setup.</span></p>
+<ol>
+<li value="1">Click the <strong>Tables</strong> tab. The following page is displayed.
+<p><span><img alt="Tables.png" height="265" src="./assets/52359d8cbfd69616.png" width="629"/></span></p>
+</li>
+<li value="2">Click <strong>Add Table</strong>. The <strong>Add Table</strong> window is displayed.
+<p><img alt="Add_Table.png" height="605" src="./assets/a3b1a1ef0339d058.png" width="463"/></p>
+</li>
+<li value="3">Enter the table name and description as shown in the above screenshot.
+<p>The table inputs can be entered either manually as rows or by uploading a CSV file.</p>
+<ul>
+<li><span>To enter manually, the user can click <strong>Add Row. </strong></span></li>
+<li><span>To upload the table values using a CSV file, click <strong>Upload CSV File</strong>. The orchestration supports only .csv file format and the file should have only two columns. <br/>A sample <a href="https://support.aquera.com/hc/article_attachments/1500003105462/Sample.csv" rel="noopener" target="_blank">CSV file</a> is attached for your reference. You may edit this file to add the required details and upload it.</span></li>
+</ul>
+<p><span>In this scenario, we add a table entry by clicking <strong>Add Row</strong>. The <strong>hireDate</strong> table is created with the column name as <strong><em>empHireDate</em></strong> and the hire date value as <strong>2020-09-09</strong>.</span></p>
+<p><img alt="Table_row.png" height="533" src="./assets/0a19836d338b68e6.png" width="377"/></p>
+</li>
+<li value="4">Click <strong>Add</strong>. The new table is listed on the page.
+<p><span><img alt="New_table.png" src="./assets/cca43c2e74ba090c.png"/></span></p>
+</li>
+<li value="5"><span>Click <strong>Save Changes</strong>.</span></li>
+</ol>
+<p><span>If you want the hire date of all employees to be updated with the value from the table, the expression for the source attribute in the <strong>Attribute Map</strong> must be given in the format, <br/><em>TABLE.&lt;table_name&gt;[&lt;column name&gt;]</em></span></p>
+<p><em><strong>TABLE.hireDate[empHireDate]</strong></em></p>
+<p><img alt="Table_exp.png" src="./assets/0bcf4b85d918530e.png"/></p>
+<p>In this case, the hire date of all employees will be updated in the target system with the same date mentioned in the table.<span></span></p>
+<h4 id="scenario-2"><span>Scenario 2</span></h4>
+<p><span>If the hire date of a particular employee is not available in the source attribute and the user wants the hire date to be posted in the target application, you can add a table in the orchestration setup containing the unique employee number and the corresponding hire date.</span></p>
+<ol>
+<li value="1">Click the <strong>Tables</strong> tab. The following page is displayed.
+<p><span><img alt="Tables.png" height="265" src="./assets/52359d8cbfd69616.png" width="629"/></span></p>
+</li>
+<li value="2">Click <strong>Add Table</strong>. The <strong>Add Table</strong> window is displayed.
+<p><img alt="Add_Table.png" height="605" src="./assets/a3b1a1ef0339d058.png" width="463"/></p>
+</li>
+<li value="3">Enter the table name and description as shown in the above screenshot.
+<p>The table inputs can be entered either manually as rows or by uploading a CSV file.</p>
+<ul>
+<li><span>To enter manually, the user can click <strong>Add Row. </strong></span></li>
+<li><span>To upload the table values using a CSV file, click <strong>Upload CSV File</strong>. The orchestration supports only .csv file format and the file should have only two columns. <br/>A sample <a href="https://support.aquera.com/hc/article_attachments/1500003105462/Sample.csv" rel="noopener" target="_blank">CSV file</a> is attached for your reference. You may edit this file to add the required details and upload it.</span></li>
+</ul>
+<p><span>In this scenario, we add a table entry by clicking <strong>Add Row</strong>. The <strong>hireDate</strong> table is created with the employeeNumber entry as <em>12345</em> and the hire date value as <em>2020-09-09</em>.</span></p>
+<p><img alt="Add_Row.png" height="611" src="./assets/d86f1aa65c91211a.png" width="467"/></p>
+</li>
+<li value="4">Click <strong>Add</strong>. The new table is listed on the page.
+<p><span><img alt="New_table.png" src="./assets/cca43c2e74ba090c.png"/></span></p>
+</li>
+<li value="5"><span>Click <strong>Save Changes</strong>.</span></li>
+</ol>
+<p><span>Now in the <strong>Attribute Map</strong> tab, the user wants to post the hire date value of the employee having employeeNumber <em>12345</em> from the table to the target attribute <em>[IAN].hireDate</em>. For all other employees,  different hire date has to be populated. In this case, to populate the hire date of the specific employee from the table, the corresponding source attribute must be entered as <strong>TABLE.hireDate[SOURCE.employeeNumber]</strong>. <br/>The hiredates of other employees must be populated from the source application. The expression can be given as follows:</span></p>
+<p><span><img alt="Add_Map_Table1.png" src="./assets/9ee3f8a4e960eeef.png"/></span></p>
+<p><span>After you run the orchestration, the hire date of the user with employee number <em>12345 is </em>assigned to the target application from the table.</span></p>
+<p><span>For details on the keywords, inbuilt methods and functions provided by Aquera, refer to <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener" target="_blank">Orchestration - Expressions</a>.</span></p>
+<h3 id="h_01EZA57SGB3NZ500RNK5BVDXX6">Scheduling the Orchestration Run</h3>
+<p>You can set the frequency by which the orchestration must run.</p>
+<ol>
+<li value="1">Click the <strong>Schedule</strong> tab.
+<p><img alt="Schedule.png" src="./assets/09c1d6160fa22050.png"/></p>
+<p>You can either select a basic schedule or set an advanced schedule.</p>
+<h4 id="basic-schedule"><strong>Basic Schedule</strong></h4>
+<p>You can select a frequency by which the orchestration must run, from a pre-defined list of frequencies ranging from 15 minutes to 24 hours.</p>
+<p><img alt="Basic_sch.png" height="410" src="./assets/4858bd81992a992b.png" width="473"/></p>
+<p><strong>Note</strong>: If you select <strong>Never</strong>, the orchestration never runs.</p>
+<h4 id="advanced-schedule"><strong>Advanced Schedule</strong></h4>
+<p><img alt="Sync_Adv.png" height="218" src="./assets/98e412e9aff38118.png" width="522"/></p>
+<ul>
+<li>Select <strong>Never</strong> if you do not want the orchestration to run on a scheduled basis.</li>
+<li>Select <strong>Minutes</strong> to schedule the orchestration to run every X minutes, where you need to select X from a drop-down list.</li>
+</ul>
+<p><img alt="Sync_Min.png" height="347" src="./assets/cc8c8d4b62819b7d.png" width="455"/> </p>
+<ul>
+<li>Select <strong>Hourly</strong> to schedule the orchestration to run every X hours, where you need to select X from a drop-down list.</li>
+</ul>
+<p><img alt="Sync_Hour.png" height="438" src="./assets/f34d264a7c61b2aa.png" width="446"/></p>
+<ul>
+<li>Select <strong>Daily</strong> to schedule the orchestration to run every X days at a specific time, where you need to select X and the time from drop down lists. <span>You can set up to a maximum of 5 daily schedules, if required.</span>
+</li>
+</ul>
+<p><img alt="Sync_Daily.png" height="388" src="./assets/384d530e859a7a8f.png" width="489"/></p>
+<ul>
+<li>Select <strong>Weekly</strong> to schedule the orchestration to run on specific days of a week at a specific time.</li>
+</ul>
+<p><img alt="Sync_week.png" height="379" src="./assets/79b8f0b29f6dd135.png" width="433"/></p>
+</li>
+<li value="2">Click <strong>Save Changes</strong> to save the orchestration setup.</li>
+</ol>
+<h1 id="appendix">Appendix</h1>
+<h2 id="h_01F7WQZ2EQZ97PG1GE379YM9XJ">Filtering Data</h2>
+<p>This section details the syntax of filter expressions that can be entered in the <strong>Source SCIM Filter</strong> field. It provides information on the various operators that can be provided in the filter expression and the functionality of each operator.</p>
+<p>Each expression must contain an attribute name followed by an attribute operator and an optional value.</p>
+<p>Multiple expressions may be combined using logical operators. <span>Furthermore, expressions can be grouped together using parenthesis ().</span></p>
+<h3 id="h_01F84KX1NBD4J2BBYCF8HJN47H">Attribute Operators</h3>
+<p>The following table lists the various attribute operators that can be used in a filter expression:</p>
+<table border="1" width="826">
+<tbody>
+<tr>
+<td><span><strong>Operator</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+<td><span><strong>Behaviour and Example</strong></span></td>
+</tr>
+<tr>
+<td>eq</td>
+<td>equal</td>
+<td>
+<p>The attribute and operator value must be identical to meet the filter criterion.</p>
+<p><em><strong>userType eq "Admin"</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>ne</td>
+<td>not equal</td>
+<td>
+<p>The attribute and operator value must not be identical to meet the filter criterion.</p>
+<p><em><strong>userType ne "Guest"</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>co</td>
+<td>contains</td>
+<td>
+<p>The entire operator value must be a substring of the attribute value for a match.</p>
+<p><em><strong>userName co "@domain.com"</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>sw</td>
+<td>starts with</td>
+<td>
+<p>The entire operator value must be a substring of the attribute value, starting at the beginning of the attribute value.</p>
+<p><em><strong>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID sw "A"</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>ew</td>
+<td>ends with</td>
+<td>
+<p>The entire operator value must be a substring of the attribute value, matching at the end of the attribute value.</p>
+<p><em><strong>userName ew "@domain.com"</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>pr</td>
+<td>present<br/>(has value)</td>
+<td>
+<p>If the attribute has a non-empty or non-null value, or if it contains a non-empty node for complex attributes, there is a match.</p>
+<p><em><strong>urn:ietf:params:scim:schemas:ian:2.0:User:departmentNumber pr</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>gt</td>
+<td>greater than</td>
+<td>
+<p>If the attribute value is greater than the operator value, there is a match. The actual comparison is dependent on the attribute type.</p>
+<p>For <em>string</em> attribute types, this is a lexicographical comparison, and for <em>DateTime</em> types, it is a chronological comparison. For <em>integer</em> attributes, it is a comparison by numeric value. This operator cannot be used for <em>Boolean</em> and <em>Binary</em> attributes.</p>
+<p><em><strong>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID gt 100</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>ge</td>
+<td>greater than or equal to</td>
+<td>
+<p>If the attribute value is greater than or equal to the operator value, there is a match. The actual comparison is dependent on the attribute type.</p>
+<p>For <em>string</em> attribute types, this is a lexicographical comparison, and for <em>DateTime</em> types, it is a chronological comparison. For <em>integer</em> attributes, it is a comparison by numeric value. This operator cannot be used for <em>Boolean</em> and <em>Binary</em> attributes.</p>
+<p><em><strong>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID ge 100</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>lt</td>
+<td>less than</td>
+<td>
+<p>If the attribute value is less than the operator value, there is a match. The actual comparison is dependent on the attribute type.</p>
+<p>For <em>string</em> attribute types, this is a lexicographical comparison, and for <em>DateTime</em> types, it is a chronological comparison. For <em>integer</em> attributes, it is a comparison by numeric value. This operator cannot be used for <em>Boolean</em> and <em>Binary</em> attributes.</p>
+<p><em><strong>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID lt 100</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>le</td>
+<td>less than or equal to</td>
+<td>
+<p>If the attribute value is less than or equal to the operator value, there is a match. The actual comparison is dependent on the attribute type.</p>
+<p>For <em>string</em> attribute types, this is a lexicographical comparison, and for <em>DateTime</em> types, it is a chronological comparison. For <em>integer</em> attributes, it is a comparison by numeric value. This operator cannot be used for <em>Boolean</em> and <em>Binary</em> attributes.</p>
+<p><em><strong>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID le 100</strong></em></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<h3 id="h_01F84KXB4TZ5H3KA75ECXKAK61">Logical Operators</h3>
+<p>The logical operators are used to combine multiple expressions. The following table lists the various logical operators that can be used in a filter expression:</p>
+<table border="1" width="1014">
+<tbody>
+<tr>
+<td><span><strong>Operator</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+<td><span><strong>Behaviour and Example</strong></span></td>
+</tr>
+<tr>
+<td>and</td>
+<td>Logical AND</td>
+<td>
+<p>The filter is a match only if both the expressions (criteria) are met.</p>
+<p><em><strong>userType ne "Guest" and</strong> <strong>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID pr</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>or</td>
+<td>Logical OR</td>
+<td>
+<p>The filter is a match if either of the expressions (criteria) is met.</p>
+<p><em><strong>userType ne "Guest" or urn:ietf:params:scim:schemas:ian:2.0:User:employeeID gt 100</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>not</td>
+<td>NOT function</td>
+<td>
+<p>The filter is a match if the expression evaluates to false.</p>
+<p><em><strong>userType eq "Admin" and not (userName co "example.com</strong></em><span><em><strong>" or</strong> <strong>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID le 100</strong></em></span><span>)</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note: not</strong> takes precedence over <strong>and</strong>, which takes precedence over <strong>or</strong>.</p>
+<h3 id="h_01F84KXK250Z99KB4ZG078M3AK">Grouping Operators</h3>
+<table border="1" width="873">
+<tbody>
+<tr>
+<td><span><strong>Operator</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+<td><span><strong>Behaviour and Example</strong></span></td>
+</tr>
+<tr>
+<td>()</td>
+<td>Precedence Grouping</td>
+<td>
+<p>Boolean expressions may be grouped using parentheses to change the standard order of operations, that is, to evaluate logical <strong>or</strong> operators before logical <strong>and</strong> operators.</p>
+<p><em><strong>userType eq "Admin" and not (userName co "example.com</strong></em><span><em><strong>" or</strong> <strong>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID le 100</strong></em></span><span>)</span></p>
+</td>
+</tr>
+<tr>
+<td>[]</td>
+<td>Complex attribute filter grouping</td>
+<td>
+<p>Complex filters are supported where expressions must be applied to the same value of a parent attribute specified immediately before the left square bracket ("["). The expression within square brackets ("[" and "]") must be a valid filter expression based upon sub-attributes of the parent attribute. Nested expressions may be used.</p>
+<p><em><strong>emails[type eq "work" and value co "@example.com"] or ims[type eq "xmpp" and value co "@foo.com"]</strong></em></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<h3 id="h_01F84KXTSVSGQ4FBTB08KJJMPY">Using Data Values</h3>
+<p>The filter expression may include optional values. The following table shows how values of different data types must be used in a filter expression.</p>
+<table border="1" width="882">
+<tbody>
+<tr>
+<td><span><strong>Type of Data</strong></span></td>
+<td><span><strong>Usage of Value in Filter Expression</strong></span></td>
+</tr>
+<tr>
+<td>Text</td>
+<td>Use the value within double quotes. For example, <em>"John"</em>
+</td>
+</tr>
+<tr>
+<td>Number</td>
+<td>Use the value without quotes. For example, <em>100</em>
+</td>
+</tr>
+<tr>
+<td>Date and Time</td>
+<td>Use the value within double quotes. For example, <em>"2011-05-13T04:42:34Z"</em>
+</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>Use <em>true</em> or <em>false</em> without any quotes. For example, <em>true</em>
+</td>
+</tr>
+<tr>
+<td>Null value</td>
+<td>Use null without quotes.</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+  </div>
+</body>
+</html>

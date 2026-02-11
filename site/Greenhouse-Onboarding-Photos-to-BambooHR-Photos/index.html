@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Greenhouse Onboarding Photos to BambooHR Photos</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Greenhouse Onboarding Photos to BambooHR Photos</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<p>The Aquera platform allows your organization to scale complex data management by automating the synchronization of data across resource types. This guide covers the end-to-end tasks in setting up a script synchronization to sync the <em>Photos</em> resource of Greenhouse Onboarding to the <em>Photos</em> resource of BambooHR.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure following application connectors in the Aquera Admin portal to integrate with BambooHR:
+<ul>
+<li>
+<strong>Greenhouse Onboarding</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360050540634">Greenhouse Onboarding Configuration Guide</a> for details.</li>
+<li>
+<strong>BambooHR</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360020300534">BambooHR Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</h1>
+<p>This section details how the synchronization must be configured to allow data push from Greenhouse Onboarding to BambooHR.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Script Synchronization</h2>
+<p>Perform the following steps to create a new script synchronization:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> from the left side panel.</li>
+<li>Click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>Greenhouse Onboarding Photos to BambooHR Photos</strong>.</li>
+<li>Enter a name and a description for the synchronization.</li>
+<li>Select your Greenhouse Onboarding and BambooHR instances.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the synchronization.</li>
+</ol>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h2>
+<p>The<strong> Greenhouse Onboarding Photos to BambooHR Photos </strong>template script maps the commonly used Greenhouse Onboarding and BambooHR attributes. You can customize it based on your use case.<br/>The following are the attributes that are mapped by default:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Greenhouse Onboarding Script Expression</strong></td>
+<td><strong>BambooHR Script Expression</strong></td>
+</tr>
+<tr>
+<td>ghEmployee.profileImage</td>
+<td>base64Photo</td>
+</tr>
+<tr>
+<td>ghEmployee.profileImage.fileUrl</td>
+<td>base64Photo</td>
+</tr>
+<tr>
+<td>ghEmployee.email</td>
+<td>bambooEmployee</td>
+</tr>
+</tbody>
+</table>
+<p id="h_01J6RRJMNFD5C1HMACKNNA2WQY"><strong>Note</strong>: bambooEmployee finds the matching employee using the  findUserByUsername method. The full expression is <em>bambooEmployee  = bamboohr.findUserByUsername(ghEmployee.email).</em></p>
+<h3 id="h_01J6VC1ST2AY38AQFXTEKTK7MX">
+<br/>Greenhouse Onboarding Photos</h3>
+<p>The following table lists the Greenhouse Onboarding application UI field name, UI path, and the corresponding SCIM attribute:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Greenhouse Onboarding UI Field Name </strong></td>
+<td><strong>Application UI Path</strong></td>
+<td><strong>Attribute</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>
+<strong> </strong>Photo</td>
+<td>New Hires by Start Date &gt; Profile &gt; Photo</td>
+<td>profileImage.fileUrl</td>
+<td>The URL of the employee's profile image  </td>
+</tr>
+<tr>
+<td>Work Email</td>
+<td>New Hires by Start Date &gt; Profile &gt; Information &gt; Basic Information &gt; <br/>Work Email</td>
+<td>email</td>
+<td>The email address of the user</td>
+</tr>
+</tbody>
+</table>
+<h3 id="01J6RRK71WB8VZY5377GGC5SCC">
+<br/>BambooHR Photos</h3>
+<p>The following table lists the BambooHR application UI field name, UI path, and the corresponding SCIM attribute:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>BambooHR UI Field Name </strong></td>
+<td><strong>Application UI Path</strong></td>
+<td>
+<strong>Attribute</strong><strong><br/></strong>
+</td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>Employee Photo </td>
+<td> People &gt; Employee Photo</td>
+<td>base64Photo</td>
+<td>The photo of the employee in Base64-encoded format. The size of the image file must be less than 20MB. </td>
+</tr>
+<tr>
+<td>Work Email</td>
+<td>People &gt; Profile &gt; Contact &gt; Work Email</td>
+<td>bambooEmployee</td>
+<td>The email address of the user</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: You can create additional custom fields in BambooHR. Aquera automatically populates the fields that you have created in BambooHR. To simplify the process, you can create attributes in BambooHR using the same name as ADP Workforce Now. </p>
+<h1 id="01J6RRK71WEJFS77MK9TBDR3VS">Run Script Synchronization</h1>
+<p>You can set event or schedule triggers to run the script synchronization. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01HTM4C4A80M67Y1EP5SJWTAV1" rel="noopener noreferrer" target="_blank">Executing a Synchronization</a> section.</p>
+<p>After the script synchronization is successfully executed, Aquera syncs the Photos created in Greenhouse Onboarding as Photos in BambooHR.</p>
+  </div>
+</body>
+</html>

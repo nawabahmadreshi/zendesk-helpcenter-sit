@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce Employees - Jumpcloud Groups to JIRA Ticketing Integration</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce Employees - Jumpcloud Groups to JIRA Ticketing Integration</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW06ZV919AYFPX7Z0BK7D25">Overview</h1><p>The Aquera platform enables scalable, automated management of the employee lifecycle across enterprise HR and IT systems. Through seamless integrations, it helps organizations eliminate manual onboarding/offboarding processes, ensure consistent provisioning, and optimize workflows across complex employee management infrastructures.</p><p>This integration facilitates synchronization between Dayforce, JumpCloud, and Jira Service Management, automating ticket creation for employee onboarding and offboarding while maintaining up-to-date group membership information throughout the employee lifecycle.</p><p>The integration operates on scheduled triggers with configurable date windows to fetch upcoming employee changes, such as new hires and terminations, from Dayforce. It automatically creates corresponding tickets in Jira Service Management for IT provisioning workflows while simultaneously querying JumpCloud for user group memberships and updating existing tickets with current access information. The system supports both full synchronization and incremental updates, processing only tickets modified since the last execution for optimal performance.</p><h2 id="core-integration-tasks">Core Integration Tasks</h2><p>This integration performs the following key tasks:</p><ul>
+<li data-list-item-id="ef83d09d3c57c225236b2777a02b220da">
+<strong>Retrieves employee data from Dayforce</strong>, including new hires, terminations, and employee profile details within configurable date windows.</li>
+<li data-list-item-id="e0871413d8c2748f89f46f4fafb979d9b">
+<strong>Processes detailed employee profiles</strong> with contact information, employee numbers, work assignments, and organizational metadata.</li>
+<li data-list-item-id="e469a7193d4a121d52aee13eeedd01b11">
+<strong>Matches employees to existing Jira records</strong> using correlation fields such as Employee Number or Work Email Address.</li>
+<li data-list-item-id="e01899009d55ab4aaf92b74fbf1c54f4a">
+<strong>Creates onboarding and offboarding tickets in Jira Service Management</strong> automatically based on employee lifecycle events.</li>
+<li data-list-item-id="e80a23228edcce8fd4d3ac5c0f87cde70">
+<strong>Prevents duplicate ticketing</strong> by checking for existing tickets using correlation fields and validating the resolved status.</li>
+<li data-list-item-id="eabec01c9c41cc573c40c2ed175a8490b">
+<strong>Fetches user group memberships from JumpCloud</strong> using employee identifiers to retrieve current access permissions.</li>
+<li data-list-item-id="eb4020ed9d05cf8d943c27815db1bc284">
+<strong>Updates existing Jira ticket descriptions</strong> with current group membership information from JumpCloud.</li>
+</ul><h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1><div><div><div><div><div><div><div><div><div><div><div><div><div><div>
+<div><div><div dir="auto" id="markdown-content-25"><div><div>
+<p>The following are the prerequisites:</p>
+<p><strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin Portal. Visit <a href="https://admin.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access.</p>
+<p><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a></p>
+<p><strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin portal for the integration:</p>
+<ul>
+<li data-list-item-id="ecee25a4859822382aa55a1aa6da167e2">
+<strong>Dayforce:</strong> Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for instructions on creating the Dayforce application connector and setting up the authentication.</li>
+<li data-list-item-id="e3aa9bb2926750d324b7776291129936b">
+<strong>JumpCloud:</strong> Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360016355614-JumpCloud-Configuration-Guide" rel="noopener noreferrer" target="_blank">JumpCloud Configuration Guide</a> for instructions on creating the JumpCloud application connector and setting up the authentication.</li>
+<li data-list-item-id="ee70df4d0a13287866e5858b97c4f64d1">
+<strong>Jira Service Management:</strong> Refer to the <a href="https://support.aquera.com/hc/en-us/articles/31310597608343-Jira-Server-Configuration-Guide" rel="noopener noreferrer" target="_blank">Jira Service Management Configuration Guide</a> for instructions on creating the Jira Service Management application connector and setting up the authentication for both Cloud and Server versions.</li>
+</ul>
+<h1 id="integration-setup">Integration Setup</h1>
+<p>This section outlines the configuration process for integrating Dayforce, JumpCloud, and Jira Service Management using the Aquera platform. It includes the steps for creating the integration, defining parameters, and enabling the automated processing of employee lifecycle events, such as onboarding, offboarding, and group management updates.</p>
+<p>This integration continuously syncs employee records from Dayforce, specifically new hires and terminations, automatically creates corresponding tickets in Jira Service Management, and updates existing tickets with current group membership information from JumpCloud.</p>
+<h2 id="create-integration">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li data-list-item-id="e132fe2940f5638c7ad319f67dd548d3c">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="e9c5de887ffa2bff83147d6a6a039e30f">Navigate to the <strong>Integrations</strong> tab.</li>
+<li data-list-item-id="ecc935105431a7f7a4c96ef9526b92175">Click<strong> Create Integration.</strong>
+</li>
+<li data-list-item-id="e5d4052fa1bebed87a0b08c6f7c037b5d">Choose<strong> Dayforce Employees — JumpCloud Groups to Jira Service Management Tickets.</strong>
+</li>
+<li data-list-item-id="e4c42d3ea0e041dc80a9732e8dc412569">Name and describe your integration.</li>
+<li data-list-item-id="e2c366fd1607a8d23201a2ade7ec0e7ff">Select your<strong> Dayforce, JumpCloud, and Jira Service Management </strong>connector instances<strong>.</strong>
+</li>
+<li data-list-item-id="edec12e686dcc6250433a532489e74620">Click <strong>Continue.</strong> The Configuration page is displayed to configure the integration.</li>
+</ol>
+<p>For further details on integrations, refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p>
+</div></div></div></div></div>
+<div><div>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>On the <strong>Configuration</strong> page, the following sections are displayed:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to edit, remove, and refresh these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Set Up Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p>
+<h3 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">Global Settings </h3>
+<p>Configure the following global settings:</p>
+<ul>
+<li data-list-item-id="e6245a907c394ccbdf7c9639858942734">
+<strong>Enable Report-Only Mode</strong>: Simulate the integration execution without creating or updating any Ivanti Neurons tickets. Use this mode to verify configurations and preview potential changes safely.</li>
+<li data-list-item-id="efc7f1f3fe226fffd6a56d79a8ffbbc3c">
+<strong>Enable Logging</strong>: Capture detailed logs of integration activities, including data changes, API interactions, and processing results, to facilitate troubleshooting and support operational audits.</li>
+<li data-list-item-id="ea51c7db120b169184994936dfd15588a">
+<strong>Enable Report Generation</strong>: Generate structured CSV reports summarizing integration outcomes, employee lifecycle event processing, ticket creation results, and errors.</li>
+<li data-list-item-id="ed6eb866bbca0ddda26a19186e2294bd1">
+<strong>Enable Log Insights</strong>: Log transaction details from integration transactions to analytics dashboards, allowing you to monitor activity trends, track performance metrics, and proactively identify and resolve issues.</li>
+<li data-list-item-id="eb4990c85c3732ed077dedb4743adc7b8">
+<strong>Enable Ticket Management</strong>: Allows the integration to automatically create, update, and manage Jira Service Management tickets for employee onboarding and offboarding workflows.</li>
+<li data-list-item-id="e2066fa6d4081393c026275bb2209c3a7">
+<strong>Enable Group Management</strong>: Allows synchronisation of JumpCloud groups and memberships to Jira Service Management, keeping ticket-related access details up to date.</li>
+<li data-list-item-id="e3560c1bc443b3554e4bfe749a28b2461">
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+</ul>
+<h3 data-end="1697" data-start="1668" id="h_01JZWCZ2GE6BHZ8XV2HHM45PDC">Notification Settings</h3>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li data-list-item-id="e7097a8359ce1ad840aace9a4763afaa8">
+<strong>Admin's Email Address</strong>: Enter one or more admin email addresses that should receive notifications about integration executions, including success, failure, and CSV reports.</li>
+<li data-list-item-id="e98826e54a6e6704ea9f0f4f5ada25dba">
+<strong>Admin Email Subject: </strong>Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li data-list-item-id="ee934bcc94d5a2e5f314b4eb16339684f">
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications</li>
+<li data-list-item-id="eecacc05b172e84a7f00cb55e7ccd0ddc">
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a CSV report for all integration runs.</li>
+</ul>
+<h3 id="h_01K2C6G27S7P7W49006R8K7GBW">Ticket Management</h3>
+<p>Configure the following settings for managing tickets:</p>
+<ul>
+<li data-list-item-id="efd13f627f5266ecad0764050a855779a">
+<strong>Employee Lifecycle Events:</strong> Select the employee lifecycle events that should automatically generate tickets. For example, select <strong>Joiner</strong> to create onboarding tickets when new employees are added to Dayforce, <strong>Leaver</strong> to generate offboarding tickets when employees exit the organization, or select both to handle onboarding and offboarding events simultaneously. </li>
+<li data-list-item-id="e3e8b56f67a12ebb014980695cee52273">
+<strong>Onboarding Ticket Action:</strong> Select the action to perform when a new hire is detected. For example, select <strong>Create</strong> to automatically generate an onboarding ticket in Jira for provisioning accounts, granting access, or setting up devices. </li>
+<li data-list-item-id="e6c55381f648dc8dd278b951393b56e5f">
+<strong>Dayforce HR Platform:</strong> Select the <strong>Dayforce</strong> instance that stores employee data and events used for onboarding and offboarding. For example, choose <strong>Dayforce – Production</strong> to connect the integration to your production HR environment. </li>
+<li data-list-item-id="ea058c8c97898a8752881e3b5009b0298">
+<strong>JIRA Ticketing Platform:</strong> Select the <strong>Jira Service Management Server</strong> instance where onboarding and offboarding tickets will be created. For example, select <strong>Jira Service Management – IT Operations</strong> to send all lifecycle event tickets to your IT service desk.</li>
+</ul>
+<h4 id="h_01K8SXNXRNYGTNQQJKTRP47A6W">Source Settings</h4>
+<ul>
+<li data-list-item-id="eca90c37f822c1b34b49f04d410e134ed">
+<strong>New Hire Lookup Period:</strong> Enter the number of days the integration should look ahead to identify upcoming new hires. For example, enter <strong>32</strong> to include employees whose start date falls within the next 32 days. </li>
+<li data-list-item-id="e6c337f38ff5e65ee5cbd9fe232a64687">
+<strong>Lookup Employee by Employee Number:</strong> Enter the unique employee identifier used in Dayforce to locate a specific employee record. For example, enter <strong>EMP10045</strong> to retrieve that employee’s details and trigger related actions. </li>
+<li data-list-item-id="eb6d2d6de8fc2d6e8c47f8c1259bbf92e">
+<strong>Maximum Employees to Process:</strong> Enter the maximum number of employee records that the integration processes in a single run. For example, enter <strong>2</strong> to test with two employee records at a time, or leave blank to process all eligible employees. </li>
+<li data-list-item-id="e94cae8ed9cf2c5fd634c8d96829d1aa8">
+<strong>Onboarding Match Field:</strong> Select the Dayforce field used to match onboarding tickets to the correct employee record. For example, select <strong>Employee Number</strong> if that field uniquely matches Dayforce records to Jira tickets. </li>
+<li data-list-item-id="ee8828e5546206000baa42644ef3c02fb">
+<strong>Select Active Employment Statuses: Enter</strong> the employment statuses considered active for onboarding and offboarding automation. For example, select <strong>Active</strong>, <strong>Maternity</strong>, and <strong>Pensioner</strong> to include employees currently active or temporarily inactive due to leave or retirement. <br/><strong>Note</strong>: Click <strong data-end="1607" data-start="1596">Refresh</strong> after updating configuration values to reload the latest data. This ensures that new <strong>Active Employment Statuses</strong> appear immediately in the dropdown menu.</li>
+<li data-list-item-id="ea6a23e22d320a493ebd339be2bb129f2">
+<strong>Create Condition:</strong> Select the rule that determines which employee records trigger ticket creation. For example, select <strong>All Active Employees</strong> to create tickets for all employees with active statuses automatically.</li>
+</ul>
+<h4 id="h_01K8SXPAP6QD925K9Q41SDGCPA">Target Settings </h4>
+<ul>
+<li data-list-item-id="e01ace21849596f7f4a23e18b8dc56a8c">
+<strong>JIRA Project:</strong> Enter the JIRA project key where lifecycle tickets are created. For example, enter <strong>onboard</strong> to send all onboarding requests to the JIRA project named “Onboard.” </li>
+<li data-list-item-id="e697be338b30f91ffee7588fcec21411b">
+<strong>Resolved Ticket Status Category:</strong> Select the JIRA status category that indicates a ticket has been completed. For example, select <strong>Done</strong> or <strong>Closed</strong> to mark onboarding or offboarding tickets as finished when they reach those statuses. </li>
+<li data-list-item-id="e88aa3a3f147a11658590db7bd76b9fa7">
+<strong>JIRA Match Field:</strong> Select the JIRA field used to associate tickets with the correct employee record from Dayforce. For example, select <strong>Employee Number</strong> if it matches the employee’s ID field in Dayforce. </li>
+<li data-list-item-id="ec9bd11dc1114c525ebdb83ad4a1865ed">
+<strong>JIRA Issue Type:</strong> Specify the JIRA issue type used for onboarding or offboarding workflows. For example, select <strong>Bug</strong> or <strong>Task</strong> depending on your organization’s JIRA configuration for lifecycle automation.<br/><br/><strong>Note:</strong> Click <strong data-end="4338" data-start="4327">Refresh</strong> to load the latest JIRA projects, status categories, and issue types from the connected JIRA instance.</li>
+</ul>
+<h3 id="h_01K2C6G8D2G0553B266B794ZBF">Group Management</h3>
+<p>Configure the following settings for managing groups:</p>
+<ul>
+<li data-list-item-id="e9e76ac25836e0dc47aff2683805d9963">
+<strong>JIRA Project:</strong> Select the JIRA project to be used for group management activities.</li>
+<li data-list-item-id="eab5835aae01e321a657f3117f76ae57a">
+<strong>Resolved Ticket Status Category:</strong> Select the JIRA statuses that indicate group management tickets are complete. For example, choose <strong>Done</strong> or <strong>Closed</strong>.</li>
+<li data-list-item-id="e2b959d5de66ccdca4abf42bfb5527222">
+<strong data-end="4123" data-start="4103">JIRA Issue Type: </strong>Specify the JIRA issue type used for onboarding workflows. For example, select <strong data-end="4214" data-start="4207">Bug</strong> or <strong data-end="4226" data-start="4218">Task</strong> depending on your organization’s Jira configuration for lifecycle tickets.</li>
+</ul>
+<h1 id="h_01JZWD1VTX1ZTNZE95CJRPVCF2">Attribute Mapping</h1>
+<p>The Attribute Mapping tab defines how source system fields from Dayforce and JumpCloud correspond to JIRA Service Management ticket fields across onboarding, offboarding, and group management workflows. Administrators can select the source system (Dayforce or JumpCloud) for each mapping and specify the source attribute or expression that should populate a specific JIRA target field.</p>
+<p>For onboarding mappings, ensure that new-hire details from Dayforce, such as Employee Number, Display Name, Work Location, Position Title, and other relevant attributes, are accurately reflected in the JIRA tickets used for IT provisioning.</p>
+<p>For offboarding termination details, including Last Working Day, Manager, Job Title, and related fields, JIRA tickets are mapped to support timely and complete deprovisioning.</p>
+<p>For group management, JumpCloud user attributes, such as Email Address, Group Memberships, and other access-related data is synchronised into JIRA fields, including groups and description, to ensure that access information remains accurate and up to date.</p>
+<h1 id="h_01K2KNEN07T52TN11TAWPHHRRD">Tables</h1>
+<p>The Tables section contains configurable key–value pairs used to define correlation mappings between source and target systems for onboarding and offboarding workflows. These mappings ensure the integration accurately identifies and matches records across Dayforce, JumpCloud, and JIRA Service Management.</p>
+<p>In this integration, three correlation tables are available:</p>
+<ul>
+<li data-list-item-id="ed32783bb22bde00a2f113035ac6ebf1e">
+<strong>Source Correlation Onboard Map: </strong>Maps Dayforce employee identifiers to standard keys used for onboarding in JIRA Service Management. For example, Employee Number maps to XRefCode, Work Email Address maps to BusinessEmail, and so on.</li>
+<li data-list-item-id="e955e63fab99074adddb17a96ed6c0505">
+<strong>Target Correlation Offboard Map: </strong>Maps JIRA ticket fields to Dayforce offboarding records. For example, Employee Number maps to Employee Number, and Work Email Address maps to Email Address, and so on.</li>
+<li data-list-item-id="eade7843ac19da6b2f16f8c487bde7956">
+<strong>Target Onboarding Correlation Map: </strong>Maps<strong> </strong>JIRA onboarding ticket fields to Dayforce records. For example, Employee Number maps to Employee ID, and Work Email Address maps to Email Address, and so on.</li>
+</ul>
+<p>Without these correlation tables, the integration fails to link related records or could create duplicate tickets. You must clearly define source-to-target relationships to prevent duplication and maintain accurate record matching across workflows. </p>
+<h1 id="h_01K2F6D9Z78A59AB3KVE88H9G4">Schedule</h1>
+<p>Integrations can be scheduled to run automatically at your chosen interval. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01K2F6DEXBP5A1KHTZSA3FMCQV">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h2 id="h_01K2F6DMW23YJJ84ZW61QNFA00">Additional Options</h2>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations</a> for further details.</p>
+</div></div>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Microsoft EntraID / ServiceNow Access Fulfillment</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Microsoft EntraID / ServiceNow Access Fulfillment</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01K41YNMDMKKS9QFTQ9WNSR05T">Overview</h1><p>The Aquera platform enables scalable, automated data management across enterprise applications. Through seamless integrations, it helps organizations eliminate manual processes, ensure consistency, and optimize workflows across complex IT infrastructures.</p><p>This integration between Microsoft Entra ID and ServiceNow keeps access packages synchronized across both systems. It retrieves the latest access packages from Entra ID, which include collections of permissions, groups, and applications, and compares them with the catalog choices in ServiceNow. Missing packages are added automatically while existing ones are left unchanged, ensuring the ServiceNow catalog reflects the most current access packages. The integration also retrieves group information from Entra ID and synchronizes it with ServiceNow, keeping group-related data up to date.</p><p>In addition, the integration automates access fulfillment. Approved ServiceNow tickets are processed to extract the details of the users and the requested access packages and groups. If the request is for an access package, the integration assigns the user to that package in Entra ID. If the request is for a group, the user is added to the appropriate group in Entra ID. This end-to-end automation ensures accurate provisioning and improves consistency across systems.</p><h2 id="h_01K41YQJT00GQAKZB0Y2Q00QVW">Key Functions</h2><p>The Microsoft EntraID to ServiceNow Access Fulfillment integration provides the following functions:</p><ul>
+<li data-list-item-id="e6adb80b7024e5036340676d5b4690a03"><p data-end="368" data-start="195"><strong data-end="294" data-start="240">Retrieves the latest access packages from Entra ID</strong> by gathering all access packages, which are collections of permissions, groups, and applications that users can request to gain the right level of access. </p></li>
+<li data-list-item-id="eb7ad8da4128444ec6da43c2b924a371d"><p data-end="707" data-start="372"><strong data-end="592" data-start="542">Synchronizes ServiceNow with Entra ID packages</strong> by automatically adding any access packages that are missing in ServiceNow. This keeps ServiceNow aligned with Entra ID without requiring manual catalog maintenance.</p></li>
+<li data-list-item-id="e5c27617d6a423ac429febe8f48ec3172"><p data-end="1083" data-start="848"><strong data-end="893" data-start="848">Retrieves the latest groups from Entra ID</strong> by reading all group information and synchronizing it with ServiceNow, so administrators and requesters can always work with the most current group data when making or approving requests.</p></li>
+<li data-list-item-id="e97979bd0cfdc55183fd545d6ac49b0ec"><p data-end="1366" data-start="1087"><strong data-end="1135" data-start="1087">Assigns users to access packages in Entra ID</strong> by processing approved ServiceNow tickets. Each ticket contains details of the user and the requested package, and the integration uses this information to automatically assign the user to the correct access package in Entra ID.</p></li>
+<li data-list-item-id="e3089681797531c0af2e78e52dceadd53"><p data-end="1647" data-start="1370"><strong data-end="1409" data-start="1370">Assigns users to groups in Entra ID</strong> by processing approved ServiceNow tickets. When a ticket specifies a group assignment, the integration reads the user and group details. It adds the user to the correct group in Entra ID, ensuring timely fulfillment of access requests.</p></li>
+</ul><h1 id="h_01K2F6ANZ30WMRWZ3HS0H8MAZN">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e98280f432069fd5712f1ebcbf060b9fd">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access. <br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e675b1f7dc77e347a8fcac64193e1cbb1">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin portal:<ul>
+<li data-list-item-id="e1cecdd802827310a4a5bd03d39a70961">
+<strong>Microsoft 365</strong>: Ensure you add and configure the Microsoft 365 connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for details.</li>
+<li data-list-item-id="e51ead58cc9c550035fe805557b4891a7">
+<strong>ServiceNow</strong>: Ensure you add and configure the ServiceNow connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for instructions on creating the ServiceNow application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section describes the configuration required for the integration to transfer access package data from Microsoft Entra ID to ServiceNow.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e0a74bb128239800ac1d1062582b7124a">Log in to the Aquera Admin Portal.</li>
+<li data-list-item-id="e6eb81d130daf4f33e5549c83ccaaf6b0">From the left-side panel, navigate to <strong>Integrations</strong>.</li>
+<li data-list-item-id="eff76d9963ec33d1b82b770a602137dbc">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="e6f0ebddeb0891f50effabff8fb309d8c">Select <strong>Entra ID to ServiceNow Access Fulfillment</strong> as the integration template.</li>
+<li data-list-item-id="ebf8e9613f24f16b2414a30ed607cbb1f">Enter a <strong>name</strong> and <strong>description</strong> for the integration.</li>
+<li data-list-item-id="e5348008c61b88c0ae944faac3f655bcb">Select your <strong>Microsoft Entra ID</strong> connector instance as the source and your <strong>ServiceNow </strong>connector instance as the target.</li>
+<li data-list-item-id="e8050270791b2fb2a2eadb8a0ae9ed797">Click <strong>Continue</strong>. The <strong>Configuration</strong> page will appear, where you can set up the integration details.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><!--Note-->
+<div>
+<div id="custom-note-icon">
+<em></em>
+<p>Note:</p>
+</div>
+<div>
+<p>
+        You must click the refresh icon on all dropdown fields to sync the
+        latest ServiceNow data before making selections. Without refreshing,
+        you may see outdated or incomplete options that could lead to configuration
+        errors.
+      </p>
+<p> </p>
+</div>
+</div><h4 id="h_01K47F11Y3N77JZZQ9MSX70B3X">Integration Scenarios</h4><p>The following are the integration scenarios:</p><ul>
+<li data-list-item-id="e3727b8fe3c254bb30d552c3efc473730">
+<strong>Enable Resource Management:</strong> Select to enable the different resource management scenarios.</li>
+<li data-list-item-id="e9af353587e16728c6459e6f0297d81fd">
+<strong>Sync Microsoft Entra ID Access Packages to ServiceNow</strong>: Select to sync the Entra ID access packages to ServiceNow for access fulfillment.</li>
+<li data-list-item-id="e9a80008834ec3a6a67d85859adfffd19">
+<strong>Enable Microsoft Entra ID Access Fulfillment</strong>: Select to enable assigning users to access packages.</li>
+<li data-list-item-id="ed116efe1fa9191d9027fe4de6eca78c8">
+<strong>Sync Microsoft Entra ID Groups to ServiceNow</strong>: Select to sync the Entra ID groups to ServiceNow for group assignment.</li>
+<li data-list-item-id="e567c6c53c5080319c56e9dab62cc9a87">
+<strong>Enable Microsoft Entra ID Group Assignment</strong>: Select to enable assigning users to Entra ID groups.</li>
+</ul><h4 id="h_01K421SEM89261VNA9S1Q7KWBV">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e043efc1fb6f4c7cb322e9acc842a6c6a">
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e31e2da96a968b938cae8d741e228e960">
+<strong>Enable Logging</strong>: Select this option to generate logs that outline data changes.</li>
+<li data-list-item-id="ede79bbbe44b580cf1e085bdd273214ee">
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li data-list-item-id="e3ba4fa8605f2ab0f974d75eaf02bc761">
+<strong>Enable Notifications</strong>: Select this option to enable notifications related to integration.</li>
+<li data-list-item-id="eb28d59688459c77f934af77785a4ebde">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+</ul><h4 id="h_01K0PGWJSDQBPT1BZ25EAQGNYR">Log Settings</h4><p>Configure the following log settings:</p><ul>
+<li data-list-item-id="e7498b34b6a8ed0e68d86a89ee0f8f1a2">
+<strong>Select the Log Detail Level</strong>:  Select the desired log detail level from the dropdown menu. <br/>The following are the available options:<ul>
+<li data-list-item-id="ee8019bb365afa6bd09a1a17d1c8b2098">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="eb4f049b40fda1d0a38ff9a44f0b799e3">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e78c07baba9ecd9042ceb477fb18bcaee">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following option only appears when the dashboard detail level is set to <strong data-end="475" data-start="465">Custom</strong>.<ul><li data-list-item-id="e6c5c2f57a4789abbbf370520a09bcdd1">
+<strong>Attribute Filter</strong>: Controls which event attributes are included or excluded.   <ul>
+<li data-list-item-id="e947750c204f0fc022c2615e9d3b583c5">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log.</li>
+<li data-list-item-id="e7a94ed00e67bead10b615a4f9c397f1d">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ea9e81e5a659bd0ab84ae72bd09091ca9">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> option.</li>
+</ul><h4 id="h_01K04B51EEX43EAV95YABBP3F5">Reporting Settings</h4><p>Configure the following settings to customize the CSV report:</p><ul><li data-list-item-id="e40d295c92584336dbf67bc4460277a8c">
+<strong data-end="258" data-start="227">Select Report Detail Level:</strong> Select the desired level of report detail from the dropdown menu.<br/>The following are the available options:<ul>
+<li data-list-item-id="efdb0f7a6f253c292ffdf23b7199a6caa">
+<strong data-end="390" data-start="373">Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e3456374bd1e9b58316986d3259f5de5e">
+<strong data-end="493" data-start="476">Full Details:</strong> All attribute details are displayed.</li>
+<li data-list-item-id="ed22d3992b84052be0763fd6dbf908d80">
+<strong data-end="546" data-start="535">Custom:</strong> Includes or excludes selected attributes. The following options only appear when the report detail level is set to <strong data-end="685" data-start="675">Custom</strong>.<ul><li data-list-item-id="e2c5ed035a3029a27bb549b739b5911cf">
+<strong data-end="711" data-start="690">Attribute Filter:</strong> Controls which attributes are included or excluded in the report.<ul>
+<li data-list-item-id="e49154cc7267f1e4f884a19582bf91193">
+<strong data-end="1177" data-start="1153">Included Attributes:</strong> Select the attributes to be included in the CSV report.</li>
+<li data-list-item-id="e5d9c72a7f305ba6ef8572edd288d51bc">
+<strong data-end="1258" data-start="1234">Excluded Attributes:</strong> Select the attributes to be excluded from the CSV report.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01K0PGWJSDXT2R47JVRVF1X192">Log Insights Settings</h4><p>Configure the following log insight settings:</p><ul><li data-end="316" data-list-item-id="ed8613f1781b4039a246069337e051716" data-start="147">
+<strong data-end="185" data-start="147">Select the Log Insights Detail Level:</strong> Select the desired level of detail from the dropdown menu on the analytics dashboard.<br/>The following are the available options:<ul>
+<li data-end="316" data-list-item-id="eb378667bd37577fb444052422e286d49" data-start="147">
+<strong data-end="337" data-start="320">Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-end="316" data-list-item-id="e2e85fbfebecad84e9fd7dd74b97b43ec" data-start="147">
+<strong data-end="440" data-start="423">Full Details:</strong> All attribute details are displayed.</li>
+<li data-end="316" data-list-item-id="e72ae9ec960e4b16151a8dddc1f0c5f7b" data-start="147">
+<strong data-end="493" data-start="482">Custom:</strong> Includes or excludes selected attributes. The following option only appears when the log insights level is set to <strong data-end="635" data-start="625">Custom</strong>.<ul><li data-end="316" data-list-item-id="ec74fee4b37d5aee900afdcc67100f1b3" data-start="147">
+<strong data-end="661" data-start="640">Attribute Filter:</strong> Controls which attribute details are included or excluded in the analysis.<ul>
+<li data-end="316" data-list-item-id="ed7bd35920fc3d5f6f6dbd5729e61c63d" data-start="147">
+<strong data-end="1106" data-start="1082">Included Attributes:</strong> Select the attributes to be included in the insights.</li>
+<li data-end="316" data-list-item-id="e2d8fdb6b107e02a0f32d465d2d495848" data-start="147">
+<strong data-end="1185" data-start="1161">Excluded Attributes:</strong> Select the attributes to be excluded from the insights.</li>
+</ul>
+</li></ul>
+</li>
+<li data-end="316" data-list-item-id="eed7217584cd1a6ed641eb34ff51636b5" data-start="147">
+<strong>Show Attribute Values for Each Event</strong> (requires consent to store event data temporarily):  Select to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+</li></ul><h4 id="h_01K0EPNYJEHDW4TQRTN6PXT579">Notification Settings</h4><p>Configure the following settings for email notifications:</p><ul>
+<li data-list-item-id="ee19dc485448a9aa2e27eb824870e0ad6">
+<strong>Notify Admin Via Email</strong>: Select to send email notifications to all admins.<ul>
+<li data-list-item-id="e0573426270f4fdb2a6f7d1e5d6076994">
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications must be sent.</li>
+<li data-list-item-id="e2dee8e3b5af0ab9bbbbd158cef4c62aa">
+<strong>Admin Email Subject:</strong> Enter the content that must be used as the email subject for the email notifications to the admins.</li>
+<li data-list-item-id="e68e7e5acaa9422949d0edd4ac22e89cb">
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for the admin email notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="eaff631706b6ba591cebc503f3c082144">
+<strong>Notify Supervisor via Email</strong>: Select to send email notifications to all employees.<ul>
+<li data-list-item-id="e186171293b12623c4c98cf06d79872c5">
+<strong>Supervisor Email Addresses</strong>: Enter the email addresses of the supervisors to whom the email notifications will be sent.</li>
+<li data-list-item-id="e2fdb5979b3daa34adc2338b2689b6c5e">
+<strong>Supervisor Email Subject:</strong> Enter the content that must be used as the email subject for the email notifications to the employees</li>
+<li data-list-item-id="e2acd427eb53603286145a0a79fe7f477">
+<strong>Supervisor Email Notification Template: </strong>Enter the content that must be used as the email body for the employee email notifications.</li>
+</ul>
+</li>
+</ul><h4 id="h_01K47FB6C9C7H991QBZW4KPNVM">Access Package Sync Settings</h4><p>Configure the following settings for access package sync from Entra ID to ServiceNow:</p><ul><li data-list-item-id="ef355bb86dba758bb8d38a07015581032">
+<strong>ServiceNow Component</strong>: Select the ServiceNow functional component under which the access packages must be synced.<ul><li data-list-item-id="eb681865771d1d0f63fc8983911a1aff5">Select the <em>Ticket</em> or <em>Service Catalogue</em> based on your requirements.</li></ul>
+</li></ul><figure><table id="269889ae-a697-80a2-a338-fe76e4659ca3">
+<colgroup>
+<col/>
+<col/>
+</colgroup>
+<thead><tr id="269889ae-a697-80ff-8a63-ff54c0df7d26">
+<th id=":~M^"><strong>ServiceNow Component</strong></th>
+<th id="HGC]"><strong>Available Fields</strong></th>
+</tr></thead>
+<tbody>
+<tr id="269889ae-a697-80b6-a797-f3ed2976c5a4">
+<td id=":~M^" rowspan="3"><strong>Ticket</strong></td>
+<td id="HGC]">ServiceNow Ticket Type</td>
+</tr>
+<tr id="269889ae-a697-80bf-acbd-ffc64e5d14aa"><td id="HGC]">ServiceNow Catalog Request Item</td></tr>
+<tr id="269889ae-a697-8026-86c8-fe76cb6c549f"><td id="HGC]">ServiceNow Catalog Request Variable</td></tr>
+<tr id="269889ae-a697-80dc-8150-e959c2b190b7">
+<td id=":~M^" rowspan="2"><strong>Service Catalog</strong></td>
+<td id="HGC]">ServiceNow Service Catalog Item</td>
+</tr>
+<tr id="269889ae-a697-80b9-94f1-d1c6392fb809"><td id="HGC]">ServiceNow Service Catalog Variable</td></tr>
+</tbody>
+</table></figure><p>The following fields are displayed if you have selected <em>Ticket</em> as the <strong>ServiceNow Component:</strong></p><ul>
+<li data-list-item-id="ec3646f1b4e59a382036eae065a370941">
+<strong>ServiceNow Ticket Type</strong>: Select the ServiceNow ticket type under which the access packages must be created or updated.</li>
+<li data-list-item-id="e196961adda01c1ce1bfda9c52e6c0c57">
+<strong>ServiceNow Catalog Request Item</strong>: Select the ServiceNow catalog request item under which the access packages must be created or updated.</li>
+<li data-list-item-id="e0bad2c3a12fde039b9e00f284f03ea4e">
+<strong>ServiceNow Catalog Request Variable</strong>: Select the ServiceNow catalog request variable under which the access packages must be created or updated.</li>
+</ul><p>The following fields are displayed if you have selected <em>Service Catalog</em> as the <strong>ServiceNow Component:</strong></p><ul>
+<li data-list-item-id="e47a82772ba96d876a3f1ccdc998c9d52">
+<strong>ServiceNow Service Catalog Item</strong>: Select the ServiceNow service catalog item under which the access packages must be created or updated.</li>
+<li data-list-item-id="eb839d378612b4cefd26723aee5cdc376">
+<strong>ServiceNow Service Catalog Variable</strong>: Select the ServiceNow service catalog variable under which the access packages must be created or updated.</li>
+</ul><h4 id="h_01K47F1ER4N20282N6ZAKZ7VCX">Access Package Assignment Settings</h4><p>Configure the following settings for assigning access packages to users:</p><ul><li data-list-item-id="e5172cab4a2aaf1754f618ba877b10d1f">
+<strong>ServiceNow Component</strong>: Select the ServiceNow functional component from which the approved access package assignment requests must be retrieved.<ul><li data-list-item-id="ee3cfe786a69a65cbe1b09e5d05ef51fa">Select the <em>Ticket</em> or <em>Service Catalogue</em> based on your requirements.</li></ul>
+</li></ul><figure><table id="269889ae-a697-809b-be2c-e5d2e7b2b747">
+<colgroup>
+<col/>
+<col/>
+</colgroup>
+<thead><tr id="269889ae-a697-8081-9d88-fd95fc970a4f">
+<th id="?`pi"><strong>ServiceNow Component</strong></th>
+<th id="aSS]"><strong>Available Fields</strong></th>
+</tr></thead>
+<tbody>
+<tr id="269889ae-a697-80f2-977a-d1867f960f3d">
+<td id="?`pi"><strong>Ticket</strong></td>
+<td id="aSS]">ServiceNow Ticket Type</td>
+</tr>
+<tr id="269889ae-a697-80bc-b7b3-dbb2ec5c711b">
+<td id="?`pi"> </td>
+<td id="aSS]">ServiceNow Catalog Request Item</td>
+</tr>
+<tr id="269889ae-a697-800a-b95c-d78e59623d30">
+<td id="?`pi"><strong>Service Catalog</strong></td>
+<td id="aSS]">ServiceNow Service Catalog Item</td>
+</tr>
+<tr id="269889ae-a697-805a-8417-fee1b75ebd06">
+<td id="?`pi" rowspan="4"><strong>Available for both components</strong></td>
+<td id="aSS]">ServiceNow Catalog Access Package Variable</td>
+</tr>
+<tr id="269889ae-a697-80ef-a6f2-e970200d0b66"><td id="aSS]">ServiceNow Catalog User Email Variable</td></tr>
+<tr id="269889ae-a697-8070-8001-e7b9ae0d608d"><td id="aSS]">ServiceNow Catalog Manager Approval Variable</td></tr>
+<tr id="269889ae-a697-80ab-8134-da13acd6d65a"><td id="aSS]">Manager Approval Status Value</td></tr>
+</tbody>
+</table></figure><p>The following fields are displayed if you have selected <em>Ticket</em> as the <strong>ServiceNow Component:</strong></p><ul>
+<li data-list-item-id="e49e7bc20eaa15047cb6b9a3ec4cd2839">
+<strong>ServiceNow Ticket Type</strong>: Select the ServiceNow ticket type under which the access package assignment tickets are created.</li>
+<li data-list-item-id="e981c5350098c57feee32be717ec0bc83">
+<strong>ServiceNow Catalog Request Item</strong>: Select the ServiceNow catalog request item that has been used for creating access fulfillment tickets.</li>
+</ul><p>The following fields are displayed if you have selected <em>Service Catalog</em> as the <strong>ServiceNow Component:</strong></p><ul>
+<li data-list-item-id="e97b14abf66a66f7ae136e98fa0c95ff0">
+<strong>ServiceNow Service Catalog Item</strong>: Select the ServiceNow service catalog item that has been used for creating access fulfillment tickets.</li>
+<li data-list-item-id="ea0e04e89e1a41f4a8dc339bdef30e327">
+<strong>ServiceNow Catalog Access Package Variable</strong>: Select the ServiceNow catalog variable that requests the access package details.</li>
+<li data-list-item-id="e4557e60148425d11b13aa82ee31f6ab9">
+<strong>ServiceNow Catalog User Email Variable</strong>: Select the ServiceNow questionnaire variable that contains the email address of the user to whom the access package will be assigned.</li>
+<li data-list-item-id="ecd39d713d157e868045aa7c42dd97699">
+<strong>ServiceNow Catalog Manager Approval Variable</strong>: Select the ServiceNow catalog variable that requests the manager’s approval details.</li>
+<li data-list-item-id="e39029a81fba61e90ab8fbe4758c32c34">
+<strong>Manager Approval Status Value</strong>: Select the manager approval status value that should be regarded as approved.</li>
+</ul><h4 id="h_01K47F1QM6AX1RDKJD12W7PXN1">Group Sync Settings</h4><p>Configure the following settings for group sync from Entra ID to ServiceNow:</p><ul><li data-list-item-id="e2382f5d682442beaf8c3b74a148c3299">
+<strong>ServiceNow Component</strong>: Select the ServiceNow functional component.<ul><li data-list-item-id="ec4e3c02646dd2bc9c1df94c8ce9314f6">Select the <em>Ticket</em> or <em>Service Catalogue</em> based on your requirements.</li></ul>
+</li></ul><figure><table id="269889ae-a697-80d1-89ea-d4ec90bf3352">
+<colgroup>
+<col/>
+<col/>
+</colgroup>
+<thead><tr id="269889ae-a697-802f-af7e-e504bf13d0de">
+<th id="UIcU"><strong>ServiceNow Component</strong></th>
+<th id="PA=V"><strong>Available Fields</strong></th>
+</tr></thead>
+<tbody>
+<tr id="269889ae-a697-80fb-9049-e7a637e271ae">
+<td id="UIcU" rowspan="4"><strong>Ticket</strong></td>
+<td id="PA=V">ServiceNow Ticket Type</td>
+</tr>
+<tr id="269889ae-a697-8034-8c45-dd240da35b7d"><td id="PA=V">ServiceNow Service Catalog Item</td></tr>
+<tr id="269889ae-a697-8058-ab39-ffef1b4f8373"><td id="PA=V">ServiceNow Catalog Request Item</td></tr>
+<tr id="269889ae-a697-8078-be56-cedda5323ec6"><td id="PA=V">ServiceNow Catalog Request Variable</td></tr>
+<tr id="269889ae-a697-80fd-96c1-d17fe477bc98">
+<td id="UIcU" rowspan="2"><strong>Service Catalog</strong></td>
+<td id="PA=V">ServiceNow Service Catalog Item</td>
+</tr>
+<tr id="269889ae-a697-804d-ab5e-fc46435f243d"><td id="PA=V">ServiceNow Service Catalog Variable</td></tr>
+</tbody>
+</table></figure><p>The following fields are displayed if you have selected <em>Ticket</em> as the <strong>ServiceNow Component:</strong></p><ul>
+<li data-list-item-id="e2a5a5b911597b2f742904854be32f371">
+<strong>ServiceNow Ticket Type</strong>: Select the ServiceNow ticket type under which the Entra ID groups must be synced.</li>
+<li data-list-item-id="eda6f1913d6f28a1ce0f70582e3e30423">
+<strong>ServiceNow Service Catalog Item</strong>: Select the ServiceNow service catalog item under which the Entra ID groups must be synced.</li>
+<li data-list-item-id="e6b50b42cedd230d2293632279735e00e">
+<strong>ServiceNow Catalog Request Item</strong>: Select the ServiceNow catalog request item under which the Entra ID groups must be synced.</li>
+<li data-list-item-id="e65b6ec47a9964db93571d265e5197bd5">
+<strong>ServiceNow Catalog Request Variable</strong>: Select the ServiceNow catalog request field under which the Entra ID groups must be available.</li>
+</ul><p>The following fields are displayed if you have selected <em>Service Catalog</em> as the <strong>ServiceNow Component:</strong></p><ul>
+<li data-list-item-id="ec7ad703692868e42893b798b1cff9b17">
+<strong>ServiceNow Service Catalog Item</strong>: Select the ServiceNow service catalog item under which the Entra ID groups must be synced.</li>
+<li data-list-item-id="ec186e4369a55fff874914783e672fc19">
+<strong>ServiceNow Service Catalog Variable</strong>: Select the ServiceNow service catalog variable under which the Entra ID groups must be available.</li>
+</ul><h4 id="h_01K47F200J1X15GX9RG3127ZNJ">Group Assignment Settings</h4><p>Configure the following settings for group assignment:</p><ul><li data-list-item-id="eb78e723d662a3b67a7d1f507190e8dd8">
+<strong>ServiceNow Component</strong>: Select the ServiceNow functional component.<ul><li data-list-item-id="eb208b801a1fc0130f6754f6a10cd3153">Select the <em>Ticket</em> or <em>Service Catalogue</em> based on your requirements.</li></ul>
+</li></ul><figure><table id="269889ae-a697-801f-8b8a-e9e41749e03c">
+<colgroup>
+<col/>
+<col/>
+</colgroup>
+<thead><tr id="269889ae-a697-807c-9c95-c22151dbefce">
+<th id="eO^B"><strong>ServiceNow Component</strong></th>
+<th id="C_Sv"><strong>Available Fields</strong></th>
+</tr></thead>
+<tbody>
+<tr id="269889ae-a697-80ff-8c81-d787ef1894fa">
+<td id="eO^B" rowspan="2"><strong>Ticket</strong></td>
+<td id="C_Sv">ServiceNow Ticket Type</td>
+</tr>
+<tr id="269889ae-a697-800e-af16-e266a2933529"><td id="C_Sv">ServiceNow Catalog Request Item</td></tr>
+<tr id="269889ae-a697-80af-a012-e25983ee0205">
+<td id="eO^B"><strong>Service Catalog</strong></td>
+<td id="C_Sv">ServiceNow Service Catalog Item</td>
+</tr>
+<tr id="269889ae-a697-808c-aa39-dc2c5a74cf62">
+<td id="eO^B" rowspan="6"><strong>Available for both components</strong></td>
+<td id="C_Sv">ServiceNow Catalog Group Variable</td>
+</tr>
+<tr id="269889ae-a697-80e6-a6b5-efe8f0692faa"><td id="C_Sv">ServiceNow Catalog Application Variable</td></tr>
+<tr id="269889ae-a697-8034-a84e-e30a75703497"><td id="C_Sv">ServiceNow Catalog Entra ID Reference Value</td></tr>
+<tr id="269889ae-a697-80ad-b67a-e805fb5fa149"><td id="C_Sv">ServiceNow Catalog User Email Variable</td></tr>
+<tr id="269889ae-a697-80c0-b68a-e32d431bfdb1"><td id="C_Sv">ServiceNow Catalog Approval Variable</td></tr>
+<tr id="269889ae-a697-8060-ac7c-ffc08386665a"><td id="C_Sv">ServiceNow Catalog Approval Status Value</td></tr>
+</tbody>
+</table></figure><p>The following fields are displayed if you have selected <em>Ticket</em> as the <strong>ServiceNow Component</strong>:</p><ul>
+<li data-list-item-id="e49f4de559060fa1021d79be5ae1502d5">
+<strong>ServiceNow Ticket Type</strong>: Select the ServiceNow ticket type under which the Entra ID groups assignment tickets are created.</li>
+<li data-list-item-id="eebc8c2d41fe48f2f71a2c8bc127e17f4">
+<strong>ServiceNow Catalog Request Item</strong>: Select the ServiceNow catalog request item that has been used for creating group assignment tickets.</li>
+</ul><p>The following fields are displayed if you have selected <em>Service Catalog</em> as the <strong>ServiceNow Component</strong>:</p><ul><li data-list-item-id="e2b09c16ffc7e040f33a6cabf704d20a9">
+<strong>ServiceNow Service Catalog Item</strong>: Select the ServiceNow service catalog item that has been used for creating group assignment tickets.</li></ul><p>The following fields are displayed regardless of whether you have selected Ticket or Service Catalog as the<strong> ServiceNow Component:</strong></p><ul>
+<li data-list-item-id="ef659fe878576354ac0a923c04366dca5">
+<strong>ServiceNow Catalog Group Variable</strong>: Select the ServiceNow catalog group variable that requests the group details.</li>
+<li data-list-item-id="e1c88b761c382cf4c86325896c277c7cb">
+<strong>ServiceNow Catalog Application Variable</strong>: Select the ServiceNow catalog variable that requests the application name.</li>
+<li data-list-item-id="eeaac4c33b47d0a169ae7ff20b4f2496d">
+<strong>ServiceNow Catalog Entra ID Reference Value</strong>: Select the ServiceNow catalog Entra ID reference value from which the tickets are retrieved for group assignment.</li>
+<li data-list-item-id="ede5a611a307a2387424d9ba6003fae00">
+<strong>ServiceNow Catalog User Email Variable</strong>: Select the ServiceNow catalog variable that requests the user's email for the Entra ID group assignment.</li>
+<li data-list-item-id="e709bb1093af967cb11a44b8c1a27e082">
+<strong>ServiceNow Catalog Approval Variable</strong>: Select the ServiceNow catalog approval variable that requests the approval details.</li>
+<li data-list-item-id="e9028a626663c918b4e64143bd0e10b35">
+<strong>ServiceNow Catalog Approval Status Value</strong>: Select the ServiceNow catalog approval status value that should be regarded as approved.</li>
+</ul><h3 id="h_01K85CGQYK5M7B1DMRXGEHQHT3">Schedule</h3><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p><p> </p>
+  </div>
+</body>
+</html>

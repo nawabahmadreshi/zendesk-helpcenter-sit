@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PeopleSoft to Okta Event Listener Orchestration Setup Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>PeopleSoft to Okta Event Listener Orchestration Setup Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview</h1>
+<p>PeopleSoft Event Listener orchestration enables you to process the user events received from PeopleSoft application and update them in a target application. PeopleSoft is the HR source of truth where user onboarding, updates, and termination activities take place. </p>
+<p><span>An event is triggered in PeopleSoft when any of the following HR actions takes place in PeopleSoft:</span></p>
+<ul>
+<li><span>Onboarding of a new hire into the organization and creation of a user record for the new hire.</span></li>
+<li><span>Modification of an existing employee's profile and any other details.</span></li>
+<li><span>Termination of an employee.</span></li>
+</ul>
+<p><span>These events are sent from PeopleSoft as an XML message string to the Aquera web service. Aquera event orchestration converts these messages to the JSON format and then updates the changes in the target application.  Click <a href="https://support.aquera.com/hc/article_attachments/4415977875607/PeopleSoft-XmlMessage.txt" rel="noopener" target="_blank">here</a> to see a sample XML message received from PeopleSoft. </span></p>
+<p><span>This document details how the PeopleSoft Listener orchestration must be setup to automatically synchronize the user data in Okta based on the user events triggered from PeopleSoft.</span></p>
+<h3 id="jump-to">Jump To</h3>
+<pre><a href="#h_01FPZ7MHEMRXHBNTYM7SQCHH81" target="_self">Prerequisites</a><br/><a href="#h_01FPZ7MR7Y75Z8VWJGPA9Y02D9" target="_self">Setting the PeopleSoft Event Listener Orchestration</a><br/>  <a href="#h_01FPYVRMXK507ETZ349BY3ZNAR" target="_self">Configuration</a><br/>  <a href="#h_01FPYVS11TNE10AVGBT706CGGG" target="_self">Attributes Mapping</a><br/>  <a href="#h_01FPYVNDBHY1ANEPCAJRBSBH93" target="_self">Group Management</a><br/>  <a href="#h_01FPYVSN7E8S3KZZ4GRFK9EBYG" target="_self">Aquera Web Service URL for Posting Events</a><br/><a href="#h_01FPZ7P4XMKSF0179P3CQS68P4" target="_self">Script Orchestration</a><br/>  <a href="#h_01FPZ7PP32TEHJDWWBAY16YVC9" target="_self">Setting up the Scheduled Script Orchestration</a><br/>  <a href="#h_01FPZ7Q0YAEA8V4RWDJB823J73" target="_self">Configuration</a><br/>  <a href="#h_01FPSYYFS9XD97B5D722GBKW41" target="_self">Script for User Activation/Reactivation</a><br/>  <a href="#h_01FPSYYV5304CZ9BNE70CV1PJ8" target="_self">Script for User Deactivation</a><br/>  <a href="#h_01FPYFPXC0C75PDY3Y8HNSYN89" target="_self">Script for Updating Future Effective Values for Users</a><br/><a href="#h_01FPZ7RR9P08W46XTQPNRQKZHJ" target="_self">Conclusion</a> </pre>
+<h2 id="h_01FPZ7MHEMRXHBNTYM7SQCHH81"><span>Prerequisites</span></h2>
+<ul>
+<li>
+<span>The following applications must be configured in Aquera Admin console:</span>
+<ul>
+<li><span>PeopleSoft</span></li>
+<li><span>Okta</span></li>
+</ul>
+</li>
+<li>
+<span>Separate groups must be created in Okta for categorizing and managing the following set of users:</span>
+<ul>
+<li><span>Users to be activated</span></li>
+<li><span>Users to be reactivated</span></li>
+<li><span>Users to be deactivated</span></li>
+<li>
+<span>Users having attributes with future effective values. <br/></span><span>For details, refer to the <a href="#h_01FPYVNDBHY1ANEPCAJRBSBH93" target="_self">Group Management</a> section.</span>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01FPZ7MR7Y75Z8VWJGPA9Y02D9"><span>Setting the PeopleSoft Event Listener Orchestration</span></h1>
+<p><span>This section details the procedures to setup the PeopleSoft Event Listener orchestration to update the user events in Okta.</span></p>
+<ol>
+<li><span><span>Navigate to <strong>Orchestrations</strong> from the left navigation pane in your Aquera Admin console and click <strong>Create</strong> <strong>Orchestration</strong>.</span></span></li>
+<li><span><span>In the <strong>Add Orchestration</strong> pop-up window, provide a name for the orchestration and select <strong>PeopleSoft Event Listener</strong> as the orchestration type from the <strong>Event </strong>tab<strong>.<br/><img alt="PS_Orch_Sel.png" height="634" src="./assets/cb00c0c74aef926d.png" width="370"/><br/></strong></span></span></li>
+<li>
+<span><span><span>Click<strong> Done. </strong>The <strong>Configuration</strong> tab is displayed.<br/></span></span></span>
+<p><span><span>The following procedures are involved in the orchestration setup:</span></span></p>
+<ul>
+<li><a href="#h_01FPYVRMXK507ETZ349BY3ZNAR" target="_self">Configuration</a></li>
+<li><a href="#h_01FPYVS11TNE10AVGBT706CGGG" target="_self">Attributes Mapping</a></li>
+<li><a href="#h_01FPYVNDBHY1ANEPCAJRBSBH93" target="_self">Group Management</a></li>
+<li><a href="#h_01FPYVSN7E8S3KZZ4GRFK9EBYG" target="_self">Aquera Web Service URL for Posting Events</a></li>
+</ul>
+</li>
+</ol>
+<h2 id="h_01FPYVRMXK507ETZ349BY3ZNAR"><span><span>Configuration</span></span></h2>
+<ol>
+<li>Select <em>Okta</em> as your <strong>Source Application</strong> and <strong>Target Application</strong>.<br/><img alt="PS_conf.png" src="./assets/d5bf9c44507ed91d.png"/>
+</li>
+<li>Select <strong>Report Only </strong>to get a report that shows what would be changed after the orchestration run without actually making the changes.</li>
+<li>
+<p>If you want to send the orchestration's outcome to a specific set of users, email IDs of those users can be provided in the <strong>Admin Email List </strong>field.</p>
+</li>
+<li>Enter the <strong>Match Expression</strong> to determine the target record that matches a given source record.</li>
+<li>Select <strong>Map Manager</strong> to map users' managers from source to target. The manager attributes in the user objects are used for mapping.</li>
+<li>Set the configuration in the following sections on this tab:
+<ul>
+<li>
+<p>Creation Email Details</p>
+</li>
+<li>
+<p>Deactivation Email Details</p>
+</li>
+<li>
+<p>Advanced Details</p>
+</li>
+<li>Admin Email Option<br/>For details, refer to the <a href="../PeopleSoft-Event-Listener-Orchestration-Setup-Guide/" rel="noopener" target="_blank">PeopleSoft Listener Sync Orchestration Guide</a>.<br/><strong>Note</strong>: You must enable the group management option in the <strong>Advanced Details</strong> section for effective management of users. Refer to the Group Management section for details.</li>
+</ul>
+</li>
+<li>Click <strong>Create</strong> to create the orchestration.</li>
+</ol>
+<h2 id="h_01FPYVS11TNE10AVGBT706CGGG">Attributes Mapping</h2>
+<p>The XML messages received from PeopleSoft are parsed in the orchestration and converted to the SCIM attributes.</p>
+<p>This section provides information on how the user attributes from PeopleSoft can be mapped to the Okta user attributes in the <strong>Attribute Map</strong> tab.</p>
+<h3 id="mapping-attributes-using-expressions">Mapping Attributes Using Expressions</h3>
+<p>The following are the most commonly used expressions in the mapping of various user attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><span><strong>Okta Attribute</strong></span></td>
+<td><span><strong>Mapping Expression</strong></span></td>
+</tr>
+<tr>
+<td>userName</td>
+<td>
+<p>(%ATTEMPT &lt;= SOURCE.name.givenName.length) ? </p>
+<p>(SOURCE.name.givenName.substring(0,%ATTEMPT) + </p>
+<p>SOURCE.name.familyName + </p>
+<p>'@sample-org.com').toLowerCase().toEmail() :</p>
+<p>(SOURCE.name.givenName + </p>
+<p>SOURCE.name.familyName+</p>
+<p>(%ATTEMPT-1) + </p>
+<p>'@sample-org.com').toLowerCase().toEmail()</p>
+</td>
+</tr>
+<tr>
+<td>phoneNumbers(mobile).primary</td>
+<td>
+<p><span>(SOURCE.phoneNumbers[mobile].value &amp;&amp; <br/>SOURCE.phoneNumbers[mobile].value != "0") ? false : undefined</span></p>
+</td>
+</tr>
+<tr>
+<td>phoneNumbers(mobile).value</td>
+<td>
+<p><span>(SOURCE.phoneNumbers[mobile].value &amp;&amp; <br/>SOURCE.phoneNumbers[mobile].value != "0") ? <br/>SOURCE.phoneNumbers[mobile].value : undefined</span></p>
+</td>
+</tr>
+<tr>
+<td>phoneNumbers(work).primary</td>
+<td>
+<p><span>(SOURCE.phoneNumbers[work].value &amp;&amp; <br/>SOURCE.phoneNumbers[work].value != "0") ? true : undefined</span></p>
+</td>
+</tr>
+<tr>
+<td>phoneNumbers(work).value</td>
+<td>
+<p><span>(SOURCE.phoneNumbers[work].value &amp;&amp; <br/>SOURCE.phoneNumbers[work].value != "0") ? <br/>SOURCE.phoneNumbers[work].value : undefined</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<h3 id="handling-attributes-with-future-effective-dates">Handling Attributes with Future Effective Dates</h3>
+<p>PeopleSoft provides options to set multiple future effective dates for user attributes. User records can have attributes that hold different values over a period of time based on their effective dates. The value of a user attribute can change as and when an effective date has reached.</p>
+<p>To handle attributes with future effective dates, create a custom attribute in Okta with the following naming convention: <em>&lt;attributeName&gt;_FUTURE</em>. For example, if <em>Location</em> is an attribute with multiple future effective dates, create a custom attribute in Okta with the name, <em>Location_FUTURE</em>.</p>
+<p><span dir="ltr"><em>{attributeName}_FUTURE</em> will contain the list of updates that need to take effect for that attribute. Each update contains the effective date of the change and the value of the change. </span><span dir="ltr">The list of updates can be in the format <em>["&lt;effective_date&gt;":{&lt;attribute_value&gt;}"]</em>. For example, </span><span dir="ltr"><em>[“2021-10-10:{location1}”, “2021-11-10:{location2}”]</em>.</span></p>
+<p><span dir="ltr">Expressions must be provided in the <strong>Attribute Map</strong> tab for such future effective attributes to populate this list. We must also create a script orchestration to read through this list of updates in the future attributes and apply the changes to the corresponding attributes in Okta when the effective date has passed. For the script, refer to the <a href="#h_01FPYFPXC0C75PDY3Y8HNSYN89" target="_self">Script for Updating Future Effective Values for Users</a> section.</span></p>
+<p>The following is a sample mapping expression that can be used for the badgeNumber custom attribute with future effective values. Similar expression can be used for other attributes with future effective values.</p>
+<pre>if(DEST)<br/><br/>{<br/><br/>if ((SOURCE[IAN].badgeNumber!= undefined) &amp;&amp;<span> </span><br/><br/>(DEST[IAN].BADGE_NBR_FUTURE ==' '<span> </span><br/><br/>|| DEST[IAN].BADGE_NBR_FUTURE =='[]'<br/><br/>||DEST[IAN].BADGE_NBR_FUTURE == null))<span> </span><br/><br/>{<span>  </span>`[{"date":"${SOURCE[IAN].effDate}",<br/><br/>"value":"${SOURCE[IAN].badgeNumber}"}]` }<br/><br/><span> </span>else if (SOURCE[IAN].badgeNumber != undefined &amp;&amp;<span> </span><br/><br/>DEST[IAN].BADGE_NBR_FUTURE!= undefined)<span> </span><br/><br/><span> </span>{<span>  </span>DEST[IAN].BADGE_NBR_FUTURE.replace("]",`,<br/><br/>{"date":"${SOURCE[IAN].effDate}","value":"${SOURCE[IAN].badgeNumber}"}]`); }<br/><br/>}<br/><br/>else if(SOURCE[IAN].badgeNumber!= undefined)<br/><br/>{<br/><br/><span>    </span>`[{"date":"${SOURCE[IAN].effDate}","value":"${SOURCE[IAN].badgeNumber}"}]`<br/><br/>}<br/><br/>else if(SOURCE[IAN].badgeNumber== undefined)<br/><br/>{<br/><br/><span>    </span>`[{"date":"${SOURCE[IAN].effDate}","value":" "}]`<br/><br/>}</pre>
+<p>You can download this sample expression <a href="https://support.aquera.com/hc/article_attachments/4415993425047/Future_Attributes_Map_Expression.txt" rel="noopener" target="_blank">here</a>.</p>
+<p><strong>Sample Attribute mapping:</strong></p>
+<p>An <a href="https://support.aquera.com/hc/article_attachments/4416115630231/Attributes_Mapping.xlsx" rel="noopener" target="_blank">attributes mapping template</a> is attached for your reference.</p>
+<p><img alt="PS_Map.png" src="./assets/9a7fa655aedeae9a.png"/></p>
+<h2 id="h_01FPYVNDBHY1ANEPCAJRBSBH93">Group Management</h2>
+<p>Group management must be enabled in the orchestration to categorize the users for effective activation, termination, and reactivation of users, and for updating the user attributes with future effective values.</p>
+<p>In the <strong>Group Management Restriction List</strong> on the <strong>Configuration</strong> tab, enter the names of the groups that are created in Okta for the following user categories:</p>
+<ul>
+<li>Users to be activated/reactivated</li>
+<li>Users to be inactivated</li>
+<li>Users with future effective updates</li>
+</ul>
+<h3 id="group-rules">Group Rules</h3>
+<p>In the <strong>Group Rules</strong> tab, you can set the rules for each user category (group), based on your requirement. The users will be added to a group when they meet the conditions set in the group rule. Sample expressions are provided here for your reference.</p>
+<p><strong>Rule for Users to be Activated</strong></p>
+<p>All new hires and rehires that have an effective date for activation will be added to this group in Okta.  </p>
+<p><strong><img alt="PS_Rule_Active.png" height="437" src="./assets/42f76597630af44b.png" width="515"/></strong></p>
+<p><strong>Rule for Users to be Deactivated</strong></p>
+<p>Users that are terminated (with <em>Inactive</em> status) in PeopleSoft are added to this Okta group.</p>
+<p><strong><img alt="PS_Rule_Inactive.png" height="384" src="./assets/c066e80b7e7a4a05.png" width="453"/></strong></p>
+<p><strong>Rule for Users to be Reactivated</strong></p>
+<p>Rehires that are yet to be activated will be added to this group.</p>
+<p><strong><img alt="PS_Rule_React.png" height="368" src="./assets/b23a225e1180b0fe.png" width="434"/></strong></p>
+<p><strong>Rule for Users with Future Updates</strong></p>
+<p>Users having attributes with future effective values will be added to this group.</p>
+<p><strong><img alt="PS_Rule_Fut_Trans.png" height="444" src="./assets/9640ef15a4009050.png" width="523"/></strong></p>
+<h2 id="h_01FPYVSN7E8S3KZZ4GRFK9EBYG">Aquera Web Service URL for Posting Events</h2>
+<p>In the <strong>Event Detail</strong> tab of the PeopleSoft Event Listener orchestration, a URL is displayed as follows:</p>
+<p><img alt="PS_Event_URL.png" height="263" src="./assets/2034f9bf50610cf1.png" width="561"/></p>
+<p>This is the Web service URL to which user events that are sent from PeopleSoft in the XML format must be published. </p>
+<p>You must click <strong>Create Token</strong> to generate a token.</p>
+<p><img alt="PS_token.png" height="389" src="./assets/b355de9993681883.png" width="540"/></p>
+<p>The new token must be copied and saved securely. This token must be configured in PeopleSoft for integration with Aquera. </p>
+<p><strong>Note</strong>: PeopleSoft administrator must configure the web service URL and the event token in PeopleSoft for publishing the events to this web service. After successful integration of PeopleSoft with Aquera, the token must <strong>not</strong> be refreshed in Aquera Admin console to avoid integration issues.</p>
+<h1 id="h_01FPZ7P4XMKSF0179P3CQS68P4">Script Orchestration</h1>
+<p>Three scheduled script orchestrations need to be setup in Aquera Admin console for the following purposes:</p>
+<ul>
+<li>Activate the new future hires/rehires in Okta when the effective date of activation has reached.</li>
+<li>Deactivate the users in Okta when the effective date of termination has reached.</li>
+<li>Update values of user attributes based on their future effective dates.</li>
+</ul>
+<h2 id="h_01FPZ7PP32TEHJDWWBAY16YVC9">Setting up the Scheduled Script Orchestration</h2>
+<p><span>This section details the procedure to setup a scheduled script orchestration to update the users in Okta.</span></p>
+<ol>
+<li><span><span>Navigate to <strong>Orchestrations</strong> from the left navigation pane in your Aquera Admin console and click <strong>Create</strong> <strong>Orchestration</strong>.</span></span></li>
+<li><span><span>In the <strong>Add Orchestration</strong> pop-up window, provide a name for the orchestration (for example, <em>Okta</em> <em>User Activation</em>) and select <strong>Script</strong> as the orchestration type from the <strong>Scheduled </strong>tab<strong>.<br/><img alt="PS_User_Activation.png" height="564" src="./assets/494d9361f8ed020d.png" width="293"/><br/></strong></span></span></li>
+<li><span>Click <strong>Done</strong>. The <strong>Configuration</strong> tab is displayed.</span></li>
+</ol>
+<h2 id="h_01FPZ7Q0YAEA8V4RWDJB823J73"><span><span>Configuration</span></span></h2>
+<p><span><span>The scripts pertain to the actions to be performed on the user accounts in Okta.</span></span></p>
+<ol>
+<li>Select <em>Okta</em> as<strong> Application</strong> and<strong> Application2</strong>.<br/><img alt="PS_Script_conf.png" height="648" src="./assets/e22b3732292cc97c.png" width="603"/>
+</li>
+<li>In the <strong>Script</strong> section, enter the required <span>script. The script is based on javascript, so various functions and language constructs are available in the script. For details on the application functions, general utilities, and the Open API methods that are supported in the script, refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052280033" rel="noopener" target="_blank">Supported Functions Guide</a>.<br/>Refer to the following <a href="#h_01FPSYYFS9XD97B5D722GBKW41" target="_self">User Activation Script</a> and <a href="#h_01FPSYYV5304CZ9BNE70CV1PJ8" target="_self">User Termination Script</a> sections for the sample scripts that can be used for the activation and termination of users.<br/></span>
+</li>
+</ol>
+<h2 id="h_01FPSYYFS9XD97B5D722GBKW41">Script for User Activation/Reactivation</h2>
+<p>All the new hires/rehires that are yet to be activated are part of the <strong><em>Users to be Activated</em></strong> group.</p>
+<p>This section provides the script that can be used to activate a new hire on the effective date of activation. The orchestration must be scheduled to run every day to check if the effective date of activation has reached for a new hire and to activate the account accordingly.</p>
+<p>When a new hire is activated, the user record will be removed from the <strong><em>Users to be Activated</em></strong> group.</p>
+<p><strong>Note</strong>: The new hire account will be in the <em>Staged</em> status in Okta until the account is activated.</p>
+<p>Click <a href="https://support.aquera.com/hc/article_attachments/4415986699671/User_Activation_Script.txt" rel="noopener" target="_blank">here</a> to download a sample script for user activation/reactivation.</p>
+<h2 id="h_01FPSYYV5304CZ9BNE70CV1PJ8">Script for User Deactivation</h2>
+<p>When an event is received from PeopleSoft with a termination date, the user in Okta will be updated with that termination date and they are added to the <em><strong>Users to be Inactivated</strong> </em>group. When the termination date has reached, the user has to be deactivated in Okta.</p>
+<p>The orchestration must be scheduled to run every day to check if the effective date of deactivation has reached for a user and to deactivate the account accordingly.</p>
+<p>This section provides the sample script that can be used to deactivate a user in Okta when their termination date has reached. The script also provides option to set the delay for deactivation (in hours).</p>
+<p>Click <a href="https://support.aquera.com/hc/article_attachments/4415977135639/User_Deactivation_Script.txt" rel="noopener" target="_blank">here</a> to download a sample script for user deactivation.</p>
+<h2 id="h_01FPYFPXC0C75PDY3Y8HNSYN89">Script for Updating Future Effective Values for Users</h2>
+<p>An active user can have attributes that hold different values over a period of time based on their effective dates. For example, a user's location can be <em>location1</em> for a period of time, <em>location2</em> for another period, and so on. The effective dates determine when each of those values must be updated for the user attribute in Okta. In this case, the attribute values must be automatically updated based on the effective date.</p>
+<p>The orchestration must be scheduled to run every 15 minutes to check if the effective date and time has reached for user attributes and to update the values accordingly.</p>
+<p>This section provides the script to retrieve users from the <strong><em>Future Transactions</em></strong> group in Okta, which has all the users having attributes with multiple future effective values. When all the future effective values are updated for all such attributes of a user over the period of time, the user will be removed from this group.</p>
+<p>Click <a href="https://support.aquera.com/hc/article_attachments/4415976672407/Future_Updates_Script.txt" rel="noopener" target="_blank">here</a> to download a sample script for updating future effective values in user attributes.</p>
+<h1 id="h_01FPZ7RR9P08W46XTQPNRQKZHJ">Conclusion</h1>
+<p>After the above setup is completed, </p>
+<ul>
+<li>
+<span dir="ltr">When a new employee is </span><span dir="ltr">onboarded into PeopleSoft, a new user will be created in Okta. The user will be activated in Okta based on their activation date from PeopleSoft.</span>
+</li>
+<li>
+<span dir="ltr">When an employee </span><span dir="ltr">profile or any of their attributes are updated, the changes will be </span><span dir="ltr">updated in Okta.</span>
+</li>
+<li>
+<span dir="ltr"> When an employee leaves the organization, the user will be deactivated</span><span dir="ltr"> in Okta based on the effective date, if there is a deactivation delay.</span>
+</li>
+</ul>
+  </div>
+</body>
+</html>

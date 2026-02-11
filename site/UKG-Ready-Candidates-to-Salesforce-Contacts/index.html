@@ -1,0 +1,375 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UKG Ready Candidates to Salesforce Contacts</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>UKG Ready Candidates to Salesforce Contacts</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating the synchronization of data across resource types. This guide covers the end-to-end tasks in setting up a script synchronization to sync the contractors from the <em>Candidates</em> resource of UKG Ready to the <em>Contacts</em> resource of Salesforce.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Admin Access to Salesforce:</strong> You must have admin access to your Salesforce instance.</li>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure following application connectors in the Aquera Admin portal to integrate with Salesforce:
+<ul>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for details.</li>
+<li>
+<strong>Salesforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360009663913">Salesforce Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</h1>
+<p>This section details how the synchronization must be configured to allow data push from UKG Ready to Salesforce.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Script Synchronization</h2>
+<p>Perform the following steps to create a new script synchronization:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> from the left side panel.</li>
+<li>Click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>UKG Ready Candidates to Salesforce Contacts</strong>.</li>
+<li>Enter a name and a description for the synchronization.</li>
+<li>Select your UKG Ready and Salesforce connector instances.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the synchronization.</li>
+</ol>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h2>
+<p>The <strong>UKG Ready Contractors to Salesforce Vendors</strong> template script maps the commonly used UKG Ready and Salesforce attributes. You can customize it based on your use case.<br/>The following are the attributes that are mapped by default:</p>
+<table border="1">
+<thead>
+<tr>
+<th>UKG Ready Script Expression</th>
+<th>Salesforce Script Expression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Candidate.id</td>
+<td>Contact.UKG_ID__c</td>
+</tr>
+<tr>
+<td>Candidate.employee_id</td>
+<td>Contact.UKG_Employee_ID__c</td>
+</tr>
+<tr>
+<td>Candidate.first_name</td>
+<td>Contact.FirstName</td>
+</tr>
+<tr>
+<td>Candidate.last_name</td>
+<td>Contact.LastName</td>
+</tr>
+<tr>
+<td>Candidate.primary_email</td>
+<td>Contact.HPG_Emailc / Contact.Email</td>
+</tr>
+<tr>
+<td>Candidate.address.address_line_1 + Candidate.address_line_2 + Candidate.address_line_3</td>
+<td>Contact.MailingStreet</td>
+</tr>
+<tr>
+<td>Candidate.address.country</td>
+<td>Contact.MailingCountry</td>
+</tr>
+<tr>
+<td>Candidate.address.city</td>
+<td>Contact.MailingCity</td>
+</tr>
+<tr>
+<td>Candidate.address.state</td>
+<td>Contact.MailingState</td>
+</tr>
+<tr>
+<td>Candidate.address.zip</td>
+<td>Contact.MailingPostalCode</td>
+</tr>
+<tr>
+<td>Candidate.phones.cell_phone</td>
+<td>Contact.MobilePhone</td>
+</tr>
+<tr>
+<td>Candidate.dates.hired</td>
+<td>Contact.Hire_Date__c</td>
+</tr>
+<tr>
+<td>Candidate.dates.review</td>
+<td>Contact.Review_Date__c</td>
+</tr>
+<tr>
+<td>Candidate.dates.terminated</td>
+<td>Contact.Separation_Date__c</td>
+</tr>
+<tr>
+<td>Candidate.dates.birthday</td>
+<td>Contact.Birthdate</td>
+</tr>
+<tr>
+<td>Candidate.dates.birthday (month)</td>
+<td>Contact.Birth_Month__c</td>
+</tr>
+<tr>
+<td>Candidate.dates.birthday (day)</td>
+<td>Contact.Birth_Date__c</td>
+</tr>
+<tr>
+<td>Candidate.default_job.name</td>
+<td>Contact.HPG_Title__c</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01HXV5081PWKBEKH540JBRRMQM">UKG Ready Candidate Attributes</h2>
+<p>Refer to the following table for the UKG Ready candidate attributes:</p>
+<table border="1">
+<thead>
+<tr>
+<th>UKG Ready Attribute Name</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>A unique identifier for the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>employee_id</td>
+<td>The employee ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>first_name</td>
+<td>The employee's first name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>last_name</td>
+<td>The employee's last name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>primary_email</td>
+<td>The employee's primary email address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>address.address_line_1</td>
+<td>The first line of the employee's address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>address.address_line_2</td>
+<td>The second line of the employee's address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>address.address_line_3</td>
+<td>The third line of the employee's address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>address.country</td>
+<td>The employee's country of residence</td>
+<td>string</td>
+</tr>
+<tr>
+<td>address.city</td>
+<td>The employee's city of residence</td>
+<td>string</td>
+</tr>
+<tr>
+<td>address.state</td>
+<td>The employee's state of residence</td>
+<td>string</td>
+</tr>
+<tr>
+<td>address.zip</td>
+<td>The employee's ZIP or postal code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>phones.cell_phone</td>
+<td>The employee's cell phone number</td>
+<td>string</td>
+</tr>
+<tr>
+<td>dates.hired</td>
+<td>The employee's hire date</td>
+<td>string</td>
+</tr>
+<tr>
+<td>dates.review</td>
+<td>The employee's review date</td>
+<td>string</td>
+</tr>
+<tr>
+<td>dates.terminated</td>
+<td>The employee's termination date</td>
+<td>string</td>
+</tr>
+<tr>
+<td>dates.retired</td>
+<td>The employee's retirement date</td>
+<td>string</td>
+</tr>
+<tr>
+<td>dates.birthday</td>
+<td>The employee's birth date</td>
+<td>string</td>
+</tr>
+<tr>
+<td>default_job.id</td>
+<td>The employee's job ID</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01J7J8PJMMQ03F0EAVX6TSNR0P">Salesforce Contacts</h2>
+<p>Refer to the following table for the Salesforce contact attributes:</p>
+<table border="1">
+<thead>
+<tr>
+<th>Salesforce Attribute Name</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Id</td>
+<td>A unique identifier for the contact</td>
+<td>string</td>
+</tr>
+<tr>
+<td>UKG_ID__c</td>
+<td>The UKG ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>UKG_Employee_ID__c</td>
+<td>The employee ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>The contact's email address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>FirstName</td>
+<td>The contact's first name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>LastName</td>
+<td>The contact's last name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>AccountId</td>
+<td>The account ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>RecordTypeId</td>
+<td>The record type ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>MailingStreet</td>
+<td>The contact's mailing street address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>MailingCountry</td>
+<td>The contact's mailing country</td>
+<td>string</td>
+</tr>
+<tr>
+<td>MailingCity</td>
+<td>The contact's mailing city</td>
+<td>string</td>
+</tr>
+<tr>
+<td>MailingState</td>
+<td>The contact's mailing state</td>
+<td>string</td>
+</tr>
+<tr>
+<td>MailingPostalCode</td>
+<td>The contact's mailing postal code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>MobilePhone</td>
+<td>The contact's mobile phone number</td>
+<td>string</td>
+</tr>
+<tr>
+<td>HPG_Email__c</td>
+<td>The contact's email address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Hire_Date__c</td>
+<td>The contact's hire date</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Review_Date__c</td>
+<td>The contact's review date</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Separation_Date__c</td>
+<td>The contact's separation date</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Birthdate</td>
+<td>The contact's birth date</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Birth_Month__c</td>
+<td>The contact's birth month</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>Birth_Date__c</td>
+<td>The contact's birthday of the month</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>HPG_Title__c</td>
+<td>The contact's job title</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h1 id="01J7J8NZBQRC3RCB2QF01GPYG9">Run Script Synchronization</h1>
+<p>You can set event or schedule triggers to run the script synchronization. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Trigger</a> section.</p>
+<p>After the script synchronization is successfully executed, Aquera syncs the candidates created in UKG Ready as contacts in Salesforce.</p>
+  </div>
+</body>
+</html>

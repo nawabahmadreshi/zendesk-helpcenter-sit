@@ -1,0 +1,247 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User Integration Setup Guide - ADP Workforce Now to Active Directory</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>User Integration Setup Guide - ADP Workforce Now to Active Directory</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01GCH73BK6BCVZG3X3HQVF43WZ">Overview</h1><p>Aquera provides a platform that allows you to scale complex data management by automating the integration of users from the ADP Workforce Now application with the Active Directory application.</p><p>This guide covers the end-to-end tasks involved in setting up a <em>User</em> <em>Integration</em> to sync users in ADP Workforce Now with Active Directory.</p><h1 id="01HC9PRY1AXWFFRR4QSM448AYF"><span lang="EN-US">Prerequisites</span></h1><p>The following are the prerequisites:</p><h2 id="h_01GCH73R80SKR55S5R76D50VKC">ADP Workforce Now</h2><p>Perform the following steps for the ADP Workforce Now prerequisite:</p><ol>
+<li data-list-item-id="ef9720c87902f2603d77c8478d109e7fa">Log in to the <a href="https://apps.adp.com/en-US/pages/why-marketplace" rel="noopener noreferrer" target="_blank">ADP Marketplace</a> as an ADP Admin.</li>
+<li data-list-item-id="e49f5b8c2d2714b62d2f04a1bfb439ccc">Purchase Aquera's connector for the ADP Workforce Now® edition from the <a href="https://apps.adp.com/en-US/apps/234247/aquera-identity-directory-sync-bridge-for-adp-workforce-now/editions" rel="noopener noreferrer" target="_blank">ADP Marketplace</a>. The connector to be selected from this page must be based on the number of employees (users).</li>
+<li data-list-item-id="ec87438d012d2fe0e1f1089f2ea9726ee">After you purchase the connector app on the ADP Marketplace, you must give appropriate permissions to the app so that the app will have authorized access to your organization's data. Aquera generates a token to make the connection.<ul>
+<li data-list-item-id="e353be4c867b7eee327acfea03905a900">To authorize Aquera for data access to your ADP instance, navigate to <strong>My Apps &gt; Aquera</strong> in the Marketplace.</li>
+<li data-list-item-id="e117119a038612dffc3e58cb73e4c68d4">For details on the required permissions and how to set them up, refer to the following sections in the ADP Workforce Now Configuration Guide:<ul>
+<li data-list-item-id="ee9833d3e3c4fb4691d2ec4cbc432335a"><a href="https://support.aquera.com/hc/en-us/articles/360017945933-ADP-Workforce-Now-Configuration-Guide#h_01EFZYGV8QK26JAD3TJ9B7BBXR" rel="noopener noreferrer" target="_blank">Customising Permissions in the Workforce Now Portal</a></li>
+<li data-list-item-id="ed4597f32497590d400e9b0b546e67375"><a href="https://support.aquera.com/hc/en-us/articles/360017945933-ADP-Workforce-Now-Configuration-Guide#h_01EE0DTBX2A70D95SNSKDEY1V7" rel="noopener noreferrer" target="_blank">ADP Workforce Now Permissions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol><p>The following screen is displayed in the ADP Marketplace when the authorization is successful:</p><p><img alt="Authorize.png" src="./assets/19e34b8434640d55.bin"/></p><h2 id="h_01HEAR7YJSAPE2D5G4ARJ90YNB">Tenant Account in the Aquera Admin Portal</h2><p>You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/"><span>https://admin.aquera.io</span></a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<span> </span></p><h2 id="h_01GCH74J20WN73QRST0HVMB0JV">Active Directory</h2><p>Determine the architecture to be followed for setting up the communication between Aquera and the Windows Active Directory Domain Controller. Refer to <a href="https://support.aquera.com/hc/en-us/articles/360052111073" rel="noopener noreferrer" target="_blank">this Aquera guide</a> for detailed information on the different architectural approaches.</p><p>Based on the selected approach, the following procedures may have to be performed:</p><ul>
+<li data-list-item-id="e25b1762012401f0cb5c9f0ed7e07e0b9">A Windows Server must be ready to deploy the Aquera Agent onto the server where the Domain Controller is present. For instructions on installing the Aquera Agent, refer to the <a href="https://support.aquera.com/hc/en-us/articles/360010090513" rel="noopener noreferrer" target="_blank">Aquera Agent Installation and Configuration Guide</a>.</li>
+<li data-list-item-id="e096142007a01677df9ede098fef878d2">A firewall must be set up to allow communication with Aquera.</li>
+<li data-list-item-id="e47e3ee0a7cc1fe19e1071fc996f1df2c">The static IP address of Aquera needs to be whitelisted. Contact the <a href="mailto:support@aquera.com" target="_self">Aquera Support team</a>.</li>
+</ul><p>To allow Aquera to make updates to Active Directory (for creating, updating, and deleting users), LDAPS communication to Active Directory needs to be set up, which requires a TLS connection. Active Directory Certificate Services must be enabled for this. To install Active Directory Certificate Services, visit the <a href="https://docs.microsoft.com/en-us/windows-server/networking/core-network-guide/cncg/server-certs/install-the-certification-authority" rel="noopener noreferrer" target="_blank">Microsoft website</a>.</p><h1 id="h_01F6EH0MBC837JQFE5ZJRW7P94">Configuring Applications in the Aquera Admin Portal</h1><p>The following application connectors must be added and configured in the Aquera Admin portal:</p><ul>
+<li data-list-item-id="ef64f060246b33c78632d54bb51272442">ADP Workforce Now: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li data-list-item-id="e7582b7e60671827c56ba58b13521cfe4">Active Directory: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory Configuration Guide</a> for details.</li>
+</ul><h1 id="h_01HDR02D8VKY6N875CFGA50C7Q">Setting Up Aquera Integration</h1><p>Aquera's integration provides the automatic integration of users from the ADP Workforce Now application to the Active Directory application. To perform this integration, you must set up a <em>User</em> <em>Integration</em> in the Aquera Admin portal.</p><p>The following steps are involved in the<em> User Integration</em> setup:</p><ul>
+<li data-list-item-id="eb73677533a8bd38e7ba87581285c5744"><a href="#h_01HEVYNFX4M0J53M7TKANT7MVW">Creating Integration</a></li>
+<li data-list-item-id="ee8432304f345ee50094d26fbb27ace98"><a href="#h_01HEVYNFX45CVGKY17WJQWC4TR">Configuring Integration</a></li>
+<li data-list-item-id="e26d0af95b7f4278b48cf5a1d6e9956db"><a href="#h_01HEVYQERSZEDNRW6K89WWNQQ2">Mapping of Attributes</a></li>
+<li data-list-item-id="e7ade6694175ead2a47a52a8a6900c327"><a href="#h_01HEVYR00BH6326R1EFMBZ8Y5P">Adding and Using Tables in Integration</a></li>
+<li data-list-item-id="e5449c73c2bb226e4334972e6686ef8ab"><a href="#01HEVYSVYDVYH60PCJ3K2JC3B3">Scheduling Integration Run</a></li>
+</ul><h2 id="h_01GCH7599TNWW9G9Z6BQ57CH30">Considerations</h2><p>The following are the important points to be considered before setting up the <em>User</em> <em>Integration</em>:</p><ul>
+<li data-list-item-id="e2f3f94d371a48571b9645b1b6ca779a9">Define the naming convention format for the User Principal Name (UPN) in Active Directory. This must be mapped to the Active Directory's <em>userName</em> attribute in the <strong>Attribute Map</strong>. Ensure to provide the <em>userName</em> with a length of less than 20 characters due to the Active Directory limitation for the <em>userName</em>. Otherwise, the user account will not be created in Active Directory.</li>
+<li data-list-item-id="e192a168b98ab35156727412f1ecd68ac">Define the naming convention format for the SAM Account Name in Active Directory. This must be mapped to the Active Directory's IAN attribute <em>sAMAccountName </em>in the <strong>Attribute Map</strong>.</li>
+<li data-list-item-id="e2e6ea39cc866cbc5f4f48913a13115ba">Decide the fields to be populated in the Active Directory. To populate these fields in Active Directory, you must provide attribute maps for the corresponding user attributes of Active Directory in the <strong>Attribute Map</strong>. </li>
+<li data-list-item-id="e2a1a0f0694daf0a8c9d59f42847f1d86">Decide whether the work email is to be retrieved from the ADP Workforce Now application or be generated by the integration to update in Active Directory. This must be mapped to the Active Directory's attribute <em>emails[work].value</em> in the <strong>Attribute Map</strong>.</li>
+<li data-list-item-id="ef491d7c39c3b4ef9bf81e5652285097b">Define the matching expression to match user records from ADP Workforce Now with the user records in Active Directory. This must be provided as the <strong>Match Expression </strong>in the<strong> Configuration</strong>.</li>
+<li data-list-item-id="e409f5221c4f0ddcb8e81f8f0a6cb7790">Define the Organizational Unit (OU) where the users will be created in Active Directory. This must be mapped to the Active Directory's IAN attribute <em>distinguishedName </em>in the <strong>Attribute Map</strong>.</li>
+</ul><h2 id="h_01GCH75GNY03EMBKVBNR8C3BDH">General Analysis</h2><p>The following analyses need to be performed before setting up the <em>User</em> <em>Integration</em>:</p><ul>
+<li data-list-item-id="ed0813a2c64e95fd3e0d7e1833b356798">Fill out the <a href="https://support.aquera.com/hc/article_attachments/18971106103831" rel="noopener noreferrer" target="_blank">Mapping Template</a> attached with this guide for mapping ADP Workforce Now user attributes to Active Directory user attributes. The most common attributes are mapped in the attached template. You can add more attribute maps to the sheet as per your requirement. This sheet can be used as a reference when doing the <strong>Attribute Map</strong> in the <em>User</em> <em>Integration</em>.</li>
+<li data-list-item-id="ef1c4e48ddf3176c2346a8a718f0d50b5">JavaScript expressions can be used in the <strong>Attribute Map</strong> to create User Principal Names and SAM Account Names without duplicates or errors. In the expressions, you can use inbuilt methods such as <strong>toNormalizedDiacritics()</strong> and <strong>toSAMAccountName()</strong> for this purpose. You can also use keywords such as <strong>%ATTEMPT</strong> and <strong>%USEQ</strong> to avoid duplicates. Refer to the <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Integration Expressions - Keywords, Methods, and Functions Guide</a> for details.</li>
+<li data-list-item-id="e3ac8af189af9863599a6aaae1d8e4c7b">Analyze the existing users in ADP Workforce Now and Active Directory before setting up the integration. You can also analyze the existing groups of users in Active Directory. Refer to the <a href="#h_01F6EGQ8TRT9E064C1YJVS653G" target="_self">Appendix</a> for details.</li>
+</ul><h2 id="h_01HEVYNFX4M0J53M7TKANT7MVW">Creating a User Integration</h2><p>Perform the following steps to create a user integration:</p><ol>
+<li data-list-item-id="e40156329f26115525adf99582fd74d9c">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e50ba0e32c5359fb870a7ecdc2379b577">Navigate to <strong>Integrations </strong>and click<strong> Create Integration</strong>. </li>
+<li data-list-item-id="e35545c3847dc74812ed056b352deb52c">Select <strong>User</strong> <strong>integration</strong> from the list of integration types.</li>
+<li data-list-item-id="e3d5f6c0c6792fb76228d4d574e89ae07">Enter a name for the integration in the <strong>Create New Integration </strong>pop-up window.</li>
+<li data-list-item-id="e7e043df3a937f0f499719bbc629a3c11">Click <strong>Continue</strong>. A new page with the fields and tabs to configure the integration is displayed.</li>
+<li data-list-item-id="e2f2f5090cd671d2925d53ab23a2c13db">Select the ADP Workforce Now connector as the <strong>Source Application</strong>.</li>
+<li data-list-item-id="e180cc51709bcfdb4171c5f85ed98b66f">Select the Active Directory connector as the <strong>Target Application</strong>.</li>
+<li data-list-item-id="eb4669d6e841fe33980e2090e06dbc927">Click <strong>Create</strong> to create the integration.</li>
+</ol><h2 id="h_01HEVYNFX45CVGKY17WJQWC4TR">Configuring the Integration</h2><p>You can set the following configurations in the Integration:</p><ul>
+<li data-list-item-id="ea201674640d166d2b4759a1d91213179">Set the administrative email addresses in the <strong>Admin Email List</strong> and configure the required options in the <strong>Admin Email Options </strong>to receive email notifications for success/failures during the integration run.<br/> </li>
+<li data-list-item-id="eb1b22ede3178c543fc6260df5e7c33a1">Set the email addresses of the IT admin or the manager in the <strong>Creation Distribution List</strong> and <strong>Deactivation Distribution List</strong> to receive user creation notification emails and user deactivation notification emails respectively.</li>
+<li data-list-item-id="e768809dfd0216e54da4514e65bca0b38">Select the <strong>Enable Group Management </strong>checkbox to manage the groups in the Active Directory. Group management can be done by setting group rules or through attribute mapping. Refer to the <a href="../Managing-Groups-in-User-Integrations/" rel="noopener noreferrer" target="_blank">Managing Groups in User Integrations Guide</a> for details on how to manage groups.<ul><li data-list-item-id="edd0d7e844d740a4dc00ba1121c90d78b"> To retrieve only the supervisors/managers from ADP and add them to a group, you can create the following group rule with the basic condition in the <strong>Group Rules</strong> tab:<br/><em><strong>SOURCE[IAN].managerEmail Equals true</strong></em><br/><img alt="GroupRule-ADP-AD-sync.png" height="542" src="./assets/3c27e3cf61713529.bin" width="455"/><br/>Select the required group from the dropdown list in the <strong>Then</strong> section.<br/> </li></ul>
+</li>
+<li data-list-item-id="e5eb6de687bc9ea462a46f47fe8d57079">Set the <strong>Source SCIM Filter</strong> to filter the users during import from ADP Workforce Now. For example, you can filter users using the <em>userName</em> attribute:<br/><img alt="ADP-AD-Source-SCIM-Filter.png" src="./assets/859fe7919e7e0e7d.bin"/>
+</li>
+</ul><p>Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Integration Setup Guide</a> for further details on the configuration.</p><h2 id="h_01HEVYQERSZEDNRW6K89WWNQQ2">Mapping of Attributes</h2><p>You can map source attributes from ADP Workforce Now to the target attributes in Active Directory through the <strong>Attribute Map</strong> tab.</p><p>By default, attributes with similar names will be mapped from the source application to the target application. For example, the integration automatically maps <em>SOURCE.userName</em> to <em>userName</em> in the target. However, you can edit the source attribute field to include the source attribute that should be mapped to the corresponding target attribute. </p><p>Ensure to provide an attribute map for the required attributes of Active Directory<em>.</em> For example, you need to provide a source attribute or expression for ADP Workforce Now to map to Active Directory's <em>[IAN].distinguishedName </em>attribute:</p><p><img alt="distinguishedname.png" src="./assets/a25b89f2c890d020.bin"/></p><p>For further details on Attribute Mapping, refer to the <a href="../Attribute-Mapping-in-Integrations/" rel="noopener noreferrer" target="_blank">Attribute Mapping in Integrations</a> guide.</p><h2 id="h_01HEVYR00BH6326R1EFMBZ8Y5P">Adding and Using Tables in Integration</h2><p>You can use tables to create lookup tables based on location and department values from ADP Workforce Now. For details on how to add tables and use them in integrations, refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide.</p><h2 id="01HEVYSVYDVYH60PCJ3K2JC3B3">Scheduling Integration Runs</h2><p>You can set the frequency by which a integration can be run. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01G2MCT423GNZKQN0RS2CTFK60">Integration Scenarios</h1><p>You may need to update the configurations or the attribute mappings for the following scenarios:</p><h2 id="h_01GK1TQMH4YB70PMFT3H3TWXRR">Creating a Normal Account for the User in Active Directory</h2><p>To create a user of type <em>NORMAL_ACCOUNT</em> in Active Directory, set the attributes mapping as follows:</p><p>Enter <em><strong>512</strong></em> as the source attribute expression and map it to the <em><strong>[IAN].userAccountControl </strong></em>attribute of AD. Set the mapping criterion as <em>Map on Create</em>.</p><p><img alt="userAccountControl.png" src="./assets/9e176b291757cedc.bin"/></p><p><strong>Note</strong>: <em>512</em> is the decimal value corresponding to the <em>NORMAL_ACCOUNT</em> property flag in Active Directory. For all property flags and the corresponding decimal values, refer to the <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties#list-of-property-flags" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p><h2 id="h_01GCH776CPY5BDXNXGVNAVFTGR">Escaping Special Characters in OUs and DNs in the Active Directory</h2><p>When using the Active Directory connector prior to version 4, it is required to escape any special characters in OUs and DNs in the expressions by using a double-backslash before the special character. For example, if the OU name is<em> #Terminated</em>, mention it in the expression as \\<em>#Terminated</em>. </p><p><em><strong>DEST[IAN].distinguishedName.split(",")[0] + ",OU=\\#Terminated, DC=local"</strong></em></p><p>Double-backslash must be introduced before any of the following special characters:</p><figure><table><tbody>
+<tr>
+<td>Comma</td>
+<td>,</td>
+</tr>
+<tr>
+<td>Backslash character</td>
+<td>\</td>
+</tr>
+<tr>
+<td>Pound sign (hash sign)</td>
+<td>#</td>
+</tr>
+<tr>
+<td>Plus sign</td>
+<td>+</td>
+</tr>
+<tr>
+<td>Less than symbol</td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td>Greater than symbol</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>Semicolon</td>
+<td>;</td>
+</tr>
+<tr>
+<td>Double quote (quotation mark)</td>
+<td>"</td>
+</tr>
+<tr>
+<td>Equal sign</td>
+<td>=</td>
+</tr>
+<tr>
+<td>Leading or trailing spaces</td>
+<td> </td>
+</tr>
+</tbody></table></figure><p><strong>Note</strong>: For Active Directory connector version 4 onwards, the connector handles escaping the special characters for OUs and DNs used in the integration expressions. Hence, when upgrading to the Active Directory connector version 4 or above, you need to remove any expressions set in the existing integration to escape the special characters.</p><h2 id="h_01GCH77G2CVDAWG68GJJTHSAR6">Prompting for Password Change at First Login to Active Directory</h2><p>To make it mandatory for the new users in Active Directory to change their password on their first login, map the Active Directory attribute <em><strong>pwdLastSet</strong></em> to <em><strong>0</strong></em> with the mapping option of <strong>Map on create</strong> only. If this mapping is not done and when users sign into their account for the first time, they will not be prompted for password change.</p><p><img alt="pwdlastset.png" src="./assets/8816be3fe981d315.bin"/></p><p>To prompt the existing users for a password reset, set the mapping option as <strong>Map on Create and Update</strong>.</p><h2 id="h_01GK1TRC4FN2W61KBF4056WEJR">Creating a Unique Email Address for the Active Directory User</h2><p>The following is a sample expression that can be used in the attribute mapping to create a unique email ID for a user in Active Directory based on the user's name change in the ADP Workforce Now application.</p><!-- Code Block--><div>
+<pre><code>
+let attempt = "%ATTEMPT" || 1; (attempt &lt;= SOURCE.name.givenName.length) ? (SOURCE.name.givenName.substring(0,attempt) + SOURCE.name.familyName + "@example.com").replace(/[[]`{};:']/gm, "").toLowerCase().toEmail().toNormalizedDiacritics() : SOURCE.name.givenName + SOURCE.name.familyName + (attempt) + "@example.com").replace(/[[]`{};:']/gm, "").toLowerCase().toEmail().toNormalizedDiacritics()
+</code></pre>
+<div><button> <span></span> Copy</button></div>
+</div><h2 id="h_01GCHNCS0RKTCCTSD497MTFDCY">Populating the Phone Number Value of the ADP User</h2><p>The following expression can be used in the attribute mapping to populate a phone number value of the ADP Workforce Now user:</p><ul>
+<li data-list-item-id="ecacf6bd29a89a0fff16e5e1952cc720e">populates the home phone number value if the home phone number is available. </li>
+<li data-list-item-id="ee70432890281137d54400f323842ded9">populates the mobile-home phone number value if the home phone number is not available. </li>
+</ul><!-- Code Block--><div>
+<pre><code>
+SOURCE.phoneNumbers[home] &amp;&amp; SOURCE.phoneNumbers[home].value || SOURCE.phoneNumbers[mobile-home].value;
+</code></pre>
+<div><button> <span></span> Copy</button></div>
+</div><h2 id="h_01GK1CGW9HV1R3WFS69YDC3JW6">Creating Users in Active Directory</h2><p> To create users through the Active Directory connector, use one of the following approaches:</p><ul>
+<li data-list-item-id="ed099676ce13626fe15abc9792868038e">Use a secure LDAPS connection with port 636:  A password must be provided to create a user.</li>
+<li data-list-item-id="e19dcf8027c4e91df598742e859cfc032">Use a non-SSL connection with port 389: Create an active user without a password and the <em>IAN.userAccountcontrol </em>attribute should be set to <em>544</em>. In this approach, a password cannot be set when creating the user.</li>
+</ul><h2 id="h_01GXZAP67MR8AP1THWGBR79210">Setting the User Password in Active Directory</h2><p>Active Directory requires a secure LDAPS connection (port 636) to set or change user passwords. This is an Active Directory’s security requirement. Random generation of passwords when creating new users does not work without the use of LDAPS. Also, setting the password through attribute mapping requires a secure LDAPS connection.</p><p><strong>Note:</strong> Active Directory does not allow you to update the user password when the connection is non-SSL (port 389).</p><p>Active Directory imposes strength requirements on a user password and the requirements vary from one instance to another.</p><h1 id="01HEVYECJWCM872KVWKHSRGB9C">Running the Integration</h1><p>Perform the following steps to successfully run the integration<em>:</em></p><ul>
+<li data-list-item-id="ea48b462fae77a9c29735c4d1d374c408">Run the integration in <strong>Report Only</strong> mode and determine if the correct user data is updated in Active Directory. If the user data is not correctly updated, change the <strong>Match</strong> <strong>Expression</strong> to correctly match users and/or update the data, for example, employeeNumber, in the Active Directory.</li>
+<li data-list-item-id="e33f75df781a3bca51daf080e352db878">Increment the <strong>Update Limit</strong> (maximum number of user records to be updated in a single run) for each run in <strong>Report Only</strong> mode to ensure that the user records are updated correctly when the records count is more.</li>
+<li data-list-item-id="e05964b7b674a5ada685260d8992eea76">Based on your analysis and considerations,<ul>
+<li data-list-item-id="ec9ae145097c5d7bf81605bb97082f147">Translate the logical maps into attribute mapping</li>
+<li data-list-item-id="e517cbcd4494c11e200ea5aa5f412fad2">Translate the logical OU/container locations into tables and expressions</li>
+<li data-list-item-id="eb6c3d6d34cd8027f4b77a7a56c2f2c72">Translate the logical group assignment rules into Group Rules</li>
+</ul>
+</li>
+<li data-list-item-id="e3bef5dec0072d3ae19a7afc58b89ffb9">Modify the attribute mapping and repeat the process until the user data is correctly updated.</li>
+<li data-list-item-id="ed14f117e2977426ae1b1796994cacd6c">Monitor the integration logs thoroughly to ensure that no errors are encountered. Modify the integration configurations to fix any errors.</li>
+<li data-list-item-id="e4e7fe1d5fef238677e450fa285d32045">Once all users are synced, user creations and updates are based on the incremental changes in ADP Workforce Now.</li>
+<li data-list-item-id="eacb55d8f18d6d1a599fb14710b69cd34">ADP Workforce Now does not return an event when a user's manager is removed. This is a limitation of the ADP Workforce Now.<span>  </span>Hence during incremental imports, when a user’s manager is removed from the ADP Workforce Now, the manager attribute values will not be removed from Active Directory even if the <strong>Map Manager</strong> checkbox is selected. However, during full imports, the user’s manager will be removed from Active Directory.</li>
+</ul><p>For details on the actions that can be performed on an integration, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations</a> guide. For details on the integration logs, refer to the <a href="https://support.aquera.com/hc/en-us/articles/11240545030935" rel="noopener noreferrer" target="_blank">Integration Logs Guide</a>.</p><h1 id="h_01F6EGQ8TRT9E064C1YJVS653G">Appendix</h1><p>This section provides the scripts that may be used by the Customer Support team to analyze the existing users in ADP Workforce Now and Active Directory before setting up the integration. It also provides the script to analyze the existing groups of users in Active Directory.</p><p>You can run the scripts using Aquera's integration solution using javascripts<em>.</em> In this integration, select the ADP Workforce Now and Active Directory connectors and set the corresponding variable names. In the script, the variable names must be used to refer to the selected application connectors.</p><p>For details on configuring the integration using scripts<em>,</em> refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Integration Using Scripts Guide</a>. For details on the functions and methods supported in the script and how to work with the scripts, refer to the <a href="../Working-With-Integration-Scripts/" rel="noopener noreferrer" target="_blank">Working With Integration Scripts</a> guide.</p><p>A few sample scripts are provided here for your reference. The scripts may vary based on your use case and the attributes to be retrieved for analysis.</p><h2 id="h_01GCH78X852JY2ME3NTPSHYNAY">Analyzing the Users in ADP Workforce Now</h2><p>You can use the following sample script in<em> integration</em> for generating a report from ADP Workforce Now to analyze the existing users' status, location, department, and so on.</p><!-- Code Block--><div>
+<pre><code>let adp_users = ADP.getUsers();
+
+let i = 0;
+
+log.info('ADP ID,ADP STATUS,ADP EMPNO,ADP GIVENNAME,ADP FAMILYNAME,ADP WORK EMAIL,ADP LOCATION CODE,ADP JOBCODE,ADP DEPT');
+
+for (i = 0; i &lt; adp_users.length; i++) {
+
+    let adp_id = adp_users[i].id;
+
+    let adp_status = adp_users[i][IAN].status;
+
+    let adp_emp = adp_users[i][ENT].employeeNumber;
+
+    let adp_locationcode = adp_users[i][IAN].LocationCode || '';
+
+    let adp_job = adp_users[i][IAN].jobCode || '';
+
+    let adp_dept = adp_users[i][IAN].departmentCode || '';
+
+    let adp_given = adp_users[i].name.givenName;
+
+    let adp_family = adp_users[i].name.familyName;
+
+    let adp_work = adp_users[i].emails &amp;&amp; adp_users[i].emails.find(x =&gt; x.type == 'work') &amp;&amp; adp_users[i].emails.find(x =&gt; x.type == 'work').value || '';
+
+    log.info('"' 
+
+    + adp_id + '","' 
+
+    + adp_status + '","'
+
+    + adp_emp + '","'
+
+    + adp_given + '","' 
+
+    + adp_family + '","'
+
+    + adp_work + '","'
+
+    + adp_locationcode + '","'
+
+    + adp_job + '","'
+
+    + adp_dept + '"');
+
+}
+</code></pre>
+<div><button> <span></span> Copy</button></div>
+</div><h2 id="h_01GCH795ZDVHTFMC5DN2RNNS9E">Analyzing the Users in Active Directory</h2><p>You can use the following sample script in <em>Integration</em> for generating a report from Active Directory to analyze the existing users' status, distinguished name, SAM account, and so on.</p><!-- Code Block--><div>
+<pre><code>
+log.info('AD ID,AD ACTIVE,AD EMPNO,AD GIVENNAME,AD FAMILYNAME,AD USERNAME,AD SAMACCOUNT,AD DN');
+
+for (let user of AD.getUsers()) {
+
+    log.info('"'
+
+    + user.id + '","'
+
+    + user.active + '","'
+
+    + (user[ENT] &amp;&amp; user[ENT].employeeNumber || '') + '","'
+
+    + user.name.givenName + '","'
+
+    + user.name.familyName + '","'
+
+    + user.userName + '","'
+
+    + user[IAN].sAMAccountName + '","'
+
+    + user[IAN].distinguishedName.split(',').slice(1).join(',') + '"');
+
+}
+</code></pre>
+<div><button> <span></span> Copy</button></div>
+</div><h2 id="h_01GCH79MA803REX2ZV1QZDBD9Q">Analyzing the Groups in Active Directory</h2><p>You can use the following sample script in<em> integration</em> for generating a report from Active Directory to analyze the groups of existing users in Active Directory:</p><!-- Code Block--><div>
+<pre><code>
+let ad_users = AD.getUsers();
+
+let i = 0;
+
+log.info('AD ID,GROUP NAME');
+
+for (i = 0; i &lt;ad_users.length; i++) {
+
+let groups = ad_users[i].groups;
+
+if (groups) {
+
+for (let group of groups) {
+
+log.info(ad_users[i].userName + ',' + group.display);
+
+}
+}
+}
+</code></pre>
+<div><button> <span></span> Copy</button></div>
+</div><p> </p><p> </p>
+  </div>
+</body>
+</html>

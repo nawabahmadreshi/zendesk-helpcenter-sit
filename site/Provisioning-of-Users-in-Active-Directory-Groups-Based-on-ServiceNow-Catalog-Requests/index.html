@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Provisioning of Users in Active Directory Groups Based on ServiceNow Catalog Requests</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Provisioning of Users in Active Directory Groups Based on ServiceNow Catalog Requests</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KEXX15T30EC7JT4CJ6DQGYVY">Overview </h1><p>The Aquera platform enables scalable, automated data management across enterprise applications. Through seamless integrations, it helps organizations eliminate manual processes, ensure consistency, and optimize workflows across complex IT infrastructures.</p><p>The <strong>ServiceNow / Active Directory - Group Management</strong> integration retrieves all the ServiceNow Catalogs that have been created for adding or removing users in Active Directory groups. It then adds or removes those users in the Active Directory groups and changes the status of the ServiceNow catalog to Closed. </p><h2 id="h_01KEY2HRJ0M1SNH10YSRF63QF4">Key Functions</h2><p>The <strong>ServiceNow / Active Directory - Group Management</strong> integration performs the following key functions:</p><ul>
+<li data-list-item-id="e873fc6d2188d7702e72756d2b470196d">Retrieves all ServiceNow Catalogs that have been approved</li>
+<li data-list-item-id="e568437a6f94f699253a6784d3b14cbe1">Looks for specific fields in each catalog to identify the users that must be added or removed in Active Directory groups</li>
+<li data-list-item-id="eecd276be647fc21f1fb3ad39fde72660">Identifies the type of operation (<em>Add</em> or <em>Remove</em>) to be performed for those users in the Active Directory group</li>
+<li data-list-item-id="eda1ce51c2ee28a2f2caa012d3cf61649">Identifies the group in which the operation needs to be performed</li>
+<li data-list-item-id="e87b2c1a5e753fb21b3b72eae22eaa1cd">Performs the operation (<em>Add</em> or <em>Remove</em> users) in the specified groups</li>
+<li data-list-item-id="e530c09200f075935bdc485cb7231e8d3">Changes the status of the ServiceNow Catalog to <em>Closed</em>, if the operation is successful for all the users. If the operation has failed for any user, the integration does not modify the status of the Catalog.</li>
+<li data-list-item-id="e0712f8583baad5c6343dbf68c2539d18">Generates audit logs, reports, and analytics.</li>
+<li data-list-item-id="e093f42933048314b80eaf54b4c72001f">Sends an email notification to admins for each integration run.</li>
+</ul><h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ed1bfc5436127aa6f29dcee3d02e7d7fb">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU or AU region, use the following URL to register:<ul>
+<li data-list-item-id="e25c21997124c4bb064a333985e7f4aa3">
+<a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a> for EU region</li>
+<li data-list-item-id="e8b4eedca13d310da41e75f5d539339fb">
+<a href="https://admin.au.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.au.aquera.io</a> for AU region</li>
+</ul>
+</li>
+<li data-list-item-id="e595eeefaafaa8eafe43cb47723651cd5">
+<strong>Configure Connectors in the Aquera Admin Portal:</strong> You need to configure the following connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e8e17d3598b51711b38606a8947d61f16">
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details. </li>
+<li data-list-item-id="ec5c4cbbefe5f9f7beb27deda46f7b326">
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/26093919567255" rel="noopener noreferrer" target="_blank">Active Directory Version 8 Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01KEXYT4S6PBGE446BGJJST3YJ">Integration Setup</h1><p data-end="188" data-start="23">This section describes the configuration steps required to set up <strong>ServiceNow / Active Directory - Group Management</strong> integration in Aquera.</p><h2 id="h_01KEXYT4S7MBFETFZYMR9QKS0M">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ed0f69c03ee29f8f195663cfb0b251d9b">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="ec587a9f1c6781412244b75521e50d72e">Navigate to <strong>Integrations</strong> from the left navigation panel.</li>
+<li data-list-item-id="ed4c461ff2868ff39113620a77ee69e6c">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="ea94c8d649ecd349e40d17abe39931db9">Select <strong>ServiceNow / AD - Group Management.</strong>
+</li>
+<li data-list-item-id="e73ddc50c4730a8cef360d08f3962a991">Enter a <strong>name</strong> and <strong>description</strong> for the integration.</li>
+<li data-list-item-id="e71a3a8d96dcaa7187dda1eddb4bf9c8f">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed.</li>
+</ol><h2 id="h_01KEXYT4SB88DN4JBNV7SJKRSV">Configuration</h2><p data-end="706" data-start="637">The following sections are available under the <strong data-end="701" data-start="684">Configuration</strong> tab:</p><h3 id="h_01KEXYT4SCB0P407JTJS4H9AYE">Applications</h3><p>The <strong>Applications</strong> section allows you to select the following connectors that are required for this integration:</p><ul>
+<li data-list-item-id="e38fea26a89b555c4f95d872a19dd100c">
+<strong>Active Directory:</strong> Select the Active Directory (Version 8) application from the drop-down list.</li>
+<li data-list-item-id="e129f92cb24596873223cb38d02e4645e">
+<strong>ServiceNow</strong>: Select the ServiceNow application from the drop-down list.</li>
+</ul><h3 id="h_01KEXZA87A280KAVD4N7YTWTXY">Parameters</h3><p>The <strong>Parameters</strong> section allows you to customize the integration preferences. These settings control the behavior of the integration and help tailor it to your organization’s requirements.</p><h4 id="h_01KEXZRH1Q7SDB2TMJ59K10QMY">Integration Scenarios </h4><p>Enable the following integration feature:</p><ul><li data-list-item-id="eaa45c4d5e048711273b745906a884e08">
+<strong>Enable Group Management</strong>: Select this checkbox to enable provisioning or deprovisioning users in specific groups in Active Directory based on the details provided in the ServiceNow Catalog requests. You <strong>must</strong> enable this option for the integration. The <a href="#h_01KFAPXA96ETTGW7ZSSS92A5RX"><strong>Group Management</strong></a> section is displayed when you enable this option.</li></ul><h4 id="h_01KEXZVYQPPTTTJJTT6X3K7JMH">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e982f61790fe69e66df62449f512bf637">
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="ed4abf177c19af2c431c6f08b2c68f85e">
+<strong>Enable Logging</strong>: Select this option to generate logs outlining the changes performed by the integration. The <strong>Logging</strong> section is displayed when you enable this option.</li>
+<li data-list-item-id="e8b9827bab4777119db1198df78db6ccd">
+<strong>Enable Report Generation</strong>: Select this option to generate integration reports. The <strong>Reporting</strong> section is displayed when you enable this option.</li>
+<li data-list-item-id="e78e94c380f44463f4af7272922d658a8">
+<strong>Enable Notification:</strong> Select this option to send integration-related notification emails to admins, after each run. The <strong>Notification</strong> section is displayed when you enable this option.</li>
+<li data-list-item-id="eec8c799149c1e7884bcc5418eae29e54">
+<strong>Enable Log Insights</strong>: Select this option to visualize the integration-related metrics. The <strong>Log Insights</strong> section is displayed when you enable this option.</li>
+</ul><h3 id="h_01KFAPXA96ETTGW7ZSSS92A5RX">Group Management</h3><p>This section includes the following options to configure the key functionality of the integration.</p><h4 id="h_01KFAPZDQZT2GDZX62Y58HQEE5">Source Configuration</h4><p>The following are the parameters under the <strong>Source Configuration</strong> section:</p><ul>
+<li data-list-item-id="ea89b30196a7bc4278d45e1831a9148a5">
+<strong>Select Catalog</strong>: Select the ServiceNow catalog from which the requests must be picked by the integration. For example, <em>Add/Remove Users in a Group</em>.  Only the requests that are in the <em>Approved</em> status will be processed by the integration.</li>
+<li data-list-item-id="e17ae50f968410593ba97a73d92348919">
+<strong>Select Source Attribute</strong>: Select the source attribute that must be used by the integration to uniquely identify a user in ServiceNow. This attribute value will be matched against a specific Active Directory attribute to identify the matching user records between ServiceNow and Active Directory. For example, <em>Email</em>
+</li>
+<li data-list-item-id="e58ddede4bae0530e174dd9ed6a894ee5">
+<strong>Select Operation Field</strong>: Select the field in the ServiceNow catalog that the integration must use to identify the type of operation (Add or remove user) to be performed in AD groups.</li>
+<li data-list-item-id="eb39d88fe0cdfc4e38ce59b63bf01ca6b">
+<strong>Select Option for Add User</strong>: Select the value that the operation type field of the catalog must contain for the integration to perform an <em>Add</em> operation. For example, <em>Add</em>. The catalog field that you have selected in the <strong>Select Operation Field</strong> must contain this value for the integration to add a user to an AD group.</li>
+<li data-list-item-id="e453a4b3ba683546b430af9b8f0ac01b3">
+<strong>Select Option for Remove User</strong>: Select the value that the operation type field of the catalog must contain for the integration to perform a <em>Remove</em> operation. For example, <em>Remove</em>. The catalog field that you have selected in the <strong>Select Operation Field</strong> must contain this value for the integration to remove a user from an AD group.</li>
+<li data-list-item-id="e57bf3a11bce50874865a35c4fedd7e16">
+<strong>Select AD Group Field</strong>: Select the field in the ServiceNow catalog that the integration must use to identify the AD group in which the action has to be performed. For example, <em>Group Name</em>
+</li>
+<li data-list-item-id="e17c48ea5996a929be5d4043b4e67cc7d">
+<strong>Select User Field</strong>: Select the section in the ServiceNow catalog where the integration must find the list of users for which the action has to be performed. For example, <em>Users</em>
+</li>
+</ul><h4 id="h_01KFAR68E39GPYW8TV3M3M9SZJ">Target Configuration</h4><p>The following parameter is available under the <strong>Target Configuration</strong> section:</p><ul><li data-list-item-id="ea2458bc537b1ec1d557fe74840e6523d">
+<strong>Select Target Attribute</strong>: Select the target attribute that must be used by the integration to uniquely identify a user in Active Directory. The integration compares the value of the source attribute (selected in <strong>Select Source Attribute</strong>) against this Active Directory attribute value to identify the matching user records between ServiceNow and Active Directory. For example, <em>Mail</em>
+</li></ul><h3 id="h_01K0PGWJSDQBPT1BZ25EAQGNYR">Logging</h3><p>Configure the following settings to customize logging:</p><ul><li data-list-item-id="e3d8ab8529e6ef3ba427bcc1d22fe372f">
+<strong>Log Detail Level</strong>:  Select the desired log detail level from the dropdown menu. <br/>The following are the available options:<ul>
+<li data-list-item-id="eeb686f584d82529447ba040c781e3a9e">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of operations is shown.</li>
+<li data-list-item-id="efc040d697386e49ced8eaa6ce236794d">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="eb99c971025376c00afd309861f901e81">
+<strong>Custom</strong>: Enables you to include or exclude specific attributes. The following option only appears when the log detail level is set to <strong data-end="475" data-start="465">Custom</strong>.<ul><li data-list-item-id="e8085574132763e73c23fc49efb50d13e">
+<strong>Attribute Filter</strong>: Enables you to select whether you want to list the attributes that must be included or excluded. Select <strong>Included Attributes</strong> or <strong>Excluded Attributes</strong>.<ul>
+<li data-list-item-id="e32a9aa9d2777350d66d65a9920eaa1a3">
+<p><strong>Attributes to Include in Logs</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to include in the logs.</p>
+<p>Or</p>
+</li>
+<li data-list-item-id="eb2e6e726c9cca7acb8db2ee39120b531">
+<strong>Attributes to Exclude in Logs</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to exclude from the logs.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="ed90798f6005631e1aac939e18caf6dda">
+<strong>Show Attribute Values</strong>: Select this option if you want to include the attribute values also in the logs. This option is displayed only if you have selected <strong>Full Details</strong> or <strong>Custom</strong> in the <strong>Log Detail Level</strong> field.</li>
+</ul>
+</li></ul><h3 id="h_01KFB01MJEQGEFNBCW2WPM71S7">Reporting</h3><p>Configure the following settings to customize the reports that can be downloaded from the <strong>Execution Timeline</strong> panel:</p><ul><li data-list-item-id="e414fe08d0334f0e439103841cf9ccb1a">
+<strong>Report Detail Level</strong>:  Select the desired report detail level from the dropdown menu. <br/>The following are the available options:<ul>
+<li data-list-item-id="e4ca2cc1080cb4f9adeccefd539b531d8">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of operations is shown.</li>
+<li data-list-item-id="e8ca09b8d55cc1c1a618d0330d15cf292">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e5ff1e253909310f984520382a484463d">
+<strong>Custom</strong>: Enables you to include or exclude specific attributes in the report. The following option only appears when the report detail level is set to <strong data-end="475" data-start="465">Custom</strong>.<ul><li data-list-item-id="ed555a899aedc50522e8e11538e885dcd">
+<strong>Attribute Filter</strong>: Enables you to select whether you want to list the attributes that must be included or excluded. Select <strong>Included Attributes</strong> or <strong>Excluded Attributes</strong>.<ul>
+<li data-list-item-id="ed8ac8d4df6261a1dc15df71c4855e5e4">
+<p><strong>Attributes to Include in Report</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to include in the report.</p>
+<p>Or</p>
+</li>
+<li data-list-item-id="e0db0c090251c20fef4a8c0a628903e0b">
+<strong>Attributes to Exclude in Report</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to exclude from the report.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KFAWRQ877J2T3ZB49RZTHEFD">Notification</h3><p>Configure the following settings for email notifications on integration runs:</p><ul>
+<li data-list-item-id="eeb6f56da2e865828121490d3f9e3e5ef">
+<strong>Send Email to Admin</strong>: Select this checkbox to send notification emails on intgeration runs to Admins.</li>
+<li data-list-item-id="ee8d0a4cb1af551308b299d7aba96818a">
+<strong>Admin Email List</strong>: Enter the list of email addresses of the admins to whom the notification emails have to be sent with the report.</li>
+<li data-list-item-id="e96ddbab2f7a78a0cd01d57501e4d2843">
+<strong>Notification Report Detail Level</strong>:  Select the desired report detail level from the dropdown menu. <br/>The following are the available options:<ul>
+<li data-list-item-id="e59130cb3a2a3a1647d2555090c5d708c">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of operations is shown.</li>
+<li data-list-item-id="e3a88d6ab955d031162dbb59fdc141e4e">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e27422374b317ceba44b17659a29fa66a">
+<strong>Custom</strong>: Enables you to include or exclude specific attributes in the report attached with the notification email. The following option only appears when the report detail level is set to <strong data-end="475" data-start="465">Custom</strong>.<ul><li data-list-item-id="eb5f287be80e80ca2a7a229a62f943c3d">
+<strong>Attribute Filter</strong>: Enables you to select whether you want to list the attributes that must be included or excluded. Select <strong>Included Attributes</strong> or <strong>Excluded Attributes</strong>.<ul>
+<li data-list-item-id="e8f968e2009fa35a5d939f0fec07d42f1">
+<p><strong>Attributes to Include in Report</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to include in the attached report.</p>
+<p>Or</p>
+</li>
+<li data-list-item-id="e9382e407e669abcf5c1870a9e0d0d507">
+<strong>Attributes to Exclude in Report</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to exclude from the attached report.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e422f4c2661f587c5a3da9e39a0809dbd">
+<strong>Show Attribute Values</strong>: Select this option if you want to include the attribute values also in the logs. This option is displayed only if you have selected <strong>Full Details</strong> or <strong>Custom</strong> in the <strong>Log Detail Level</strong> field.</li>
+</ul>
+</li>
+</ul><h3 id="h_01K0PGWJSDXT2R47JVRVF1X192">Log Insights</h3><p>Configure the following settings for Log Insights:</p><ul><li data-end="316" data-list-item-id="e1ba362e7484f2932f11e634ab79ac4f8" data-start="147">
+<strong data-end="185" data-start="147">Log Insights Detail Level:</strong> Select the desired level of details to be displayed on the analytics dashboard in Log Insights.<br/>The following are the available options:<ul>
+<li data-end="316" data-list-item-id="e4622935a7b24aeab4396b58e39756092" data-start="147">
+<strong data-end="337" data-start="320">Summary Only:</strong> Attribute details are not displayed. Only the count of operations is shown.</li>
+<li data-end="316" data-list-item-id="e60f3870ea7f30c4f2fac5179f6ddd1c3" data-start="147">
+<strong data-end="440" data-start="423">Full Details:</strong> All attribute details are displayed.</li>
+<li data-end="316" data-list-item-id="e0b2c2dd3abc672baddc8e0fb00213c4d" data-start="147">
+<strong data-end="493" data-start="482">Custom:</strong> Includes or excludes selected attributes. The following option only appears when the log insights level is set to <strong data-end="635" data-start="625">Custom</strong>.<ul><li data-end="316" data-list-item-id="e6dcb80d663900747c21dde475453380f" data-start="147">
+<strong data-end="661" data-start="640">Attribute Filter:</strong> Enables you to select whether you want to list the attributes that must be included or excluded. Select <strong>Included Attributes</strong> or <strong>Excluded Attributes</strong>.<ul>
+<li data-list-item-id="e3c1142f71040995096e76f51c6998486">
+<p><strong>Attributes to Include in Log Insights</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to include in the Log Insights.</p>
+<p>Or</p>
+</li>
+<li data-list-item-id="ee597598d567e78fa5348c0d8783f3467">
+<strong>Attributes to Exclude in Log Insights</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to exclude from the Log Insights.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 data-end="613" data-start="601" id="h_01KEY0VRP28DFNKTTNRZ36WYVZ">Schedule</h3><p data-end="872" data-start="615">Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h3 data-end="902" data-start="879" id="h_01KEY0VRP38CCXNPB165EJ6C27">Execute Integration</h3><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01KFFKM4P3DR5KB72M9PPMF8AB">Integration Reports</h1><p>This section details the reports that are generated by the integration.</p><h2 id="h_01KFFKN67DT5JDRYB9NNVGXGCY">Integration Sync Summary</h2><p>This report is available in the body of the email that is sent by the integration on each run. It includes the following details:</p><ul>
+<li data-list-item-id="e81d581641e4ec8f71e6674f96dc53f66">The number of ServiceNow catalog requests analyzed </li>
+<li data-list-item-id="ef567fa94acbf08634beb671204c34e7e">The number of requests successfully processed by the integration (successfully added or removed users in Active Directory groups)</li>
+<li data-list-item-id="e944c6ea8091b776b5b003d2cf9879fce">The number of failed operations</li>
+<li data-list-item-id="e26e65b002e8a3f4b21bf6d6728d7d8b8">The number of Active Directory groups skipped by the integration (the groups where no users were added or removed)</li>
+</ul><h2 id="h_01KFFMWN7AV0F0DHYXGR828KBJ">Email Report</h2><p>A CSV report is attached to the email if the email notification feature is enabled in the integration. The CSV report has the following details:</p><ul>
+<li data-list-item-id="e22d5e28ec979dd171f7ae1161b4242f3">The request approval status</li>
+<li data-list-item-id="ea31d9572ca80809c0b1a0c8ded17727a">The group in which the operation was performed</li>
+<li data-list-item-id="ea9f5d718e54f5cdd08420a449570a04e">The type of operation (A<em>dd</em> or R<em>emove</em>)</li>
+<li data-list-item-id="e0c03d96cbcd6716f9d2605911ea19946">The Distinguished Name of the Active Directory user </li>
+<li data-list-item-id="ee7ca6572260415f56873176942708398">The operation status (<em>Success</em> or <em>Failure</em>)</li>
+<li data-list-item-id="e859c18f51d878fe032e4bfc572d5ec81">A message that indicates success or the reason of failure </li>
+</ul><p> </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Lever / UKG Ready Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Lever / UKG Ready Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide outlines the process for synchronizing newly hired candidate information, including basic details, base compensation, and pay information from Lever to UKG Ready. The integration ensures that candidate data captured in Lever is converted into new‑hire or employee records in UKG Ready.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The Lever to UKG Ready integrations provides the following functions:</p>
+<ul>
+<li data-list-item-id="e2698707f6c64f2eda671dafc784b9da7">Synchronizes newly hired candidate information (basic details, base compensation, and pay data) from Lever to UKG Ready.</li>
+<li data-list-item-id="e2698707f6c64f2eda671dafc784b9da7">Converts Lever candidate records into new‑hire or employee records in UKG Ready.</li>
+<li data-list-item-id="e2698707f6c64f2eda671dafc784b9da7">Whenever a new candidate is hired in Lever, an event triggers the automatic transfer of their data to UKG Ready.</li>
+<li data-list-item-id="e2698707f6c64f2eda671dafc784b9da7">Handles successful events by logging details, generating CSV reports, sending notification emails, and updating log insights data, if enabled.</li>
+<li data-list-item-id="e2698707f6c64f2eda671dafc784b9da7">Handles failure events by logging errors, creating failure-specific CSV reports, sending failure notifications, and updating dashboard analytics, if enabled.</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li data-list-item-id="e6847c1e0e35f8c76343dd349d62c109b">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li data-list-item-id="e72cc737b0e4b0b4c78c609d8bac4bd56">
+<strong>Lever</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4412320090007" rel="noopener noreferrer" target="_blank">Lever Configuration Guide</a> for details.</li>
+<li data-list-item-id="e3305e81d8d9e9c0bd9cf0dc4dd625aa9">
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li data-list-item-id="e6971345320fb72b3e7cc43e2acf43ea2">
+<strong>Set up Webhooks in Lever</strong>: Your Lever admin must configure webhooks in the Lever application to trigger events when a new candidate is added. For details on the webhooks setup, refer to the <a href="https://support.aquera.com/hc/en-us/articles/35486221359895" rel="noopener noreferrer" target="_blank">Set Up Webhooks in Lever</a> guide.</li>
+<li data-list-item-id="e6971345320fb72b3e7cc43e2acf43ea2">
+<strong>Configure</strong> <strong>Webhook Signature Token in the Lever Connector: </strong>Configure the signature token generated in your Lever application after configuring the webhook in the <strong>CANDIDATE HIRED</strong> category. For details on the webhook signature token in the Lever application, refer to the <a href="https://support.aquera.com/hc/en-us/articles/35486221359895" rel="noopener noreferrer" target="_blank">Set Up Webhooks in Lever</a>. For configuring the <strong>Webhook Signature Token For Candidate hired Event </strong>tenant attribute in the connector, refer to the <a href="https://support.aquera.com/hc/en-us/articles/4412320090007" rel="noopener noreferrer" target="_blank">Lever Configuration Guide</a>.</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured to push newly hired candidate data from Lever to UKG Ready.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li data-list-item-id="e85941107d495b683bf4841b167ebe0af">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e194c9b1cd3c32357415b44d020b11a45">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="edaacb4e288fac06b7f892651c8be4ac6">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e4228becb92e680f018141e6b2d419866">Select <strong>Lever / UKG Ready</strong>.</li>
+<li data-list-item-id="e5bc996dcd0f5046483ed618694935161">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e1b1feec4f00b2cddccc840c087c389c6">Select your Lever and UKG Ready connector instances.</li>
+<li data-list-item-id="e24ae77a020ae12c129ace39d47c69d00">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li data-list-item-id="e8951614bb6e4feb3dee9d6f3e7d8b838">
+<strong>Create Candidate Event</strong>: Select the event that will trigger the sync of new candidate data from Lever to UKG Ready. For example, choose <em>Candidate Hired</em> from the dropdown menu to sync newly hired candidate data.</li>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable the integration-related notifications.<br/><strong>Note</strong>: The <strong>Notification Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.<br/><strong>Note</strong>: The <strong>Analytics Settings</strong> section will be displayed only when this checkbox is selected.</li>
+</ul>
+<h3 id="h_01K0PGWJSDQBPT1BZ25EAQGNYR">Log Settings</h3>
+<p>Configure the following logging settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting this option will display the <strong>Log Custom Mode</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Inclusion: </strong> Select the attributes to be included in the report. Choosing this option will display the <strong>Log Inclusion Attributes</strong> menu, where you can add the desired attributes.</li>
+<li>
+<strong>Exclusion: </strong> Select the attributes to be excluded from the report. Choosing this option will display the <strong>Log Exclusion Attributes</strong> menu, where you can specify the attributes to exclude.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show attribute values for each event</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select this checkbox to generate logs outlining data changes that would occur for debugging.</li>
+</ul>
+<h3 id="h_01K0PGWJSDWRPH0DRX23RJ5DDJ">Report Settings</h3>
+<p>Configure the following report generation settings:</p>
+<ul>
+<li>
+<strong>Select Report Detail Level</strong>: Select the desired level of report detail from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting this option will display the <strong>Report Custom Mode</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Inclusion: </strong> Select the attributes to be included in the report. Choosing this option will display the <strong>Report Inclusion Attributes</strong> menu, where you can add the desired attributes.</li>
+<li>
+<strong>Exclusion: </strong> Select the attributes to be excluded from the report. Choosing this option will display the <strong>Report Exclusion Attributes</strong> menu, where you can specify the attributes to exclude.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Enable Integration Report Download</strong>: Select this checkbox to allow downloading the integration report in CSV format.</li>
+<li>
+<strong>Show attribute values for each event</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul>
+<h3 id="h_01K0EPNYJEHDW4TQRTN6PXT579">Notification Settings</h3>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li>
+<strong>Recipients' Email Addresses</strong>: Enter the comma-separated email addresses of the recipients to whom the email notifications will be sent.</li>
+<li>
+<strong>Success Email Subject</strong>: Enter the content that must be used as the email subject for successful integration execution.</li>
+<li>
+<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body in the notifications for successful integration execution.</li>
+<li>
+<strong>Email Body on Failed Integration Execution</strong>: Enter the content that must be used as the email body in the notifications for integration failure.</li>
+<li>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a CSV report for all integration runs.</li>
+<li>
+<strong>Failure Email Subject</strong>: Enter the content that must be used as the email subject for integration failure.</li>
+</ul>
+<h3 id="01K58GNXGG1YQW0AX744QCT7JV">Analytics Settings</h3>
+<p>Configure the following analytics settings:</p>
+<ul>
+<li>
+<strong>Select the Analytics Detail Level</strong>: Select the desired level of detail from the dropdown menu on the log insights dashboard. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting this option will display the <strong>Analytics Custom Mode</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Inclusion: </strong> Select the attributes to be included in the report. Choosing this option will display the <strong>Analytics</strong><strong> Inclusion Attributes</strong> menu, where you can add the desired attributes.</li>
+<li>
+<strong>Exclusion: </strong> Select the attributes to be excluded from the report. Choosing this option will display the <strong>Analytics</strong><strong> Exclusion Attributes</strong> menu, where you can specify the attributes to exclude.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show attribute values for each event</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The Lever to UKG Ready integration maps the Lever and UKG Ready attributes. Modify the source attributes, if required, based on your use case.</p>
+<h2 id="h_01JVP6WJ681AK5EKZYA0EHHYMZ">Event</h2>
+<p>The <strong>Event</strong> tab is used to configure the webhook details. </p>
+<p>Provide the following details and save the changes:</p>
+<ul>
+<li>
+<strong>Event Source</strong>: Select your Lever application from which candidate-hiring events are triggered.</li>
+<li>
+<strong>URL</strong>: Copy this URL and paste it into the appropriate webhook field on the Lever Webhooks setup page. For details on setting up a webhook in the Lever application, refer to the <a href="https://support.aquera.com/hc/en-us/articles/35486221359895" rel="noopener noreferrer" target="_blank">Set Up Webhooks in Lever</a> guide.</li>
+<li>
+<strong>Create Token</strong>: Do not generate a token, as it is not required or used in the configuration.</li>
+</ul>
+<h1 id="lever-apis-leveraged-by-this-integration">Lever APIs Leveraged by this Integration</h1>
+<p>This integration uses the following Lever APIs:</p>
+<table width="864">
+<tbody>
+<tr>
+<td><strong>Scope</strong></td>
+<td><strong>API Endpoint</strong></td>
+</tr>
+<tr>
+<td>View all archived reasons</td>
+<td>https://api.lever.co/v1/archive_reasons</td>
+</tr>
+<tr>
+<td>View all of an opportunity's offers</td>
+<td>https://api.lever.co/v1/opportunities/:opportunity/offers</td>
+</tr>
+<tr>
+<td>View and manage all opportunities</td>
+<td>https://api.lever.co/v1/opportunities</td>
+</tr>
+<tr>
+<td>View and manage all users</td>
+<td>https://api.lever.co/v1/users</td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+<p> </p>
+<p> </p>
+  </div>
+</body>
+</html>

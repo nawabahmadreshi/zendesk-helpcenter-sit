@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Synchronization Orchestration from BambooHR to Okta </title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Synchronization Orchestration from BambooHR to Okta </h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview</h1>
+<p>This guide explains you the step-by-step procedure on how to setup synchronization orchestration from BambooHR to Okta by using Aquera as a connector. BambooHR provides human resources software as a service, while Okta offers identity and access management services. An orchestration between the BambooHR and the Okta will enable the users access authenticated data and avoid duplication of entries. Aquera uses SCIM (System for Cross Domain Identity Management) as the gateway for identity provisioning and offers identity integration as a service. </p>
+<p>To perform the orchestration, the user needs to configure the BambooHR application connector (source application) and the Okta application connector (target application) on the Aquera Admin console. </p>
+<h1 id="prerequisites">Prerequisites</h1>
+<ul>
+<li>The user must have access to the Aquera Admin console.</li>
+<li>The <strong>Orchestrations</strong> option is enabled for the user in the Aquera Admin console.</li>
+<li>The user must have the required access to BambooHR and Okta applications.</li>
+</ul>
+<h1 id="setup-procedures">Setup Procedures</h1>
+<p>The following procedures are involved in this orchestration setup:</p>
+<ul>
+<li><a href="#h_01FG8M7DTWJSH6PYBW2EE3RB85" target="_self">Configuring BambooHR Application Connector</a></li>
+<li><a href="#h_01FG8M7PHN88WR9DFF5SKSED27" target="_self">Configuring Okta Application Connector</a></li>
+<li><a href="#h_01FG8M7WGPMQ4B5XGVPJ0APS4R" target="_self">Integration Setup in Okta </a></li>
+<li><a href="#h_01FG8M825M7W0MDZS4W5V4PH3F" target="_self">Verifying Connector Credentials</a></li>
+<li><a href="#h_01FG8M88Q8S5BGMAFYMSEHJJC5" target="_self">Setting up Synchronization Orchestration</a></li>
+</ul>
+<h1 id="h_01FG8M7DTWJSH6PYBW2EE3RB85">Configuring BambooHR Application Connector</h1>
+<ol>
+<li>Log in to the Aquera Admin Console and navigate to the Applications page.</li>
+<li>Search and select the BambooHR application from the application catalog. </li>
+<li>Configure the BambooHR application connector and click <strong>Create</strong>.<br/>For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/360020300534" rel="noopener" target="_blank">BambooHR Configuration Guide</a>
+</li>
+</ol>
+<p><img alt="Syn_Bamboo_connector.png" src="./assets/3cd87d9da70010f2.png"/></p>
+<h1 id="h_01FG8M7PHN88WR9DFF5SKSED27">Configuring Okta Application Connector</h1>
+<ol>
+<li>Log in to the Aquera Admin Console and navigate to the Applications page.</li>
+<li>Search and select the Okta application from the application catalog. </li>
+<li>Configure the Okta application connector and click <strong>Create</strong>.<br/>For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/360039119053" rel="noopener" target="_blank">Okta Configuration Guide</a>
+</li>
+</ol>
+<p><img alt="Sync_Okta_connector.png" src="./assets/437d18601dbf0934.png"/></p>
+<p><strong>Note</strong>: The <strong>Tenant</strong> value must be from the URL of your Okta instance. </p>
+<p><img alt="Sync_Okta_URL.png" height="337" src="./assets/428e3be769e0585b.png" width="515"/></p>
+<h1 id="h_01FG8M7WGPMQ4B5XGVPJ0APS4R">Importing Users to Okta </h1>
+<p>Before executing the orchestration, the user needs to import users data from BambooHR to Okta. The following steps must be performed for importing users.</p>
+<p>1. Login to Okta by entering your credentials.</p>
+<p>2. Click <strong>Admin</strong> at the top-right corner of the page, if you have logged in to <em>Oktapreview </em>org.<br/>If you have logged into <em>Okta</em> org, skip to the next step.</p>
+<p>3. Expand <strong>Applications</strong> in the navigate pane and then click <strong>Applications</strong>. The <strong>Applications</strong> page is displayed.</p>
+<p><img alt="Okta_App_Home.png" src="./assets/717c0cfc4ec26d00.png"/></p>
+<p>4. Click<strong> Browse App Catalog </strong>and navigate to the<strong> Private Apps </strong>category in the list.</p>
+<p><img alt="Okta_Private_App.png" src="./assets/bafd25dd0c9120fe.png"/></p>
+<p>You can see the Aquera private apps set up by the Okta support team on this page. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/1500000091162" rel="noopener" target="_blank">Okta Setup Guide</a> for details on how to get the Aquera private apps enabled in Okta.</p>
+<p>5. Click <strong>Aquera</strong> private app<strong>,</strong> as BambooHR supports <em>Bearer Token</em> authentication.</p>
+<p><img alt="Sync_Aquera_private_app.png" height="441" src="./assets/0651cf135d6b63f3.png" width="562"/></p>
+<p>6. Click <strong>Add</strong> to configure your BambooHR application in Okta.</p>
+<p><img alt="Sync_Add_Private.png" height="438" src="./assets/bd631bb97512e1aa.png" width="558"/></p>
+<p>7. Provide an <strong>Application Label</strong> and click <strong>Next</strong>.</p>
+<p><img alt="Sync_Sign_On_Ops.png" height="720" src="./assets/30136ed63c54d1d5.png" width="570"/></p>
+<p>8. Select the required sign-on method and click <strong>Done</strong>. Your BambooHR application is now added in Okta.</p>
+<p><img alt="Sync_Add_App.png" height="404" src="./assets/d1ed1c9818638cd1.png" width="577"/></p>
+<p>9. Click <strong>Provisioning</strong>. </p>
+<p><img alt="Sync_Okta_Provision.png" src="./assets/582ab1384847b9d2.png"/></p>
+<p>10. Click <strong>Configure API Integration </strong>and select <strong>Enable API Integration</strong>.</p>
+<p><img alt="Sync_Enable_API.png" height="561" src="./assets/7745d56ee48d0c44.png" width="603"/></p>
+<p>11. Enter the following details:</p>
+<ul>
+<li>
+<strong>Base URL</strong>: The interface URL to the Aquera BambooHR connector must be copied from the Aquera Admin console and pasted here.</li>
+</ul>
+<p><img alt="Sync_Bamboo_API_URL.png" src="./assets/b6106a68cf5b643c.png"/></p>
+<ul>
+<li>
+<strong>API Token</strong>: Enter the API key generated in your BambooHR application. To obtain the API token:
+<ul>
+<li>Logon to the BambooHR web application. </li>
+<li>On the top right corner of the home page, click the user profile icon. </li>
+</ul>
+</li>
+</ul>
+<p><img alt="Sync_BHR_Profile.png" src="./assets/53cb9544d304e327.png"/></p>
+<ul>
+<li>
+<ul>
+<li>Click<strong> API Keys </strong>and then click click <strong>Add New Key</strong>.</li>
+</ul>
+</li>
+</ul>
+<p><img alt="Sync_Add_API.png" src="./assets/08d976b499e062f9.png"/></p>
+<ul>
+<li>
+<ul>
+<li>Enter a unique name for the API key and click <strong>Generate Key</strong>. A unique API key is generated.</li>
+</ul>
+</li>
+</ul>
+<p><img alt="Sync_New_Key.png" height="361" src="./assets/dbfcefed079aec33.png" width="573"/></p>
+<ul>
+<li>
+<ul>
+<li>Copy this key and click <strong>Done</strong>.</li>
+<li>Paste it in the <strong>API Token</strong> field in Okta. Save this key securely for future use.</li>
+</ul>
+</li>
+</ul>
+<p>12. Click <strong>Test API Credentials</strong> in Okta. A verification success message is displayed.</p>
+<p><img alt="Sync_Okta_verify.png" height="529" src="./assets/fbbe859ae45a2aa8.png" width="613"/></p>
+<p>13. Click <strong>Save</strong>. The <strong>Provisioning to App</strong> section is displayed.</p>
+<p><img alt="Sync_Edit_App_Options.png" height="550" src="./assets/da9556b4da0bc0a7.png" width="651"/></p>
+<p>14. Click <strong>Edit</strong> and enable the following options as per your requirement:</p>
+<ul>
+<li>Create Users</li>
+<li>Update User Attributes</li>
+<li>Deactivate Users</li>
+<li>Sync Password</li>
+</ul>
+<p><img alt="Syn_App_opt_enable.png" height="652" src="./assets/1378d6c83d8a75d9.png" width="631"/></p>
+<p>15. Click <strong>Save</strong>.</p>
+<p>16. Navigate to <strong>Import.</strong></p>
+<p><strong><img alt="Syn_Okta_impo.png" src="./assets/0def280994073fb3.png"/></strong></p>
+<p>17. Click<strong> Import Now</strong>. Aquera connector imports the users from BambooHR to Okta. Okta shows the number of users that are imported.<br/><img alt="Syn_Okta_user_scan.png" height="430" src="./assets/4990f0cfd4081c13.png" width="559"/></p>
+<p>18. Click <strong>OK</strong>.</p>
+<p><img alt="Sync_Okta_import.png" src="./assets/0257607ff8d2629e.png"/></p>
+<p>19. Verify all the users imported to Okta and click <strong>Confirm Assignments</strong>. </p>
+<p><img alt="Syn_Okta_imp_confirm.png" height="388" src="./assets/717eff6a6e451ff2.png" width="535"/></p>
+<p><strong>Note</strong>: If any user assignments could not be performed, a pop-up message similar to the following is displayed. The assignment can fail if any mandatory user attributes for Okta are left blank. In that case, you need to enter those user attributes in BambooHR and import them again. </p>
+<p><img alt="2022-09-14_19-37-23.png" height="549" src="./assets/0c36c99013339b1b.png" width="533"/><br/><br/>20. Click <strong>Confirm</strong>. The users from BambooHR are created in Okta.</p>
+<h1 id="h_01FG8M825M7W0MDZS4W5V4PH3F">Verifying Connector Credentials</h1>
+<h2 id="bamboohr">BambooHR</h2>
+<p>Before performing the orchestration, User needs to check the credentials for the BambooHR and the Okta connectors. This verification ensures the smooth flow of orchestration. </p>
+<p>1. Go to the Bamboo HR Application connector on the Aquera Admin console and click the <strong>Credentials</strong> tab.</p>
+<p><img alt="Sync_BHR_token.png" height="288" src="./assets/d8380f8de0f8c1dc.png" width="518"/></p>
+<p>2. Enter the API key copied from the BambooHR application and click <strong>Save Changes</strong>.</p>
+<p>3. Click the <strong>Data</strong> tab to verify the users data from BambooHR are imported.</p>
+<p><img alt="Syn_BHR_Data.png" src="./assets/a5e41f19d9ab84ec.png"/></p>
+<h2 id="okta">Okta</h2>
+<p>To create authentication token for Okta:</p>
+<p>1. Go to Okta Admin page and click <strong>Security &gt; API</strong>. </p>
+<p><img alt="Sync_Okta_token.png" height="463" src="./assets/6ed47da726cdbdd2.png" width="617"/></p>
+<p>2. Click <strong>Create Token</strong>. </p>
+<p><img alt="Sync_Okta_Create_Token.png" height="234" src="./assets/75c2b30736789efe.png" width="420"/></p>
+<p>3. Provide a name for the token and click <strong>Create Token</strong>.</p>
+<p><img alt="Sync_Okta_tok_created.png" height="322" src="./assets/9a1d98474d6b8d50.png" width="407"/></p>
+<p>4. Copy the token and save it securely.</p>
+<p>5. Go to the Okta Application connector on the Aquera Admin console and click the <strong>Credentials</strong> tab. </p>
+<p><img alt="Sync_Okta_Creds.png" height="270" src="./assets/9eb9ee1d841c5e73.png" width="491"/></p>
+<p>6. Enter the token copied from the Okta application and click <strong>Save Changes</strong>.</p>
+<p>7. Click the <strong>Data</strong> tab to verify the users data created in Okta are imported.</p>
+<p><img alt="Sync-Okta_Data.png" height="353" src="./assets/941dbc329fd8deac.png" width="600"/></p>
+<h1 id="h_01FG8M88Q8S5BGMAFYMSEHJJC5">Setting up Synchronization Orchestration</h1>
+<p>1. Go to Aquera Admin console and select <strong>Orchestrations &gt; Create Orchestration</strong>.</p>
+<p>2. Enter a name for the orchestration and select the <strong>Synchronization</strong> orchestration type.</p>
+<p>3. Select <em>BambooHR</em> as the <strong>Source Application</strong> and <em>Okta</em> as the <strong>Target Application</strong>. </p>
+<p><img alt="Sync_Orch_Conf.png" src="./assets/61b1154b588e5540.png"/></p>
+<p>You can either retain or change the other default settings as per your requirement. It is advisable to select the <em>Report Only</em> mode while performing orchestration for the first time. </p>
+<p>4. Click the <strong>Attribute Map</strong> tab to check the mapping of attributes from Source to Target. Change the mappings as per your requirement. </p>
+<p><img alt="Sync_Att_Map.png" src="./assets/fdda6a746832b494.png"/></p>
+<p>5. Set the orchestration schedule as required.</p>
+<p><img alt="Sync_Orch_Sch.png" height="216" src="./assets/73e3f962f133439f.png" width="615"/></p>
+<p>6. Click <strong>Create</strong>.</p>
+<p>For details on the individual configuration fields in the orchestration setup page, refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener" target="_blank">Synchronization Orchestration Setup Guide</a>.</p>
+<p>The orchestration executes as per the schedule set in the orchestration. You can also execute the orchestration manually. The changes made to the users data in BambooHR will be reflected in Okta.</p>
+  </div>
+</body>
+</html>

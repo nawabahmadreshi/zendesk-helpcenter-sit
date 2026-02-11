@@ -1,0 +1,369 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User Integration Setup Guide - Dayforce to Active Directory</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>User Integration Setup Guide - Dayforce to Active Directory</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01GK1KY48FTFD8MTPAQP73DBYN">Overview</h1><p>Aquera provides an innovative platform that allows your organization to scale complex data management by automating the synchronization of users from Dayforce to the users in Active Directory.</p><p>This guide covers the end-to-end tasks in setting up synchronization to synchronize Dayforce users to Active Directory users. </p><h1 id="h_01J8EWA8546GVJW1E9AGBBA7FH">Use Case</h1><p>Aquera provides a real-time, non-persistent integration service between Dayforce and Active Directory. It is important to note that the Aquera integration running inside of the Aquera Platform uses a service account whose permissions are 100% managed separately by the Dayforce Admin for permissions to Dayforce, and the Active Directory Admin for permissions to AD. The setup of what fields can be read and written in Dayforce by the Service Account used by the integrations in the Aquera Platform is done solely by the Dayforce Admin. The same is the case on the AD side.</p><p>The following is the use case diagram illustrating the integration from Dayforce to Active Directory through Aquera:<br/><img alt="Dayforce to AD.png" src="./assets/487e935ba7bb1132.bin"/><br/><br/> </p><h2 id="h_01J8FCKR252DW1BF6TX1KQCFZT">User Roles</h2><ul>
+<li data-list-item-id="efc31eea97a9a1889904b85a3f3bd9c60">The Dayforce Admin can be any HR administrator who controls the API access permissions of each employee attribute in Dayforce and determines what attribute can be read and/or written.</li>
+<li data-list-item-id="e5769f22b470db4d3df0ba90d86b7d55a">The Aquera Admin configures the integration and may not have access to AD or Dayforce environment.</li>
+<li data-list-item-id="e869019ac1f9b644719851920a713c0bd">The AD Admin can be any Active Directory administrator who controls the LDAP access permissions on specific OUs for the service account that is used to manage users in AD.</li>
+</ul><h1 id="h_01J46AGRGRQPVRAPETC1V9F4Q4">Prerequisites</h1><h2 id="h_01J6F2B03BC66ZJPJJKKC255CE">Aquera Tenant Account</h2><p><strong>Tenant account in the Aquera Admin portal</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/"><span>https://admin.aquera.io</span></a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.</p><p><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank"><span>https://admin.eu.aquera.io/</span></a></p><h2 id="h_01GK1KYQ1JX1DSBVM866K054CC">Dayforce</h2><p>The following are the prerequisites for Dayforce:</p><ul>
+<li data-list-item-id="efcf6a4f689fe941cf7ab343367da9943">
+<strong>Service Account with Appropriate Roles</strong>: A service account must be created with access to the Web Services feature. The username and password of this account are required for authentication.</li>
+<li data-list-item-id="e408929da0540031c26b43f77f5d2401a">
+<strong>Feature-Level and Field-Level Access Permissions</strong>: Appropriate feature-level and web services field-level access permissions must be enabled in Dayforce. </li>
+</ul><p>For details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a>.</p><h2 id="h_01GK1KZA7A4AY7RSBNJ9KEH7AT">Active Directory</h2><p>Determine the architecture to be followed for setting up communication between Aquera and the Windows Active Directory Domain Controller. Refer to <a href="https://support.aquera.com/hc/en-us/articles/360052111073" rel="noopener noreferrer" target="_blank">this guide</a> for detailed information on the different architectural approaches.</p><p>Based on the selected approach, the following procedures may have to be performed:</p><ul>
+<li data-list-item-id="e4a270450ab0f324c1e52ce2a07ff350e">A Windows Server must be ready to deploy Aquera Agent onto the server where the Domain Controller is present. For instructions on installing Aquera Agent, refer to the<a href="https://support.aquera.com/hc/en-us/articles/360010090513" rel="noopener noreferrer" target="_blank"> Installation and Configuration Guide</a>.</li>
+<li data-list-item-id="e40f584582738126608594d9dcacdb809">A firewall must be set up to allow communication with Aquera.</li>
+<li data-list-item-id="e93a03d069b6d8029b994fe5d9d7e4ba9">The static IP address of Aquera needs to be whitelisted. Contact the <a href="mailto:support@aquera.com" target="_self">Aquera Support team</a>.</li>
+</ul><p>To allow Aquera to update the Active Directory (for creating, updating, and deleting users), LDAPS communication to the Active Directory needs to be set up, which requires a TLS connection. Active Directory Certificate Services must be enabled for this. To install Active Directory Certificate Services, visit the <a href="https://docs.microsoft.com/en-us/windows-server/networking/core-network-guide/cncg/server-certs/install-the-certification-authority" rel="noopener noreferrer" target="_blank">Microsoft website</a>.</p><h2 id="h_01J6Y0Y2KHRKEQQDYYFNGRZYWY">Configure Applications in the Aquera Admin Portal</h2><p>Aquera provides SCIM Gateway connectors to support user lifecycle management. Aquera's connectors use the SCIM protocol to perform the read and write operations on the applications. </p><p>You must add and configure the following connectors in the Aquera Admin portal:</p><ul>
+<li data-list-item-id="e39a6bbaca27666cc0de28b8a04336eb4">
+<strong>Dayforce: </strong>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for details.</li>
+<li data-list-item-id="e831fe1e2f09cbfbb8b991f690fcfd6b9">
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
+</ul><h1 id="h_01J46B7Y1FJFZ9EF69E21925AA">User Synchronization Setup</h1><p>Aquera's user synchronization automatically imports users from Dayforce and provisions these users in Active Directory.</p><h2 id="h_01J6F3QXEA1V016HW0PGHKR5RC">Synchronization Setup</h2><p>Perform the following steps to create a user synchronization:</p><ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> on the left panel.</li>
+<li>Click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>User</strong> <strong>Synchronization</strong>.</li>
+<li>Enter a name and a description for the synchronization.</li>
+<li>Click <strong>Continue</strong>. A new page with the fields and tabs to configure the user synchronization is displayed.</li>
+<li>Select a Dayforce connector in the <strong>Source Application</strong> dropdown field.</li>
+<li>Select an Active Directory connector in the <strong>Target Application</strong> dropdown field.</li>
+<li>You can update the configurations as required. For further details, refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Synchronization Setup Guide</a>.</li>
+<li>Click <strong>Create</strong> to create the user synchronization.</li>
+</ol><h2 id="01J6F3MXFPKK6PTWA9XGXRZ070">Synchronization Configuration</h2><p>You can set the following configurations in the synchronization:</p><ul>
+<li data-list-item-id="ebe090868bdcc5b34cec31b3193bbef45">Enter the matching expression to match a user record from Ceridian Dayforce with that in the Active Directory.</li>
+<li data-list-item-id="eb1732a39a6b9ff68fc4a99ef1ef5a8ba">Configure the fields in the <em>Admin Email Options</em> to receive email notifications for success or failures during the synchronization run.</li>
+<li data-list-item-id="e20de4e342f4843200e8a70361ab13f53">Set the email list of the IT admin or manager to receive user creation notification emails and user deactivation notification emails.</li>
+<li data-list-item-id="e9437988d9ebfd4a808363ce15a696c7a">Use tables for creating lookup tables based on location and department values from the source.</li>
+<li data-list-item-id="ef3af37235ae83741a1b3f27b0ddc235a">Enable Group Management if Aquera has to manage the groups and group assignment rules based on the group analysis. </li>
+</ul><p>Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Synchronization Setup Guide</a> for further details on the configurations.</p><p><strong>Note</strong>: Any custom fields added in Active Directory are not displayed automatically on the <strong>Attribute Map</strong> page. You must manually add those custom attributes using the <strong>Add Row to Map</strong> option on the<strong> Attribute Map</strong> page and then complete the mapping.</p><h2 id="h_01GK1KZZ5JR6ETCYR0MTFERXPC">Considerations</h2><p>Consider defining the following when setting up the synchronization:</p><ul>
+<li data-list-item-id="e6f6c235b839f6c1d91ec5a3458135a6b">Define a naming convention for the User Principal Name (UPN) in the Active Directory.</li>
+<li data-list-item-id="ecc828d37caf44b97505a356e1cb47e07">Define a naming convention for the SAM Account Name in the Active Directory.</li>
+<li data-list-item-id="e349e01311afc4778093ebbe32f698b06">Define the logical OU mapping rules for user containers.</li>
+</ul><h2 id="01J6F3DJA93NCP0PAK3P4ZWG6T">General Analysis</h2><p>You can use JavaScript expressions in the mapping to create UPNs and SAM Account Names without duplicates or errors. In the expressions, you can use Aquera's inbuilt methods such as <strong>toNormalizedDiacritics</strong>() and <strong>toSAMAccountName</strong>() for this purpose. You can also use keywords such as <strong>%ATTEMPT </strong>or<strong> %UTTEMPT </strong>to avoid duplicates. For details, refer to the <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Synchronization Expressions - Keywords, Methods, and Functions</a> guide.</p><p>For a detailed analysis of Ceridian Dayforce users and the users/groups in Active Directory using scripts, refer to the <a href="#h_01F6EGQ8TRT9E064C1YJVS653G" target="_self">Appendix</a>.</p><p>You can also analyze the user's data using the <strong>Reports</strong> option in the <strong>Data</strong> tab of the <strong>Applications</strong> module in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4411279965463" rel="noopener noreferrer" target="_blank">Applications Data Guide</a> for details.</p><h2 id="h_01J4PAZQ130M14QJ5WWR1KVF5A">Attribute Mapping</h2><p>The <strong>Attribute Map </strong>tab allows you to map user attributes from the Dayforce application to the user attributes in the Active Directory system. </p><p>The following is a sample attribute mapping from Dayforce to Active Directory:</p><figure><table><tbody>
+<tr>
+<td><strong>Dayforce Attribute / Value / Expression</strong></td>
+<td><strong>Active Directory Attribute</strong></td>
+</tr>
+<tr>
+<td>SOURCE.active</td>
+<td>active</td>
+</tr>
+<tr>
+<td>
+<p>var attempts = {<br/> </p>
+<p>1: (SOURCE.nickName?SOURCE.nickName[0]:SOURCE.name.givenName[0]) +(SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName),</p>
+<p>2: (SOURCE.nickName?SOURCE.nickName[0]:SOURCE.name.givenName[0]) + (SOURCE.name.middleName ? SOURCE.name.middleName[0] : "") + (SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName),</p>
+<p>3: (SOURCE.nickName?SOURCE.nickName:SOURCE.name.givenName) + (SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName),</p>
+<p>4: (SOURCE.nickName?SOURCE.nickName:SOURCE.name.givenName) + (SOURCE.name.middleName ? SOURCE.name.middleName[0] : "") + (SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName)</p>
+<p>};</p>
+<p>(</p>
+<p>(</p>
+<p>%ATTEMPT &lt; 5 ?</p>
+<p>attempts[%ATTEMPT] :</p>
+<p>SOURCE.nickName[0] + (</p>
+<p>SOURCE[IAN].preferredLastName ?</p>
+<p>SOURCE[IAN].preferredLastName :</p>
+<p>SOURCE.name.familyName</p>
+<p>)</p>
+<p>)</p>
+<p>+ (%ATTEMPT == 1 ? "" : %ATTEMPT)</p>
+<p>).toLowerCase().replace(/[[\]`{};:.!@#$%^&amp;*-\/\\&lt;&gt; ()?]/gm, "")+"@abc.org"</p>
+</td>
+<td>userName<span>*</span>
+</td>
+</tr>
+<tr>
+<td>"CN=" + SOURCE.userName + ",CN=Users,DC=aquera,DC=com"</td>
+<td>[IAN].distinguishedName<span>*</span>
+</td>
+</tr>
+<tr>
+<td>
+<p>var attempts = {</p>
+<p>1: (SOURCE.nickName?SOURCE.nickName[0]:SOURCE.name.givenName[0]) +(SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName),</p>
+<p>2: (SOURCE.nickName?SOURCE.nickName[0]:SOURCE.name.givenName[0]) + (SOURCE.name.middleName ? SOURCE.name.middleName[0] : "") + (SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName),</p>
+<p>3: (SOURCE.nickName?SOURCE.nickName:SOURCE.name.givenName) + (SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName),</p>
+<p>4: (SOURCE.nickName?SOURCE.nickName:SOURCE.name.givenName) + (SOURCE.name.middleName ? SOURCE.name.middleName[0] : "") + (SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName)</p>
+<p>};</p>
+<p>(</p>
+<p>(</p>
+<p>%ATTEMPT &lt; 5 ?</p>
+<p>attempts[%ATTEMPT] :</p>
+<p>SOURCE.nickName[0] + (</p>
+<p>SOURCE[IAN].preferredLastName ?</p>
+<p>SOURCE[IAN].preferredLastName :</p>
+<p>SOURCE.name.familyName</p>
+<p>)</p>
+<p>)</p>
+<p>+ (%ATTEMPT == 1 ? "" : %ATTEMPT)</p>
+<p>).toLowerCase().replace(/[[\]`{};:.!@#$%^&amp;*-\/\\&lt;&gt; ()?]/gm, "")</p>
+</td>
+<td>[IAN].sAMAccountName</td>
+</tr>
+<tr>
+<td>
+<p>var attempts = {</p>
+<p>1: (SOURCE.nickName?SOURCE.nickName[0]:SOURCE.name.givenName[0]) +(SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName),</p>
+<p>2: (SOURCE.nickName?SOURCE.nickName[0]:SOURCE.name.givenName[0]) + (SOURCE.name.middleName ? SOURCE.name.middleName[0] : "") + (SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName),</p>
+<p>3: (SOURCE.nickName?SOURCE.nickName:SOURCE.name.givenName) + (SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName),</p>
+<p>4: (SOURCE.nickName?SOURCE.nickName:SOURCE.name.givenName) + (SOURCE.name.middleName ? SOURCE.name.middleName[0] : "") + (SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName)</p>
+<p>};</p>
+<p>(</p>
+<p>(</p>
+<p>%ATTEMPT &lt; 5 ?</p>
+<p>attempts[%ATTEMPT] :</p>
+<p>SOURCE.nickName[0] + (</p>
+<p>SOURCE[IAN].preferredLastName ?</p>
+<p>SOURCE[IAN].preferredLastName :</p>
+<p>SOURCE.name.familyName</p>
+<p>)</p>
+<p>)</p>
+<p>+ (%ATTEMPT == 1 ? "" : %ATTEMPT)</p>
+<p>).toLowerCase().replace(/[[\]`{};:.!@#$%^&amp;*-\/\\&lt;&gt; ()?]/gm, "")+"@abc.org"</p>
+</td>
+<td>emails[work].value</td>
+</tr>
+<tr>
+<td>(SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName)+"," +(SOURCE.nickName?" "+SOURCE.nickName:" "+SOURCE.name.givenName)</td>
+<td>displayName</td>
+</tr>
+<tr>
+<td>SOURCE[ENT].department</td>
+<td>[ENT].department</td>
+</tr>
+<tr>
+<td>SOURCE[ENT].employeeNumber</td>
+<td>[IAN].employeeID</td>
+</tr>
+<tr>
+<td>SOURCE[IAN].preferredLastName?SOURCE[IAN].preferredLastName:SOURCE.name.familyName</td>
+<td>name.familyName</td>
+</tr>
+<tr>
+<td>SOURCE.nickName?SOURCE.nickName : SOURCE.name.givenName</td>
+<td>name.givenName</td>
+</tr>
+<tr>
+<td>SOURCE.name.middleName.substring(0,1)</td>
+<td>name.middleName</td>
+</tr>
+<tr>
+<td>512</td>
+<td>[IAN].userAccountControl</td>
+</tr>
+</tbody></table></figure><p>In the source attribute field, you can include source attributes or write JavaScript expressions to map to the corresponding target attribute. The target attributes marked with a red asterisk (<span>*</span>) are mandatory to be mapped.</p><h3 id="h_01J46AK2H42JBWFD9RD2EPT9A3"><strong>Dayforce User Data</strong></h3><p>The following table shows the application field name and the corresponding SCIM attribute in Dayforce:</p><figure><table><tbody>
+<tr>
+<td><strong>Application Field Name</strong></td>
+<td><strong>Application UI Path</strong></td>
+<td><strong>SCIM Attribute</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>Status</td>
+<td>People icon &gt; Select a user &gt; Overview &gt; Employment</td>
+<td>active</td>
+<td>Indicates whether the user account is active</td>
+</tr>
+<tr>
+<td>User Name</td>
+<td>People icon &gt; Select a user &gt; Security Settings &gt; User Properties</td>
+<td>userName</td>
+<td>A unique identifier for the user. <strong>Note</strong>: The userName is assigned the XRefCode value from the Dayforce when a user is created.</td>
+</tr>
+<tr>
+<td>Business Email</td>
+<td>People icon &gt; Select a user &gt; Overview &gt; Business Contacts </td>
+<td>emails[].value</td>
+<td>The email ID of the user</td>
+</tr>
+<tr>
+<td>Display Name</td>
+<td>People icon &gt; Select a user &gt; View the display name in the header of the user info at the top</td>
+<td>displayName </td>
+<td>The display name of the user</td>
+</tr>
+<tr>
+<td>Department</td>
+<td>People icon &gt; Select a user &gt; Overview &gt; Work Assignment</td>
+<td>department</td>
+<td>The department name of the user</td>
+</tr>
+<tr>
+<td>EMPLOYEE NUMBER</td>
+<td>People icon &gt; Select a user &gt; View the employee number in the header of the user info at the top</td>
+<td>employeeNumber </td>
+<td>The employee number of the user</td>
+</tr>
+<tr>
+<td>Last Name</td>
+<td>People icon &gt; Select a user &gt; Personal &gt; Contact Information</td>
+<td>name.familyName</td>
+<td>The family name or the last name of the user</td>
+</tr>
+<tr>
+<td>First Name</td>
+<td>People icon &gt; Select a user &gt; Personal &gt; Contact Information</td>
+<td>name.givenName</td>
+<td>The given name or the first name of the user</td>
+</tr>
+<tr>
+<td>Middle Name</td>
+<td>People icon &gt; Select a user &gt; Personal &gt; Contact Information</td>
+<td>name.middleName</td>
+<td>The middle name of the user</td>
+</tr>
+</tbody></table></figure><h3 id="01J5QYQEZXVJT5EFRF8Q8DS3PJ"><strong>Active Directory User Data</strong></h3><p>The following table shows the application field name and the corresponding SCIM attribute in Active Directory:</p><figure><table><tbody>
+<tr>
+<td><strong>Application Field Name</strong></td>
+<td><strong>Application UI Path</strong></td>
+<td><strong>SCIM Attribute</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>userAccountControl</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; Attribute Editor</td>
+<td>active</td>
+<td>
+<p>Indicates whether the user account is active.</p>
+<p><strong>Note</strong>: When the value of the userAccoutControl is 512, the user account is active. However, if the value is 514, the user account is disabled.</p>
+</td>
+</tr>
+<tr>
+<td>userPrincipalName</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; Attribute Editor</td>
+<td>userName</td>
+<td>A unique identifier for the user</td>
+</tr>
+<tr>
+<td>distinguishedName</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; Attribute Editor</td>
+<td>[IAN].distinguishedName</td>
+<td>The name that uniquely identifies an entry in the directory. It describes the fully qualified path to an entry.</td>
+</tr>
+<tr>
+<td>sAMAccountName</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; Attribute Editor</td>
+<td>[IAN].sAMAccountName</td>
+<td>The logon name used to support clients and servers running earlier versions of the operating system</td>
+</tr>
+<tr>
+<td>E-mail</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; General</td>
+<td>emails[].value</td>
+<td>The email ID of the user</td>
+</tr>
+<tr>
+<td>Display name</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; General </td>
+<td>displayName </td>
+<td>The display name of the user</td>
+</tr>
+<tr>
+<td>Department</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; Organization</td>
+<td>department</td>
+<td>The department name of the user</td>
+</tr>
+<tr>
+<td>employeeNumber</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; Attribute Editor</td>
+<td>employeeID</td>
+<td>The employee ID of the user</td>
+</tr>
+<tr>
+<td>Last name</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; General</td>
+<td>name.familyName</td>
+<td>The family name or the last name of the user</td>
+</tr>
+<tr>
+<td>First name</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; General </td>
+<td>name.givenName</td>
+<td>The given name or the first name of the user</td>
+</tr>
+<tr>
+<td>Initials</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; General</td>
+<td>name.middleName</td>
+<td>The middle name of the user</td>
+</tr>
+<tr>
+<td>userAccountControl</td>
+<td>Active Directory Users and Computers &gt; Go to Properties &gt; Attribute Editor</td>
+<td>userAccountControl</td>
+<td>The flag that controls the behavior of the user account. <br/><strong>Note</strong>: To create a user of type NORMAL_ACCOUNT in Active Directory, set this attribute value to 512.</td>
+</tr>
+</tbody></table></figure><h2 id="01J6F45C60874TCDDGQMQ8861V">Synchronization Scenarios</h2><p>The following are the common synchronization scenarios:</p><h3 id="h_01GCH77G2CVDAWG68GJJTHSAR6">Prompting for Password Change at Login</h3><p>To make it mandatory for the new users in Active Directory to change their password on their first login, map the Active Directory attribute <em>pwdLastSet</em> to <em>0</em> with the mapping option as <strong>Map on create</strong>. If this mapping is not done and users sign into their account for the first time, they will not be prompted for password change.</p><p>To prompt the existing users also for a password reset, set the mapping option as <strong>Map on Create and Update</strong>.</p><h3 id="h_01GK1W1C5GEZX22S6634GSWCRR">Requirements to Set the User Password</h3><p>Active Directory requires a secure LDAPS connection (TCP port 636) to set or change user passwords. This is an Active Directory’s security requirement. Random generation of passwords when creating new users does not work without the use of LDAPS. Also, setting the password through attribute mapping requires a secure LDAPS connection.</p><p><strong>Note:</strong> Active Directory imposes complexity requirements on the password. Ensure the user's password follows the password guidelines as mentioned in the <a href="https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements" rel="noopener noreferrer" target="_blank">Microsoft Documentation</a>.</p><h3 id="h_01J6S0YEWBE2194D6RDH4NHGS7">Requirements to Set the User Password to Never Expire</h3><p>To set the user's password to never expire, you must set the <em>IAN.userAccountControl</em> attribute to the value <em>66048</em> for an active user and <em>66050</em> for an inactive user.</p><h1 id="01J5QYQEZX65XNKBP2ZZXEG4D8">Running the User Synchronization</h1><p>Click the<strong> Execute </strong>button at the top right of the user synchronization to manually run the user synchronization. You can also schedule the user synchronization to run automatically at specified intervals by configuring a frequency in the <strong>Schedule</strong> tab.</p><p>You can navigate to <strong>Logs </strong>&gt; <strong>Synchronizations</strong> in the Aquera Admin portal to view the logs of the synchronization execution.</p><p>Perform the following steps to ensure that the users are updated correctly:</p><ul>
+<li data-list-item-id="e8d4fed097896a4e47cef69397ae65951">Run the synchronization in<em> Report Only</em> mode and determine if the correct data is updated in Active Directory. If the data is not correctly updated, change the matching expression to correctly match users and/or update the data, for example, employeeNumber, in Active Directory.</li>
+<li data-list-item-id="e64fe35005e8f933b6390b243fc682caa">Increment the <em>Update Limit</em> for each run in <em>Report Only </em>mode to ensure that the records are updated correctly when the records count is more.</li>
+<li data-list-item-id="e56983e23cd8a2c9a879af46fa37e8246">Based on your analysis and considerations,<ul>
+<li data-list-item-id="e16afe1b6020dfc91283ebaee13b43659">Translate the logical maps into synchronization attribute mapping</li>
+<li data-list-item-id="e2d00c26a4fc63570a1d839872568e6cd">Translate the logical OU/container locations into synchronization tables and expressions</li>
+<li data-list-item-id="eb9e4af21c3782747698ea466e1178205">Translate the logical group assignment rules into synchronization group rules</li>
+</ul>
+</li>
+<li data-list-item-id="eaff77a541b16502322e35a639d4282f0">Modify the attribute mapping and repeat the process until the data is correctly updated.</li>
+<li data-list-item-id="e055718a9d4ae6909a12689618a9a3ed3">Monitor the synchronization logs thoroughly to ensure that no errors are encountered. Modify the synchronization configurations to fix any errors.</li>
+<li data-list-item-id="e80bd23f437a82d8c476fbadb5a250755">Once all users are synced, user creations and updates are based on the incremental changes in Dayforce.</li>
+</ul><p>After the user synchronization is successfully executed, new users will be created and existing users will be updated in Active Directory.</p><h1 id="h_01F6EGQ8TRT9E064C1YJVS653G">Appendix</h1><p>This section provides sample scripts to analyze the existing users in Dayforce and Active Directory before setting up the synchronization. It also provides the script to analyze the existing groups of users in Active Directory. The scripts can be modified based on your use case and the attributes to be retrieved for analysis.</p><p>Execute these scripts in a script synchronization. In the script synchronization, add<em> Dayforce</em> and <em>Active Directory</em> applications and set the corresponding variable names. The variable names must be used in the script to refer to the applications. For details on configuring the script synchronization, refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Synchronization Setup Using Scripts</a> guide.</p><h2 id="h_01GK1M2V3AXBEDR3DZH0FVE70H">Analyzing the Users in Dayforce </h2><p>Use the following script in a script synchronization for generating a report from Dayforce for the analysis of users:</p><pre><code>log.info('DAYFORCE ID, DAYFORCE ACTIVE, DAYFORCE GIVENNAME, DAYFORCE FAMILYNAME, DAYFORCE USERNAME, DAYFORCE MIDDLENAME, DAYFORCE TITLE, DAYFORCE DEPARTMENT, DAYFORCE DIVISION, DAYFORCE USERTYPE');
+let users = df.getUsers();
+for (let user of users) {
+log.info('"'
++ user.id + '","'
++ user.active + '","'
++ user.name.givenName + '","'
++ user.name.familyName + '","'
++ user.userName + '","'
++ user.name.middleName + '","' 
++ user.title + '","'
++ user.department + '","'
++ user.division + '","'
++ user.userType +  '"');
+}</code></pre><h2 id="h_01GK1M32FMM44Q29H9TWWREZGH">Analyzing the Users in Active Directory</h2><p>Use the following script in a script synchronization for generating a report from Active Directory for the analysis of users:</p><pre><code>log.info('AD ID,AD ACTIVE,AD EMPNO,AD GIVENNAME,AD FAMILYNAME,AD USERNAME,AD SAMACCOUNT,AD DN');
+let users = AD.getUsers();
+for (let user of users) {
+log.info('"'
++ user.id + '","'
++ user.active + '","'
++ (user[ENT] &amp;&amp; user[ENT].employeeNumber || '') + '","'
++ user.name.givenName + '","'
++ user.name.familyName + '","'
++ user.userName + '","'
++ user[IAN].sAMAccountName + '","'
++ user[IAN].distinguishedName.split(',').slice(1).join(',') + '"');
+}</code></pre><h2 id="h_01GK1M8JDBAXSEFPG2RY6GY6D5">Analyzing the Groups in Active Directory</h2><p>Use the following script in a script synchronization to analyze the groups of existing users in Active Directory:</p><pre><code>let ad_users = AD.importAllUsers();
+let ad_users_length = ad_users.length;
+let i = 0;
+let total = ad_users_length;
+log.info('AD ID,GROUP NAME');
+for (i = 0; i &lt; total; i++) {
+let groups = ad_users[i].groups;
+if (groups) {
+for (let group of groups) {
+log.info(ad_users[i].userName + ',' + group.display);
+}
+}
+}</code></pre>
+  </div>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now to Jira Server Ticket Management</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now to Jira Server Ticket Management</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZ2NATZEDH1HSM2JA67KZMH7">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>The <strong>Workday to ServiceNow Tickets Management</strong> integration retrieves the details from Workday for users who are newly onboarded, have changed their positions or roles, or have been terminated. Based on the user lifecycle events in Workday, the integration creates tickets (catalog requests) in ServiceNow. A catalog request is created for each of the joiner, mover, and leaver records retrieved from Workday. This guide provides details on the configurations that are available in the Aquera Admin portal to set up this integration.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <strong>Workday to ServiceNow Tickets Management</strong> integration performs the following functions:</p><ul>
+<li data-list-item-id="e00f42050ab774933242d400399e9c190">Retrieves the data of the following workers from your Workday instance in an incremental mode.<ul>
+<li data-list-item-id="e8e71b5aab132ba73eb35321327b156cc">New hires</li>
+<li data-list-item-id="ebde10168718a131b67de79b8d95a3064">Employees with department, title, location, manager, or any specific custom attribute changes</li>
+<li data-list-item-id="e3a484e5bf29a45e602f8b92b1cfb17a5">Terminated employees</li>
+</ul>
+</li>
+<li data-list-item-id="ef1374f233e41955049b510d089a1f1b8">Creates a ServiceNow ticket (catalog request) for each joiner, mover, or leaver event to trigger necessary IT or HR processes for account creation, access modification, or deprovisioning.<ul>
+<li data-list-item-id="e53506717aed740309208ee9ed89ec242">You can select the event types (joiner, mover, leaver) for which a ticket needs to be created on the integration setup page.</li>
+<li data-list-item-id="efc8ed900c3e848ab3b2e25ca675a66b6">Ticket fields are updated based on the mappings provided in the Attribute Map section of the integration.</li>
+</ul>
+</li>
+<li data-list-item-id="e9d25d1746ccacdeb3a8c790efdf640c3">Sends automated, detailed notification emails to a group of people based on the configuration.</li>
+<li data-list-item-id="e340672a1ca393900531d3897999fda87">Generates CSV reports and logs capturing the details of the joiners, movers, and leavers, and the tickets created.</li>
+<li data-list-item-id="ed9f29f7fadc513b447845a655ccae695">Enables log insights to monitor integration outcomes and for analytics.</li>
+</ul><h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e3fe0dbe96738d203ee5ab3b4af4a31c0">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e547875fc3c5b2f9104636d7585d0bbb6">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal, based on your requirements:<ul>
+<li data-list-item-id="ef863fd3a1c5aed34ec522083794fee2b">
+<strong>Workday:</strong> Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360020093234" rel="noopener noreferrer" target="_blank">Workday Configuration Guide</a> for instructions on creating the Workday application connector and setting up the authentication.</li>
+<li data-list-item-id="ec943e58a6d43c6fd411cbd1bc0c7c39a">
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for instructions on creating the ServiceNow application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section details the configurations required for this integration. It covers setting up the applications involved in the integration and configuring the integration parameters for creating and updating tickets in ServiceNow for the joiner, mover, and leaver events in Workday. </p><h2 id="h_01JZ7GF2GY5XR38ZNZCRV1KGS2">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ea448275a559f86ef902cc27789a48119">Log in to the <strong>Aquera Admin portal</strong>.</li>
+<li data-list-item-id="eb50e8510bb61e9d0d18821f6a9fb5d9c">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ee68ea53e566bbb70bc4f2659a37922a7">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="ebf1422984e4ef80833c2553b88fc5492">Select <strong>Workday to ServiceNow Tickets Management</strong>.</li>
+<li data-list-item-id="e388f724861a186342b1d9c51734d5a64">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e46d10b96de9e5c064160e029249087cf">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the application connectors required for the integration. This section allows you to search and select the Workday application from which the joiner, mover and leaver details need to be retrieved, and the ServiceNow application in which the tickets must be created.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K76JZPVE08T94CAR5RFBPB14">Integration Features</h4><p>This section is used to enable the following features of the integration.</p><ul>
+<li data-list-item-id="edbbaac7dbf597e4c716ae0822c2db681">
+<strong>Enable Ticket Management</strong>: Select this checkbox to manage tickets in ServiceNow for the joiner, mover, and leaver events. This is a mandatory setting.</li>
+<li data-list-item-id="e1c523326a8f0c721d331876536ac7be7">
+<strong>Select Event Type</strong>: Select the types of the events (<em>Joiner</em>, <em>Mover</em>, <em>Leaver</em>) for which you want the integration to create ServiceNow tickets. This field is displayed only if you have selected the <strong>Enable Ticket Management</strong> checkbox.</li>
+<li data-list-item-id="ec31b477726166f0e26c570cec6f5734e">
+<strong>Enable Department Management</strong>: Select this checkbox if you want the integration to sync departments from Workday to ServiceNow. The <strong>Manage Departments</strong> configuration section is displayed to configure the department sync settings.</li>
+<li data-list-item-id="e73ad8949804d88da7c50e8d237f319ec">
+<strong>Enable Location Management</strong>: Select this checkbox if you want the integration to sync locations from Workday to ServiceNow. The <strong>Manage Locations</strong> configuration section is displayed to configure the location sync settings.</li>
+<li data-list-item-id="eb07586fa42a6112fb0b838da9e9c184f">
+<strong>Enable User Management</strong>: Select this checkbox if you want the integration to sync users from Workday to ServiceNow. The <strong>Manage Users</strong> configuration section is displayed to configure the user sync settings.</li>
+</ul><h4 id="h_01K76JZX9RA6QTXRFZY43GEXW9">Execution Features</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e20652481ccd4cc70b1ed14df137e17e7">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the updates that would happen, but without applying them.</li>
+<li data-list-item-id="ef90bc17e2ea881e4a2815cd34cf8d805">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes.<br/><strong>Note</strong>: The <strong>Log Settings</strong> section will be displayed when this checkbox is selected.</li>
+<li data-list-item-id="e81238e196035271f6161a673cfae3af7">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report.<br/><strong>Note</strong>: The <strong>Report Settings</strong> section will be displayed when this checkbox is selected.</li>
+<li data-list-item-id="e20fbfb8650b942a9be4bb5dce78a5753">
+<strong>Enable Email Notifications</strong>: Select this checkbox to enable the integration-related notifications.<br/><strong>Note</strong>: The <strong>Notification Settings</strong> section will be displayed when this checkbox is selected.</li>
+<li data-list-item-id="e22557df6cce0e1ab9335aa4e531b2aa3">
+<p><strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.<br/><strong>Note</strong>: The <strong>Log Insights</strong> section will be displayed when this checkbox is selected.</p>
+<p><strong>Debug Settings</strong>: Select this checkbox to run the integration in debug mode.<br/><strong>Note</strong>: The <strong>Debug Settings</strong> section will be displayed when this checkbox is selected.</p>
+</li>
+</ul><h3 id="h_01K76SERK3XZAPMBD22134KJMJ">Debug Settings</h3><p>Configure the following debug settings:</p><ul><li data-list-item-id="e1eefba5600f68e98e4c656dd72e0197d">
+<strong>Source Filter</strong>: Used to filter a single worker record from Workday and run the integration for debugging purposes. You can filter workers by <em>Worker ID</em> or <em>Worker Email</em>. Based on the selection, another field is displayed to enter the <strong>Worker ID</strong> or the <strong>Worker Email ID</strong>.</li></ul><h3 id="h_01K76SERK4R03REA0VWX894TBR">Joiner Ticket Settings</h3><p>Configure the following settings for creating joiner tickets:</p><ul>
+<li data-list-item-id="edfb0bd251ef9f54b9fd4b6576c410acc">
+<strong>Enable Onboarding Ticket Generation</strong>: Select this checkbox to create onboarding tickets in ServiceNow for new hires.</li>
+<li data-list-item-id="e5cb6f2bea6e671d3a75da905c2df25e2">
+<strong>Workday Workers Retrieval Statuses</strong>: Select the statuses of the new hires who must be retrieved from Workday for creating onboarding tickets. For example, if you select <em>Rehire</em>, only the workers with the status as <em>Rehire</em> in Workday are retrieved and onboarding tickets are created in ServiceNow for only those workers.</li>
+<li data-list-item-id="e2a686d490bd7a1565df190a5b59fa6a7">
+<strong>Onboarding Date Type</strong>: The type of date that must be considered for retrieving new hires from Workday. For example, if you select <em>HireDate</em>, the date value in the <strong>Hire Date</strong> field of the workers in Workday will be considered for retrieving the workers.</li>
+<li data-list-item-id="efd0582b93d6ce424151fd27123384fa4">
+<strong>Enable Ticket Preprocessing</strong>: Select this checkbox if you want to create tickets in advance for employees who will have a hire date in the future.</li>
+<li data-list-item-id="e4aa602504213dc4d484751ab7989f09b">
+<strong>Create Tickets X Days Before Date</strong>: Enter the number of days before which onboarding tickets have to be created for new employees. For example, if you configure <em><strong>5</strong></em> in this field, onboarding tickets will be created in advance for employees whose hire date is on the date that is 5 days from the current date.<br/><strong>Note</strong>: This field is displayed only if you have selected the <strong>Enable Ticket Preprocessing</strong> checkbox.</li>
+<li data-list-item-id="e424c9c32a8fd9f34f4ace18516b5337a">
+<strong>Include Ranges for Onboarding</strong>: Select this checkbox to create onboarding tickets for all new hires whose hire dates fall within the range between the current date and the number of days specified in the <strong>Create Tickets X Days Before Date</strong> field. For example, if you enable this option and set <strong>Create Tickets X Days Before Date</strong> to <em>5</em>, onboarding tickets will be generated for all employees scheduled to be hired within the next five days from the current date.<br/><strong>Note</strong>: This field is displayed only if you have selected the <strong>Enable Ticket Preprocessing</strong> checkbox.</li>
+<li data-list-item-id="ecabcc44e50accd309965cc6656687b80">
+<strong>ServiceNow Ticket Category</strong>: Select the category under which the onboarding tickets have to be created in ServiceNow.</li>
+<li data-list-item-id="e00ef5cb6f1d1c4e7f94c9c9136e7ab6f">
+<strong>ServiceNow Ticket Type</strong>: Select the type of ticket that needs to be created in ServiceNow for employee onboarding.</li>
+<li data-list-item-id="e35983e400fa6eb2f13cee48b3684383f">
+<strong>Enable Workday Worker ID Filter</strong>: Select this checkbox if you want to create an onboarding ticket for a particular worker only.</li>
+<li data-list-item-id="e3b2439c63e150b21b1a9f40f5e1abd9a">
+<strong>Workday Worker ID</strong>: Enter the ID of the worker for whom the onboarding ticket has to be created.<br/><strong>Note</strong>: This field is displayed only if you have selected the <strong>Enable Workday Worker ID Filter</strong> checkbox.</li>
+</ul><h3 id="01K7EFF63089VHZWQSYS7D490T">Mover Ticket Settings</h3><p>Configure the following settings for creating mover tickets:</p><ul>
+<li data-list-item-id="e1384e85cb675ba82f74d1d55f2b70142">
+<strong>Enable Mover Ticket Generation</strong>: Select this checkbox to create tickets in ServiceNow for changes in any of the following details for a worker: <em>department, location, title, manager,</em> or any other (custom) attribute, as per your requirement.</li>
+<li data-list-item-id="ecb29b8fd552ca6958494bd6046811e50">
+<strong>Trigger Field for Mover Ticket Creation</strong>: Select one or more field(s) whose changes should trigger the creation of a mover ticket in ServiceNow. When any of the selected fields (such as <strong>Department</strong>, <strong>Location</strong>, <strong>Title</strong>, <strong>Manager</strong>, or other <strong>Custom</strong> attributes) are updated for a worker, the integration identifies it as a mover event and automatically generates a corresponding Mover ticket. </li>
+<li data-list-item-id="e52be697618b67de84453efa1ba1c84dd">
+<strong>Custom Mover Field for Ticket Creation</strong>: Select the custom attribute that the integration must check for any changes for creating a mover ticket in ServiceNow. <br/><strong>Note</strong>: This field is displayed only if you have selected <em>Custom</em> from the <strong>Trigger Field for Mover Ticket Creation</strong> field.</li>
+<li data-list-item-id="ee7095cbe4181c6de45800f4b18367500">
+<strong>ServiceNow Ticket Category</strong>: Select the category under which the employee mover tickets have to be created in ServiceNow.</li>
+<li data-list-item-id="e2bb7313e405287074064cb8d42ac6023">
+<strong>ServiceNow Ticket Type</strong>: Select the type of ticket that needs to be created in ServiceNow for employee mover transactions.</li>
+<li data-list-item-id="e50a75f1f1f93867f8055601843202b45">
+<strong>Enable Workday Worker ID Filter</strong>: Select this checkbox if you want to create a mover ticket for a particular worker only.</li>
+<li data-list-item-id="eeb1d09962fee58d166ea67cde346dfea">
+<strong>Workday Worker ID</strong>: Enter the ID of the worker for whom the mover ticket has to be created.<br/><strong>Note</strong>: This field is displayed only if you have selected the <strong>Enable Workday Worker ID Filter</strong> checkbox.</li>
+</ul><h3 id="01K7EGRBGWD33M2Y54Z0DXD8BQ">Leaver Ticket Settings</h3><p>Configure the following settings for creating offboarding tickets:</p><ul>
+<li data-list-item-id="e9219758d562445cdae78f4694ffe75d9">
+<strong>Enable Offboarding Ticket Generation</strong>: Select this checkbox to create offboarding tickets in ServiceNow for worker terminations.</li>
+<li data-list-item-id="e309c61e31bd2b62cdfaf5a589c262195">
+<strong>Workday Workers Retrieval Statuses</strong>: Select the statuses of the terminated employees who must be retrieved from Workday for creating offboarding tickets. For example, if you select <em>Terminated</em>, only the workers with the status as <em>Terminated</em> in Workday are retrieved and offboarding tickets are created in ServiceNow for only those workers.</li>
+<li data-list-item-id="e30f4514808d553e164d4262c6acdc0c0">
+<strong>Offboarding Date Type</strong>: The type of date that must be considered for retrieving terminated employees from Workday. For example, if you select <em>Terminated</em> <em>Date</em>, the date value in the <strong>Termination Date</strong> field of the workers in Workday will be considered for retrieving the workers.</li>
+<li data-list-item-id="e68a3004269dfee256940024e0dff8d30">
+<strong>Enable Ticket Preprocessing</strong>: Select this checkbox if you want to create tickets in advance for employees who will have a termination date in the future.</li>
+<li data-list-item-id="e96359a4d1ee6ff5ec06d7faf5f445fdf">
+<strong>Create Tickets X Days Before Date</strong>: Enter the number of days before which offboarding tickets have to be created for terminated employees. For example, if you configure <em><strong>5</strong></em> in this field, an offboarding ticket will be created for an employee who has a termination date in the next 5 days from the current date.<br/><strong>Note</strong>: This field is displayed only if you have selected the <strong>Enable Ticket Preprocessing</strong> checkbox.</li>
+<li data-list-item-id="e5d171f1ff6e510a27dddbbcf5c4ed90e">
+<strong>ServiceNow Ticket Category</strong>: Select the category under which the offboarding tickets have to be created in ServiceNow.</li>
+<li data-list-item-id="eb316a07b2abd61e8a5ad28e7cc261c08">
+<strong>ServiceNow Ticket Type</strong>: Select the type of ticket that needs to be created in ServiceNow for employee offboarding.</li>
+<li data-list-item-id="e2ac69e2d248ea188496accb51ad76181">
+<strong>Enable Workday Worker ID Filter</strong>: Select this checkbox if you want to create an offboarding ticket for a particular worker only.</li>
+<li data-list-item-id="e4474751817f88a6cc4dc8bf6955846cd">
+<strong>Workday Worker ID</strong>: Enter the ID of the worker for whom the offboarding ticket has to be created.<br/><strong>Note</strong>: This field is displayed only if you have selected the <strong>Enable Workday Worker ID Filter</strong> checkbox.</li>
+</ul><h3 id="h_01K719VA7RPQ5Z2BWMRBXVSVRN">Log Settings</h3><p>Configure the following log settings:</p><ul><li data-list-item-id="eb7dc2ba91b4f5aa95f75523c1c5a737c">
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e737015642a33e16295374a975c91ff59">
+<strong>Summary Only</strong>: All the integration configurations are captured in the logs.</li>
+<li data-list-item-id="e3d53370d4f9c3a077d4316d1a396e772">
+<strong>Full Details</strong>: All the actions performed by the integration are captured in the logs. The logs include the following details:<ul>
+<li data-list-item-id="ef72cc9807cab67b687e5fa74f393ef12">
+<p>The count of joiner, mover, and leaver tickets that have been created</p>
+<p>The total number of tickets that have been created successfully</p>
+</li>
+<li data-list-item-id="e5e16de2893808a27c2ac1eaac6469ed5">The total number of tickets that have been updated successfully</li>
+<li data-list-item-id="ea131d97a0fed04b41e9b135ebe4608eb">The total number of ticket creation failures</li>
+<li data-list-item-id="e0c0b1cb1f1f7f05a536781c32132e832">The total number of ticket update failures.</li>
+<li data-list-item-id="ee01161cbabf978952905b9cccfc3e0dd">The total number of workers who were skipped.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01JZ7GJ97ZX233WAF2MGX9PFME">Report Settings</h3><p>Configure the following report settings:</p><ul><li data-list-item-id="efbf9cc2bc94018e557a0d6e063b4442d">
+<p><strong>Generate Integration Report</strong>: Select this checkbox to generate a CSV report for integration runs. The CSV report will have the details of the tickets created for joiner, mover, and leaver transactions from Workday.</p>
+<p><strong>Report Log level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:</p>
+<ul>
+<li data-list-item-id="e996cac9d35aecf6a31c96da76bd9f110">
+<strong>Summary Only</strong>: All the integration configurations are captured in the report.</li>
+<li data-list-item-id="e3d66db215ccf6f6dad25a3045e4fa48e">
+<strong>Full Details</strong>: All the actions performed by the integration are captured in the report. The report includes the following details:<ul>
+<li data-list-item-id="e66d39abadb7bc9592df9d1f42cb7e3b3">
+<p>The count of joiner, mover, and leaver tickets that have been created</p>
+<p>The total number of tickets that have been created successfully</p>
+</li>
+<li data-list-item-id="e30c1ee270cbacafecf71a05b78566d99">The total number of tickets that have been updated successfully</li>
+<li data-list-item-id="e3cfb0a8550aa1e53c2a77559c0d55f6f">The total number of ticket creation failures</li>
+<li data-list-item-id="e3981161cd3635a0f73598d3b780f5ac6">The total number of ticket update failures.</li>
+<li data-list-item-id="eb04ca9cb7060820f645712bb96f64261">The total number of workers who were skipped.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="01K2C3V86CTCZR5NZXJ1805N9K">Notification Settings</h3><p>Configure the following settings for email notifications.</p><ul><li data-list-item-id="e64196a9263d5bbfcb43bcc498483f154">
+<strong>Recipient's Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications must be sent.</li></ul><h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2><p>The Attribute Map enables you to set the worker attributes that must be mapped to the fields in the tickets created by the integration in ServiceNow. The data from the mapped worker attributes are populated in those ticket fields while creating tickets.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

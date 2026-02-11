@@ -1,0 +1,375 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pinpoint Candidates to ADP Vantage HCM for API Central Employees</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Pinpoint Candidates to ADP Vantage HCM for API Central Employees</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JTPZ6E2FP4KGMBD9SZ8A91JT">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types.</p>
+<p>This integration synchronizes candidate onboarding data from the Pinpoint HRM application to ADP Vantage HCM for API Central Employees. It extracts candidate data from Pinpoint, creates a new employee record in ADP, and generates a structured CSV export.</p>
+<p>The integration is triggered when a candidate’s hiring process is finalized in Pinpoint (e.g., offer acceptance or onboarding initiation).</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Receiving the candidate information from Pinpoint HRM.</li>
+<li>Sends the organized candidate profile to ADP Vantage HCM for API Central Employees to create a new employee record.</li>
+<li>If successful, it creates a CSV report with all candidate details.</li>
+<li>Adds status columns to the report (Success or Failed) with timestamps and error messages.</li>
+<li>Emails the hiring manager or admin about the result (Success/Failure) and any errors.</li>
+<li>If enabled, it saves a copy of the data and results to a logging system (OpenSearch) for future review.</li>
+<li>Log errors clearly for troubleshooting (e.g., “Failed to send data to ADP: Invalid date format”).</li>
+</ul>
+<p><strong>Note</strong>: You must set up webhooks in the Pinpoint application to send the candidate hire events to this Aquera integration. Refer to the <a href="#h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</a> for details.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Pinpoint HRM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/17731752333335-Pinpoint-Configuration-Guide" rel="noopener noreferrer" target="_blank">Pinpoint Configuration Guide</a> for instructions on creating the Pinpoint HRM application connector and setting up the authentication.</li>
+<li>
+<strong>ADP Vantage HCM for API Central Employees</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/27650941826199-ADP-Vantage-HCM-Configuration-Guide-for-API-Central-Customers" rel="noopener noreferrer" target="_blank">ADP Vantage HCM Configuration Guide for API Central Customers</a> for instructions on creating the ADP Vantage HCM for API Central Employees application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section describes the configuration process for integrating Pinpoint HRM with ADP Vantage HCM for API Central Employees. It covers creating the integration, configuring system preferences, and setting up event-driven triggers to automate the real-time transfer of new hire data from Pinpoint HRM to ADP Vantage HCM for API Central Employees.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Pinpoint employees to ADP Vantage HCM for API Central Employees</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <em>Pinpoint</em> and <em>ADP Vantage HCM for API Central Employees</em> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Set Up Preferences</h3>
+<ul>
+<li>
+<strong>Company Code</strong>: A unique identifier for each organizational unit.</li>
+<li>
+<strong>Default Hours</strong>: Specifies the standard number of hours employees are expected to work in a given period, such as per week or day.</li>
+<li>
+<strong>Recipient Email Addresses</strong>: Specifies the email addresses to which notifications are sent. It supports multiple addresses separated by commas or mailing lists.</li>
+<li>
+<strong>Email Subject</strong>:  The subject line used in the e-mail notification sent when a user is created in the target application.</li>
+<li>
+<strong>Email Body</strong>: The main content of the email, containing the message and formatting (plain text/HTML).</li>
+<li>
+<strong>Debug Mode</strong>: Simulates the email-sending process without actual delivery, logging details such as recipient, subject, and body for debugging purposes.</li>
+<li>
+<strong>Report Only</strong>: Generates a report that shows the data that would be changed without making those changes.</li>
+<li><span><strong>Email Body on Failed Integration</strong>:  Predefined template or content used in emails sent when the integration encounters errors or fails to execute successfully.</span></li>
+</ul>
+<h2 id="h_01JTQV2KGSYBQJKSCE6H0E64CG">Set Up Event Triggers</h2>
+<p>You need to set up the event triggers to receive candidate hire events from the Pinpoint HRM application and run the integration.</p>
+<ol>
+<li>In the Trigger section, click <strong>Event</strong>.</li>
+<li>Select the Pinpoint HRM connector configured in your Aquera Admin tenant in the <strong>Event Source</strong> drop-down.</li>
+<li>The URL field displays the endpoint URL to which Pinpoint HRM will send the candidate hire events. This URL must be configured in the Pinpoint HRM application when configuring the webhooks. For more details on configuring webhooks, see <a href="#h_01ESN6XGCPQRMFGWGTMB3YVH03">Setting up Webhooks in Pinpoint HRM</a>.</li>
+<li>Click <strong>Create Token</strong> to generate a token. Save this token securely.</li>
+</ol>
+<h1 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h1>
+<p>Integrating <em>Pinpoint employees to ADP Vantage HCM for API Central Employees </em>provides mapping between the commonly used Pinpoint candidates and ADP Vantage HCM for API Central Employees attributes.<br/>The following are the API attributes that are mapped by default:</p>
+<table border="1" cellpadding="0" cellspacing="0">
+<thead>
+<tr>
+<td><strong><span>Pinpoint Attributes/Script Expression</span></strong></td>
+<td><strong><span>ADP Vantage HCM API Attributes</span></strong></td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>candidate.application.attributes.first_name</span></td>
+<td><span>applicant.person.legalName.givenName</span></td>
+</tr>
+<tr>
+<td><span>candidate.application.attributes.last_name</span></td>
+<td><span>applicant.person.legalName.familyName1</span></td>
+</tr>
+<tr>
+<td><span>candidate.application.attributes.email</span></td>
+<td><span>applicant.person.communication.emails[0].emailUri</span></td>
+</tr>
+<tr>
+<td><span>candidate.application.attributes.phone</span></td>
+<td><span>applicant.person.communication.mobiles[0].formattedNumber</span></td>
+</tr>
+<tr>
+<td><span>candidate.answers</span></td>
+<td><span>applicant.person.governmentIDs[0].idValue</span></td>
+</tr>
+<tr>
+<td><span>fetchDateAnswers(candidate.answers, "date of birth")</span></td>
+<td><span>applicant.person.birthDate</span></td>
+</tr>
+<tr>
+<td><span>candidate.application.attributes.address1</span></td>
+<td><span>applicant.person.legalAddress.lineOne</span></td>
+</tr>
+<tr>
+<td><span>candidate.application.attributes.town</span></td>
+<td><span>legalAddress.countrySubdivisionLevel1.codeValue</span></td>
+</tr>
+<tr>
+<td><span>candidate.application.attributes.address2</span></td>
+<td><span>applicant.person.legalAddress.cityName</span></td>
+</tr>
+<tr>
+<td><span>candidate.application.attributes.postcode</span></td>
+<td><span>applicant.person.legalAddress.postalCode</span></td>
+</tr>
+<tr>
+<td><span>jobCustomAttributes(candidate.job_custom_attributes, "Work Locations")</span></td>
+<td><span>jobOffer.offerAssignment.assignedWorkLocations[0].nameCode.codeValue</span></td>
+</tr>
+<tr>
+<td><span>jobCustomAttributes(candidate.job_custom_attributes, "Pay Groups")</span></td>
+<td><span>jobOffer.offerAssignment.payrollGroupCode</span></td>
+</tr>
+<tr>
+<td><span>companyCode </span></td>
+<td><span>jobOffer.offerAssignment.legalEntityID</span></td>
+</tr>
+<tr>
+<td><span>candidate.job.attributes.employment_type</span></td>
+<td><span> <font> <font>jobOffer.offerAssignment.assignmentTermCode.codeValue</font> </font> </span></td>
+</tr>
+<tr>
+<td><span>DEFAULT_HOURS </span></td>
+<td><span>jobOffer.offerAssignment.standardHours.payPeriodHoursQuantity</span></td>
+</tr>
+<tr>
+<td><span>candidate.offers[0].attributes.salary_amount</span></td>
+<td><span> <font> <font> jobOffer.offerTerms.compensation.baseRemuneration.annualRate.amountValue </font> </font> </span></td>
+</tr>
+<tr>
+<td><span>candidate.offers[0].attributes.salary_currency</span></td>
+<td><span> <font> <font> jobOffer.offerTerms.compensation.baseRemuneration.payPeriodRateAmount.currencyCode </font> </font> </span></td>
+</tr>
+<tr>
+<td><span>candidate.application.attributes.start_on</span></td>
+<td><span>jobOffer.offerTerms.expectedStartDate</span></td>
+</tr>
+<tr>
+<td><span> <font> <font>maritalData</font> </font> </span></td>
+<td><span>eapplicant.person.maritalStatusCode.codeValue</span></td>
+</tr>
+<tr>
+<td><span>genderData</span></td>
+<td><span>applicant.person.genderCode.codeValue</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01J6RRJMNFD5C1HMACKNNA2WQY">ADP Vantage HCM for API Central Employees Attributes</h3>
+<p>The following table lists the <strong>ADP Vantage HCM for API Central Employees</strong> application UI field name, UI path, and the description:</p>
+<table border="1">
+<tbody>
+<tr>
+<td>
+<p><span><strong>ADP Vantage HCM — API Central Employees UI Field</strong></span></p>
+</td>
+<td><span><strong>Application UI Path</strong></span></td>
+<td><span><strong>API Attribute</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td>
+<p><span>Legal First Name + Legal Last Name</span></p>
+</td>
+<td>
+<p>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox (Continue) &gt; Personal Information &gt;(Edit) &gt; Legal First Name, Legal Last Name </p>
+</td>
+<td>
+<p><span>applicant.person.legalName.givenName<br/>applicant.person.legalName.familyName1<br/></span></p>
+</td>
+<td>
+<p>First and last name of the candidate</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span>Work Email</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox (Continue) &gt; Personal Information &gt;Contact Information &gt; (Edit) &gt; Work Email</td>
+<td><span>applicant.person.communication.emails[0].emailUri</span></td>
+<td>Specifies the Email address of the employee.</td>
+</tr>
+<tr>
+<td>
+<p><span>Work Cell </span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox (Continue) &gt; Personal Information &gt;Contact Information &gt; (Edit) &gt; Work Cell</td>
+<td><span><span>applicant.person.communication.mobiles[0].formattedNumber</span></span></td>
+<td>Specifies the mobile number of the employee.</td>
+</tr>
+<tr>
+<td>
+<p><span>SSN</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox (Continue) &gt; Personal Information</td>
+<td><span><span>applicant.person.governmentIDs[0].idValue</span></span></td>
+<td>The Social security number of the employee.</td>
+</tr>
+<tr>
+<td>
+<p><span>Birth Date </span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox (Continue) &gt; Personal Information &gt; Demographics &gt; (Edit) &gt; Birth Date</td>
+<td>
+<span>applicant.person.birthDate</span><span><span><br/></span></span>
+</td>
+<td> The birthdate of the employee.</td>
+</tr>
+<tr>
+<td>
+<p><span>Address Line 1</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox (Continue) &gt; Personal Information &gt; Addresses &gt; (Edit) &gt;  Address Line 1</td>
+<td><span>applicant.person.legalAddress.lineOne</span></td>
+<td>The home address of the employee.</td>
+</tr>
+<tr>
+<td>
+<p><span>City</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox (Continue) &gt; Personal Information &gt; Addresses &gt; (Edit) &gt; City</td>
+<td><span>applicant.person.legalAddress.cityName</span></td>
+<td>The home address of the employee.</td>
+</tr>
+<tr>
+<td>
+<p><span>Zip Code</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox (Continue) &gt; Personal Information &gt; Addresses &gt; (Edit) &gt; Zip Code</td>
+<td><span>applicant.person.legalAddress.postalCode</span></td>
+<td>The Zip code of the employee's home. </td>
+</tr>
+<tr>
+<td>
+<p><span>Work Location</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox (Continue) &gt; Job Information &gt; (click <strong>&gt;</strong> ) Job Record  &gt; Job &gt; Location &gt; Work location</td>
+<td>
+<p><span>jobOffer.offerAssignment.assignedWorkLocations[0].</span></p>
+<p><span> <font> <font>nameCode.codeValue</font> </font> </span></p>
+</td>
+<td>The work location  assigned to the employee.</td>
+</tr>
+<tr>
+<td>
+<p><span>Pay Group </span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox  (Continue) &gt; Job Information &gt; (click <strong>&gt;</strong> )  Job Record &gt; Compensation &gt;  Pay Group</td>
+<td><span>jobOffer.offerAssignment.payrollGroupCode</span></td>
+<td>The associated pay group of the employee.</td>
+</tr>
+<tr>
+<td>
+<p><span>Employment Type</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox  (Continue) &gt; Personal Information</td>
+<td>
+<p><span> <font> <font>jobOffer.offerAssignment.</font> </font> </span></p>
+<p><span> <font> <font>assignmentTermCode.codeValue</font> </font> </span></p>
+</td>
+<td>The type of employment refers to the classification of how an employee is employed, such as full-time or part-time.</td>
+</tr>
+<tr>
+<td>
+<p><span>Standard Hours</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox  (Continue) &gt; Job Information &gt;(click <strong>&gt;</strong> )  Job Record &gt; Job &gt; Standard Hours </td>
+<td>
+<p><span>jobOffer.offerAssignment.standardHours.</span></p>
+<p><span>payPeriodHoursQuantity</span></p>
+</td>
+<td>Refers to the normal number of hours employees must work in a given week or day.</td>
+</tr>
+<tr>
+<td>
+<p><span>Annual Benefits Base Rate </span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox  (Continue) &gt; Job Information &gt;(click <strong>&gt;</strong> )  Job Record &gt; Job &gt; Change Pay &gt; Annual Benefits Base Rate </td>
+<td>
+<p><span> <font> <font>jobOffer.offerTerms.compensation.baseRemuneration.</font> </font> </span></p>
+<p><span> <font> <font>annualRate.amountValue</font> </font> </span></p>
+</td>
+<td><font size="2"> The specific annual earnings figure is used to calculate benefits for the employee. </font></td>
+</tr>
+<tr>
+<td>
+<p><span>Currency </span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox  (Continue) &gt; Job Information &gt;(click <strong>&gt;</strong> )  Job Record &gt; Job &gt; Change Pay &gt; Currency </td>
+<td>
+<p><span> <font> <font>jobOffer.offerTerms.compensation.baseRemuneration.</font> </font> </span></p>
+<p><span> <font> <font>payPeriodRateAmount.currencyCode</font> </font> </span></p>
+</td>
+<td>The code for the currency of the compensation of the employee.</td>
+</tr>
+<tr>
+<td>
+<p><span>Job service date</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox  (Continue) &gt; Personal Information &gt; Employment Dates &gt; (Edit) &gt; Job service date</td>
+<td><span>jobOffer.offerTerms.expectedStartDate</span></td>
+<td>Refers to the date an employee began working for an employer</td>
+</tr>
+<tr>
+<td>
+<p><span>Marital Status</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox  (Continue) &gt; Personal Information &gt; Demographics &gt; (Edit) &gt; Marital Status</td>
+<td><span>applicant.person.maritalStatusCode.codeValue</span></td>
+<td>Refers to the status of the employee, whether married or single. </td>
+</tr>
+<tr>
+<td>
+<p><span>Gender</span></p>
+</td>
+<td>People &gt; Personal Information &gt; Employee Search (Search by any UI field) &gt; Select the checkbox  (Continue) &gt; Personal Information &gt; Demographics &gt; (Edit) &gt; Gender</td>
+<td><span>applicant.person.genderCode.codeValue</span></td>
+<td>Refers to the gender of the employee.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="01JQQX8ZJ9C62RPE14W4DTF9PE">Run the Integration</h1>
+<p>The integration is triggered when a candidate's hiring process is completed in the Pinpoint HRM application. It will process the event received from Pinpoint HRM and create an employee record in the ADP Vantage HCM for the API Central application. For more details on Events, see the Set Up Event Triggers section.</p>
+<p>Once an employee is successfully onboarded to the ADP Vantage HCM for the API Central application, the integration triggers an email notification to the email addresses configured in your integration. It will also send messages and reports to the email addresses in case of integration errors.</p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<h1 id="h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</h1>
+<h2 id="h_01JV9BMCM5D93HAK0VA50EK0YW">Setting Up Webhooks in Pinpoint HRM</h2>
+<p>This section details how to set up webhooks in the Pinpoint HRM application to send the candidate hire events to the Aquera integration for processing.</p>
+<ol>
+<li>Log in to Pinpoint and, using the left-hand navigation, go to Company &gt; Profile &gt; Webhooks.</li>
+<li>Click the New webhook button.</li>
+<li>Specify a valid URL, whether HTTP or HTTPs.</li>
+</ol>
+<p>Note: You can get the URL while setting up the Event trigger. For more details, see the <a href="#h_01JTQV2KGSYBQJKSCE6H0E64CG">Set Up Event Triggers</a> section.</p>
+<p> </p>
+<p><!-- notionvc: 28aa8e6e-8fdd-4432-86da-988a359abdec --></p>
+  </div>
+</body>
+</html>

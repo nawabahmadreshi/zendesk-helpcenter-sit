@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PeopleSoft Event Listener Orchestration Setup Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>PeopleSoft Event Listener Orchestration Setup Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h3 id="jump-to">Jump to</h3>
+<pre><a href="#h_01H10YGNG6GN47Q8Y41M0B4F1B" target="_self">Overview</a><br/><a href="#h_01H1P8VFAFTSX80GAH609P2P6J" target="_self">Prerequisite</a><br/><a href="#h_01FNZX380AK1H64VEK3D9FJMTD" target="_self">Setting Up the Orchestration</a><br/>   <a href="#h_01FNZX7WX3EZB2YFTVKR1EEYNQ" target="_self">Configuration</a><br/>   <a href="#h_01FNZX8449XXMSY22ZA838KWH6" target="_self">Attributes Mapping</a><br/>   <a href="#h_01FNZX8E1ZMS0Y338QTKBZEA4Z" target="_self">Tables</a><br/>   <a href="#h_01FNZV3BP8CN2JYN8FCHFK36GY" target="_self">Event Detail</a><br/><a href="#h_01FNZXCMPW9X84GE29B972067V" target="_self">Event Publishing Setup in PeopleSoft</a><br/>   <a href="#h_01FNZXCZXEC1NZR397TVWK59CQ" target="_self">Incremental Reconciliation</a><br/>   <a href="#h_01FNZS9BPKAA4JMA5TCYV9468R" target="_self">Configuring PeopleSoft Integration Broker</a><br/><a href="#h_01H28BY8TBRC3XYJMESFE8BE8N" target="_self">Conclusion</a></pre>
+<h1 id="h_01H10YGNG6GN47Q8Y41M0B4F1B">Overview</h1>
+<p><span>Orchestration is the automated configuration, management, and coordination of applications and services. PeopleSoft Listener Sync orchestration </span><span>synchronizes XML Messages from PeopleSoft to any SCIM <span>(System for Cross-domain Identity Management) </span>destination. <span>The orchestration takes place between the PeopleSoft application, which is the source, and the SCIM-based target application. </span></span></p>
+<p><span><span>This guide explains the configurations to be done in the Aquera Admin portal to set up the orchestration for capturing the events triggered in the PeopleSoft application and synchronizing those changes in a target application.</span></span></p>
+<h1 id="h_01H1P8VFAFTSX80GAH609P2P6J"><span><span>Prerequisite</span></span></h1>
+<ul>
+<li><span><span>Make sure that you have set up the source application (PeopleSoft) connector and the target application in the Applications module in Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4405455145751" rel="noopener" target="_blank">PeopleSoft Connector Configuration Guide</a> for details.</span></span></li>
+</ul>
+<h1 id="h_01FNZX380AK1H64VEK3D9FJMTD"><span><span>Setting Up the Orchestration</span></span></h1>
+<p><span><span>To configure the PeopleSoft Listener Sync orchestration, perform the following:</span></span></p>
+<ol>
+<li>
+<span>On the Aquera Admin Home page</span>, navigate to the <strong>Orchestrations </strong>module and click <strong>Create Orchestration</strong>.<span><span><br/></span></span>
+</li>
+<li>Enter the following details on the <strong>Add Orchestration</strong> pop-up window:
+<ul>
+<li>Enter a <strong>Name</strong> for the orchestration.</li>
+<li>Select<em> <span>Peoplesoft Event Listener </span></em>from the orchestration type drop-down list.</li>
+</ul>
+</li>
+<li>Click <strong>Done</strong>.<span><span><strong><br/></strong></span></span>
+</li>
+</ol>
+<h2 id="h_01FNZX7WX3EZB2YFTVKR1EEYNQ"><span><span>Configuration</span></span></h2>
+<ol>
+<li>Select <em>PeopleSoft</em> as your <strong>Source Application</strong> and the required destination application as the <strong>Target Application</strong> (for example, <em>BambooHR</em>).</li>
+<li>Select <strong>Report Only </strong>to get a report that shows what would be changed after the orchestration run without actually making the changes.</li>
+<li>If you want to send the orchestration's outcome to a specific set of users, the email IDs of those users can be provided in the <strong>Admin Email List </strong>field.</li>
+<li>Enter the <strong>Match Expression</strong> to determine the target record that matches a given source record. The match expression can be provided only if the target connector supports GET operation.</li>
+<li>Select <strong>Map Manager</strong> to map users' managers from source to target. The manager attributes in the user objects are used for mapping. </li>
+<li><span><span>Click <strong>Create</strong> to create the orchestration</span></span></li>
+</ol>
+<h3 id="orchestration-hooks"><span><span>Orchestration Hooks</span></span></h3>
+<p><span><span>This section details the configurations to set up the following Orchestration hooks. The Hooks settings are optional.</span></span></p>
+<ul>
+<li><span><span><strong>New User Orchestration Hook</strong> - Select an orchestration that has to be executed when a user is created in the target application. The selected orchestration will be triggered during user creation. </span></span></li>
+<li><span><span><strong>Update User Orchestration Hook</strong> - Select an orchestration that has to be executed when a user is updated in the target application. The selected orchestration will be triggered during the user update. </span></span></li>
+<li><span><span><strong>Deprovision User Orchestration Hook</strong> - Select an orchestration that has to be executed when a user is de-provisioned in the target application. The selected orchestration will be triggered during user deprovisioning. </span></span></li>
+</ul>
+<h3 id="creation-email-details"><span><span>Creation Email Details</span></span></h3>
+<p><span><span>Clicking <strong>Send New User's Manager Email</strong> causes an email to be sent to a new user's manager.</span></span></p>
+<p><span><span>In the <strong>Creation Distribution List</strong>, users can create a comma-separated list of recipients who will receive an email when the orchestration creates a new target.</span></span></p>
+<p><strong><span>Creation Email Subject </span></strong><span>can be used</span><span> when sending creation email reports.</span></p>
+<p><span><strong>Creation Email Body</strong> is a t</span><span>emplate used as the body for creation emails. (Target attributes may be included).<img alt="03.png" src="./assets/9ec9ad1202c52688.png"/></span></p>
+<h3 id="deactivation-email-details"><span>Deactivation Email Details </span></h3>
+<p><span>Clicking <strong>Send Deactivated User's Manager Email</strong> c<span>auses an email to be sent to a deactivated user's manager.</span></span></p>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<strong>Deactivation Distribution List </strong>is a comma-separated list of recipients who will receive an email when the orchestration deactivates a target.</div>
+<div>
+<strong>Deactivation Email Subject</strong> can be the subject used when sending deactivation email reports.</div>
+<div>
+<strong>Deactivation Email Body</strong> is a template used as the body for deactivation emails. Target attributes may be included.<img alt="04.png" src="./assets/ac12328b43010f53.png"/>
+</div>
+<h3 id="advanced-details">Advanced Details</h3>
+<p><strong>Enable Group Management</strong> can be s<span>elected to enable group management.</span></p>
+<p><span>When</span><strong><span> Group Management Restriction List </span></strong><span>is specified, group management is limited to the set of comma-separated groups. When not specified, Enable Group Management applies to all groups.</span></p>
+<p><span><strong>Phone Number Formatting</strong> can be chosen as one of the following: "disabled", "automatic", "E164", "INTERNATIONAL", or "NATIONAL[,country=US], where ",country=US" is optional and "US" can be replaced with other countries.</span></p>
+<p><span><strong>Password Length</strong> is the length of the password generated when creating new users.</span></p>
+<p><span><strong>Report Logging</strong> is set as <em>normal </em>by default. <span>This feature controls the amount of detail that will be provided in the report.  Users need to start with <em>normal</em>, and increase (<em>verbose</em>) or decrease (<em>minimal</em>) as desired.</span> <img alt="05.png" src="./assets/4aa3872fffee53be.png"/></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>After providing all the relevant details, click <strong>Create</strong> on the top right to create the orchestration<img alt="06.png" src="./assets/5ddd410825841b8f.png"/>
+</div>
+<h2 id="h_01FNZX8449XXMSY22ZA838KWH6">Attributes Mapping</h2>
+<p>In the <strong>Attribute Map</strong> section, attributes that are commonly placed at the Source and the Target will be matched automatically. Users can filter the attributes to be mapped further by using the <strong>Attribute Filter</strong> located on the top right. They can choose either one or two or all of the three types of <strong>Core,</strong> <strong>Enterprise,</strong> and <strong>IAN</strong> attributes based on the Target application's requirement. <img alt="07.png" src="./assets/4ce09e5455fae0e5.png"/></p>
+<p><span>If the users want to map a specific attribute, they can search it by name in the Search Box</span><img alt="08.png" src="./assets/6357ee066c3b9985.png"/></p>
+<div><span>After choosing the attribute that has to be mapped, Click on the dropdown next to the 'Arrow' mark that is located in between the Source and Target attributes.<img alt="09.png" src="./assets/6d9bfaefd78f45d4.png"/></span></div>
+<div>
+<span>Select the relevant mapping option from the list and edit the source attribute accordingly</span><img alt="10.png" src="./assets/772d50733b5fbd28.png"/>
+</div>
+<div><span>Once the attribute mapping is completed, click <strong>Save Changes</strong> on the top right<img alt="11.png" src="./assets/91ca7f72d6125d54.png"/></span></div>
+<div><span>You can see a message <strong>Update orchestration successful<img alt="12.png" src="./assets/1c29152c18030278.png"/></strong></span></div>
+<h2 id="h_01FNZX8E1ZMS0Y338QTKBZEA4Z">Tables</h2>
+<p>Users can create a new table/tables by clicking <strong>Add New Table </strong>in the Tables section<strong><img alt="13.png" src="./assets/ed1eb97468acfdcf.png"/></strong></p>
+<p>To upload the table in the file format, provide a <strong>Name </strong>and <strong>Description</strong> and click <strong>Upload CSV File</strong>. The orchestration supports only .csv file format and the file should have only two columns -  <strong>Name</strong> and <strong>Value.</strong><img alt="14.png" src="./assets/9b309644640d3f79.png"/></p>
+<p>Portions of this data can be deleted. To delete the data, click the <strong>Delete</strong> icon on the relevant row<img alt="15.png" src="./assets/29a278e688a0daa7.png"/></p>
+<p><span>After verifying the data, click </span><strong>Add</strong><span> to add the table to the orchestration.<img alt="16.png" src="./assets/22759bbced981f85.png"/></span></p>
+<p>Users can add any number of Tables, based on the requirement. </p>
+<h2 id="h_01FNZV3BP8CN2JYN8FCHFK36GY">Event Detail</h2>
+<p><span>Events can be enabled for source applications that support asynchronous notification of specific data changes. When a user update or create event happens in PeopleSoft, the corresponding event is sent as an XML message to the Aquera orchestration service and the orchestration updates the change in the target application. </span></p>
+<ol>
+<li><span>Click the <strong>Event Detail</strong> tab and copy the <strong>URL.<br/><img alt="19.png" src="./assets/873cc9d89f67a3b1.png"/></strong>This URL is the location of the Aquera service to which the XML messages sent from PeopleSoft will be posted. The copied URL must be pasted into PeopleSoft when you configure the PeopleSoft Integration Broker. For details, refer to the <a href="#h_01FNZS9BPKAA4JMA5TCYV9468R" target="_self">Configuring PeopleSoft Integration Broker</a> section.</span></li>
+<li>Click <strong>Create Token</strong>. A token is generated.<br/><img alt="20.png" src="./assets/9ca37048c401231e.png"/><br/><br/>
+</li>
+<li>Copy the token<strong>.</strong>
+</li>
+<li>Paste this token at the source application (PeopleSoft) and save the changes. </li>
+</ol>
+<h1 id="h_01FNZXCMPW9X84GE29B972067V">Event Publishing Setup in PeopleSoft</h1>
+<div>This section details the setup required in PeopleSoft to send the created and modified users' data from PeopleSoft to the target application.</div>
+<div>
+<div>
+<h2 id="h_01FNZXCZXEC1NZR397TVWK59CQ">Incremental Reconciliation</h2>
+<p>The incremental reconciliation is achieved through the PeopleSoft standard messages, such as <span>USER_PROFILE and DELETE_USER_PROFILE. These standard messages are used to synchronize user profiles with other applications. </span></p>
+<p><span>The USER_PROFILE message contains information about user accounts that are created or modified. The DELETE_USER_PROFILE message contains information about user accounts that are deleted.</span></p>
+<p><span>Fetching all the records present in PeopleSoft is implemented by running the USER_PROFILE message. When a user profile is updated in PeopleSoft, the USER_PROFILE message is triggered. Similarly, when a user profile is deleted in PeopleSoft, the DELETE_USER_PROFILE message is triggered from PeopleSoft to delete the corresponding provisioned resource in the target application. The DELETE_USER_PROFILE is supported through incremental reconciliation.</span></p>
+<p><span>Incremental reconciliation is performed using PeopleSoft application messaging.</span></p>
+<h2 id="h_01FNZS9BPKAA4JMA5TCYV9468R"><span>Configuring PeopleSoft Integration Broker</span></h2>
+<p><span>The PeopleSoft Integration Broker is a messaging system, which is deployed on the PeopleSoft Web server. It is the physical hub between PeopleSoft and any third-party system. It provides a mechanism for communicating with the outside world using XML files.</span></p>
+<p><span>You must configure Integration Broker as follows to send and receive messages from and to PeopleSoft.</span></p>
+<p>Create a remote node by performing the following steps:</p>
+<ol>
+<li>
+<span></span>In the PeopleSoft Internet Architecture window:
+<ul>
+<li>
+<span></span>For PeopleTools 8.54 and earlier releases, expand <strong>PeopleTools,</strong> <strong>Integration Broker,</strong> <strong>Integration Setup,</strong> and then click <strong>Nodes.</strong>
+</li>
+<li>
+<span></span>For PeopleTools 8.55 and 8.56, click <strong>NavBar</strong>, <strong>Navigator</strong>, <strong>PeopleTools, Integration Broker, Integration Setup,</strong> and then click <strong>Nodes.</strong>
+</li>
+</ul>
+</li>
+<li>
+<span></span>On the <strong>Add a New Value</strong> tab, enter the node name, for example, <em>AQUERA_NODE</em>, and then click <strong>Add.</strong>
+</li>
+<li>
+<span></span>On the <strong>Node Definition</strong> tab, enter a description for the node in the <strong>Description</strong> field. In addition, enter PS in the <strong>Default User ID</strong> field.</li>
+<li>
+<span></span>Make this node a remote node by deselecting the <strong>Local Node</strong> check box and selecting the <strong>Active Node</strong> check box.</li>
+<li>
+<span></span>Make the Node Type as <strong>PIA.</strong>
+</li>
+<li>
+<span></span>On the <strong>Connectors</strong> tab, search for the following information by clicking the Lookup icon:<br/>Gateway ID: LOCAL<br/>Connector ID: HTTPTARGET</li>
+<li>
+<span></span>In the <strong>Properties</strong> section under the <strong>Connectors</strong> tab, enter the following information:
+<ul>
+<li>Property ID: HEADER<br/>Property Name: sendUncompressed<br/>Required: Enable<br/>Value: Y</li>
+<li>Property ID: HTTP PROPERTY<br/>Property Name: Method<br/>Required: Enable<br/>Value: POST</li>
+<li>Property ID: HEADER<br/>Property Name: Location<br/>Value: Enter the value of the IT resource name as configured for the target system.<br/>Sample value: PSFT User</li>
+<li>Property ID: PRIMARYURL<br/>Property Name: URL<br/>Required: Enable<br/>Value: Enter the URL that is configured to receive XML messages from PeopleSoft. This must be the URL copied from the <strong>Event Detail</strong> tab in the Aquera Admin console. For details, refer to the <a href="#h_01FNZV3BP8CN2JYN8FCHFK36GY" target="_self">Event Detail</a> section.</li>
+<li>Property ID: HEADER<br/>Property Name: Authorization<br/>Required: Enable<br/>Value: Enter the token that is generated in the <strong>Event Detail</strong> tab in the Aquera Admin console. For details, refer to the <a href="#h_01FNZV3BP8CN2JYN8FCHFK36GY" target="_self">Event Detail</a> section.<br/>Sample value: Bearer &lt;token-value&gt;<br/><img alt="ppl.png" src="./assets/397a8a4d8d66867d.bin"/>
+</li>
+</ul>
+</li>
+<li>Navigate to the <strong>Routings</strong> tab and add the following definitions:<br/>
+<ul>
+<li>
+<strong>Name</strong>: PERSON BASIC SYNC AQUERA<br/><strong>Service Operation</strong>: PERSON_BASIC_SYNC<br/><strong>Service Operation Version</strong>: INTERNAL<br/><strong>OType</strong>: Asynch<br/><strong>Sender Node</strong>: PSFT_HR<br/><strong>Receiver Node</strong>: The name of the node. For example, AQUERA_NODE<br/><strong>Direction</strong>: Outbound</li>
+<li>
+<strong>Name</strong>: WORKFORCE SYNC AQUERA<br/><strong>Service Operation</strong>: WORKFORCE_SYNC<br/><strong>Service Operation Version</strong>: INTERNAL<br/><strong>OType</strong>: Asynch<br/><strong>Sender Node</strong>: PSFT_HR<br/><strong>Receiver Node</strong>: The name of the node. For example, <em>AQUERA_NODE</em><br/><strong>Direction</strong>: Outbound<br/><img alt="ppl1.png" src="./assets/bbf65b0f4699cbcc.bin"/>
+</li>
+</ul>
+</li>
+<li>Click <strong>Save</strong> to save the changes.</li>
+</ol>
+<h1 id="orchestration-logs">Orchestration Logs</h1>
+<p>To see the orchestration logs in the Aquera Admin console, go to <strong>Logs</strong>, select <strong>Orchestrations</strong> and click on your orchestration name.<img alt="22.png" src="./assets/40ba3a00ac41ce13.png"/></p>
+<h1 id="h_01H28BY8TBRC3XYJMESFE8BE8N">Conclusion</h1>
+<p>Data changes made to the source application will get reflected in the target application once the orchestration is executed. The updated data can be seen in the orchestration logs. Similarly, users can also log in to the target application and verify the updated users' data.  </p>
+</div>
+</div>
+  </div>
+</body>
+</html>

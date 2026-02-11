@@ -1,0 +1,1094 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UKG Ready Employees to Okta (XaaS) Users</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>UKG Ready Employees to Okta (XaaS) Users</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data synchronization across resource types. This guide covers the end-to-end tasks involved in setting up an integration to synchronize the <em>Employees</em> resource of UKG Ready with the <em>Users</em> resource of Okta.</p>
+<p>The integration performs a full sync on the initial run, processing all employee records in UKG Ready. Subsequent runs execute incremental syncs, processing only changed records. The full sync frequency is configurable in the Parameters section.</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Retrieves all employees created in UKG Ready.</li>
+<li>Processes all the records and then upserts (updates or inserts) or deletes user profiles in Okta in bulk. The user records are inserted, updated, and deleted in Okta based on the upsert and delete conditions set in the <strong>Parameters</strong> section.</li>
+<li>Performs a full sync or an incremental sync based on the full sync frequency set in the <strong>Parameters</strong> section.</li>
+<li>Generates a CSV report of all the processed records.</li>
+<li>Triggers an email notification.</li>
+</ul>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Admin Access to Okta:</strong> You must have admin access to your Okta instance. You can visit the Okta portal to get access to an Okta instance.</li>
+<li>
+<strong>Enable XaaS access:  </strong>You must <a href="https://support.okta.com/help/s/?language=en_US" rel="noopener noreferrer" target="_blank">open a support case</a> with Okta to enable XaaS in your Okta instance.</li>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal to integrate with Okta:
+<ul>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953">UKG Ready Configuration Guide</a> for details.</li>
+<li>
+<strong>Okta XaaS</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/22174259020695" rel="noopener noreferrer" target="_blank">Okta Anything-as-a-Source (XaaS) Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<p>For details on the limitations of Okta's Anything-as-Source (XaaS) solution, refer to the <a href="https://help.okta.com/oie/en-us/content/topics/users-groups-profiles/usgp-anything-as-a-source.htm" rel="noopener noreferrer" target="_blank">Okta documentation</a>.</p>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details the configuration process for integrating UKG Ready with Okta. It covers creating and setting up the integration, setting up parameters, and establishing automated synchronization to ensure employee data flow from UKG Ready into Okta. This integration automates user lifecycle management by provisioning new hires, updating existing user profiles, and handling offboarding events. </p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>UKG Ready Employees to Okta Users</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your UKG Ready and Okta connector instances.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JV22SCGN2WWGNY0FN1N4AQCJ">Set Up Parameters</h2>
+<p>The <strong>Parameters</strong> section allows you to customize the integration settings according to your use case. It has the following configuration parameters:</p>
+<ul>
+<li>
+<strong>Report only</strong>: Select this checkbox if the integration must only generate a report of the changes made in Okta without applying them. If this checkbox is not selected, the integration will make changes (add, update, and delete users) in Okta.</li>
+<li>
+<strong>Upsert condition</strong>: Specify the condition that determines the users that need to be created or updated in Okta(for example, <em>worker.terminationDate == undefined</em>).</li>
+<li>
+<strong>Delete condition</strong>: Specify the condition that determines the users that need to be deleted in Okta(for example: <em>worker.terminationDate != undefined).</em>
+</li>
+<li>
+<strong>Full Sync Frequency</strong>: Specify the time interval, in number of days, after which a full employee sync has to be performed instead of an incremental sync from UKG Ready to Okta.</li>
+<li>
+<strong>Debug Mode</strong>: Enables detailed logging and monitoring to assist in troubleshooting by providing comprehensive information about each step of the integration process.</li>
+<li>
+<strong>Enable Dashboard Generation</strong>: Monitors integration performance and analyzes trends through customizable graphical dashboards.</li>
+<li>
+<strong>Enable Integration Report Download: </strong>Allows generation of integration results in CSV format.</li>
+</ul>
+<h2 id="h_01JV22SCGNNC4ZFAQ6NS9M8H0Z">Set Up Schedule</h2>
+<p>You can configure the integration to run automatically at specified intervals.</p>
+<ol>
+<li>Navigate to the <strong>Trigger</strong> tab.</li>
+<li>Select <em>Schedule</em> as the <strong>Type</strong>.</li>
+<li>Under <strong>Schedule Type</strong>, select <em>Basic</em> to configure a basic schedule, or click <em>Advanced</em> to configure advanced schedule settings.</li>
+</ol>
+<p>For details, refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a>.</p>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h2>
+<p>The<strong> UKG Ready Employees to Okta Users </strong>template script maps the commonly used UKG Ready and Okta attributes. You can customize it based on your use case.<br/>The following are the attributes that are mapped by default:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>UKG Ready Employee Attribute/ Expression</strong></td>
+<td><strong>Okta Attribute</strong></td>
+</tr>
+<tr id="1fae6fe2-6a16-8056-bbe4-d2e4e405cf84">
+<td id="rMHW">worker.id</td>
+<td id="Ftnm">externalId</td>
+</tr>
+<tr id="1fae6fe2-6a16-80a1-8f6f-c3821b45aa3b">
+<td id="rMHW">worker.username</td>
+<td id="Ftnm">profile.userName</td>
+</tr>
+<tr id="1fae6fe2-6a16-808b-9acf-f8740732fe38">
+<td id="rMHW">worker.first_name</td>
+<td id="Ftnm">profile.firstName</td>
+</tr>
+<tr id="1fae6fe2-6a16-8012-9f1d-e869192396b8">
+<td id="rMHW">worker.last_name</td>
+<td id="Ftnm">profile.lastName</td>
+</tr>
+<tr id="1fae6fe2-6a16-8021-9a93-c73af995a5a4">
+<td id="rMHW">worker.primary_email</td>
+<td id="Ftnm">profile.email</td>
+</tr>
+<tr id="1fae6fe2-6a16-8096-adae-fd1df765fc55">
+<td id="rMHW">worker.secondary_email</td>
+<td id="Ftnm">profile.secondEmail</td>
+</tr>
+<tr id="1fae6fe2-6a16-80e3-99de-d497b2ee5702">
+<td id="rMHW">worker.phones.work_phone_country_code + work_phone</td>
+<td id="Ftnm">profile.mobilePhone</td>
+</tr>
+<tr id="1fae6fe2-6a16-804e-8f34-f910383328ba">
+<td id="rMHW">worker.city</td>
+<td id="Ftnm">city</td>
+</tr>
+<tr id="1fae6fe2-6a16-80e1-a5d0-e752203458d8">
+<td id="rMHW">worker.countryCode</td>
+<td id="Ftnm">countryCode</td>
+</tr>
+<tr id="1fae6fe2-6a16-8052-821e-c73a3dcc1d04">
+<td id="rMHW">worker.Department</td>
+<td id="Ftnm">department</td>
+</tr>
+<tr id="1fae6fe2-6a16-80cb-b6cb-d0e00f16df07">
+<td id="rMHW">worker.displayName</td>
+<td id="Ftnm">displayName</td>
+</tr>
+<tr id="1fae6fe2-6a16-8034-87e5-eb444c4c41e5">
+<td id="rMHW">worker.employee_id</td>
+<td id="Ftnm">employeeNumber</td>
+</tr>
+<tr id="1fae6fe2-6a16-8038-ac6a-cb51b45e0d8e">
+<td id="rMHW">worker.suffix</td>
+<td id="Ftnm">honorificSuffix</td>
+</tr>
+<tr id="1fae6fe2-6a16-80bc-815a-e4ea10c83e00">
+<td id="rMHW">worker.manager</td>
+<td id="Ftnm">manager</td>
+</tr>
+<tr id="1fae6fe2-6a16-8082-ac4c-f755fd69432f">
+<td id="rMHW">worker.managerId</td>
+<td id="Ftnm">managerId</td>
+</tr>
+<tr id="1fae6fe2-6a16-80ad-a4c3-cedf0708a0cc">
+<td id="rMHW">worker.middle_name</td>
+<td id="Ftnm">middleName</td>
+</tr>
+<tr id="1fae6fe2-6a16-80d5-9810-c834e816c1ca">
+<td id="rMHW">worker.nickname</td>
+<td id="Ftnm">nickName</td>
+</tr>
+<tr id="1fae6fe2-6a16-802e-9568-d532cb65ce02">
+<td id="rMHW">worker.primaryPhone</td>
+<td id="Ftnm">primaryPhone</td>
+</tr>
+<tr id="1fae6fe2-6a16-806a-a44d-fcfa08950b38">
+<td id="rMHW">worker.state</td>
+<td id="Ftnm">state</td>
+</tr>
+<tr id="1fae6fe2-6a16-8028-b1e5-e1a7cc9cc4b0">
+<td id="rMHW">worker.streetAddress</td>
+<td id="Ftnm">streetAddress</td>
+</tr>
+<tr id="1fae6fe2-6a16-8087-ae96-e1eeacb5f585">
+<td id="rMHW">worker.zipCode</td>
+<td id="Ftnm">zipCode</td>
+</tr>
+<tr id="1fae6fe2-6a16-8092-a2c6-d9bd4c648f12">
+<td id="rMHW">worker.postalAddress</td>
+<td id="Ftnm">postalAddress</td>
+</tr>
+<tr id="1fae6fe2-6a16-8036-8485-eccf92e0c0a8">
+<td id="rMHW">worker.timezone</td>
+<td id="Ftnm">timezone</td>
+</tr>
+<tr id="1fae6fe2-6a16-80a0-a24c-d11860269144">
+<td id="rMHW">worker.Division</td>
+<td id="Ftnm">division</td>
+</tr>
+<tr id="1fae6fe2-6a16-8075-809d-d72c1290f6cc">
+<td id="rMHW">worker.photo_href</td>
+<td id="Ftnm">profileUrl</td>
+</tr>
+<tr id="1fae6fe2-6a16-80cb-937c-c67c4cb07901">
+<td id="w;_&gt;">worker.managers []</td>
+<td id="UJlR">managerDisplayName</td>
+</tr>
+<tr id="1fae6fe2-6a16-80d2-ab45-cb2a72155131">
+<td id="w;_&gt;">worker.phones[]</td>
+<td id="UJlR">primaryPhone</td>
+</tr>
+<tr id="1fae6fe2-6a16-80c2-9c8f-cb2143def18d">
+<td id="w;_&gt;">Address[]</td>
+<td id="UJlR">streetAddress</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01J6RRJMNFD5C1HMACKNNA2WQY">UKG Ready Employees</h3>
+<p>The following table lists the UKG Ready application UI field name, UI path, and the corresponding UKG Ready attribute:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>UKG Ready UI Field Name</strong></td>
+<td><strong>Application UI Path</strong></td>
+<td>
+<strong>Attribute</strong><strong><br/></strong>
+</td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>N/A</td>
+<td>N/A</td>
+<td>id</td>
+<td>The ID of the employee</td>
+</tr>
+<tr>
+<td>Username</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt;  Account Information </td>
+<td>username</td>
+<td>The username of the employee</td>
+</tr>
+<tr>
+<td>First Name</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt;  Account Information</td>
+<td>first_name</td>
+<td>The given name, or the first name of the employee</td>
+</tr>
+<tr>
+<td>Last Name</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt;  Account Information </td>
+<td>last_name</td>
+<td>The family name, or the last name of the employee</td>
+</tr>
+<tr>
+<td>Primary Email</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information </td>
+<td>primary_email</td>
+<td>The work email ID of the employee</td>
+</tr>
+<tr>
+<td>Secondary Email</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information </td>
+<td>secondary_email</td>
+<td>The personal email ID of the employee</td>
+</tr>
+<tr>
+<td>Work Phone</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information </td>
+<td>worker.phones.work_phone_country_code + work_phone</td>
+<td>The work phone number of the employee</td>
+</tr>
+<tr id="1fae6fe2-6a16-804e-8f34-f910383328ba">
+<td>City</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information </td>
+<td id="rMHW">worker.city</td>
+<td>The city where the employee is located.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80e1-a5d0-e752203458d8">
+<td>Country code</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information &gt; Country code</td>
+<td id="rMHW">worker.countryCode</td>
+<td>The country code for the employee’s location.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8052-821e-c73a3dcc1d04">
+<td>Department</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Extra Fields </td>
+<td id="rMHW">worker.Department</td>
+<td>The department to which the employee belongs.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8034-87e5-eb444c4c41e5">
+<td>Employee ID</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information </td>
+<td id="rMHW">worker.employee_id</td>
+<td>The unique employee ID assigned to the employee.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8038-ac6a-cb51b45e0d8e">
+<td>Suffix</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Account  Information </td>
+<td id="rMHW">worker.suffix</td>
+<td>Any suffix associated with the employee’s name (e.g., Jr., Sr., III).</td>
+</tr>
+<tr id="1fae6fe2-6a16-80bc-815a-e4ea10c83e00">
+<td>Manager</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Managers &gt; Manager 1</td>
+<td id="rMHW">worker.manager</td>
+<td>The name of the employee’s primary manager.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8082-ac4c-f755fd69432f">
+<td>Manager </td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Managers </td>
+<td id="rMHW">worker.managerId</td>
+<td>The ID of the assigned manager.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80ad-a4c3-cedf0708a0cc">
+<td>Middle name</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Account Information &gt;  Middle </td>
+<td id="rMHW">worker.middle_name</td>
+<td>The employee’s middle name.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80d5-9810-c834e816c1ca">
+<td>Nickname</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Account Information </td>
+<td id="rMHW">worker.nickname</td>
+<td>The employee’s nickname, if any.</td>
+</tr>
+<tr id="1fae6fe2-6a16-802e-9568-d532cb65ce02">
+<td>Work phone, Home Phone, <br/>Cell Phone</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information </td>
+<td id="rMHW">worker.primaryPhone</td>
+<td>The employee’s primary phone number, as designated in their profile.</td>
+</tr>
+<tr id="1fae6fe2-6a16-806a-a44d-fcfa08950b38">
+<td>State</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information &gt;Address &gt; State</td>
+<td id="rMHW">worker.state</td>
+<td>The state or province of the employee’s address.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8028-b1e5-e1a7cc9cc4b0">
+<td>Street Address</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information &gt;Address &gt; Street Address</td>
+<td id="rMHW">worker.streetAddress</td>
+<td>The street address where the employee resides.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8087-ae96-e1eeacb5f585">
+<td>Zip Code</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information &gt;Address </td>
+<td id="rMHW">worker.zipCode</td>
+<td>
+<p>The postal or ZIP code of the employee’s address.</p>
+</td>
+</tr>
+<tr id="1fae6fe2-6a16-8092-a2c6-d9bd4c648f12">
+<td>Postal Address</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information </td>
+<td id="rMHW">worker.postalAddress</td>
+<td>The full postal address of the employee.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8036-8485-eccf92e0c0a8">
+<td>Time Zone</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Account Information </td>
+<td id="rMHW">worker.timezone</td>
+<td>The timezone associated with the employee’s work location.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80a0-a24c-d11860269144">
+<td>Division</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt;Cost centers </td>
+<td id="rMHW">worker.Division</td>
+<td>The division or cost center to which the employee is assigned.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8075-809d-d72c1290f6cc">
+<td>
+<p> </p>
+<p>-</p>
+</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt;Employee Profile &gt; (Edit Photo)</td>
+<td id="rMHW">worker.photo_href</td>
+<td>The URL to the photo of the employee.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80cb-937c-c67c4cb07901">
+<td>Managers</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main</td>
+<td id="w;_&gt;">worker.managers []</td>
+<td>List of all managers associated with the employee.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80d2-ab45-cb2a72155131">
+<td>Work Phone, Home Phone, Cell</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information </td>
+<td id="w;_&gt;">worker.phones[]</td>
+<td><span>List of all phone numbers for the employee (work, home, cell).</span></td>
+</tr>
+<tr id="1fae6fe2-6a16-80c2-9c8f-cb2143def18d">
+<td>Address</td>
+<td>Team &gt; My Team &gt; Employee Information &gt; (Click Employee Information Icon) &gt; Main &gt; Personal Information </td>
+<td id="w;_&gt;">Address[]</td>
+<td>The address of the employee.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="01J6S7H1HTXX3N1FBWFPEQES7Y">Okta Users</h3>
+<p>The following table lists the Okta application UI field name, UI path, and the corresponding Okta attribute:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Okta UI Field Name </strong></td>
+<td><strong>Application UI Path</strong></td>
+<td><strong>Attribute</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>N/A</td>
+<td>N/A</td>
+<td>externalId</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Username</td>
+<td> Directory &gt; People &gt; (Click any user in the list) &gt; Profile  </td>
+<td>userName</td>
+<td>A unique identifier for the user</td>
+</tr>
+<tr>
+<td>First name</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile  </td>
+<td>firstName</td>
+<td>The given name, or the first name of the user</td>
+</tr>
+<tr>
+<td>Last name</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile  </td>
+<td>lastName</td>
+<td>The family name, or the last name of the user</td>
+</tr>
+<tr>
+<td>Primary email</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td>email</td>
+<td>The email ID of the user</td>
+</tr>
+<tr>
+<td>Secondary email</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile  </td>
+<td>secondEmail</td>
+<td>The secondary email ID of the user</td>
+</tr>
+<tr>
+<td>Mobile phone</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td>mobilePhone</td>
+<td>The phone number of the user</td>
+</tr>
+<tr>
+<td>City</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile  </td>
+<td id="Ftnm">city</td>
+<td>The city where the user is located.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80e1-a5d0-e752203458d8">
+<td>Country code</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile  </td>
+<td id="Ftnm">countryCode</td>
+<td>The country code for the user’s location.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8052-821e-c73a3dcc1d04">
+<td>Department</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile  </td>
+<td id="Ftnm">department</td>
+<td>The department to which the user belongs.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80cb-b6cb-d0e00f16df07">
+<td>Display name</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">displayName</td>
+<td>The full display name of the user.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8034-87e5-eb444c4c41e5">
+<td>Employee number</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile  &gt; Employee number</td>
+<td id="Ftnm">employeeNumber</td>
+<td>The unique employee ID assigned to the user.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8038-ac6a-cb51b45e0d8e">
+<td><span>Honorific suffix</span></td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">honorificSuffix</td>
+<td>Any suffix associated with the user’s name (e.g., Jr., Sr., III).</td>
+</tr>
+<tr id="1fae6fe2-6a16-80bc-815a-e4ea10c83e00">
+<td><span>Manager </span></td>
+<td><span>Directory &gt; People &gt; (Click any user in the list) &gt; Profile   &gt; Manager </span></td>
+<td id="Ftnm">manager</td>
+<td>The name of the user’s primary manager.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8082-ac4c-f755fd69432f">
+<td>ManagerId</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">managerId</td>
+<td>The unique ID of the user’s manager.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80ad-a4c3-cedf0708a0cc">
+<td>Middle name</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile &gt;Middle name</td>
+<td id="Ftnm">middleName</td>
+<td>The middle name of the user.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80d5-9810-c834e816c1ca">
+<td>Nick name</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">nickName</td>
+<td>The nickname of the user, if any.</td>
+</tr>
+<tr id="1fae6fe2-6a16-802e-9568-d532cb65ce02">
+<td>Primary phone</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">primaryPhone</td>
+<td>The primary contact phone number of the user.</td>
+</tr>
+<tr id="1fae6fe2-6a16-806a-a44d-fcfa08950b38">
+<td>State</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">state</td>
+<td>The state or province in the user’s address.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8028-b1e5-e1a7cc9cc4b0">
+<td>Street address</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile</td>
+<td id="Ftnm">streetAddress</td>
+<td>The street address of the user.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8087-ae96-e1eeacb5f585">
+<td>Zip code</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">zipCode</td>
+<td>The postal or ZIP code of the user’s address.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8092-a2c6-d9bd4c648f12">
+<td>Postal address</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">postalAddress</td>
+<td>The complete mailing address of the user.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8036-8485-eccf92e0c0a8">
+<td>Time zone</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">timezone</td>
+<td>The time zone where the user primarily works.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80a0-a24c-d11860269144">
+<td>Division</td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">division</td>
+<td>The division or business unit to which the user belongs.</td>
+</tr>
+<tr id="1fae6fe2-6a16-8075-809d-d72c1290f6cc">
+<td>Profile Url </td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="Ftnm">profileUrl</td>
+<td>The link to the user’s profile page.</td>
+</tr>
+<tr id="1fae6fe2-6a16-80d2-ab45-cb2a72155131">
+<td>Primary phone </td>
+<td>Directory &gt; People &gt; (Click any user in the list) &gt; Profile </td>
+<td id="UJlR">primaryPhone</td>
+<td>The display name of the user’s manager.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01J6XRXE25YXJE5CJ0RQRJDEF1">Create Custom Attributes in Okta</h1>
+<p>You can create custom fields in Okta to include additional UKG Ready <em>Employee </em>attributes in Okta's User object. You must configure all the custom attributes individually. After the configuration, Aquera automatically populates the fields you created in Okta from the <em>Employee</em> resource of UKG Ready. </p>
+<p>Perform the following steps to create custom attributes in Okta:</p>
+<ol>
+<li>Sign in to your Okta instance.</li>
+<li>Navigate to <strong>Directory &gt; Profile Editor</strong> and locate the custom identity source integration you've created.<br/><img alt="profile_editor.png" src="./assets/e573323552e01b41.bin"/>
+</li>
+<li>Click <strong>Add Attribute</strong> to add a new attribute.<br/><img alt="add_attribute.png" src="./assets/adaca582fdc782d4.bin"/>
+</li>
+<li>Configure the attribute using the same name as UKG Ready in the <strong>Variable name</strong> field and fill in the other fields. <br/><img alt="Screenshot 2024-10-14 at 3.39.41 PM.png" height="897" src="./assets/7dca3b01955ac5db.bin" width="642"/><br/><strong>Note</strong>: You must remove special characters in the name and replace periods with underscores.<br/>For example, the equivalent name for the attribute <em>links.badges</em> would be <em>links_badges</em>.</li>
+<li>Click <strong>Save </strong>to save the changes or <strong>Save and Add Another</strong> to create another custom attribute. </li>
+</ol>
+<h1 id="h_01J6XV4GBH0QTB86T0TX6YJYWZ">Map Custom Attribute to Okta Profile</h1>
+<p>Perform the following steps to map the custom attributes to the Okta profile:</p>
+<ol>
+<li>Navigate to <strong>Mappings &gt; Configure User mappings</strong>.<br/><img alt="configure_user_mappings.png" src="./assets/4de023be19ea864b.bin"/>
+</li>
+<li>Map the custom attribute to an equivalent attribute in the Okta user profile and click <strong>Save Mappings</strong>.<br/><img alt="Screenshot 2024-10-14 at 3.12.44 PM.png" src="./assets/814f65f28482c524.bin"/>
+</li>
+<li>If the equivalent attribute is not present in the default Okta user profile, open the default profile from <strong>Directory &gt; Profile Editor.<br/><img alt="default_profile.png" src="./assets/bf27f0223cd49a9a.bin"/><br/></strong>
+</li>
+<li>Click<strong> Add Attribute </strong>to add a custom attribute to the Okta default user profile.<strong><br/><img alt="add_attribute_default_profile.png" src="./assets/7eaab7bb765ed4a3.bin"/></strong>
+</li>
+<li>Fill in the attribute's display name, description, and set the user permission. Click <strong>Save Attribute</strong> to save the changes.<br/><img alt="Screenshot 2024-10-14 at 3.46.30 PM.png" src="./assets/ea61ee643b8a4cbb.bin"/>
+</li>
+<li>Map the custom identity source attribute to the attribute in the Okta default profile and click <strong>Save Mappings</strong>.</li>
+</ol>
+<p><strong>Note</strong>: You can repeat these steps to add all employee-related attributes in UKG Ready to Okta.</p>
+<h2 id="h_01HXV5081PWKBEKH540JBRRMQM">UKG Ready Employee Attributes</h2>
+<p id="h_01J9TM8DSA1RJ8T11QPJ0F67PZ">Refer to the following table for the UKG Ready attributes you must create in the Okta profile:<br/><strong>Note: </strong>You must replace the array index number based on your use case. For example, national_id_numbers_{index}_value, where {index} is 1, 2, 3, etc. To retrieve the first value, you must create the attribute as national_id_numbers_0_value. Similarly, to retrieve the second value, you must create the attribute as national_id_numbers_1_value.</p>
+<table border="1">
+<thead>
+<tr>
+<th><strong><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Name to be entered in the Okta profile</span></font></strong></th>
+<th><strong><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Description</span></font></strong></th>
+<th><strong><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Data Type</span></font></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>A unique identifier for the employee</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>username</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>A unique identifier for the employee</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>first_name</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The employee's first name</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>last_name</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The employee's last name</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>photo_href</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The URL to the employee's photo</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>middle_name</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The employee's middle name</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>external_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The external identifier for the employee</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>employee_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The employee ID</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>status</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The employment status</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>bsn</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The Dutch citizen service number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>address_country</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The country of residence</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>address_address_line_1</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The first line of address</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>address_address_line_2</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The second line of address</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>address_address_line_3</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The third line of address</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>address_city</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The city of residence</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>address_state</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The state or province</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>address_zip</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The postal or ZIP code</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>address_number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The street number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>address_number_addition</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The additional number information</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>use_separate_mailing_address</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Indicates if a separate mailing address is used</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>boolean</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>mailing_address_country</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The country for mailing</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>mailing_address_address_line_1</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The first line of the mailing address</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>mailing_address_address_line_2</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The second line of the mailing address</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>mailing_address_address_line_3</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The third line of the mailing address</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>mailing_address_city</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The city for mailing</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>mailing_address_state</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The state for mailing</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>mailing_address_zip</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The postal or ZIP code for mailing</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>mailing_address_number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The address number for mailing</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>mailing_address_number_addition</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The additional number information for mailing</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>primary_account_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The primary account identifier</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>ein_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The ID of the EIN</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>force_change_password</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Indicates if the employee must change the password</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>boolean</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>locked</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Indicates if the account is locked</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>boolean</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>first_screen_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The ID of the first screen</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_cell_phone_country_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The country ID for cell phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_cell_phone_country_code</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The country code for cell phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_cell_phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The cell phone number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_home_phone_country_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The country ID for the home phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_home_phone_country_code</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The country code for home phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_home_phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The home phone number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_work_phone_country_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The country ID for the work phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_work_phone_country_code</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The country code for work phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_work_phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The work phone number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>phones_preferred_phone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The preferred phone type</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>locale_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The ID of the locale</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>managers_0_index</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The index of the manager</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>managers_0_empl_ref_account_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The account ID of the manager</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>national_insurance</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The national insurance number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>nickname</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The employee's nickname</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>primary_email</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The primary email address</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>secondary_email</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The secondary email address</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>salutation</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The salutation</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>social_insurance</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The social insurance number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>social_security</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The social security number</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>suffix</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The name suffix</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>timezone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The employee's timezone</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>cost_centers_info_defaults_0_index</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The index of the default cost center</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>cost_centers_info_defaults_0_value_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The ID of the default cost center</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>cost_centers_info_limits_0_index</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The index of the cost center limit</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>cost_centers_info_limits_0_values_0_id</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The ID of the cost center limit value</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>cost_centers_info_limits_0_values_0_effective_from</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The effective date of the cost center limit</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>cost_centers_info_limits_0_values_0_type</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The type of the cost center limit</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>add_to_new_hire_export</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Indicates if the employee should be added to the new hire export</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>boolean</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_hired</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The date of hire</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_deceased</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The date of death (if applicable)</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_re_hired</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The date of rehire (if applicable)</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_started</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The start date</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_birthday</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The date of birth</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_review</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The date of review</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_seniority</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The seniority date</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_frozen_benefit</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The date benefits were frozen</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_benefits</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The date of benefits eligibility</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_retired</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The retirement date</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_terminated</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The termination date</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_peo_hired</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The PEO hire date</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_custom_dates_0_index</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The index of the custom date</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>dates_custom_dates_0_date</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The custom date value</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>account_extra_fields_0_index</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The index of the extra field</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>account_extra_fields_0_values_0_value</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The value of the extra field</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>account_extra_fields_0_values_0_effective_from</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The effective date of the extra field value</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>time_entry_extra_fields_0_index</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The index of the time entry extra field</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>time_entry_extra_fields_0_value</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The value of the time entry extra field</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>links_self</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The link to the employee's resource</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>links_demographics</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The link to employee's demographics</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>links_pay-info</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The link to the employee's pay information</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>links_badges</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The link to employee's badges</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>links_profiles</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The link to employee's profiles</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>links_hcm-profiles</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The link to employee's HCM profiles</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>links_hcm-fields</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The link to employee's HCM fields</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>hardware_settings_in_touch_security_level</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The security level for InTouch devices</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>hardware_settings_in_touch_pin</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The PIN for InTouch devices</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>integer</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>managed_cost_centers_enabled</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Indicates if managed cost centers are enabled</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>boolean</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>managed_cost_centers_settings_allow_save_others_cost_centers</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Indicates the option to allow saving other's cost centers</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>boolean</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>national_id_numbers_0_type</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The type of national ID</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>national_id_numbers_0_value</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>The value of the national ID</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>string</span></font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>national_id_numbers_0_primary</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>Indicates if it is the primary national ID</span></font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"><span>boolean</span></font></td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Run Integration</h1>
+<p>You can set event or schedule triggers to run the script synchronization. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01HTM4C4A80M67Y1EP5SJWTAV1" rel="noopener noreferrer" target="_blank">Executing a Synchronization</a> section.</p>
+<p>After the script synchronization is successfully executed, Aquera syncs the Employees created in UKG Ready as users in Okta. The imported users are staged and need admin approval to get provisioned to Okta.</p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<p> </p>
+  </div>
+</body>
+</html>

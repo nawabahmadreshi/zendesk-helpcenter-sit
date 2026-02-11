@@ -1,0 +1,541 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Active Directory (AD) to HaloITSM</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Active Directory (AD) to HaloITSM</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating the integration of data across resource types.</p>
+<p>Aquera's integrations facilitate the automatic integration, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide details how to set up <em>AD to HaloITSM</em> integration for the following use case:</p>
+<p>When a new user is created or updated in Active Directory (AD), this integration will generate a service ticket in HaloITSM for logging purposes. The service ticket will include the Active Directory login details of the user such as Display Name, UPN, and phone number. If there are any issues with user creation or generating the service ticket, this integration will create an incident ticket in HaloITSM to help track and resolve the issue.</p>
+<p>This <em>AD to HaloITSM</em> integration will be used in the <a href="../User-Integration-Setup-Guide/#h_01GYETPXFB90S2QM74D1EBPHZS" rel="noopener noreferrer" target="_blank">integration hook</a> configurations of the user integration from a source application (for example, ADP Workforce Now) to Active Directory. This <em>AD to HaloITSM </em>integration will be executed when a new user is created or an existing user is updated in Active Directory as part of the user integration.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Connectors in the Aquera Admin Portal:</strong> You need to configure the following connectors in the Aquera Admin portal for the integration:
+<ul>
+<li>
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
+<li>
+<strong>HaloITSM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/29116202742423" rel="noopener noreferrer" target="_blank">HaloITSM Configuration Guide</a> or details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>The <em>AD to HaloITSM</em> integration creates a service ticket in HaloITSM to log Active Directory user details for every new user creation or update. If there is an issue with user creation or service ticket creation, this integration will create an incident ticket in HaloITSM.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create an Integration</h2>
+<p>Perform the following steps to create an integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> on the left panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>AD to HaloITSM</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your AD and HaloITSM connector instances.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the integration.</li>
+<li>Click<span> </span><strong>Create</strong><span> </span>to create the integration.</li>
+</ol>
+<p>For further details on integrations, refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p>
+<h2 id="h_01JNZF9WP3CBCXQTHGP3B91X4K">Configuration</h2>
+<p>The Configuration section lets you update application instances, preferences, triggers, and tables for the integration.</p>
+<h3 id="h_01JNZFAKCB3GPX8Y1X0GXEKSJS">Preferences</h3>
+<p>Preferences are variables used as inputs for the integration script. You can update the preference values based on your use case.<br/>The following are the preferences for the <em>AD to HaloITSM</em> integration:</p>
+<ul>
+<li>
+<strong>Service request ticket type name for user onboarding</strong>: Enter the name of the HaloITSM ticket type that must be used to log and manage service requests for new user creations in Active Directory. For example, <em>Useronboard</em>
+</li>
+<li>
+<strong>Incident ticket type name:</strong> Enter the name of the HaloITSM ticket type that must be used to log and manage incidents in HaloITSM. For example, <em>Incident</em>
+</li>
+<li>
+<strong>Client ID:</strong> Enter the unique HaloITSM client ID assigned to your organization.</li>
+<li>
+<strong>Site ID:</strong> Enter the unique ID of the site with which the tickets created by the integration will be associated.</li>
+<li>
+<strong>Send Email Notifications?:</strong> Select this checkbox to send email notifications for integration runs. The email addresses to which the notifications have to be sent must be set in the <strong>Send email notifications to</strong> field. If this checkbox is not selected, email notifications will not be sent on integration runs.</li>
+<li>
+<strong>Incident impact level:</strong> Enter the incident impact level based on the severity of the incident (1- High, 2- Medium, 3-Low). For example, <em>1</em>
+</li>
+<li>
+<strong>Incident urgency level:</strong> Enter the urgency level that determines how quickly the incident needs to be addressed (1- High, 2- Medium, 3-Low). For example, <em>2</em>
+</li>
+<li>
+<strong>Enable debug?:</strong> Select this checkbox to create detailed logs for debugging purposes. If this checkbox is not selected, detailed logs will not be created by the integration.</li>
+<li>
+<strong>Send email notifications to:</strong> Enter the comma-separated list of email addresses to which notifications must be sent on integration runs. This field will be effective only if you have selected the <strong>Send Email Notifications?</strong> checkbox.</li>
+<li>
+<strong>Service request ticket type name for user updates: </strong>Enter the name of the HaloITSM ticket type that must be used to log and manage service requests for user updates in Active Directory. For example, <em>Userupdate</em>
+</li>
+<li><strong>Not Apply Template in the API?: -----------------</strong></li>
+<li>
+<strong>Service request ticket type name for user offboarding: </strong>Enter the name of the HaloITSM ticket type that must be used to log and manage service requests for user deactivations in Active Directory. For example, <em>Useroffboard</em>
+</li>
+<li>
+<strong>AD Admin ID: </strong>Enter the ID of the Active Directory admin to be used to create incidents in HaloITSM in case the user creations/updates/deactivations fail in Active Directory.</li>
+<li>
+<strong>HaloITSM Admin ID: </strong>Enter the ID of the HaloITSM admin to be used to create incidents in HaloITSM in case the ticket creations fail in HaloITSM.</li>
+<li>
+<strong>Generate CSV report:</strong> Select this checkbox to generate a CSV report of the integration runs. The report will have data ------------</li>
+<li>
+<strong>Enable Dashboard Logging:</strong> Select this checkbox to create create integration activity logs for detail analysis on the Dashboard. You can access the detail activity logs for analyses from the Search Dashboards module. If this checkbox is not selected, detail activity logs cannot be accessed for this integration from the Search Dashboards module.</li>
+<li>
+<strong>Report-only mode</strong>: Select this checkbox to only generate a report that shows the HaloITSM tickets that would be created, without actually making those changes in HaloITSM. Only when the checkbox is not selected, the actual changes are done by the integration in HaloITSM.</li>
+</ul>
+<p> </p>
+<h2 id="h_01JNZM424QRBS99QRKKQRKC1WP">Attribute Mapping</h2>
+<p>The <em>AD to HaloITSM</em> integration maps the commonly used Active Directory and HaloITSM attributes. You can customize it based on your use case. The following are the attributes that are mapped by default:</p>
+<table border="1">
+<thead>
+<tr>
+<th><strong>AD Attribute</strong></th>
+<th><strong>HaloITSM Attribute</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<p><em>Not Applicable</em></p>
+</td>
+<td>user_id</td>
+</tr>
+<tr>
+<td><em>Not Applicable</em></td>
+<td>summary
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><em>Not Applicable</em></td>
+<td>
+<p>client_id</p>
+</td>
+</tr>
+<tr>
+<td><em>Not Applicable</em></td>
+<td>
+<p>site_id</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><em>Not Applicable</em></p>
+</td>
+<td>
+<p>details</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><em>Not Applicable</em></p>
+</td>
+<td>details_html
+<p> </p>
+</td>
+</tr>
+<tr>
+<td>
+<p><em>Not Applicable</em></p>
+</td>
+<td>tickettype_id</td>
+</tr>
+<tr>
+<td>employee?.name?.givenName</td>
+<td>
+<p>customfields.CFNUFirstName</p>
+</td>
+</tr>
+<tr>
+<td>employee?.name?.middleName</td>
+<td>
+<p>customfields.CFMiddleName</p>
+</td>
+</tr>
+<tr>
+<td>employee?.name?.familyName</td>
+<td>
+<p>customfields.CFNULastName</p>
+</td>
+</tr>
+<tr>
+<td>employee?.displayName</td>
+<td>
+<p>customfields.CFDisplayName</p>
+</td>
+</tr>
+<tr>
+<td>employee?.phoneNumbers</td>
+<td>
+<p>customfields.CFmobileNumber</p>
+</td>
+</tr>
+<tr>
+<td>employee?.emails</td>
+<td>
+<p>customfields.CFemailAddress</p>
+</td>
+</tr>
+<tr>
+<td>employee[ian]?.originalHireDate</td>
+<td>
+<p>customfields.CFstartDate</p>
+</td>
+</tr>
+<tr>
+<td>employee[enterprise]?.department</td>
+<td>
+<p>customfields.CFDepartment</p>
+</td>
+</tr>
+<tr>
+<td>employee?.userName</td>
+<td>
+<p>customfields.CFOfficeName</p>
+</td>
+</tr>
+<tr>
+<td><em>Not Applicable</em></td>
+<td>
+<p>customfields.CFEmploymentType</p>
+</td>
+</tr>
+<tr>
+<td><em>Not Applicable</em></td>
+<td>
+<p>customfields.CFimpact</p>
+</td>
+</tr>
+<tr>
+<td><em>Not Applicable</em></td>
+<td>
+<p>customfields.CFurgency</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: The attribute names starting with <em>CF</em> are custom fields in HaloITSM.</p>
+<h3 id="h_01JNZFN4CMKZXEYQW6JQ1GXJCC">Active Directory Users</h3>
+<p>The following table lists the Active Directory user attributes and their descriptions:</p>
+<table border="1">
+<thead>
+<tr>
+<th>Active Directory UI Field Name<strong><br/></strong>
+</th>
+<th><strong>Application UI Path</strong></th>
+<th><strong>Attribute</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First name</td>
+<td>AD Users and Computers &gt; User &gt; Properties &gt; General </td>
+<td>employee?.name?.givenName</td>
+<td>The given name or the first name of the user.</td>
+</tr>
+<tr>
+<td>Initials</td>
+<td>AD Users and Computers &gt; User &gt; Properties &gt; General </td>
+<td>employee?.name?.middleName</td>
+<td>The middle names of the user.</td>
+</tr>
+<tr>
+<td>Last name</td>
+<td>AD Users and Computers &gt; User &gt; Properties &gt; General </td>
+<td>employee?.name?.familyName</td>
+<td>The family name or the last name of the user.</td>
+</tr>
+<tr>
+<td>Display name</td>
+<td>AD Users and Computers &gt; User &gt; Properties &gt; General </td>
+<td>employee?.displayName</td>
+<td>The display name of the user.</td>
+</tr>
+<tr>
+<td>Telephone number</td>
+<td>AD Users and Computers &gt; User &gt; Properties &gt; General </td>
+<td>employee?.phoneNumbers</td>
+<td>The phone number of the user.</td>
+</tr>
+<tr>
+<td>E-mail</td>
+<td>AD Users and Computers &gt; User &gt; Properties &gt; General </td>
+<td>employee?.emails</td>
+<td>The email address of the user.</td>
+</tr>
+<tr>
+<td>Department</td>
+<td>AD Users and Computers &gt; User &gt; Properties &gt; Organization </td>
+<td>employee[enterprise]?.department</td>
+<td>The department of the user.</td>
+</tr>
+<tr>
+<td>User logon name</td>
+<td>AD Users and Computers &gt; User &gt; Properties &gt; Account </td>
+<td>employee?.userName</td>
+<td>The username of the user.</td>
+</tr>
+<tr>
+<td>E-mail</td>
+<td>AD Users and Computers &gt; User &gt; Properties &gt; Organization &gt; Manager &gt; Properties &gt; General</td>
+<td>employee[ian].managerEmail</td>
+<td>The manger's email address of the user.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01JNZFN7KFQKS9M6MV5Q9B2NX1">HaloITSM Tickets</h3>
+<p>The following table lists the HaloITSM ticket attributes and their descriptions:</p>
+<table border="1">
+<thead>
+<tr>
+<th>HaloITSM UI Field Name<strong><br/></strong>
+</th>
+<th><strong>Application UI Path</strong></th>
+<th><strong>Attribute</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> </td>
+<td> </td>
+<td>user_id</td>
+<td>
+<p>The ID of the manager based on the user's manager's email address.</p>
+<p><strong>Note</strong>: This value will be retrieved from the source application of the user integration. If it is empty, the default value from the preference <em>defaultManagerMail </em>will be used.</p>
+</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>summary</td>
+<td>The summary for incident creation.</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>client_id</p>
+</td>
+<td>
+<p>The client ID for incident creation. <br/>Provide this value for the preference <em>clientId</em>. </p>
+</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>site_id</p>
+</td>
+<td>The site ID for incident creation. <br/>Provide this value for the preference <em>siteId</em>.</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>details</p>
+</td>
+<td>
+<p>The details of failure for user or service ticket creation.</p>
+</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>details_html</td>
+<td>
+<p>The details of failure for user or service ticket creation in HTML format.</p>
+</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>tickettype_id</td>
+<td>
+<p>The ID of the ticket type</p>
+</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFNUFirstName </p>
+</td>
+<td>The custom attribute for the user's first name</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFMiddleName</p>
+</td>
+<td>The custom attribute for the user's middle name</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFNULastName</p>
+</td>
+<td>The custom attribute for the user's last name</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFDisplayName</p>
+</td>
+<td>The custom attribute for the user's display name</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFmobileNumber</p>
+</td>
+<td>The custom attribute for the user's mobile number</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFemailAddress</p>
+</td>
+<td>The custom attribute for the user's email address</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFstartDate</p>
+</td>
+<td>The custom attribute for the user's start date in the organization</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFDepartment</p>
+</td>
+<td>The custom attribute for the user's department</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFOfficeName</p>
+</td>
+<td>The custom attribute for the user's username</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFEmploymentType</p>
+</td>
+<td>The custom attribute having a numeric value for the employment type</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFimpact</p>
+</td>
+<td>
+<br/>The custom attribute for the level of the incident impact. Provide this value for the preference <em>incidentImpact</em>.</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>customfields.CFurgency</p>
+</td>
+<td>
+<br/>The custom attribute for the level of the incident urgency. Provide this value for the preference <em>incidentUrgency</em>. </td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Run Integration</h1>
+<p>When the integration runs, a service ticket is created in HaloITSM for each new user creation or user update to log Active Directory user details. An incident ticket is created in HaloITSM when there is an issue with user creation or service ticket creation. If the <em>sendMail </em>preference is true, an email notification will be sent to the user's manager for service ticket creation, incident creation, or failures.</p>
+  </div>
+</body>
+</html>

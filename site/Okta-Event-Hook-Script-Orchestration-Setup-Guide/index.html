@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Okta Event Hook Script Orchestration Setup Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Okta Event Hook Script Orchestration Setup Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview<span></span>
+</h1>
+<p><span>Okta Event hooks are outbound calls triggered at specific events from Okta to a custom code. </span><span>Unlike Okta <span>Inline Hooks</span>, Okta event hooks are asynchronous and the <span>Okta</span> process flow continues after sending the call, without waiting for a response from the called service.</span></p>
+<p><span>The Okta Event Hook Script Orchestration by Aquera is used to set up custom scripts that must be executed for specific events in Okta. This guide explains how to set up Okta Event Hook Script orchestration in Aquera. It also explains the procedure to set up </span><span>event hooks in Okta and integrate it with Aquera's Okta Event Hook Script orchestration.</span></p>
+<p><span><strong>Note</strong>: It is highly recommended to request the Okta Support team to increase the Event Hook time-out from 3 to 10 seconds.</span></p>
+<h1 id="h_01F70SC2NM685KTWCV52125ABZ"><span>Setting Up Okta Event Hook Script Orchestration</span></h1>
+<p>The Okta Event Hook Script orchestration must be first set up in Aquera with the scripts to be executed when some specific events are triggered in Okta.</p>
+<p>An event from Okta will be passed to the orchestration script as a variable. The name of the variable to be used in the script is <strong>event</strong>. </p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to the <strong>Orchestrations</strong> page and click <strong>Create Orchestration</strong>.<br/>The <strong>Add Orchestration</strong> pop-up window is displayed.</li>
+<li>Provide a <strong>Name</strong> for the orchestration.</li>
+<li>Select <strong>Okta Event Hook Script </strong>from the orchestration type drop-down list.</li>
+<li>Click <strong>Done</strong>. The <strong>Configuration</strong> tab is displayed.</li>
+<li>
+<span> <font color="#2f3941"> <span>Click <strong>Add Application</strong> and select the Okta application of which you want to process the events through the orchestration.</span> </font> </span> <span><span></span></span>
+</li>
+<li><span> <font color="#2f3941"> <span>Enter a variable name that you want to use in the script to refer to the Okta application.<br/><img alt="Okta_event2.png" src="./assets/e4333c1fcaacb60f.bin"/><br/></span> </font> </span></li>
+<li>In the script editor area, enter the script to be executed for processing the inbound events from Okta. Here is <span>a sample script to p</span>rocess the inbound event from Okta:<span><br/></span>
+<div>
+<pre><span>log.info(</span><span>JSON</span><span>.stringify(event,</span><span> </span><span>null</span><span>,</span><span> </span><span>4</span><span>));</span></pre>
+</div>
+</li>
+<li> Click <strong>Create</strong> at the top right corner of the page to create the orchestration.</li>
+<li>Click the <strong>Event Detail</strong> tab. A URL is displayed on the page.
+<p><img alt="Event_Dtl.png" src="./assets/df7240c3c3e0461c.png"/></p>
+<p>This URL will have to be copied and configured as the event hook endpoint when you set up event hooks in Okta. For details, refer to the <a href="#h_01F70KH5K5C7W5VYQX9GM88QPB" target="_self">Setting up Event Hooks in Okta</a> section.</p>
+</li>
+</ol>
+<ol>
+<li value="10">Click <strong>Create Token</strong>. A token is generated and displayed on the <strong>Generate Token</strong> pop-up window.
+<p><img alt="Token.png" height="431" src="./assets/ab090eb9283ccbb0.png" width="574"/></p>
+</li>
+<li value="11">Copy the token and save it. This token will have to be configured when you set up event hooks in Okta. For details, refer to the <a href="#h_01F70KH5K5C7W5VYQX9GM88QPB" target="_self">Setting up Event Hooks in Okta</a> section.</li>
+<li value="12">Close the pop-up window.
+<p><img alt="Refresh.png" height="250" src="./assets/6fd7cd3bc49a213c.png" width="513"/></p>
+<p>In case you have lost the generated token, you can click <strong>Refresh Token</strong> to generate a new token. Then, this new token will have to be configured in Okta.</p>
+</li>
+<li value="13">Click <strong>Save Changes.</strong>
+</li>
+</ol>
+<h1 id="h_01F70KH5K5C7W5VYQX9GM88QPB"><span>Setting up Event Hooks in Okta</span></h1>
+<p>Event hooks are outbound calls from Okta, sent when specified events occur for the user accounts. These are HTTPS REST calls containing information about the events in JSON objects, which are sent to the event URL configured by you. </p>
+<ol>
+<li value="1">Log in to Okta.</li>
+<li value="2">Navigate to <strong>Admin &gt; Workflow &gt; Event Hooks</strong>. The <strong>Event Hooks</strong> page is displayed.
+<p><img alt="Event_Hooks.png" src="./assets/e750b7f3c381353e.png"/></p>
+</li>
+<li value="3">Click <strong>Create Event Hook</strong>. The <strong>Add Event Hook Endpoint</strong> window is displayed.
+<p><img alt="Add_Event_Hook.png" height="552" src="./assets/7291fc802a6d48e0.png" width="583"/></p>
+</li>
+<li value="4">Enter values in the following fields:
+<table border="1" width="840">
+<tbody>
+<tr>
+<td><span><strong>Field</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td>Name</td>
+<td>Enter any name for the event hook.</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>Copy the URL from the <strong>Event Detail</strong> tab of the Okta Event Hook Script orchestration on the Aquera Admin portal and paste it here. Refer to the <a href="#h_01F70SC2NM685KTWCV52125ABZ" target="_self">Setting Up Okta Event Hook Script Orchestration</a> section for details.</td>
+</tr>
+<tr>
+<td>Authentication field</td>
+<td>
+<p>Enter <em>Authorization, </em>which is the name of the authorization header.</p>
+<p><strong>Note</strong>: <em>Okta Event Hooks use header-based authentication</em>.</p>
+</td>
+</tr>
+<tr>
+<td>Authentication secret</td>
+<td>
+<p>Copy the token that was generated for the Okta Event Hook Script orchestration from the Aquera Admin console and paste it here. Refer to the <a href="#h_01F70SC2NM685KTWCV52125ABZ" target="_self">Setting Up Okta Event Hook Script Orchestration</a> section for details.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Requests</strong></td>
+</tr>
+<tr>
+<td>Custom header fields</td>
+<td>
+<p><span>Optional field name/value pairs to be sent with the request to Aquera event hook orchestration.</span></p>
+</td>
+</tr>
+<tr>
+<td>Subscribe to events</td>
+<td>
+<p><span>Select the types of events that must be sent to the orchestration.</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Event_Hook.png" height="616" src="./assets/632b4eb4a3caff1f.png" width="588"/></p>
+</li>
+<li value="5">Click <strong>Save &amp; Continue</strong>. The event hook is now active.<br/><br/>
+</li>
+</ol>
+  </div>
+</body>
+</html>

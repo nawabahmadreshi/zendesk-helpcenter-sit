@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BSwift to ADP API Central Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>BSwift to ADP API Central Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide outlines the Bswift file connector integration for mapping employee benefits deductions to ADP API Central. It processes CSV files containing employee ID, deduction code, rates, goals, and other details via FTP and pushes them to the ADP Workforce Now API Central..</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The BSwift to ADP API Central integrations provide the following functions:</p>
+<ul>
+<li>
+<p>Reads the benefits CSV file from the Bswift FTP server.</p>
+</li>
+<li>
+<p>Maps employee ID, deduction code, and payroll data to ADP format.</p>
+</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li data-list-item-id="ecd51713f9f3a87a1c1976bec01ac7c5d">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e3719dce99450df891359298b4e120b12">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<strong>BSwift</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360058816934" rel="noopener noreferrer" target="_blank">FTP Generic Configuration Guide</a> for details.</li>
+<li>
+<strong>ADP Workforce Now for ADP API Central Customers</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/21457610148375" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide for ADP API Central Customers</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured to push employee data from <strong>BSwift</strong> to <strong>ADP Workforce Now for ADP API Central Customers</strong>.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li data-list-item-id="eabd542a0782bdd39f4a886605ec06333">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ee0b464cbb7b7e67dae15521440a7cfa6">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e25b381701f3481d5e5e92ebc12112cdd">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ed2fe17562fbba9e6f18b8954ad036a33">Select <strong>BSwift</strong> to <strong>ADP Workforce Now for ADP API Central Customers</strong>.</li>
+<li data-list-item-id="e106a6f4178c8b59052fa156b6a54327b">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e144d49f38b3122ce4a547c3fecb89325">Select your <strong>BSwift</strong> and <strong>ADP Workforce Now for ADP API Central Customers</strong> connector instances.</li>
+<li data-list-item-id="e480d12d833ee4d2ebd0edaf6719a854d">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<ul>
+<li>
+<strong>ADP API Central</strong> reads employee data from ADP Workforce Now and writes benefits deductions back to it</li>
+<li>
+<strong>Write Demographic</strong> uploads ADP employee data as CSV to BSwift for benefits enrollment.</li>
+<li>
+<strong>Read Benefits</strong> downloads BSwift CSV to update ADP deductions (start/change/stop).</li>
+<li>
+<strong>Read Demographic Headers</strong> retrieves CSV column names to validate the BSwift demographic format</li>
+</ul>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4>
+<p>Configure the following integration scenario settings:</p>
+<ul>
+<li>
+<strong>Enable Election Benefits Sync</strong>: Select to enable election benefits (deduction) sync from Bswift to ADP API Central Customers.</li>
+</ul>
+<h4 id="01KERNMJVMHXNECZARGMMST88N">Global Settings</h4>
+<p>Configure the following global settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+<li>
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+</ul>
+<h3 id="01KERQXQC13KRN7RYV8BYH5D3M">Benefits Sync Settings</h3>
+<p>The <strong>Benefit Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li><span><strong>Available CSV Date Formats: </strong>Enter the date format in uppercase letters only. For example, DD-MM-YYYY or D/M/YY.</span></li>
+<li>
+<span><strong>Start Benefits Sync</strong></span>: Select to enable synchronization of <strong data-end="529" data-start="436">new benefit elections or deduction records from BSwift to ADP Workforce Now (API Central)</strong>. When enabled, benefit records marked as start events in the BSwift CSV file are created in ADP.</li>
+<li>
+<span><strong>Stop Benefits Sync</strong></span>: Select to enable synchronization of <strong data-end="787" data-start="681">ended or stopped benefit elections or deduction records from BSwift to ADP Workforce Now (API Central)</strong>. When enabled, benefit records marked as stop events in the BSwift CSV file are ended in ADP.</li>
+<li>
+<span><strong>Change Benefits Sync</strong></span>: Select to enable synchronization of <strong data-end="1047" data-start="938">changes to existing benefit elections or deduction records from BSwift to ADP Workforce Now (API Central)</strong>. When enabled, modified benefit records in the BSwift CSV file are updated in ADP.</li>
+<li>
+<strong>Import Limit</strong>: Specifies the maximum number of <strong data-end="408" data-start="369">benefit election records (CSV rows)</strong> that can be processed from the BSwift file in a single integration run. When this limit is reached, any additional benefit records in the file are skipped for that run.</li>
+</ul>
+<h3 id="01K5TXWEG9QVYTG8WCYTN8SJ58">Log Settings</h3>
+<p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong><span><strong>*</strong></span>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span><strong>*</strong></span> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes<span>*</span></strong>: Select the attributes to be included in the log.</li>
+<li>
+<strong>Excluded Attributes<span>*</span></strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+<h3 id="01K5TY1G8QTYYA129P3KWESN2C">Report Settings</h3>
+<p>The <strong>Report Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Select the Report Detail Level</strong><span><strong>*</strong></span>: Select the desired report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span><strong>*</strong></span> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes<span>*</span></strong>: Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes<span>*</span></strong>: Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+<h3 id="01K5TY3EN4QF917HX732APHYFT">Log Insights</h3>
+<p>The <strong>Log Insights</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Dashboard Name</strong><strong>: </strong>Enter the dashboard name for log insights.</li>
+<li>
+<strong>Select the Log Insights Detail Level</strong><span><strong>*</strong></span>: Select the desired log insights detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span><strong>*</strong></span> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes<span>*</span></strong>: Select the attributes to be included in the log insights.</li>
+<li>
+<strong>Excluded Attributes<span>*</span></strong>: Select the attributes to be excluded from the log insights.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+<h3 id="01K5TY2F66RQRGHM0D3B23C2S3">Notifications</h3>
+<p>The <strong>Notifications</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p>
+<h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4>
+<p>Configure the following notification report settings:</p>
+<ul>
+<li>
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a CSV report for all integration runs.</li>
+<li>
+<strong>Select the Notification Report Detail Level</strong><span><strong>*</strong></span>: Select the desired notification report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span><strong>*</strong></span> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes<span>*</span></strong>: Select the attributes to be included in the notification report.</li>
+<li>
+<strong>Excluded Attributes<span>*</span></strong>: Select the attributes to be excluded from the notification report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Data Values in Email Reports</strong>: Select to display sensitive or personal data.<br/><strong>Note</strong>: When disabled, only field names are displayed without actual values to ensure data privacy compliance.</li>
+<li>
+<strong>Alert Aquera Support on Failures</strong>: Select to alert Aquera support for sync failures in ADP.</li>
+</ul>
+<h4 id="01K5TY4V4B9MPS45NWNY829Z3F">Admin Notification Settings</h4>
+<p>Configure the following admin notification settings:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+<li>
+<strong>Admin Email Subject</strong><span>: Enter the content that must be used as the email subject for sending email notifications to the admins.</span>
+</li>
+<li>
+<strong>Restrict to this Domain</strong>: Enter the domain to which emails should be sent exclusively.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The <strong>Attribute Map</strong> tab in <strong>BSwift</strong> to <strong>ADP Workforce Now for ADP API Central Customers </strong><strong>Synchronization</strong> defines the default <strong>BSwift</strong> attributes that are mapped to the <strong>ADP Workforce Now for ADP API Central Customers</strong> attributes.</p>
+<p><strong data-end="1546" data-start="1537">Note:</strong> The Attribute Map supports conditional logic and action-based mappings for <strong data-end="1649" data-start="1622">Start, Change, and Stop</strong> benefit deduction events.</p>
+<p><span>Tables</span></p>
+<p>In the Tables tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

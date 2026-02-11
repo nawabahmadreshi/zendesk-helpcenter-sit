@@ -1,0 +1,411 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SIS Hubbe / Brivo Security Suite Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>SIS Hubbe / Brivo Security Suite Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZ2NATZEDH1HSM2JA67KZMH7">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This integration synchronizes parent data from HUBBE SYSTEMS, creates a user account for each parent, assigns them to the appropriate groups, and grants access to the relevant courses in Brivo.</p>
+<!--Note-->
+<div>
+<div>
+<em> </em> <!-- Font Awesome icon as a note icon -->
+</div>
+<div>
+<p><strong>NOTE</strong>: During the initial integration run, parent records will be retrieved from the HUBBE SYSTEMS and created in the Brivo instance. Each parent record will be assigned a unique external ID by the integration. If some parent records were created in Brivo prior to the integration and do not have an external ID, the integration will not be able to identify them. Since the external ID is used as the correlation attribute to determine whether a record already exists, duplicate parent accounts may be created during the first integration run.</p>
+</div>
+</div>
+<h1 id="h_01K96SMKHQXP80C00BZ7VQJEZM">Key Functions</h1>
+<p>The SIS Hubbe / Brivo Security Suite Integration performs the following functions:</p>
+<ul>
+<li>Parents from HUBBE SYSTEMS are provisioned into Brivo, where a user account is created for each parent and then assigned to the groups corresponding to their children.</li>
+<li>The Brivo team will assign the necessary permissions to each parent account, allowing access to their children’s academic courses, surveillance, and other related features.</li>
+<li>This integration supports only full synchronization.</li>
+<li>Based on the parent status in HUBBE SYSTEMS, user accounts in Brivo are automatically created, updated, or suspended in the corresponding groups. Any parent removed from HUBBE SYSTEMS will be suspended from the matching Brivo group during the next integration run.</li>
+</ul>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li data-list-item-id="e3fe0dbe96738d203ee5ab3b4af4a31c0">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e547875fc3c5b2f9104636d7585d0bbb6">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal, based on your requirements:
+<ul>
+<li data-list-item-id="ef863fd3a1c5aed34ec522083794fee2b">
+<strong>HUBBE SYSTEMS</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/29872388857495" rel="noopener noreferrer" target="_blank">HUBBE SYSTEMS Configuration Guide</a> for instructions on creating the HUBBE SYSTEMS application connector and setting up the authentication.</li>
+<li data-list-item-id="ec943e58a6d43c6fd411cbd1bc0c7c39a">
+<strong>Brivo</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/29523924880279" rel="noopener noreferrer" target="_blank">Brivo Configuration Guide</a> for instructions on creating the Brivo application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details the configurations required for this integration. It covers setting up the applications involved in the integration and configuring the integration parameters for creating and updating user details in Brivo. </p>
+<h2 id="h_01JZ7GF2GY5XR38ZNZCRV1KGS2">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li data-list-item-id="ea448275a559f86ef902cc27789a48119">Log in to the <strong>Aquera Admin portal</strong>.</li>
+<li data-list-item-id="eb50e8510bb61e9d0d18821f6a9fb5d9c">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ee68ea53e566bbb70bc4f2659a37922a7">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="ebf1422984e4ef80833c2553b88fc5492">Select <strong>SIS Hubbe / Brivo Security Suite</strong>.</li>
+<li data-list-item-id="e388f724861a186342b1d9c51734d5a64">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e388f724861a186342b1d9c51734d5a64">Select your <strong>HUBBE SYSTEMS</strong> and <strong>Brivo</strong> connector instances.</li>
+<li data-list-item-id="e46d10b96de9e5c064160e029249087cf">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory parameters.</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the application connectors required for the integration. This section allows you to search and select the HUBBE SYSTEMS application from which the parents data need to be retrieved, and the Brivo application in which the parent's must be assigned to student courses/groups.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K82ZS2BN6F49EYF7DB2R4634">Integration Scenarios</h4>
+<p>Configure the following settings for integration scenarios:</p>
+<ul>
+<li>
+<strong>Enable User Lifecycle Management</strong><span>*</span>: Select this to retrieve the details of parents and the courses to which the students are enrolled. The <strong>Manage Users</strong> section will be displayed to configure user management settings only when this checkbox is selected.</li>
+<li>
+<strong><span>HUBBE SYSTEMS</span> Agency ID</strong><span>*</span>: Enter the unique agency ID of your HUBBE SYSTEMS from which the parent data must be retrieved.</li>
+</ul>
+<h4 id="01K2C3V86CTCZR5NZXJ1805N9K">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li data-list-item-id="e64196a9263d5bbfcb43bcc498483f154">
+<strong>Enable Report-Only Mode</strong>: Select this to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e64196a9263d5bbfcb43bcc498483f154">
+<strong>Enable Logging</strong>: Select this to generate logs outlining data changes.<br/><strong>Note</strong>: The <strong>Logging</strong> section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="e64196a9263d5bbfcb43bcc498483f154">
+<strong>Enable Report Generation</strong>: Select this to generate the integration report.<br/><strong>Note</strong>: The <strong>Reporting</strong> section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="e64196a9263d5bbfcb43bcc498483f154">
+<strong>Enable Notifications</strong>: Select this to enable the integration-related notifications.<br/><strong>Note</strong>: The <strong>Notifications</strong> section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="e64196a9263d5bbfcb43bcc498483f154">
+<strong>Enable Log Insights</strong>: Select this to visualize the integration-related metrics.<br/><strong>Note</strong>: The <strong>Log Insights</strong><strong><span> </span></strong>section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="e64196a9263d5bbfcb43bcc498483f154">
+<strong>Debug Setting</strong>: Select to generate logs outlining data changes that would occur for debugging. <strong>Note</strong>: The <strong>Debug Mode</strong> section will be displayed only when this checkbox is selected.</li>
+</ul>
+<h3 id="h_01K83074E8FTV8F8GYDWXM1597">Manage Users</h3>
+<h4 id="h_01K8309PFNYGR0RVBVH83N0CCZ">Source Filter Settings</h4>
+<p>Configure the following source filter settings:</p>
+<ul>
+<li>
+<strong>Source Filter</strong>: Select a filter for retrieving parents from HUBBE SYSTEMS. The available options are <em>All Active Parents</em>, <em>All Inactive Parents, </em>and<em> Custom.</em>
+<ul>
+<li>Select <em>All Active Parents</em> to filter parents based on their active status as defined in the <strong>Parent Active Statuses</strong> parameter.</li>
+<li>Select <em>All Inactive Parents</em> to filter parents based on their inactive status as defined in the <em>Parent Inactive Statuses</em> parameter.</li>
+<li>Similarly, select <em>Custom</em> to apply filters based on specific criteria that you define in the <strong>Custom Source Filter</strong> parameter.</li>
+</ul>
+</li>
+<li>
+<span><strong>Parent Active Statuses</strong></span>: Select the statuses from the dropdown menu that should be considered active parent statuses in HUBBE SYSTEMS. The supported value is <em>Active</em>. This parameter is displayed only when <em>All Active Parents</em> is selected in the <strong>Source Filter </strong>parameter<strong>.</strong>
+</li>
+<li>
+<span><strong>Parent Inactive Statuses</strong></span>: Select the statuses from the dropdown menu that should be considered inactive parent statuses in HUBBE SYSTEMS. The supported value is <em>Inactive</em><span>. </span>This parameter is displayed only when <em>All Inactive Parents</em> is selected in the <strong>Source Filter </strong>parameter<strong>.</strong>
+</li>
+<li>
+<strong>Custom <span>Source</span> Filter</strong>: Enter the expression that will be validated to filter parents from the HUBBE SYSTEMS. The parameter is available only when you select <em>Custom</em> in the <strong>Source Filter</strong> parameter. For example, if you enter phone==09688983 in this field, the user with that phone number will be retrieved from HUBBE SYSTEMS into Brivo.</li>
+</ul>
+<h4 id="h_01K838NRRR3RMQHTZ6P4PFHZF4">Group Assignment</h4>
+<p>Configure the following group assignment settings:</p>
+<ul>
+<li>
+<strong>Group Assignment to User</strong><span>*</span>: Select the attribute from the dropdown menu, the course ID from Hubbe will be validated against the selected attribute to find the matching group in Brivo. The available options are <strong>site_id</strong> and <strong>Custom</strong>.</li>
+<li>
+<strong>Group Assignment Custom Condition</strong><span>*</span>: Enter an expression that defines the group to which the parents should be assigned. This parameter is displayed only if you select <em>Custom</em> in the <strong>Group Assignment to User</strong> parameter.<br/><strong>Note</strong>: If you want to integrate parents from HUBBE SYSTEMS into Brivo without assigning them to any group, select <em>Custom</em> in the <strong>Group Assignment to User</strong> parameter and enter <em>false</em> in this parameter.</li>
+</ul>
+<h4 id="h_01K838XP909V7DPX5YXD14D8BB">Provisioning Settings</h4>
+<p>Configure the following provisioning settings:</p>
+<ul>
+<li>
+<strong>Create User Condition</strong>: Select a condition from the dropdown menu that must be applied while creating parents in the Brivo instance. Only the parents that meet the condition configured in this field will be created. The available options are <em>Create All Users</em>, <em>Create Active Users Only</em>, and <em>Custom</em>.
+<ul>
+<li>If you select <em>Create All Users</em>, all users retrieved from the HUBBE SYSTEMS will be created in Brivo.</li>
+<li>If you select <em>Create Active Users Only</em>, only active users in HUBBE SYSTEMS will be created in Brivo.</li>
+</ul>
+</li>
+<li>
+<strong>Custom Create Condition</strong>: Enter an expression that defines the user creation condition in the Brivo instance. This parameter is displayed only if you select <em>Custom</em><span> in the </span><strong>Create User Condition </strong><span>parameter.</span>
+</li>
+<li>
+<strong>Update User Condition</strong>: Select a condition from the dropdown menu that must be applied while updating parents in the Brivo instance. Only the parents that meet the condition configured in this field will be updated. The available options are <em>Update All Users</em>, <em>Update Active Users Only</em>, and <em>Custom</em>.
+<ul>
+<li>If you select <em>Update All Users</em>, all HUBBE SYSTEMS users will be updated in Brivo.</li>
+<li>If you select <em>Update Active Users Only</em>, only active users in HUBBE SYSTEMS will be updated in Brivo.</li>
+</ul>
+</li>
+<li>
+<strong>Custom Update Condition</strong>: Enter an expression that defines the parent update condition in the Brivo instance. This parameter is displayed only if you select <em>Custom</em> in the <strong>Update User Condition </strong>parameter. </li>
+<li>
+<strong>Terminate User Condition</strong>: Select a condition from the dropdown menu that must be applied while terminating parents in the Brivo instance. Only the parents that meet the condition configured in this field will be terminated. The available options are <em>Terminate Inactive Users Only</em> and <em>Custom</em>. If you select <em>Terminate Inactive Users Only</em>, all inactive users in the HUBBE SYSTEMS will be terminated in Brivo.</li>
+<li>
+<strong>Custom Terminate Condition</strong>: Enter an expression that defines the parent termination condition in the Brivo instance. This parameter is available only if you select <em>Custom</em> in the <strong>Terminate User Condition</strong> parameter.</li>
+</ul>
+<h4 id="h_01K83B90R662KB5J3V39B8FG5X">Provisioning Threshold</h4>
+<p>Configure the following provisioning threshold:</p>
+<ul>
+<li>
+<strong>Create Limit</strong>: Enter the maximum number of parents that can be created during each integration run. By default, the value is 5.</li>
+<li>
+<strong>Update Limit</strong>: Enter the maximum number of parents that can be updated during each integration run. By default, the value is 5.</li>
+<li>
+<strong>Delete Limit</strong>: Enter the maximum number of parents that can be deleted during each integration run. By default, the value is 5.</li>
+</ul>
+<h4 id="01K83BE9GK52DNKXP2NNG0VWDE">Correlation Settings</h4>
+<p>Configure the following correlation settings:</p>
+<ul>
+<li>
+<strong>Source Correlation Attribute</strong>: Select the HUBBE SYSTEMS field that the integration must use to find the matching parent record in Brivo. The available option is <em>contact_id</em>.</li>
+<li>
+<strong>Target Correlation Attribute</strong>: Select the Brivo field that the integration must use to find the matching parent record in HUBBE SYSTEMS. The available option is <em>externalId</em>.</li>
+</ul>
+<h3 id="01K857QX74GN9FBH9TKRM3GQGJ">Logging</h3>
+<p>The <strong>Logging</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K857S4F0718HWW0NKXPEH6EH">Log Settings</h4>
+<p>Configure the following log settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the following options:
+<ul>
+<li>
+<strong>Attribute</strong> <strong>Filter</strong>: Select an attribute filter from the dropdown menu. The available options are <em>Included Attributes</em> and <em>Excluded Attributes</em>.
+<ul>
+<li>
+<strong>Included</strong> <strong>Attributes</strong>: Select the attributes to be included in the log. This parameter is displayed only if you select <em>Included Attributes</em> in the <strong>Attribute Filter</strong> parameter.</li>
+<li>
+<strong>Excluded</strong> <strong>Attributes</strong>: Select the attributes to be excluded in the log. This parameter is displayed only if you select <em>Excluded Attributes</em> in the <strong>Attribute Filter</strong> parameter.</li>
+</ul>
+</li>
+<li>
+<span><strong>Show Attribute Values for Each Event</strong></span>: Select this to populate the attribute values when choosing the <em>Full Details</em> or <em>Custom</em> option from the <strong>Select the Log Detail Level</strong> parameter.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K94S7F746CDFGPEACYB3YXWE">Debug Mode</h3>
+<h4 id="h_01K94SEPV0Q2X4KSKXY1JACYWP">Debug Settings</h4>
+<p>Configure the following debug settings:</p>
+<ul>
+<li>
+<strong>Select Filter</strong>: Select an attribute from the dropdown menu to use as a filter when debugging the integration. The available options are <em>contact_id</em> and <em>email</em>.</li>
+<li>
+<strong>Email ID value</strong>: Enter the parent email address for debugging the integration. This parameter is displayed only when <em>email</em> is selected in the <strong>Select Filter</strong> parameter.</li>
+<li>
+<strong>Contact ID value</strong>: Enter the parent contact ID for debugging the integration. This parameter is displayed only when <em>contact_id</em> is selected in the <strong>Select Filter</strong> parameter.</li>
+</ul>
+<h3 id="01K85BEAE46WXRJ4DW39R9YD0B">Notifications</h3>
+<p>The <strong>Notifications</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p>
+<h4 id="01K85BEAE4AMAXB7Y81RXG5638">Notification Report Settings</h4>
+<p>Configure the following notification report settings:</p>
+<ul>
+<li>
+<strong><span>Include</span> Attribute Values</strong>: Select this to include all the attribute values in the notification report.</li>
+<li>
+<strong>Select the Notification Report Detail Level</strong>: Select the desired notification report detail level from the dropdown menu. This section is used to attach the integration report in CSV format to the email. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are populated.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span>*</span> drop-down menu with the following options:<br/>
+<ul>
+<li>
+<strong>Included Attribute Notifications</strong>: Select the attributes to be included in the notification report.</li>
+<li>
+<strong>Excluded Attribute<span> </span>Notifications</strong>: Select the attributes to be excluded from the notification report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<span><strong>Send Integration Report via Email</strong></span>: Select to receive email notification with a report for all integration runs.</li>
+</ul>
+<h4 id="01K85C2CVBBSYVJS6MDKDW7A97">Notification Template Settings</h4>
+<p>Configure the following notification template settings:</p>
+<ul>
+<li>
+<strong>Send Email Notification On</strong>: Select the events from the dropdown menu for which notifications should be sent via email. The available options are <em>Success Event</em>, <em>Failure Event</em>, <em>User Created</em>, and <em>User Disabled</em>.</li>
+</ul>
+<p><strong>Success Execution <span>Notification</span></strong></p>
+<p>Configure the following success execution notification settings:</p>
+<p><strong>Note</strong>: This section will be displayed only if you select <em>Success Event</em> in the <strong>Send Email Notification On</strong> parameter.</p>
+<ul>
+<li>
+<span><strong>Recipients' Email Addresses</strong></span>: Enter the email addresses of the recipients to whom the email notifications will be sent. The available options are <em>Administrator</em> and <em>Custom</em>.
+<ul>
+<li>Select <em>Administrator</em> only if you want to send notifications to the administrator.</li>
+<li>Select <em>Custom</em> to add email recipients and send notifications to the recipients you specify in the <strong>Custom Recipient</strong> parameter.</li>
+</ul>
+</li>
+<li>
+<strong>Custom <span>Recipient</span></strong>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select <em>Custom</em> in the <strong>Recipients' Email Addresses</strong> parameter.</li>
+<li>
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li>
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li>
+<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body for notifications sent upon successful integration execution.</li>
+</ul>
+<p><strong>Execution Failure Notification</strong></p>
+<p>Configure the following execution failure notification settings:</p>
+<p><strong>Note</strong>: This section will be displayed only if you select <em>Failure Event</em> in the <strong>Send Email Notification On</strong> parameter.</p>
+<ul>
+<li>
+<span><strong>Recipients' Email Addresses</strong></span>: Enter the email addresses of the recipients to whom the email notifications will be sent. 
+<ul>
+<li>Select <em>Administrator</em> only if you want to send notifications to the administrator.</li>
+<li>Select <em>Custom</em> to add email recipients and send notifications to the recipients you specify in the <span><strong>Custom Recipients </strong>parameter.</span>
+</li>
+</ul>
+</li>
+<li>
+<span><strong>Custom Recipients</strong></span>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select <em>Custom</em> in the <strong>Recipients' Email Addresses</strong> parameter.</li>
+<li>
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li>
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li>
+<strong>Email Body on Failed Integration Execution</strong>: Enter the content that must be used as the email body for notifications sent upon integration execution fails.</li>
+</ul>
+<p><strong>User Created <span>Notification</span></strong></p>
+<p>Configure the following user created settings:</p>
+<p><strong>Note</strong>: This section will be displayed only if you select <em>User Created</em> in the <strong>Send Email Notification On</strong> parameter.</p>
+<ul>
+<li>
+<span><strong>Recipients' Email Addresses</strong></span>: Enter the email addresses of the recipients to whom the email notifications will be sent.
+<ul>
+<li>Select <em>User's Email</em> only if you want to send notifications to the users created during this integration run.</li>
+<li>Select <em>Custom</em> to add email recipients and send notifications to the recipients you specify in the <span><strong>Custom Recipients </strong>parameter.</span>
+</li>
+</ul>
+</li>
+<li>
+<span><strong>Custom Recipients</strong></span>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select <em>Custom</em> in the <strong>Recipients' Email Addresses</strong> parameter.</li>
+<li>
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li>
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li>
+<strong>Email Body for User Creation Notification</strong>: Enter the content that must be used as the email body for notifications sent upon successful user creation.</li>
+</ul>
+<p><strong>User Disabled <span>Notification</span></strong></p>
+<p>Configure the following user disabled settings:</p>
+<p><strong>Note</strong>: This section will be displayed only if you select <em>User Disabled</em> in the <strong>Send Email Notification On</strong> parameter.</p>
+<ul>
+<li>
+<span><strong>Recipients' Email Addresses</strong></span>: Enter the email addresses of the recipients to whom the email notifications will be sent.
+<ul>
+<li>Select <em>Administrator</em> only if you want to send notifications to the administrator when users are disabled during this integration run.</li>
+<li>Select <em>Custom</em> to add email recipients and send notifications to the recipients you specify in the <span><strong>Custom Recipients </strong>parameter.</span>
+</li>
+</ul>
+</li>
+<li>
+<span><strong>Custom Recipients</strong></span>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select <em>Custom</em> in the <strong>Recipients' Email Addresses</strong> parameter.</li>
+<li>
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li>
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li>
+<strong>Email Body for User Disabled Notification</strong>: Enter the content to be used as the email body for notifications sent when a user is successfully disabled.</li>
+</ul>
+<h3 id="h_01K8NDA4RBFEX1GXNHGH3F0NMP">Reporting</h3>
+<p>The <strong>Reporting</strong> section enables you to customize the integration settings according to your specific use case. This section is used to download the integration report in CSV format from the execution timeline. It has the following settings:</p>
+<h4 id="h_01K8NDAHE1DJAG7QNNHHXSZFMN">Report Settings</h4>
+<p>Configure the following report settings:</p>
+<ul>
+<li>
+<strong>Enable Integration Report Download</strong>: Select to allow downloading the integration report.</li>
+<li>
+<strong>Select the Report Detail Level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details from the report. Selecting the Custom option will display the following options:
+<ul>
+<li>
+<strong><span>Custom</span></strong> <span><strong>Report Filter</strong></span>: Select a report filter from the dropdown menu. The available options are Custom Included and Custom Excluded.
+<ul>
+<li>
+<span><strong>Include Attributes from Report</strong></span>: Select the attributes to be included in the report. This parameter is available only if you select <em>Custom Report Included</em> in the <strong>Custom Report Level</strong> parameter.</li>
+<li>
+<span><strong>Exclude Attributes from Report</strong></span>: Select the attributes to be excluded in the report. This parameter is available only if you select <em>Custom Report Excluded</em> in the <strong>Custom Report Level</strong> parameter.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the <em>Full</em> or <em>Custom</em> option.</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01K8NFHWY8X5NQ0SZ0SZ48A5X7">Log Insights</h3>
+<p>The <strong>Log Insights</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K8NFJEF32E34PT7CRX73EKBM">Log Insights Settings</h4>
+<p>Configure the following settings to customize the log insights:</p>
+<ul>
+<li>
+<strong>Generate Log Insights</strong>: Select this checkbox to generate detailed logs in the <strong>Log Insights</strong>.</li>
+<li>
+<strong>Select the Log Insights Detail Level</strong><span>*</span>: <span>Select the desired log insights detail level from the dropdown menu. The following are the available options:</span>
+<ul>
+<li>
+<strong>Summary</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the Custom option will display the Attribute Filter* drop-down menu with the following options:
+<ul>
+<li>
+<span><strong>Attribute Filter</strong></span>: Select a report filter from the dropdown menu. The available options are Custom Included and Custom Excluded.
+<ul>
+<li>
+<span><strong>Include Attributes</strong></span>: <span>Select the attributes to be included in the log insights.</span> This parameter is available only if you select <em>Custom Report Included</em> in the <strong>Custom Report Level</strong> parameter.</li>
+<li>
+<span><strong>Exclude Attributes</strong></span>: <span>Select the attributes to be excluded in the log insights. </span>This parameter is available only if you select <em>Custom Report Excluded</em> in the <strong>Custom Report Level</strong> parameter.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the <em>Full</em> or <em>Custom</em> option.</li>
+</ul>
+</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The <strong>Attribute Map</strong> tab in the SIS Hubbe / Brivo Security Suite Integration defines the default HUBBE SYSTEMS attributes that are mapped to the Brivo attributes.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

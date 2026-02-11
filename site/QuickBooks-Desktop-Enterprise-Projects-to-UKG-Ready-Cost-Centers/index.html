@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>QuickBooks Desktop Enterprise Projects to UKG Ready Cost Centers</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>QuickBooks Desktop Enterprise Projects to UKG Ready Cost Centers</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating the synchronization of data across resource types. This guide covers the end-to-end tasks in setting up a script synchronization to sync the <em>Projects</em> resource of QuickBooks Desktop Enterprise to the <em>Cost Centers</em> resource of UKG Ready.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Admin Access to QuickBooks Desktop Enterprise:</strong> You must have admin access to your QuickBooks Desktop Enterprise instance. You can visit the QuickBooks Desktop Enterprise portal to get access to an QuickBooks Desktop Enterprise instance.</li>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure following application connectors in the Aquera Admin portal to integrate with QuickBooks Desktop Enterprise:<br/>
+<ul>
+<li>
+<strong>QuickBooks Desktop Enterprise</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/24385272876055">QuickBooks Desktop Enterprise Configuration Guide</a> for details.</li>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</h1>
+<p>This section details how the synchronization must be configured to allow data push from QuickBooks Desktop Enterprise to UKG Ready.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Script Synchronization</h2>
+<p>Perform the following steps to create a new script synchronization:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> from the left side panel.</li>
+<li>Click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>QuickBooks Desktop Enterprise Projects to UKG Ready Cost Centers</strong><span>.</span>
+</li>
+<li>Enter a name and a description for the synchronization.</li>
+<li>Select your QuickBooks Desktop Enterprise and UKG Ready connector instances.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the synchronization.</li>
+</ol>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h2>
+<p>The <strong>QuickBooks Desktop Enterprise Projects to UKG Ready Cost Centers</strong> template script maps the commonly used QuickBooks Desktop Enterprise and UKG Ready attributes. You can customize it based on your use case.<br/>The following are the attributes that are mapped by default:</p>
+<table border="1">
+<thead>
+<tr>
+<th>QuickBooks Desktop Enterprise Script Expression</th>
+<th>UKG Ready Script Expression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>companyName (customerDetailsWithJobNameAndDescription[i].ParentRef.FullName)</td>
+<td>ukginstanceCompanyName</td>
+</tr>
+<tr>
+<td>jobName (customerDetailsWithJobNameAndDescription[i].Name)</td>
+<td> cost_centers.name</td>
+</tr>
+<tr>
+<td>customerType (customerDetailsWithJobNameAndDescription[i].CustomerTypeRef.FullName)</td>
+<td> cost_centers.description</td>
+</tr>
+<tr>
+<td>treeIndex (ROOT_COST_CENTER_FIELD_VALUE - 1)</td>
+<td>cost_centers.parent_cc. tree_index</td>
+</tr>
+<tr>
+<td>companyNameId (companyCostCenter.id)</td>
+<td>cost_centers.parent_cc.id</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01J7J8PJMMQ03F0EAVX6TSNR0P">QuickBooks Desktop Enterprise Projects</h2>
+<p>Refer to the following table for the QuickBooks Desktop Enterprise project attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>QuickBooks Desktop Enterprise Attribute Name</strong></td>
+<td><strong>Description</strong></td>
+<td><strong>Data Type</strong></td>
+</tr>
+<tr>
+<td>Name</td>
+<td>The project name<br/><strong>Note</strong>: The script fetches the Name attribute from the <strong>CustomerAdd</strong> OpenAPI method.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>ParentRef.FullName</td>
+<td>The parent reference full name<br/><strong>Note</strong>: The script fetches the ParentRef.FullName attribute from the <strong>CustomerAdd</strong> OpenAPI method.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>CustomerTypeRef.FullName</td>
+<td>The customer type reference full name<br/>Note: The script fetches the CustomerTypeRef.FullName attribute from the <strong>CustomerAdd</strong> OpenAPI method.</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01HXV5081PWKBEKH540JBRRMQM">UKG Ready Cost Center Attributes</h2>
+<p>Refer to the following table for the UKG Ready cost center attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>UKG Ready Attribute Name</strong></td>
+<td><strong>Description</strong></td>
+<td><strong>Data Type</strong></td>
+</tr>
+<tr>
+<td>name</td>
+<td>The name of the cost center</td>
+<td>string</td>
+</tr>
+<tr>
+<td>description</td>
+<td>The description of the cost center</td>
+<td><span>string</span></td>
+</tr>
+<tr>
+<td>tree_index</td>
+<td>The parent cost center tree index<br/><strong>Note</strong>: The script fetches the tree_index attribute from the <strong>getCostCentersBasedOnTreeIndex</strong> OpenAPI method.</td>
+<td><span>integer</span></td>
+</tr>
+<tr>
+<td>id</td>
+<td>The parent cost center ID<br/><strong>Note</strong>: The script fetches the id attribute from the<strong> getCostCentersBasedOnTreeIndex</strong> OpenAPI method.</td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+<h1 id="01J93MPATEM19QKF0AXT5VT8MM">Run Script Synchronization</h1>
+<p>You can set event or schedule triggers to run the script synchronization. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Trigger</a> section.</p>
+<p>After the script synchronization is successfully executed, Aquera syncs the contractors created in UKG Ready as vendors in QuickBooks Desktop Enterprise.</p>
+  </div>
+</body>
+</html>

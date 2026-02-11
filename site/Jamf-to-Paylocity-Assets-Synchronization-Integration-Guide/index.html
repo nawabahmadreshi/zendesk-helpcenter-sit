@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Jamf to Paylocity Assets Synchronization Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Jamf to Paylocity Assets Synchronization Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZ2NATZEDH1HSM2JA67KZMH7">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This integration enables seamless synchronization between Jamf and Paylocity, enhancing asset management and simplifying employee-device assignments. It continuously retrieves and reconciles asset data from Jamf, including iPads, MacBooks, and other Apple devices, with employee records in Paylocity, ensuring better asset tracking and accurate device allocation across your organization.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The Jamf to Paylocity integration provides the following functions:</p>
+<ul>
+<li>Retrieves asset data from Jamf, supporting incremental updates and filtering by source.</li>
+<li>Accesses and synchronizes employee records from Paylocity, aligning these accurately with device assets based on email addresses and device serial numbers.</li>
+<li>Dynamically allocates or de-allocates devices within Paylocity based on up-to-date Jamf records, ensuring accuracy and compliance.</li>
+<li>Handles successful events by logging details, generating CSV reports, sending notification emails, and updating dashboard data, if enabled.</li>
+<li>Handles failure events by logging errors, creating failure-specific CSV reports, sending failure notifications, and updating dashboard analytics, if enabled.</li>
+<li>Sends automated, detailed notification emails to employees and administrators regarding device assignments, integration status, and updates.</li>
+<li>Produces CSV reports capturing user data, operation results, timestamps, and error details.</li>
+<li>Enables dashboard analytics to monitor integration outcomes and performance.</li>
+</ul>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Jamf:</strong> Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360019285773-Jamf-Configuration-Guide" rel="noopener noreferrer" target="_blank">Jamf Configuration Guide</a> for instructions on creating the Jamf application connector and setting up the authentication.</li>
+<li>
+<strong>Paylocity</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360014901433-Paylocity-Configuration-Guide" rel="noopener noreferrer" target="_blank">Paylocity Configuration Guide</a> for instructions on creating the Paylocity application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details the configuration of the scheduled integration between <strong>Jamf</strong> and <strong>Paylocity</strong>. It covers creating the integration, setting up integration preferences, and configuring how device and employee lifecycle events are synchronized. The integration reads device and user data changes from Jamf, including new device enrollments, updates, and user assignments, at scheduled intervals and creates or updates corresponding records in Paylocity.</p>
+<h2 id="h_01JZ7GF2GY5XR38ZNZCRV1KGS2">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the <strong>Aquera Admin portal</strong>.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click <strong>Create Integration</strong>.</li>
+<li>Select <strong>Jamf to Paylocity Assets Synchronization</strong>.</li>
+<li>Enter a name and a description for the integration to identify it.</li>
+<li>Select your <strong>Jamf</strong> and <strong>Paylocity</strong> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K2C37MDKFBH7NZF2DE5JGCPE">Global Settings</h4>
+<p>Configure the following global settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select this checkbox to generate logs outlining data changes that would occur for debugging.<br/><strong>Note</strong>: The <strong>Log Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable the integration-related notifications.<br/><strong>Note</strong>: The <strong>Notification Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report.<br/><strong>Note</strong>: The <strong>Report Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Analytics</strong>: Select this checkbox to analyze integration-related metrics in a dashboard.<br/><strong>Note</strong>: The <strong>Analytics</strong> <strong>Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Asset Management</strong>: Select this checkbox to activate the asset management feature for the company.<br/><strong>Note</strong>: The <strong>Asset Management Settings</strong> section will be displayed only when this checkbox is selected.</li>
+</ul>
+<h3 id="01K2C3RTQYENSS8ANZ3Z19JWTX">Log Settings</h3>
+<p>Configure the following log settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K2C3V86CTCZR5NZXJ1805N9K">Notification Settings</h3>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li>
+<strong>Notify Admin Via Email</strong>: Select this checkbox to send email notifications to all admins. When this checkbox is selected, the following settings will be displayed:
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li>
+<strong>Admin Email Body</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+</ul>
+</li>
+<li>
+<strong>Notify Employees via Email</strong>: Select this checkbox to send email notifications to all employees. When this checkbox is selected, the following settings will be displayed:
+<ul>
+<li>
+<strong>Employee Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the employees.</li>
+<li>
+<strong>Employee Email Body</strong>: Enter the content that must be used as the email body for sending email notifications to the employees.</li>
+</ul>
+</li>
+<li>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive email notification with a CSV report for all integration runs. When this checkbox is selected, the following settings will be displayed:
+<ul>
+<li>
+<strong>Select the Notification Report Detail Level</strong>: Select the desired notification report level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01JZ7GJ97ZX233WAF2MGX9PFME">Report Settings</h3>
+<p>Configure the following report settings:</p>
+<ul>
+<li>
+<strong>Select the Report Detail Level: </strong> Select the desired report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details.
+<ul>
+<li>
+<strong>Included Attributes: </strong> Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes: </strong> Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K2C44M1N077QHHABZG4ETTBN">Analytics Settings</h3>
+<p>Configure the following analytics settings:</p>
+<ul>
+<li>
+<strong>Select the Analytics Detail Level</strong>: Select the desired level of detail from the dropdown menu on the analytics dashboard. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K2C4YCCXK4RD1TW7PRTZ1ET0">Asset Management Settings</h3>
+<p>Configure the following settings for the asset management:</p>
+<ul>
+<li>
+<strong>Source Settings</strong><br/>Configure the following settings in the source application:
+<ul>
+<li>
+<strong>Device Type</strong>: Select the device type(s) for synchronization.</li>
+<li>
+<strong>Number of Devices to Sync</strong>: Enter the number of devices to synchronize in an integration run.</li>
+<li>
+<strong>Advanced Sync &amp; Filters</strong>: Select the advanced filtering and synchronization option for the integration run.</li>
+<li>
+<strong>Days for Initial Incremental Sync</strong>: Enter the number of previous days to consider for data sync during the first incremental run.</li>
+</ul>
+</li>
+<li>
+<strong>Target Settings</strong>:<br/>Configure the following settings in the target application:
+<ul>
+<li>
+<strong>Company ID</strong>: Enter your company ID to enable device management for your organization.</li>
+<li>
+<strong>Target Application Category</strong>: Select the category in the target application where devices will be synchronized.</li>
+</ul>
+</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The Jamf to Paylocity Assets Synchronization integration maps the Jamf and Paylocity attributes. Only the source attributes can be modified, as needed, to align with your specific use case.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

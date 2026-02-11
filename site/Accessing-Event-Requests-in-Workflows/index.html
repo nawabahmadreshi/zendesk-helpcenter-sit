@@ -1,0 +1,357 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Accessing Event Requests in Workflows</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Accessing Event Requests in Workflows</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01H9FEJ9FWPS7SKYPF6JSQ7E3J">Overview</h1>
+<p>Workflows can be triggered when specific events occur in applications such as user data changes. An event will be triggered when there is a data change in an application such as a new user creation, existing user modification, or user deactivation. The application or the synchronization sends the events that trigger the workflow. </p>
+<p>This guide details how to access event requests in workflows. <span>For further details on event triggers in workflows, refer to the </span><a href="../Workflow-User-Guide/#h_01HBG680HK5D93KFXW9ZNX8E35" rel="noopener noreferrer" target="_blank">Workflows User Guide</a><span>. </span></p>
+<h1 id="h_01H5A9S4H1FQ9QVZPFPWHWCSYH">Accessing Event Request</h1>
+<p>You can provide the attributes of the event request in the element configurations based on your requirements.</p>
+<p>The following tables give the description, format, and examples of the event request attributes.</p>
+<h2 id="h_01H9FE6RSA9HBEXCAMVAWGVPRV">Synchronization Events</h2>
+<p>The workflow receives the Synchronization event when a user is created, updated, or deactivated in the target application configured in a User Synchronization. The following are the supported request object attributes for a Synchronization event:</p>
+<table border="1" width="669">
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td><strong>Format</strong></td>
+<td><strong>Request Object Attribute</strong></td>
+</tr>
+<tr>
+<td>The standard request attributes of the Synchronization event.</td>
+<td>request.<br/>&lt;attributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>request.type</strong>: <br/>The type of the event such as <em>creation</em>, <em>update.</em>
+</li>
+<li>
+<strong>request.name</strong>:<br/>The Synchronization name</li>
+<li>
+<strong>request.guid</strong>:<br/>The Synchronization ID</li>
+<li>
+<strong>request.engineId</strong>:<br/>The Synchronization engine ID</li>
+<li><span><strong>request.error</strong>: <br/>The error details when there is a failure in the user creations/updates and the checkbox <a href="../User-Integration-Setup-Guide/#h_01GYETRSSQ79QVM7DTMMS309H7" rel="noopener noreferrer" target="_blank"><em>Fire Hooks on Error</em></a> is selected in the configuration of the User Synchronization.</span></li>
+<li>
+<span><strong>request.error.statusCode</strong>: <br/>The error status code when there is a failure in the user creations/updates and the checkbox <a href="../User-Integration-Setup-Guide/#h_01GYETRSSQ79QVM7DTMMS309H7" rel="noopener noreferrer" target="_blank"><em>Fire Hooks on Error</em></a> is selected in the configuration of the User Synchronization. </span><span></span>
+</li>
+<li><span><strong>request.error.value</strong>: <br/>The error value when there is a failure in the user creations/updates and the checkbox <a href="../User-Integration-Setup-Guide/#h_01GYETRSSQ79QVM7DTMMS309H7" rel="noopener noreferrer" target="_blank"><em>Fire Hooks on Error</em></a> is selected in the configuration of the User Synchronization. <br/></span></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>
+<p>The values of user attributes of the Source Application schema.</p>
+</td>
+<td>request.source.&lt;attributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>Core attribute:</strong><br/>request.source.active</li>
+<li>
+<strong>Complex single-valued attribute:</strong><br/><span>request.source.name.formatted</span>
+</li>
+<li>
+<strong>Complex multi-valued attribute:<br/></strong>request.source.emails[work].value</li>
+<li>
+<strong>ENT attribute:</strong><br/>request.source[ENT].department</li>
+<li>
+<strong>IAN attribute:</strong><br/>request.source[IAN].hireDate</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>
+<p>All the previous values of<br/>user attributes of the Target Application schema.</p>
+<p><br/>This is applicable only for <em>User Updated by Synchronization</em>.</p>
+</td>
+<td>request.target.old.&lt;attributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>Core attribute:</strong><br/>request.target.old.active</li>
+<li>
+<strong>Complex single-valued attribute:<br/></strong><span>request.target.old.name.formatted</span>
+</li>
+<li>
+<strong>Complex multi-valued attribute:</strong><br/><span>request.target.old.emails[work].value</span>
+</li>
+<li>
+<strong>ENT attribute:</strong><br/>request.target.old[ENT].department</li>
+<li>
+<strong>IAN attribute:</strong><br/>request.target.old[IAN].hireDate</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>
+<p>All the mapped values of user attributes of the Target Application schema.<br/><br/>For <em>User Created by Synchronization, </em>the request object contains only the mapped attributes whose mapping option in the attribute mapping is set as "Map on Create and Update" or "Map on Create".</p>
+<p> </p>
+<p>For <em>User Updated by Synchronization, </em>the request object contains only the mapped attributes whose mapping option in the attribute mapping is set as "Map on Create and Update" or "Map on Update".</p>
+</td>
+<td>request.target.new.&lt;attributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>Core attribute:</strong><br/>request.target.new.active</li>
+<li>
+<strong>Complex single-valued attribute:<br/></strong><span>request.target.new.name.formatted</span>
+</li>
+<li>
+<strong>Complex multi-valued attribute:</strong><br/><span>request.target.new.emails[work].value</span>
+</li>
+<li>
+<strong>ENT attribute:</strong><br/>request.target.new[ENT].department</li>
+<li>
+<strong>IAN attribute:</strong><br/>request.target.new[IAN].hireDate</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>
+<p>The changed values of user attributes of the Target Application schema.</p>
+<p> </p>
+<p>The request object contains only the changed attributes of the user. Hence for unchanged user attributes, it returns <em>undefined</em>. <br/><br/>This is applicable only for <em>User Updated by Synchronization.</em></p>
+</td>
+<td>request.target.changed.<br/>&lt;attributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>Core attribute:</strong><br/>request.target.changed.active</li>
+<li>
+<strong>Complex single-valued attribute:<br/></strong><span>request.target.changed.name.formatted</span>
+</li>
+<li>
+<strong>Complex multi-valued attribute:</strong><br/><span>request.target.changed.emails[work].value</span>
+</li>
+<li>
+<strong>ENT attribute:</strong><br/>request.target.changed[ENT].department</li>
+<li>
+<strong>IAN attribute:</strong><br/>request.target.changed[IAN].hireDate</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>The values of metadata user attributes of the Source Application schema.</td>
+<td>request.source.meta.<br/>&lt;metaAttributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>request.source.meta.resourceType</strong>:<br/>The resource type such as user.</li>
+<li>
+<strong>request.source.meta.lastModified</strong>:<br/>The last modified date of the source user.</li>
+<li>
+<strong>request.source.meta.location</strong>:<br/>The reference location of the source user.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>The values of metadata user attributes of the Target Application schema.</td>
+<td>request.target.old.meta.<br/>&lt;metaAttributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>request.target.old.meta.resourceType</strong>:<br/>The resource type such as user.</li>
+<li>
+<strong>request.target.old.meta.created</strong>:<br/>The creation date of the target user.</li>
+<li>
+<strong>request.target.old.meta.lastModified</strong>:<br/>The last modified date of the target user.</li>
+<li>
+<strong>request.target.old.meta.location</strong>:<br/>The reference location of the target user.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01H9FE6DP3HKMFT5KCNZ67J4S5">Application Events</h2>
+<p>The workflow receives the application event when there is a data change in an application. The following are the supported request object attributes for an Application event:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td><strong>Format</strong></td>
+<td><strong>Request Object Attribute</strong></td>
+</tr>
+<tr>
+<td>
+<p>The standard request attributes of the application event.</p>
+</td>
+<td>request.&lt;attributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>request.type</strong>:<br/>The type of the event.</li>
+<li><span><strong>request.id</strong>:<br/>The ID of the event.<strong><br/></strong></span></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>The event attributes of the application schema.</td>
+<td>request.&lt;eventAttributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>request.actor</strong><br/><strong>Note</strong>: <span>Refer to the respective <a href="https://support.aquera.com/hc/en-us/categories/115000284613-Connectors" rel="noopener" target="_blank">Connector Configuration Guide</a> for details on application <em>events</em>.</span>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>The metadata attributes of the application event.</td>
+<td>request.data.meta.<br/>&lt;metaAttributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>request.meta.resourceType</strong>:<br/>The type of resource.</li>
+<li>
+<strong>request.meta.created</strong>:<br/>The creation date of the event.</li>
+<li>
+<strong>request.meta.lastModified</strong>:<br/>The last modified date of the event.</li>
+<li>
+<strong>request.meta.location</strong>:<br/>The reference location of the event.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01H9FE6797J46AEP27C0N6G2MC">Users Modified Since Event</h2>
+<p>The workflow receives the <em>users modified since</em> event when there is a user modification in an application. The following are the supported request object attributes for <em>users modified since</em> event:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td><strong>Format</strong></td>
+<td><strong>Request Object Attribute</strong></td>
+</tr>
+<tr>
+<td>The standard request attributes of the users modified since event.</td>
+<td>request.&lt;attributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>request.type</strong>:<br/>The type of the event.</li>
+<li>
+<strong>request.id</strong>: <br/>The ID of the event.</li>
+<li>
+<strong>request.sourceType:</strong><br/>The source that generated the event, such as <em>aquera-engine.</em>
+</li>
+<li>
+<strong>request.scheduledSupported</strong>:<br/>Mentions if the event can be scheduled.</li>
+<li>
+<strong>request.actor</strong>:<br/>The ID of the user for which the event is generated.</li>
+<li>
+<strong>request.source</strong>:<br/>The ID of the application for which the event is generated.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>
+<p>The user attributes for which the users modified since event is generated.</p>
+</td>
+<td>request.data.&lt;attributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>Core attribute:</strong><br/>request.data.active</li>
+<li>
+<strong>Complex multi-valued attribute:</strong><br/><span>request.data.emails[work].value</span>
+</li>
+<li>
+<strong>ENT attribute:</strong><br/>request.data[ENT].department</li>
+<li>
+<strong>IAN attribute:</strong><br/>request.data[IAN].hireDate</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>The metadata attributes of the user for which the users modified since event is generated.</td>
+<td>request.data.meta.<br/>&lt;metaAttributeName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>request.data.meta.resourceType</strong>:<br/>The type of resource such as the user.</li>
+<li>
+<strong>request.data.meta.created</strong>:<br/>The creation date of the user.</li>
+<li>
+<strong>request.data.meta.lastModified</strong>:<br/>The last modified date of the user.</li>
+<li>
+<strong>request.data.meta.location</strong>:<br/>The reference location of the user.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="01HQ0H36QY3DZ0PXB2NDT86Q7G">Form Events</h2>
+<p>The workflow receives the form event when a form recipient clicks on an action button mapped to the workflow. The following are the supported request object attributes for a form event:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Description</strong></td>
+<td><strong>Format</strong></td>
+<td><strong>Request Object Attribute</strong></td>
+</tr>
+<tr>
+<td>The standard request attributes of the form event.</td>
+<td>request.&lt;attributeName&gt;</td>
+<td>
+<ul>
+<li>
+<span><strong>request.formName</strong>:<br/></span><span>The name of the form</span>
+</li>
+<li><span><strong>request.requestId</strong>:<br/>The ID of the form event</span></li>
+<li><span><strong>request.submittedBy</strong>:<br/>The email ID of the user who filled and submitted the form</span></li>
+<li>
+<span><strong>request.submittedOn</strong>:<br/></span><span>The date and time of form submission</span>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>
+<p>The attributes of the form fields.</p>
+</td>
+<td>request.data.&lt;fieldName&gt;</td>
+<td>
+<ul>
+<li>
+<strong>Form Data Field Name</strong>:<br/>request.data.field1</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<section>
+<div>
+<div>
+<h1 id="h_01H6RR11C48K1S32AYS3AVETGH">References</h1>
+<ul>
+<li><a href="../Workflow-User-Guide/" rel="noopener noreferrer" target="_blank">Workflows User Guide</a></li>
+<li><a href="https://support.aquera.com/hc/en-us/articles/17258237173911/" rel="noopener noreferrer" target="_blank">Workflow Elements Configuration Guide</a></li>
+<li><a href="../Workflows-Use-Case-Guide-Employee-Onboarding/" rel="noopener noreferrer" target="_blank">Workflows Use Case Guide: Employee Onboarding</a></li>
+<li><a href="../Workflows-Use-Case-Guide-Create-Tickets-for-New-Hires/" rel="noopener noreferrer" target="_blank">Workflows Use Case Guide: Create Tickets for New Hires</a></li>
+</ul>
+<p> </p>
+<p> </p>
+</div>
+</div>
+</section>
+  </div>
+</body>
+</html>

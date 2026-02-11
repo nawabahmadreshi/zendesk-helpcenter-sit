@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SCIM Filter Expressions in Integrations</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>SCIM Filter Expressions in Integrations</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01FCCTSJVX9A7A5W23VQWT6D33">Overview</h1>
+<p><strong>SCIM Filter Expressions</strong> are used in the <a href="../User-Integration-Setup-Guide/#h_01GYETHB98MMAZ5Q91SHB5ES0M" rel="noopener noreferrer" target="_blank">Source SCIM Filter</a> configuration of integrations. <span>SCIM filter expressions follow the SCIM RFC specification.</span></p>
+<p>This guide provides information on the operators that can be provided in the SCIM filter expressions and the functionality of each operator.</p>
+<p><strong>Note</strong>: You can use <strong>J</strong><span><strong>avaScript expressions</strong> in all other configuration fields (such as <a href="../User-Integration-Setup-Guide/#h_01GYETEJHRGTX46BYBRFSKNFHG" rel="noopener noreferrer" target="_blank">Match Expression</a>, <a href="../User-Integration-Setup-Guide/#h_01GYETP0MHT03VXNH1DJ4HJ0QN" rel="noopener noreferrer" target="_blank">Create Condition</a>, and <a href="../User-Integration-Setup-Guide/#h_01GYETP5N1ENJCFYKX52KXBAYE" rel="noopener noreferrer" target="_blank">Update Condition</a>), attribute mappings, tables, and groups when you set up integrations. </span><span>All the JavaScript operators are supported in the JavaScript expressions of integrations.</span></p>
+<h1 id="h_01HBTHH0C71WN7NDNB5QAWY3Z2"><span>SCIM Filter Expressions</span></h1>
+<p>Each SCIM Filter expression must contain an attribute name followed by an attribute operator and an attribute value. Multiple expressions may be combined using logical operators. <span>Furthermore, expressions can be grouped using grouping operators. </span></p>
+<p><span><strong>Note</strong>: The SCIM Filter expression will work only if the connector selected in the integration supports filtering by the specified attribute operators and attribute names. Refer to the </span><strong>Supported Filters </strong>section of the <span>respective <a href="https://support.aquera.com/hc/en-us/categories/115000284613-Connectors" rel="noopener" target="_blank">connector configuration guides</a> for further details.</span></p>
+<h2 id="h_01F84KX1NBD4J2BBYCF8HJN47H">Attribute Operators</h2>
+<p>The following table lists the attribute operators that can be used in a SCIM filter expression:</p>
+<table border="1" width="808">
+<tbody>
+<tr>
+<td><span><strong>Operator</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+<td><span><strong>Behavior and Example</strong></span></td>
+</tr>
+<tr>
+<td>eq</td>
+<td>equal</td>
+<td>
+<p>The attribute and operator value must be identical to meet the filter criterion.</p>
+<p><em><strong>Core</strong>: userName <strong>eq</strong> "bjensen"</em></p>
+<p><em><strong>Enterprise</strong>: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department <strong>eq</strong> "Sales"</em></p>
+<p><em><strong>IAN</strong>: urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>eq</strong> "Q7DETWGV"</em></p>
+</td>
+</tr>
+<tr>
+<td>ne</td>
+<td>not equal</td>
+<td>
+<p>The attribute and operator value must not be identical to meet the filter criterion.</p>
+<p><em><strong>Core</strong>: userName <strong>ne</strong> "bjensen"</em></p>
+<p><em><strong>Enterprise</strong>: </em><em>urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department <strong>ne</strong> "Sales"</em></p>
+<p><em><strong>IAN</strong>: urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>ne</strong> "Q7DETWGV"</em></p>
+</td>
+</tr>
+<tr>
+<td>co</td>
+<td>contains</td>
+<td>
+<p>The entire operator value must be a substring of the attribute value for a match.</p>
+<p><em><strong>Core</strong>: userName <strong>co</strong> "@domain.com"</em></p>
+<p><em><strong>Enterprise</strong>: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department <strong>co</strong> "Sale"</em></p>
+<p><em><strong>IAN</strong>: urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>co</strong> "Q7"</em></p>
+</td>
+</tr>
+<tr>
+<td>sw</td>
+<td>starts with</td>
+<td>
+<p>The entire operator value must be a substring matching at the beginning of the attribute value.</p>
+<p><em><strong>Core</strong>: userName <strong>sw</strong> "b"</em></p>
+<p><em><strong>Enterprise</strong>: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department <strong>sw</strong> "S"</em></p>
+<p><em><strong>IAN</strong>: </em><em>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>sw</strong> "Q"</em></p>
+</td>
+</tr>
+<tr>
+<td>ew</td>
+<td>ends with</td>
+<td>
+<p>The entire operator value must be a substring matching at the end of the attribute value.</p>
+<p><em><strong>Core</strong>: userName <strong>ew</strong> "@domain.com"</em></p>
+<p><em><strong>Enterprise</strong>: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department <strong>ew</strong> "s"</em></p>
+<p><em><strong>IAN</strong>: </em><em>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>ew</strong> "V"</em></p>
+</td>
+</tr>
+<tr>
+<td>pr</td>
+<td>present<br/>(has value)</td>
+<td>
+<p>If the attribute has a non-empty or non-null value, or if it contains a non-empty node for complex attributes, there is a match.</p>
+<p><em><strong>Core</strong>: userName <strong>pr</strong></em></p>
+<p><em><strong>Enterprise</strong>: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department <strong>pr</strong></em></p>
+<p><em><strong>IAN</strong>: </em><em>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>pr</strong></em></p>
+</td>
+</tr>
+<tr>
+<td>gt</td>
+<td>greater than</td>
+<td>
+<p>If the attribute value is greater than the operator value, there is a match. The actual comparison is dependent on the attribute type.</p>
+<p>For <em>string</em> attribute types, this is a lexicographical comparison, and for <em>DateTime</em>types, it is a chronological comparison. For <em>integer</em> attributes, it is a comparison by numeric value. This operator cannot be used for <em>Boolean</em> and <em>Binary</em> attributes.</p>
+<p><em><strong>Enterprise</strong>: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:employeeNumber <strong>gt</strong> 100</em></p>
+<p><em><strong>IAN</strong>: </em><em>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>gt</strong> 100</em></p>
+</td>
+</tr>
+<tr>
+<td>ge</td>
+<td>greater than or equal to</td>
+<td>
+<p>If the attribute value is greater than or equal to the operator value, there is a match. The actual comparison is dependent on the attribute type.</p>
+<p>For <em>string</em> attribute types, this is a lexicographical comparison, and for <em>DateTime</em>types, it is a chronological comparison. For <em>integer</em> attributes, it is a comparison by numeric value. This operator cannot be used for <em>Boolean</em> and <em>Binary</em> attributes.</p>
+<p><em><strong>Enterprise</strong>: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:employeeNumber <strong>ge</strong> 100</em></p>
+<p><em><strong>IAN</strong>: </em><em>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>ge</strong> 100</em></p>
+</td>
+</tr>
+<tr>
+<td>lt</td>
+<td>less than</td>
+<td>
+<p>If the attribute value is less than the operator value, there is a match. The actual comparison is dependent on the attribute type.</p>
+<p>For <em>string</em> attribute types, this is a lexicographical comparison, and for <em>DateTime</em>types, it is a chronological comparison. For <em>integer</em> attributes, it is a comparison by numeric value. This operator cannot be used for <em>Boolean</em> and <em>Binary</em> attributes.</p>
+<p><em><strong>Enterprise</strong>: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:employeeNumber <strong>lt</strong> 100</em></p>
+<p><em><strong>IAN</strong>: </em><em>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>lt</strong> 100</em></p>
+</td>
+</tr>
+<tr>
+<td>le</td>
+<td>less than or equal to</td>
+<td>
+<p>If the attribute value is less than or equal to the operator value, there is a match. The actual comparison is dependent on the attribute type.</p>
+<p>For <em>string</em> attribute types, this is a lexicographical comparison, and for <em>DateTime</em>types, it is a chronological comparison. For <em>integer</em> attributes, it is a comparison by numeric value. This operator cannot be used for <em>Boolean</em> and <em>Binary</em> attributes.</p>
+<p><em><strong>Enterprise</strong>: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:employeeNumber <strong>le</strong> 100</em></p>
+<p><em><strong>IAN</strong>: </em><em>urn:ietf:params:scim:schemas:ian:2.0:User:employeeID <strong>le</strong> 100</em></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01F84KXB4TZ5H3KA75ECXKAK61">Logical Operators</h2>
+<p>The logical operators are used to combine multiple expressions. The following table lists the logical operators that can be used in a SCIM filter expression:</p>
+<table border="1" width="875">
+<tbody>
+<tr>
+<td><span><strong>Operator</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+<td><span><strong>Behavior and Example</strong></span></td>
+</tr>
+<tr>
+<td>and</td>
+<td>Logical AND</td>
+<td>
+<p>The filter is a match only if both the expressions (criteria) are met.</p>
+<p><em>userType ne "Guest" <strong>and</strong> urn:ietf:params:scim:schemas:ian:2.0:User:employeeID pr</em></p>
+</td>
+</tr>
+<tr>
+<td>or</td>
+<td>Logical OR</td>
+<td>
+<p>The filter is a match if either of the expressions (criteria) is met.</p>
+<p><em>userType ne "Guest" <strong>or</strong> urn:ietf:params:scim:schemas:ian:2.0:User:employeeID gt 100</em></p>
+</td>
+</tr>
+<tr>
+<td>not</td>
+<td>Logical NOT</td>
+<td>
+<p>The filter is a match if the expression evaluates to false.</p>
+<p><em>userType eq "Admin" and <strong>not</strong> (userName co "example.com</em><em>" or urn:ietf:params:scim:schemas:ian:2.0:User:employeeID le 100</em>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: <strong>not</strong> takes precedence over <strong>and</strong>, which takes precedence over <strong>or</strong>.</p>
+<h2 id="h_01F84KXK250Z99KB4ZG078M3AK">Grouping Operators</h2>
+<p>The following table lists the grouping operators that can be used in a SCIM filter expression:</p>
+<table border="1" width="818">
+<tbody>
+<tr>
+<td><span><strong>Operator</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+<td><span><strong>Behavior and Example</strong></span></td>
+</tr>
+<tr>
+<td>()</td>
+<td>Precedence Grouping</td>
+<td>
+<p>Boolean expressions may be grouped using parentheses to change the standard order of operations, that is, to evaluate logical <strong>or</strong> operators before logical <strong>and</strong> operators.</p>
+<p><em>userType eq "Admin" and not <strong>(</strong>userName co "example.com</em><em>" or urn:ietf:params:scim:schemas:ian:2.0:User:employeeID le 100</em><strong>)</strong></p>
+</td>
+</tr>
+<tr>
+<td>[]</td>
+<td>Complex attribute filter grouping</td>
+<td>
+<p>Complex filters are supported where expressions must be applied to the same value of a parent attribute specified immediately before the left square bracket ("["). The expression within square brackets ("[" and "]") must be a valid filter expression based upon sub-attributes of the parent attribute. Nested expressions may be used.</p>
+<p><em>emails<strong>[</strong>type eq "work" and value co "@example.com"<strong>]</strong> or ims<strong>[</strong>type eq "xmpp" and value co "@foo.com"<strong>]</strong></em></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01F84KXTSVSGQ4FBTB08KJJMPY">Using Data Values in SCIM Filter Expressions</h2>
+<p>The SCIM filter expression can include optional values. The following table shows how values of different data types can be used in a SCIM filter expression. </p>
+<table border="1" width="815">
+<tbody>
+<tr>
+<td><span><strong>Type of Data</strong></span></td>
+<td><span><strong>Usage of Value in Filter Expressions</strong></span></td>
+</tr>
+<tr>
+<td>Text</td>
+<td>Use the value within double quotes. For example, <em>"Barbara".</em>
+</td>
+</tr>
+<tr>
+<td>Number</td>
+<td>Use the value without quotes. For example, <em>100.</em>
+</td>
+</tr>
+<tr>
+<td>Date Time</td>
+<td>Use the value within double quotes. For example, <em>"2011-05-13T04:42:34Z".</em>
+</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>Use <em>true</em> or <em>false</em> without any quotes. For example, <em>true.</em>
+</td>
+</tr>
+<tr>
+<td>Null</td>
+<td>Use <em>null</em> without quotes.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01H02H9WB603XRNADRN1EK60SB">References</h1>
+<p><a href="../Integrations-Overview-Guide/" rel="noopener noreferrer" target="_blank">Integrations Overview Guide</a></p>
+<p><a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Integration Setup Guide</a></p>
+<p><a href="../Bulk-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">Bulk Integration Setup Guide</a></p>
+<p><a href="../Attribute-Mapping-in-Integrations/" rel="noopener noreferrer" target="_blank">Attribute Mapping in Integrations</a></p>
+<p><a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Integration Expressions - Keywords, Methods, and Functions</a></p>
+<p> </p>
+  </div>
+</body>
+</html>

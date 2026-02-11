@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Managing Groups in User Integrations</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Managing Groups in User Integrations</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01FCCTSJVX9A7A5W23VQWT6D33">Overview</h1>
+<p>This guide provides details about how to manage groups in User Integrations. Managing group membership of users can be facilitated through the <strong>Group Rules </strong>tab or the <strong>Attribute Mapping</strong> tab on the integration setup page. </p>
+<p>Group rules can be created using basic conditions or using the full capabilities of JavaScript SCIM extensions. One group rule must be defined for each managed group. If the group rule resolves to <em>true</em>, the user will be included in the group’s membership; otherwise, the user will be excluded from the group. </p>
+<h1 id="h_01H1RTJZAPTNRRE6BHM0J5BRMQ">Managing Groups </h1>
+<p>Groups can be managed using one of the following ways:</p>
+<ul>
+<li>Setting Group Rules: You can create group rules to manage the target groups.</li>
+<li>Attribute Mapping:<br/>
+<ul>
+<li>Using Expressions: You can write JavaScript expressions in the attribute mapping to manage the target groups.</li>
+<li>Using Tables: You can add tables and use them in the attribute mapping expressions to manage the target groups. </li>
+</ul>
+</li>
+</ul>
+<!--Note-->
+<div>
+<div id="custom-note-icon">
+<p><strong>Note</strong>:</p>
+</div>
+<div>
+<p>Only when the checkbox <a href="../User-Integration-Setup-Guide/#h_01GYEVCZCAZVKGRCK5VX2XTD2N" rel="noopener noreferrer" target="_blank">Enable Group Management</a> is selected in the <strong>Configuration</strong> tab of User Integration, Aquera's integration will be able to manage the groups in the target application through Attribute Mapping or Group Rules.</p>
+</div>
+</div>
+<h1 id="h_01F1QC3H37KV004GFERDM590W9">Setting Group Rules</h1>
+<p>You can set up rules to manage the groups in the target application. There is no limit to the number of group rules that can be added in User Integration.</p>
+<p><strong>Notes</strong>: </p>
+<ul>
+<li>When the target application does not support groups, the <strong>Group Rules </strong>tab shows the message <em>Groups are not supported by the target application </em>and the <strong>Add Rule</strong> button is disabled.</li>
+<li>When the target application is changed and the selected target application does not support groups, the already existing group rules will be ignored.</li>
+</ul>
+<p>Perform the following steps to set a group rule:</p>
+<ol>
+<li>Click the <strong>Group Rules</strong> tab.<br/><img alt="GroupRules1.png" src="./assets/b263052e18c8abc2.bin"/>
+</li>
+<li>Click <strong>Add Rule</strong> which displays an <strong>Add Rule</strong> pop-up window.<br/><img alt="AddRule.png" height="539" src="./assets/87e06183f9314712.bin" width="450"/>
+</li>
+<li value="3">Enter a name for the rule.</li>
+<li value="4">Set the rule condition in the <strong>IF</strong> section using one of the following methods:
+<ul>
+<li>Basic Condition</li>
+<li>Expression</li>
+</ul>
+</li>
+<li>Select the group name from the dropdown group list to which the group rule must be applied in the <strong>THEN</strong> section.<br/><strong>Notes</strong>:
+<ul>
+<li>When the group list is being loaded from the target application, this section shows the message <em><em><span>Fetching Groups</span>.</em></em>
+</li>
+<li>When there is an error in loading the group list from the target application, you can get any of the following messages after the <strong>THEN</strong> section:<br/>
+<ul>
+<li>
+<em>Error while fetching groups from the target application. </em><span><em>Unauthorized, Invalid Authentication</em></span><span>: This occurs if the authentication token/credentials have not been provided on the connector setup page, or the token/credentials are incorrect.</span>
+</li>
+<li>
+<span><em>Error while fetching groups from the target application. </em></span><span><em>Bad Gateway</em></span><span>: This occurs if the Tenant/Agent details that were provided on the connector setup page are incorrect, or the Agent is not running.</span>
+</li>
+<li>
+<span><em>Error while fetching groups from the target application. </em></span><span><em>Bad request, The request cannot be fulfilled due to bad syntax</em></span><span>: This occurs if the tenant attribute values that were provided on the connector setup page are incorrect.<br/></span><span>Refer to the respective connector configuration guide for further details to fix these errors. </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Click <strong>Add</strong> at the bottom of the <strong>Add Rule</strong> window to add the rule.</li>
+<li>Close the rule window and click <strong>Save Changes </strong>at the top right of the integration page to save the group rule to the integration. </li>
+</ol>
+<p><strong>Note</strong>: The Else statement is not supported in the Group Rules. However, you can create a new Group Rule to add users to a default group when the users do not match any existing group rules. Refer to the article <a href="https://support.aquera.com/hc/en-us/articles/21616736522391" rel="noopener noreferrer" target="_blank">Setting a Group Rule for Managing Users who do not satisfy any Group Rules</a> for further details.</p>
+<h2 id="h_01GHKBFR7NWCH9SV2SXD8P7WXP">Using Basic Conditions in Group Rules</h2>
+<p>Perform the following steps to use a basic condition in a group rule:</p>
+<ol>
+<li>Select <strong>Use Basic Condition</strong>.</li>
+<li>Select a source user attribute from the drop-down list in the <strong>User Attribute</strong> field:<br/><img alt="UserAttribute.png" height="322" src="./assets/35d6c0a7be5acc4a.bin" width="437"/>
+</li>
+<li>Select an option from the drop-down list in the <strong>Condition </strong>field:<br/><img alt="Condition.png" height="356" src="./assets/ed064cd4195fbc70.bin" width="438"/><br/>The following table explains each of the options:<br/>
+<table border="1" width="736">
+<tbody>
+<tr>
+<td><strong>Option</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>Equals</td>
+<td>Determines if the attribute value equals to a specific value.</td>
+</tr>
+<tr>
+<td>Not Equals</td>
+<td>Determines if the attribute value is not equal to a specific value.</td>
+</tr>
+<tr>
+<td>Contains</td>
+<td>Determines if the attribute value contains a specific string.</td>
+</tr>
+<tr>
+<td>Less Than</td>
+<td>Determines if the attribute value is less than a specific value.</td>
+</tr>
+<tr>
+<td>Greater Than</td>
+<td>Determines if the attribute value is greater than a specific value.</td>
+</tr>
+<tr>
+<td>Starts With</td>
+<td>Determines if the attribute value starts with a specific string.</td>
+</tr>
+<tr>
+<td>Ends With</td>
+<td>Determines if the attribute value ends with a specific string.</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Enter the attribute value against which the condition has to be validated in the <strong>Attribute</strong> <strong>Value</strong> field.</li>
+<li>Enter the group name to which the group rule must be applied in the <strong>THEN</strong> section.<br/>The users satisfying the condition will be added to this group.<br/><img alt="AllManagers.png" height="657" src="./assets/09224e156450c166.bin" width="479"/><br/><strong>Note</strong>: If the <strong>User Attribute</strong> is a string type, ensure to include the <strong>Attribute Value</strong> in double quotes.</li>
+</ol>
+<h2 id="h_01F1QB0MSYTHEY452KFE0S35KV">Using Expression in Group Rules</h2>
+<p>You can write JavaScript expressions to set the rules for updating group-related data. Expressions can use all of the helper functions as well as the user attributes in the source and destination applications. The configured expressions must always be evaluated as <em>true</em> or <em>false</em>.</p>
+<p><em>SOURCE</em> must be used in an expression to represent an attribute in the source application and <em>DEST </em>to represent an attribute in the destination application. For example, <em>SOURCE.userName, SOURCE[ENT].organization, DEST.title, SOURCE[IAN].empStatus</em>, and so on.</p>
+<p>For details on the keywords, inbuilt methods, and functions provided by Aquera, refer to the <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Integration Expressions - Keywords, Methods, and Functions</a> guide.</p>
+<h3 id="h_01GHKBGBYDGWGMRYDWM8ZD42KT">Provisioning Users to a Single Group</h3>
+<p>Perform the following steps to use expressions in a group rule and manage a single group:</p>
+<ol>
+<li>Select <strong>Use Expression</strong>.</li>
+<li>Enter the condition as an expression in the <strong>IF</strong> section.</li>
+<li>Enter the group name to which the rule has to be applied in the <strong>THEN</strong> section.<br/>The users satisfying the condition will be added to the group.<br/><img alt="AccountingManagerRule.png" height="608" src="./assets/088d52c8ec891076.bin" width="503"/>
+</li>
+</ol>
+<h3 id="h_01GHKBGJH64P5A4JPJM6E4K2BT">Provisioning Users to Multiple Groups</h3>
+<p>Perform the following steps to use expressions in a group rule and manage multiple groups:</p>
+<ol>
+<li>Select <strong>Use Expression</strong>.</li>
+<li>Enter the condition as an expression in the <strong>IF</strong> section.<br/><img alt="AreaManagerRule.png" height="608" src="./assets/ac288233e070cabe.bin" width="515"/>
+</li>
+<li>Enter the group names to which the rule has to be applied in the <strong>THEN</strong> section. <br/>The users satisfying the condition will be added to the groups.</li>
+</ol>
+<p><strong>Note</strong>: If you want to deprovision the users from groups upon termination, include the active attribute in the expression. A separate rule for de-provisioning is not necessary.</p>
+<div>
+<p>For example, you can enter the following expression for de-provisioning:<br/><em>SOURCE.active &amp;&amp; SOURCE[IAN].divisionCode == "TRW"</em><br/><em><br/></em></p>
+</div>
+<p>All the added rules are displayed as a list on the <strong>Group Rules</strong> page. You can add more rules, and modify or delete an existing rule, as required.<br/><img alt="GroupsList.png" src="./assets/11367f1731f4f4d1.bin"/></p>
+<div>
+<h1 id="h_01H0FJXVKNKXATSEYK2C5FKK78">Using Tables to Manage Groups through Attribute Mapping</h1>
+<p>It is possible to manage groups using the <strong>Tables</strong> option in the integration. For example, you have all the department names of users in the <em>Name</em> column and the groups to which the users belong in the <em>Value</em> column. The following is a sample table:</p>
+</div>
+<p><img alt="AddTable-Dept.png" height="612" src="./assets/553f7edb61f84c6e.bin" width="510"/></p>
+<p>To manage the target groups, you need to map the users belonging to a source department to a target group. To do this, <a href="../Attribute-Mapping-in-Integrations/#h_01GBYT9SFF99R1BJGN1B0D3K5Z" rel="noopener noreferrer" target="_blank">add a new row</a> in attribute mapping to map to the target attribute <strong>groups</strong>. Enter the following expression in the <strong>source attribute/expression</strong> which returns the group names from the table, based on the user's department:</p>
+<p>TABLE.Dept[SOURCE[ENT].department]!=null?TABLE.Dept[SOURCE[ENT].department].split(','):null </p>
+<p><img alt="Groups3.png" src="./assets/868a4118de6d86db.bin"/></p>
+<p><strong>Note</strong>: The <em><strong>groups</strong></em> target attribute is an array of strings which are the display names of the groups.</p>
+<p>When the integration runs, all the users belonging to the department will be added to the corresponding groups in the target application.</p>
+<p>For details on the keywords, inbuilt methods, and functions provided by Aquera, refer to the <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Integration - Expressions</a> guide.</p>
+<h1 id="h_01H1RKT550TZB7AE5QFP8VBRD4">Group Management Functionality in User Integration</h1>
+<p>The following are the details on how group management works in User Integration version 3:</p>
+<ul>
+<li>Only when the checkbox <em>Enable Group Management</em> is selected in the configuration of User Integration, the integration process will be able to manage the groups in the target application through <em>Attribute Mapping</em> or <em>Group Rules</em>.<br/><br/>
+</li>
+<li>When you have set valid group rules, users will be added to the groups specified in the group rules.<br/><strong>Note</strong>: The <em>Group Management Restriction List</em> should be left empty when you have set valid group rules. <br/><br/>
+</li>
+<li>The <em>Group Management Restriction List</em> will not be considered if the groups are managed through Group Rules. However, the <em>Group Management Restriction List </em>will be considered only if the groups are managed through Attribute Mapping.<br/><br/>
+</li>
+<li>
+<p><span>When managing groups via attribute mapping, users will be removed from groups, if they are not satisfying the group attribute mapping evaluation and the group is mentioned in the <em>Group Management Restriction List</em>. However, users will be added to groups, if they are satisfying the group attribute mapping evaluation and the group is mentioned in the <em>Group Management Restriction List</em>. <br/></span></p>
+<strong>Notes:</strong>
+<ul>
+<li>If the <em>Group Management Restriction List</em> is empty, then it is treated the same as if all groups are present in the <em>Group Management Restriction List</em>.</li>
+<li>The <em>Group Management Restriction List</em> must be filled in accurately when using attribute mapping to avoid unintentional removal of users.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>When you have set group rules and set groups via attribute mapping, the groups will be managed only by considering the groups in the group rules.<br/><br/>
+</li>
+<li>When the <em>Group Management Restriction List </em>is empty and you have added a group rule which does not have any groups selected in it, then the users will be removed from all the groups.<br/><br/>
+</li>
+<li>When the <em>Group Management Restriction List</em> is empty and you have not set any group rules and have not set any attribute mapping for groups, the users will neither be added nor removed from groups. However, users will be retained in their existing groups in the target application. <br/><br/>
+</li>
+<li>If the attribute mapping evaluation for groups does not return any result for a particular user's preview, then this user will neither be added nor removed from groups. <br/><br/>
+</li>
+<li>When the <em>Report Only</em> checkbox is selected and the <em>Report Mode</em> is selected as normal, debug, or verbose, the integration logs will contain the details of the group names to which the users will be added. </li>
+</ul>
+<p>The following is the major difference in the group management functionality in User Integration version 2 from version 3:</p>
+<p>In User Integration version 2, when users are managed via group rules, users will be removed from groups, if they are not included in the <em>Group Rules </em>and the group is present in the <em>Group Management Restriction List. </em>However, users will be added to groups, if they are included in the <em>Group Rules</em> and the group is present in the <em>Group Management Restriction List</em>. If the <em>Group Management Restriction List</em> is empty, then it is treated the same as if all groups are present in the list. The <em>Group Management Restriction List</em> must be filled in accurately to avoid unintentional removal of users.</p>
+<h1 id="h_01GSAK4P08V0ENHHPS7QBXNTP8">References</h1>
+<p><a href="../Integrations-Overview-Guide/" rel="noopener noreferrer" target="_blank">Integration Overview Guide</a></p>
+<p><a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Integration Setup Guide</a></p>
+<p><a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Integration Expressions - Keywords, Methods, and Functions</a></p>
+<p><a href="../Attribute-Mapping-in-Integrations/" rel="noopener noreferrer" target="_blank">Attribute Mapping in Integrations</a></p>
+<p><a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a></p>
+<p id="h_01HB63NH5MYDYBM9T4YA4CE7QR" title="Users Not Updated in the Groups through Orchestration Group Rules"><a href="https://support.aquera.com/hc/en-us/articles/17787384865815" rel="noopener noreferrer" target="_blank">Users Not Updated in the Groups through Integration Group Rules</a></p>
+<p><a href="https://support.aquera.com/hc/en-us/articles/21616736522391" rel="noopener noreferrer" target="_blank">Setting a Group Rule for Managing Users who do not satisfy any Group Rules</a></p>
+<div>
+<div> </div>
+</div>
+<p> </p>
+  </div>
+</body>
+</html>

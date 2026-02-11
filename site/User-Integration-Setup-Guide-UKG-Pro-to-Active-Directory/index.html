@@ -1,0 +1,230 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User Integration Setup Guide - UKG Pro to Active Directory</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>User Integration Setup Guide - UKG Pro to Active Directory</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<div>
+<p><span>Overview</span></p>
+<p>This guide covers the end-to-end tasks involved in setting up integration to sync users in UKG Pro with Active Directory.</p>
+<p>The following tasks are involved in setting up the integration from UKG Pro to Active Directory:</p>
+<ul>
+<li data-list-item-id="e84f0255d60cbd6f48e57010592379615"><a href="#h_01F6EH0A638QSV3GWRKPF09R35" target="_self">Initial Preparation</a></li>
+<li data-list-item-id="e18b19d8bed12c4094ed217235d52d131"><a href="#h_01F6EH0MBC837JQFE5ZJRW7P94" target="_self">Configuring Applications in Aquera Admin</a></li>
+<li data-list-item-id="e69ee501a649b20955d9fdfb08f069538"><a href="#h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</a></li>
+<li data-list-item-id="ee5af1243e2fb6e1f6b1769bf26296908"><a href="#h_01F6EH144YSHC99KVTGPC8D65M">Running Integration</a></li>
+</ul>
+<h1 id="h_01F6EH0A638QSV3GWRKPF09R35">Initial Preparation</h1>
+<h2 id="h_01GK3Z825513CT0E617A9MQQA9">Aquera Admin Console</h2>
+<ol>
+<li data-list-item-id="ebfe44c2e061f7a43770f6cdbf7ee4ed1">Your IT admin must <a href="https://admin.aquera.io/home/register" rel="noopener noreferrer" target="_blank">register as an Aquera Admin</a>.</li>
+<li data-list-item-id="e64280e769015f30876fd5a8cbaedcbbf">Once registered successfully, Aquera creates a tenant for the IT Admin and provides access to it.</li>
+</ol>
+<h2 id="h_01GK3Z87A2CCQYHG9DSBTVZY5G">Active Directory</h2>
+<p>Determine the architecture to be followed for setting up communication between Aquera and the Windows Active Directory Domain Controller. Refer to this <a href="https://support.aquera.com/hc/en-us/articles/360052111073" rel="noopener noreferrer" target="_blank">Aquera guide</a> for detailed information on the different architectural approaches.</p>
+<p>Based on the selected approach, the following procedures may have to be performed:</p>
+<ul>
+<li data-list-item-id="e4f16066c92c2fdf9f3431cbe1028eac0">A Windows Server must be ready to deploy Aquera Agent onto the server where Domain Controller is present. For instructions on installing Aquera Agent, refer to the<a href="https://support.aquera.com/hc/en-us/articles/360010090513" rel="noopener noreferrer" target="_blank"> Installation and Configuration Guide</a>.</li>
+<li data-list-item-id="e3bfa4e54f9027246c8ebfc36013fd89b">A firewall must be set up to allow communication with Aquera.</li>
+<li data-list-item-id="e85f862cbbdefd903bff68a8dc46959ea">The static IP address of Aquera needs to be whitelisted. Contact the <a href="mailto:support@aquera.com" target="_self">Aquera Support team</a>.</li>
+</ul>
+<p>To allow Aquera to make updates to Active Directory (for creating, updating, and deleting users), LDAPS communication to Active Directory needs to be set up, which requires a TLS connection. Active Directory Certificate Services must be enabled for this. To install Active Directory Certificate Services, see <a href="https://docs.microsoft.com/en-us/windows-server/networking/core-network-guide/cncg/server-certs/install-the-certification-authority" rel="noopener noreferrer" target="_blank">docs.microsoft.com</a>.</p>
+<h1 id="h_01F6EH0MBC837JQFE5ZJRW7P94">Configuring Applications in Aquera Admin</h1>
+<p>The following applications must be added and configured in the Aquera Admin console:</p>
+<ul>
+<li data-list-item-id="e082d2bfcf9132d4fa810d10f83c12733">UKG Pro. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4420217992727" target="_self">UKG Pro Configuration Guide</a> for details.</li>
+<li data-list-item-id="e9cd8ef6cf30c5f431f67809ce589e3da">Active Directory. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory Configuration Guide</a> for details.</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details how the integration must be configured to allow data push from UKG Pro to Active Directory. </p>
+<p>It also describes the various analyses to be performed and the important points to be considered before setting up the integration.</p>
+<h2 id="h_01GK3Z8NTN2XRWC53MM1JCWHW2">Considerations</h2>
+<ul>
+<li data-list-item-id="edca64a6ec6d7161dd73620ccc0cd3a82">The naming convention for the User Principal Name (UPN) in the Active Directory</li>
+<li data-list-item-id="e7b9585ade61f3f71e9844a8c423f00f2">The naming convention for the SAM Account Name in the Active Directory</li>
+<li data-list-item-id="e41563d19772dd9d776b48235881a5b38">Fields currently populated in the Active Directory</li>
+<li data-list-item-id="e5cbba61c657d1f0d7b35067a8e34aa42">The criteria for matching a user record from Oracle HCM Cloud with that in the Active Directory.</li>
+</ul>
+<h2 id="h_01GK3Z8XEVAW10VVK00X69HSGF">General Analysis Steps</h2>
+<p>Before setting up the integration, the following analyses need to be done:</p>
+<ul>
+<li data-list-item-id="e162684148bf76fda149195fba36d81b2">Fill out the <a href="https://support.aquera.com/hc/article_attachments/4464589580823" rel="noopener noreferrer" target="_blank">attached mapping template</a> for mapping the UKG Pro user attributes to Active Directory user attributes.</li>
+<li data-list-item-id="e717ea52b0ab6ab52e0527024d35a5bcf">
+<p>Expression language can be used in the mapping to create UPNs and SAM Account Names without duplicates or errors. In the expressions, you can use inbuilt methods such as <strong>toNormalizedDiacritics</strong>() and <strong>toSAMAccountName</strong>() for this purpose. You can also use the keywords such as <strong>%ATTEMPT, %USEQ, SEQUENCENUMBER</strong> to avoid duplicates. </p>
+<p>For details, refer to the <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Integrations Expressions Guide</a>.</p>
+</li>
+<li data-list-item-id="ef771c9aa274be21779bdf83a20a35247">Define the logical OU mapping rules for user containers.</li>
+</ul>
+<p>For detailed analyses of the UKG Pro users and the users/groups in Active Directory using scripts, refer to the <a href="#h_01F6EGQ8TRT9E064C1YJVS653G" target="_self">Appendix</a>.</p>
+<p>You can also analyze the user's data using the <strong>Reports</strong> option in the <strong>Data</strong> tab of the <strong>Applications</strong> page in the Aquera Admin console. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4411279965463" rel="noopener noreferrer" target="_blank">User Reports Guide</a> for details.</p>
+<h2 id="h_01GK3Z92RA29GPKM106HHDJRS3">Building Integration</h2>
+<p>This document describes how to set up the integration using the<em> Use</em>r <em>Integration</em> method.</p>
+<ul><li data-list-item-id="e1c46ceef6d67a1a1e44c8ea2ae2e2094">
+<strong>User Integration </strong>- In this integration, set <em>UKG Pro</em> as the <strong>Source Application</strong> and <em>Active Directory</em> as the <strong>Target Application</strong>. Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Integration Setup Guide</a> for details on the configurations.</li></ul>
+<p>You can set the following configurations in the <em>User Integration</em>:</p>
+<ul>
+<li data-list-item-id="e8e2c0b5d20be689f7399e3007d5408fa">Set the <strong>Admin Email Options</strong> to receive email notifications for success/failures during the integration run.</li>
+<li data-list-item-id="e19fd6087b5c6d756d2a94b475a156e3d">Set the email list of the IT admin or manager to receive user creation notification emails and user deactivation notification emails.</li>
+<li data-list-item-id="ecab49193667e4d62e429f26dbc112415">Use tables for creating lookup tables based on location and department values from the source.</li>
+<li data-list-item-id="ea157ec28e21ccb898c24651cf95bba19">Enable Group management if Aquera has to manage the groups and group assignment rules based on your group analysis. Set the group names in the restriction list for scoping of the groups which would be managed by Aquera.</li>
+</ul>
+<p>Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Integration Setup Guide</a> for details on <em>User</em> <em>Integration </em>configurations.</p>
+<figure><table><tbody><tr>
+<td><p><strong>Note: </strong></p></td>
+<td>Any custom fields added by you in the Active Directory are not displayed automatically on the <strong>Attribute Map</strong> tab. You must manually add those custom attributes using the <strong>Add Row to Map </strong>option on the<strong> Attribute Map</strong> page and then complete the mapping.</td>
+</tr></tbody></table></figure><h3 id="h_01G2MCT423GNZKQN0RS2CTFK60">Integration Scenarios</h3>
+<p>This section details the integration scenarios.</p>
+<h4 id="h_01GK1TQMH4YB70PMFT3H3TWXRR"><strong>Creating a user of type NORMAL_ACCOUNT in the Active Directory</strong></h4>
+<p>To create a user of type NORMAL_ACCOUNT in Active Directory, set the attributes mapping as follows:</p>
+<p>Enter <strong>"512"</strong> as the source attribute expression and map it to the <strong>[IAN].userAccountControl </strong>attribute of AD. Set the mapping criterion as <em>Map on Create</em>.</p>
+<p><img alt="Map.png" src="./assets/c6fc2e7599ab73a1.bin"/></p>
+<p><strong>Note</strong>: <em>512</em> is the decimal value corresponding to the <em>NORMAL_ACCOUNT</em> property flag in Active Directory. For all property flags and the corresponding decimal values, refer to the <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties#list-of-property-flags" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p>
+<h4 id="h_01GK3Z9YDZJC8C9ABE6PWCWM9S"><strong>Escaping Special Characters in OUs and DNs for Active Directory</strong></h4>
+<p>To escape any special characters in OUs and DNs in the expressions, use a double-backslash before the special character. For example, if the OU name is<em> #Terminated</em>, mention it in the expression as \\<em>#Terminated</em>. </p>
+<p><em><strong>DEST[IAN].distinguishedName.split(",")[0] + ",OU=\\#Terminated, DC=local"</strong></em></p>
+<p>Double-backslash must be introduced before any of the following special characters:</p>
+<figure><table><tbody>
+<tr>
+<td>Comma</td>
+<td>,</td>
+</tr>
+<tr>
+<td>Backslash character</td>
+<td>\</td>
+</tr>
+<tr>
+<td>Pound sign (hash sign)</td>
+<td>#</td>
+</tr>
+<tr>
+<td>Plus sign</td>
+<td>+</td>
+</tr>
+<tr>
+<td>Less than symbol</td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td>Greater than symbol</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>Semicolon</td>
+<td>;</td>
+</tr>
+<tr>
+<td>Double quote (quotation mark)</td>
+<td>"</td>
+</tr>
+<tr>
+<td>Equal sign</td>
+<td>=</td>
+</tr>
+<tr>
+<td>Leading or trailing spaces</td>
+<td> </td>
+</tr>
+</tbody></table></figure><h4 id="h_01GK3ZA8FC478S31CC6N3Q92S6">
+<br/><strong>Attribute Mapping for mandatory password change at first sign-in</strong>
+</h4>
+<p>To make it mandatory for users to change their password when signing in for the first time, map the Active Directory attribute <strong>pwdLastSet</strong> to <strong>"0"</strong> with the mapping option of <strong>Map on create</strong> only.</p>
+<p><img alt="Screenshot_2022-06-09_at_12.23.33_PM.png" src="./assets/ca4e4cc2a052573d.bin"/><br/> </p>
+<p>If this mapping is not done and users sign into their account for the first time, it will not prompt them to change their password.</p>
+<h4 id="h_01GK1W1C5GEZX22S6634GSWCRR"><strong>Requirements to set user password</strong></h4>
+<p>Active Directory requires a secure LDAPS (LDAP over SSL) connection to set or change user passwords. This is an Active Directory’s security requirement. Random generation of passwords when creating new users does not work without the use of LDAPS. Also, setting the password through attribute mapping requires a secure LDAPS connection.</p>
+<p><strong>Note:</strong> If the connection is not secured (non-SSL), Active Directory does not allow you to update the user password. </p>
+<p>Active Directory imposes strength requirements on the password and the requirements vary from one instance to another.</p>
+<h1 id="h_01F6EH144YSHC99KVTGPC8D65M">Running Integration</h1>
+<ul>
+<li data-list-item-id="e9cfc1c1b1e21b30008e127d7564e2ce4">Enter the matching expression to match the source records with the destination records.</li>
+<li data-list-item-id="e185516f5de3be4cc0561c16d2f1021e9">Run the integration in<em> Report Only</em> mode and determine if the correct data is updated in the Active Directory. If the data is not correctly updated, change the matching expression to correctly match users and/or update the data, for example, employeeNumber, in the Active Directory.</li>
+<li data-list-item-id="ea613f29a07e82cd264bd22d3922600aa">Increment the <strong>Update Limit</strong> (maximum number of records to be updated in a single run) for each run in <strong>Report Only</strong> mode to ensure that the records are updated correctly when the records count is more.</li>
+<li data-list-item-id="e8855e19ffdf16865217a4573df5ddec9">Based on your analysis and considerations,<ul>
+<li data-list-item-id="eb1c078955ae9fcca746dae70730cb23d">Translate the logical maps to the Aquera attribute maps for the fields</li>
+<li data-list-item-id="ec1f311839835da9e7c42274f01fca48f">Translate the logical OU/container locations into tables and expressions</li>
+<li data-list-item-id="e161a05a92792ad758b16e8963638de5b">Translate the logical group assignment rules into Aquera rules</li>
+</ul>
+</li>
+<li data-list-item-id="ed36e6be2ea5653c1ba6785acc718b6bd">Modify the attributes mapping and repeat the process until the data is correctly updated.</li>
+<li data-list-item-id="ed7ffcf5cd4a5191372ffd5049a1ece82">Monitor the integration logs thoroughly to ensure that no errors are encountered. Modify the integration configurations to fix any errors.</li>
+<li data-list-item-id="ea9d95c5ae15928badcb5477c4bd7c99a">Once all users are synced, user creations and updates are based on the incremental changes in Oracle HCM Cloud.</li>
+</ul>
+<h1 id="h_01F6EGQ8TRT9E064C1YJVS653G">Appendix</h1>
+<p>This section provides the scripts that may be used by the <strong>Customer Support</strong> team to analyze the existing users in UKG Pro and Active Directory before setting up the user integration. It also provides the script to analyze the existing groups of users in Active Directory.</p>
+<p>This document explains how analyses can be done using a script integration. In this integration, add <em>UKG Pro</em> and <em>Active Directory</em> applications and set the corresponding variable names. In the script, the variable names must be used to refer to the applications.<br/>For details on configuring the script integration, refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Integration Setup using Scripts Guide</a>.</p>
+<p>A few sample scripts are provided here for your reference. The scripts may vary based on your use case  and the attributes to be retrieved for analysis.</p>
+<h2 id="h_01HV0847BMXKBN54RF3DNK80NT">Analyzing the Users in UKG Pro</h2>
+<p>Use the below sample script in a script integration for generating a report from UKG Pro for analysis of user status, department, and usertype, and so on. </p>
+<pre><code>
+let ukg_users = ukg_user.getUsers();
+ 
+      let i = 0;
+      log.info('UKG ID,UKG STATUS,UKG EMPNO,UKG GIVENNAME,UKG FAMILYNAME,UKG WORK EMAIL,UKG NICKNAME,UKG USERNAME,UKG MANAGER');
+      for (i = 0; i &lt; ukg_users.length; i++)   {
+      let ukg_id = ukg_users[i].id;
+      let ukg_status = ukg_users[i][IAN].status;
+      let ukg_emp = ukg_users[i][ENT].employeeNumber;
+      let ukg_given = ukg_users[i].name.givenName;
+      let ukg_family = ukg_users[i].name.familyName;
+          let ukg_work = ukg_users[i].emails &amp;&amp; ukg_users[i].emails.find(x =&gt; x.type == 'work') &amp;&amp; ukg_users[i].emails.find(x =&gt; x.type == 'work').value || '';
+      let ukg_username = ukg_users[i].userName;
+      let ukg_manager = ukg_users[i].manager;
+      log.info('"' 
+      + ukg_id + '","' 
+      + ukg_status + '","'
+       + ukg_emp + '","'
+       + ukg_given + '","' 
+       + ukg_family + '","'
+       + ukg_work + '","'
+      + ukg_username + '","'
+       + ukg_manager + '"');
+      }</code></pre>
+<h2 id="h_01GK3ZB7D2NBGE5K74N5B16EV2">Analyzing the Users in Active Directory</h2>
+<p>Use the below sample script below in a script integration for generating a report from Active Directory for analysis of user domain, status, and so on.</p>
+<pre><code>log.info('AD ID,AD ACTIVE,AD EMPNO,AD GIVENNAME,AD FAMILYNAME,AD USERNAME,AD SAMACCOUNT,AD DN');
+let users = AD.getUsers();
+for (let user of users) {
+log.info('"'
++ user.id + '","'
++ user.active + '","'
++ (user[ENT] &amp;&amp; user[ENT].employeeNumber || '') + '","'
++ user.name.givenName + '","'
++ user.name.familyName + '","'
++ user.userName + '","'
++ user[IAN].sAMAccountName + '","'
++ user[IAN].distinguishedName.split(',').slice(1).join(',') + '"');
+}</code></pre>
+<h2 id="h_01GK3ZBCXR9EWTMQPBMWW7PAB0">Analyzing the Groups in Active Directory</h2>
+<p>Use the below script to analyze the groups of existing users in the Active Directory.</p>
+<pre><code>let ad_users = AD.getUsers();
+let ad_users_length = ad_users.length;
+let i = 0;
+let total = ad_users_length;
+log.info('AD ID,GROUP NAME');
+for (i = 0; i &lt; total; i++) {
+let groups = ad_users[i].groups;
+if (groups) {
+for (let group of groups) {
+log.info(ad_users[i].userName + ',' + group.display);
+}
+}
+}</code></pre>
+</div><div><p> </p></div>
+  </div>
+</body>
+</html>

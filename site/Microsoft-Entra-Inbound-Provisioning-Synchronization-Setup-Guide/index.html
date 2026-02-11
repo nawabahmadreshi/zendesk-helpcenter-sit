@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Microsoft Entra Inbound Provisioning Synchronization Setup Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Microsoft Entra Inbound Provisioning Synchronization Setup Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01G2KVKHHG6FK1QFNFMY9RE5XF">Overview</h1>
+<p>Aquera provides the <em>Microsoft Entra Inbound Provisioning s</em>ynchronization that <span>allows your organization to scale complex data management by automating the synchronization of users from a source application to the Microsoft Entra ID application. </span><span>The <em>Microsoft Entra Inbound Provisioning </em>synchronization imports all the users from a source application and performs a bulk synchronization to </span>provision users <span>in the Microsoft Entra ID application. This <em>s</em>ynchronization uses the bulkUpload API of Microsoft to create or update users as a batch operation using a single bulk request to the Microsoft Entra ID application.</span></p>
+<p><span>To support user lifecycle management, Aquera provides SCIM Gateway connectors that use the SCIM protocol to carry out the read/write operations on the applications</span><span>. The SCIM protocol is an IETF standard for automating the exchange of user identity information between applications or IT systems.</span></p>
+<p><span>This user guide explains how you can set up a <em>Microsoft Entra Inbound Provisioning</em> synchronization in the Aquera Admin portal.</span></p>
+<h1 id="h_01F1HR60XC9QMSNZ27WGB2GWH8">Setting Up a Synchronization</h1>
+<p>This procedure describes how to set up the <em>Microsoft Entra Inbound Provisioning </em>synchronization.</p>
+<p>As a prerequisite, you need to configure <span>SCIM Gateway connectors in the Aquera Admin portal. To explain the procedure, </span>we consider <em>Oracle Cloud</em> <em>HCM</em> as the <strong>Source</strong> <strong>Application</strong> and <em>Microsoft Entra ID</em> as the <strong>Target</strong> <strong>Application</strong>.</p>
+<p>The following Aquera Flow Map shows the high-level visual representation of data flow from the Oracle Cloud HCM application to the Microsoft Entra ID application through Aquera's <em>Microsoft Entra Inbound Provisioning </em>synchronization:</p>
+<p><img alt="FlowMap Microsoft Entra Inbound Provisioning .png" src="./assets/82e062645c9dd464.bin"/></p>
+<p>Ensure that the source (<a href="https://support.aquera.com/hc/en-us/articles/360014797914-Oracle-Cloud-HCM-Configuration-Guide" rel="noopener noreferrer" target="_blank">Oracle Cloud HCM</a>) and target (<a href="https://support.aquera.com/hc/en-us/articles/17672439129239" rel="noopener noreferrer" target="_blank"><em>Microsoft Entra ID</em></a>) SCIM Gateway connectors are added and configured correctly in the Aquera Admin portal, before creating the synchronization.</p>
+<p><span>To configure a source connector based on your requirement, refer to the respective </span><a href="https://support.aquera.com/hc/en-us/categories/115000284613-Connectors" rel="noopener" target="_blank">connector configuration guides</a><span> for further details.</span></p>
+<p>The following steps are involved in the <em><em>Microsoft Entra Inbound Provisioning </em></em>synchronization setup:</p>
+<ul>
+<li><a href="#h_01HTYZGZS1TF9NWFC99NSP0X8B">Creating a Synchronization</a></li>
+<li><a href="#h_01HTYZGYTMVSFYERNQ5ZA8P2VZ">Configuring a Synchronization</a></li>
+<li><a href="#h_01EZA579V8NBAKB6Z4MSD9BNEX">Mapping of Attributes</a></li>
+<li><a href="#h_01HTYZGYTMF46EJ685PR81Q006">Adding and Using Tables</a></li>
+<li><a href="#h_01HTYZGYTMZCKJNBMK6QXPDH5K">Scheduling a Synchronization Run</a></li>
+</ul>
+<h1 id="h_01HTYZGZS1TF9NWFC99NSP0X8B">Creating a Synchronization</h1>
+<p>Perform the following steps to create a synchronization:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> on the left panel which displays the list of synchronizations created by the user. <br/><strong>Note</strong>: The number of synchronization records displayed on this page is based on the display size of the user's screen.</li>
+<li>Click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>Microsoft Entra Inbound Provisioning</strong>.</li>
+<li>Enter a name and a description for the synchronization.</li>
+<li>Click <strong>Continue</strong>. <span>A new page is displayed with the fields and tabs to configure the synchronization.</span>
+</li>
+<li>Select <em>Oracle Cloud HCM</em> as the <strong>Source Application</strong> and select <em>Microsoft Entra ID</em> as the <strong>Target</strong> <strong>Application </strong>on the <strong>Configuration</strong> tab.<span></span>
+</li>
+<li>Click <strong>Create</strong> to create the synchronization.</li>
+</ol>
+<h1 id="h_01HTYZGYTMVSFYERNQ5ZA8P2VZ">
+<span>Configuring a </span>Synchronization</h1>
+<p><span>The following table lists all the configurations available in the <em>Microsoft Entra Inbound Provisioning</em> synchronization:  </span></p>
+<table>
+<tbody>
+<tr>
+<td>
+<p><strong><a href="#h_01H0PWCXWT6MJE5NCTTP63J2YS">Basic Details</a></strong></p>
+</td>
+<td>
+<p><strong><a href="#h_01H0PWEQMF76RHVC3PKQMW1QD5">Advanced Details</a></strong></p>
+</td>
+</tr>
+<tr>
+<td rowspan="8">
+<p><a href="#h_01GZZRGC7226RARJ9NN9RVMPSX">Source Application</a></p>
+<p><a href="#h_01GZZRGJ46PWG9X5GD7DQPDBNP">Target</a><a href="#h_01GZZRGJ46PWG9X5GD7DQPDBNP"> Application</a></p>
+<p><a href="#h_01GZZRGQJ8VV459KS5WTA0QNSX">Repo</a><a href="#h_01GZZRGQJ8VV459KS5WTA0QNSX">rt</a><a href="#h_01GZZRGQJ8VV459KS5WTA0QNSX"> Only</a></p>
+<p><a href="#h_01GZZRH7FQ07G6R5AJ7V6AKYKA">Incrementa</a><a href="#h_01GZZRH7FQ07G6R5AJ7V6AKYKA">l</a><a href="#h_01GZZRH7FQ07G6R5AJ7V6AKYKA"> Mode</a></p>
+<p><a href="#h_01GZZRHEKRN1H27GY5Q2SPB4SJ">Incremental Mode Initial Timestamp</a></p>
+<p><a href="#01HCHCY2T1BFVC8XM1CVVD3ERJ">Import</a><a href="#01HCHCY2T1BFVC8XM1CVVD3ERJ"> L</a><a href="#01HCHCY2T1BFVC8XM1CVVD3ERJ">imit</a></p>
+<p><a href="#h_01GZZRR6W8M25PDXJK5DX4K6SP">Updat</a><a href="#h_01GZZRR6W8M25PDXJK5DX4K6SP">e</a><a href="#h_01GZZRR6W8M25PDXJK5DX4K6SP"> Limit</a></p>
+</td>
+<td rowspan="8">
+<p><font> <a href="#h_01GZZRWP806AJ6Y1E539D3PBC2">Phone Number Formatting</a> </font></p>
+<p><a href="#h_01GZZRWWSTHQM9J51X5Y8V2TVR">Report Mode</a></p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Enter the following details on the <strong>Configuration</strong> tab, as required:</p>
+<h2 id="h_01H0PWCXWT6MJE5NCTTP63J2YS">Basic Details</h2>
+<p><font> This section explains the fields to configure the basic details.  </font></p>
+<table border="1" width="1014">
+<tbody>
+<tr>
+<td><span><strong>Field</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td>
+<h4 id="h_01GZZRGC7226RARJ9NN9RVMPSX">Source Application</h4>
+</td>
+<td>
+<p>The application from where the data of users must be retrieved. The created and modified users are retrieved from this application as part of the synchronization.</p>
+</td>
+</tr>
+<tr>
+<td>
+<h4 id="h_01GZZRGJ46PWG9X5GD7DQPDBNP">Target Application</h4>
+</td>
+<td>
+<p>The Microsoft Entra ID application to which the bulk (batch) data of users are created or updated as part of the synchronization. </p>
+</td>
+</tr>
+<tr>
+<td>
+<h4 id="h_01GZZRGQJ8VV459KS5WTA0QNSX">Report Only</h4>
+</td>
+<td>Select this checkbox to generate a report that shows the data that would be changed, without actually making those changes. This can be selected for the first instance of synchronization to identify any issues. You can clear this selection after verifying the report and confirming that the result is as expected.</td>
+</tr>
+<tr>
+<td>
+<h4 id="h_01GZZRH7FQ07G6R5AJ7V6AKYKA">Incremental Mode</h4>
+</td>
+<td>Select this checkbox to run the synchronization in incremental mode. In this mode, the start timestamp of the last run synchronization is always captured, and the source records that have been added or modified after this timestamp will only be considered for the next synchronization. </td>
+</tr>
+<tr>
+<td>
+<h4 id="h_01GZZRHEKRN1H27GY5Q2SPB4SJ">Incremental Mode Initial Timestamp</h4>
+</td>
+<td>
+<p>The timestamp that must be considered when you run the synchronization in the Incremental Mode for the first time. The source records that were added or modified after this timestamp will only be considered for the first incremental run of synchronization.</p>
+<p>When the <strong>Incremental Mode</strong> checkbox is selected, ensure to remove the double quotes from this field and provide a <span>valid date string. </span><em>For example, 2023-04-19T14:15:16.148Z, 2023-04-19T14:15Z, 2023-04-19T14:15-08:00, 2023-04-19T14:15+01:00, 3/15/2024 09:00:00 GMT, 3/15/2024 09:00:00 PDT, 3-15-2024 09:00:00 PDT.</em></p>
+</td>
+</tr>
+<tr>
+<td>
+<h4 id="01HCHCY2T1BFVC8XM1CVVD3ERJ">Import Limit</h4>
+</td>
+<td>
+<p>The maximum number of user records that must be retrieved from the source application during a single run of the synchronization. Set this field to <em>unlimited</em> if you do not want to limit the number of imported records. The default value is <em>unlimited </em>which pulls all the users from the source application.</p>
+<p>The limit can be set accordingly to verify and debug the source-to-target mapping condition. You can set the import limit to <em>1</em> to verify that the user is imported correctly in the <span>Microsoft Entra ID </span>application.</p>
+<p><strong>Note</strong>:<span> The </span><strong>Import Limit</strong><span> must be set to <em>unlimited</em> when the synchronization runs in the Incremental Mode. Otherwise, a few user updates may be skipped during the incremental runs and the synchronization may take a long time to complete the execution.</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<h4 id="h_01GZZRR6W8M25PDXJK5DX4K6SP">Update Limit</h4>
+</td>
+<td>
+<p>The maximum number of user records that are allowed to be updated in the <span>Microsoft Entra ID </span>application during a single run of the synchronization. Set this field to <em>unlimited</em> if you do not want to limit the number of records. When this field is set to <em>1, </em>it updates a single user in the <span>Microsoft Entra ID</span> application. </p>
+<p><strong>Note</strong>: The <strong>Update Limit</strong> must be set to <em>unlimited</em> when the synchronization runs in the <span>Incremental Mode</span>. <span>Otherwise</span>, a few user updates may be skipped during the incremental runs and the synchronization may take a long time to complete the execution.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01H0PWEQMF76RHVC3PKQMW1QD5"><font>Advanced Details</font></h2>
+<p><font> This section explains the fields to configure the advanced details.  </font></p>
+<table border="1" width="866">
+<tbody>
+<tr>
+<td><span><strong>Field</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td>
+<h4 id="h_01GZZRWP806AJ6Y1E539D3PBC2">Phone Number Formatting</h4>
+</td>
+<td>
+<p>The standard format to which the phone numbers of users must be converted during the synchronization process. <span>Enter one of the following values:</span></p>
+<ul>
+<li>
+<strong>disabled</strong>: By default, the conversion of phone numbers to a specific format is disabled.</li>
+<li>
+<strong>automatic</strong>: </li>
+<li>
+<strong>E164</strong>: The E.164 international telephone numbering format is <span><em>+ &lt;country code&gt; &lt;subscriber number including area code&gt;</em>.</span>
+</li>
+<li>
+<strong>INTERNATIONAL</strong>: International format</li>
+<li><span><strong>NATIONAL,country=US</strong>: The format that is being followed in a nation. You must replace <span>US</span> with the appropriate country code.</span></li>
+</ul>
+<p><span><strong>Note</strong>: To set the international phone number format of +1-xxx-xxxxx during the synchronization, set the field value as </span><strong>INTERNATIONAL,template=+.-...-.......</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<h4 id="h_01GZZRWWSTHQM9J51X5Y8V2TVR">Report Mode</h4>
+</td>
+<td>
+<p>The logging mode of synchronization details. This setting controls the level of details to be captured in the synchronization logs.</p>
+<p><span>The following are the valid values listed</span><span> in the order starting with the least to the most detailed level of logging: </span></p>
+<ul>
+<li>minimal</li>
+<li>normal</li>
+<li>debug</li>
+<li>verbose</li>
+</ul>
+<p>The default value is <em>normal</em>. <span>Enter <em>minimal</em> or <em>normal </em>mode to get the basic synchronization details. </span><span>Enter <em>debug or verbose </em>mode to get a detailed analysis of the synchronization.</span><span></span></p>
+<p><span>For further information on the log-level details for each report mode, refer to the <a href="../Integration-Logging-Modes/" rel="noopener noreferrer" target="_blank">Synchronization Logging Modes</a> guide.</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Click <strong>Save Changes</strong> to save the synchronization after making the required configuration changes.</p>
+<h1 id="h_01EZA579V8NBAKB6Z4MSD9BNEX">Mapping of Attributes</h1>
+<p><span>You can map the source SCIM attributes to the target SCIM attributes by navigating to the <strong>Attribute Map </strong>tab. This is required to synchronize the user data from the source application to the Microsoft Entra ID application. You can also write expressions to modify the value of the source attribute before updating the value in the </span><span>target attribute.</span></p>
+<p><span><img alt="MicrosoftEntraID-AttributeMap.png" src="./assets/be7d4ed8a96298ac.bin"/></span></p>
+<p><span><strong>Notes</strong>: </span></p>
+<ul>
+<li>
+<span>In this synchronization, the <em>externalId</em> attribute of the Microsoft Entra ID connector is not displayed by default in the Attribute Mapping. You must add it manually using the <strong>Add Row To Map</strong>. Map the <em>externalId </em>to a unique identifier in the source application such as employee ID, person ID, student ID, or employee number attribute. </span><span><img alt="externalID Map.png" height="179" src="./assets/faa2ce62ab8d3b6f.bin" width="2983"/></span>
+</li>
+<li><span>Ensure that the <em>userName</em> and <em>displayName</em> attributes of the Microsoft Entra ID connector have an attribute mapping in the SOURCE ATTRIBUTE/EXPRESSION field.</span></li>
+</ul>
+<p><span>For details, refer to the <a href="../Attribute-Mapping-in-Integrations/" rel="noopener noreferrer" target="_blank">Attribute Mapping in Synchronizations</a> guide.</span></p>
+<h1 id="h_01HTYZGYTMF46EJ685PR81Q006"><span>Adding and Using Tables</span></h1>
+<p><span>Tables define a name-value pair to create custom attributes. Tables are added in synchronization to create custom source attributes, and POST (sync) them to the Microsoft Entra ID application. Tables are used when the source application attribute is empty or particular data is not sent from the source application, and you want to update a value for that attribute in the Microsoft Entra ID application.</span></p>
+<p><span>For details on how to add tables and use them in synchronizations, refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Synchronizations</a> guide.</span></p>
+<h1 id="h_01HTYZGYTMZCKJNBMK6QXPDH5K">Scheduling a Synchronization Run</h1>
+<p>You can set the frequency by which a synchronization can be run. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Synchronization Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01HTYZGYTMM9PS2E4T5WVY8J4V">User Actions on a Synchronization</h1>
+<p><span>You can perform user actions on a synchronization.</span></p>
+<p><span>The following are the user actions that can be performed by navigating to the <strong>Synchronizations</strong> module and then clicking the respective action button on a synchronization record:</span></p>
+<ul>
+<li><strong>Execute</strong></li>
+<li><strong>Upgrade Synchronization</strong></li>
+<li><strong>Copy Synchronization</strong></li>
+<li><strong>Delete<br/></strong></li>
+</ul>
+<p>The following are the user actions t<span>hat can be performed on the synchronization setup page by clicking the vertical ellipsis icon:</span></p>
+<ul>
+<li><strong>Execute</strong></li>
+<li><strong>Latest Logs</strong></li>
+<li><strong>Export</strong></li>
+<li><strong>Delete</strong></li>
+</ul>
+<p><span>For further details, refer to the </span><a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Synchronizations</a> guide.</p>
+<h1 id="h_01HCMHCB4SQ4C6JNK47VS6Z6YR">Troubleshooting</h1>
+<p><span>This section explains</span><span> the issues that you may encounter when the synchronization runs and the corresponding solutions to resolve those issues.</span></p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td valign="top">
+<p><strong>Description</strong></p>
+</td>
+<td valign="top">
+<p><strong>Resolution</strong></p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>synchronization failure: list is not iterable</p>
+</td>
+<td valign="top">
+<p>Ensure that you have provided the Provisioning API Endpoint of your enterprise application in the <strong>Bulk SCIM URL</strong> tenant attribute. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/17672439129239#h_01FGR6V8T3DM3BSGCZQ643HRCY" rel="noopener noreferrer" target="_blank">Aquera Tenant Attributes</a> of the Microsoft Entra ID Configuration Guide for further details.</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>Error 502: Application has refused the connection, retry after sometime</p>
+</td>
+<td valign="top">
+<p>Ensure that you have provided a valid value for the user's <em>externalId, userName, and displayName.</em></p>
+<p>Also, ensure that you have provided the Provisioning API Endpoint of your enterprise application in the <strong>Bulk SCIM URL</strong> tenant attribute. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/17672439129239#h_01FGR6V8T3DM3BSGCZQ643HRCY" rel="noopener noreferrer" target="_blank">Aquera Tenant Attributes</a> of the Microsoft Entra ID Configuration Guide for further details.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>EntrySynchronizationError: Duplicate entries exist in the target</p>
+</td>
+<td>
+<p>This error will be shown in the <span>Microsoft Entra ID application. To resolve this error, e</span>nsure that you have provided a unique <em>externalId </em>for a new user creation.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+  </div>
+</body>
+</html>

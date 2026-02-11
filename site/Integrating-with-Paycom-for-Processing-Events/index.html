@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Integrating with Paycom for Processing Events</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Integrating with Paycom for Processing Events</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J9JP5QDZM0NK0AQ39Q32J9EF">Overview</h1>
+<p><span>Paycom provides support for webhooks to automatically send a data payload containing event details from the Paycom application to a third-party system. Paycom events may include creating new hires, creating employees, modifying employee data, and more.</span></p>
+<p>When the Paycom webhooks are configured to send event notifications to the Aquera integration, Aquera can receive the Paycom events in real time and process them for synchronization with identity management systems and other applications.</p>
+<p>This guide provides the details of the Paycom events and how to set up the Aquera integration to receive and process the Paycom events.</p>
+<h1 id="h_01J9JP5V37R7M62QKJNK8N24SP">Paycom Webhooks</h1>
+<p>Paycom can send notifications via webhooks for the following events:</p>
+<ul>
+<li>New hire created</li>
+<li>New hire deleted</li>
+<li>New hire self-onboarding completed </li>
+<li>Employee added</li>
+<li>Employee photo added</li>
+<li>Employee changes - Refer to the following section for the list of employee changes for which an event notification will be sent.</li>
+</ul>
+<h3 id="h_01J9JQKRV9A131YA29CF1JSS98">Employee Changes</h3>
+<table border="1">
+<tbody>
+<tr>
+<td>Additional Schedule Group</td>
+<td>Employee Position Change</td>
+<td>Position Family</td>
+</tr>
+<tr>
+<td>Alternate Pay Frequency</td>
+<td>Employee Re-Hire</td>
+<td>Position Level Change</td>
+</tr>
+<tr>
+<td>Available Health Insurance</td>
+<td>Employee Status</td>
+<td>Position Seat Change</td>
+</tr>
+<tr>
+<td>Badge Level</td>
+<td>Ethnic Background</td>
+<td>Position Title Change</td>
+</tr>
+<tr>
+<td>Badge Number</td>
+<td>Exempt Status</td>
+<td>Previous Termination Date</td>
+</tr>
+<tr>
+<td>Birth Date</td>
+<td>Full-Time to Part-Time Date</td>
+<td>Primary Schedule Group</td>
+</tr>
+<tr>
+<td>Clock Sequence Number</td>
+<td>Gender</td>
+<td>Retirement Plan</td>
+</tr>
+<tr>
+<td>Cobra End</td>
+<td>Highly Comp Employee</td>
+<td>Schedule Time Zone</td>
+</tr>
+<tr>
+<td>Cobra Start</td>
+<td>Hire Date</td>
+<td>Statutory Employee</td>
+</tr>
+<tr>
+<td>Commission Only</td>
+<td>Hourly or Salary</td>
+<td>Supervisor Learning</td>
+</tr>
+<tr>
+<td>Current Key Employee</td>
+<td>Hours 401(k)</td>
+<td>Supervisor Primary</td>
+</tr>
+<tr>
+<td>DOL Status</td>
+<td>Last Pay Change</td>
+<td>Supervisor Quaternary</td>
+</tr>
+<tr>
+<td>EE Message</td>
+<td>Last Position Change Date</td>
+<td>Supervisor Secondary</td>
+</tr>
+<tr>
+<td>EEOC Class</td>
+<td>Last Review</td>
+<td>Supervisor Talent</td>
+</tr>
+<tr>
+<td>Eligible 401(k)</td>
+<td>Marital Status</td>
+<td>Supervisor Tertiary</td>
+</tr>
+<tr>
+<td>Email Change</td>
+<td>Match Eligible</td>
+<td>Supervisor Time-Off Approval</td>
+</tr>
+<tr>
+<td>Emergency Contact Information</td>
+<td>Next Review</td>
+<td>Terminal Access Group</td>
+</tr>
+<tr>
+<td>Employee Address Changes</td>
+<td>Non-Resident Alien</td>
+<td>Termination Date</td>
+</tr>
+<tr>
+<td>Employee Department Changes</td>
+<td>On-Leave Start and End Date</td>
+<td>Termination Reason</td>
+</tr>
+<tr>
+<td>Employee GL Code</td>
+<td>Part Num 401(k)</td>
+<td>Union Code</td>
+</tr>
+<tr>
+<td>Employee Labor Allocation Changes</td>
+<td>Part-Time to Full-Time Date</td>
+<td>Vets 4212 Emp Category</td>
+</tr>
+<tr>
+<td>Employee Location Changes</td>
+<td>Pay Class</td>
+<td>Vets 4212 Job Category</td>
+</tr>
+<tr>
+<td>Employee Name Changes</td>
+<td>Pay Frequency</td>
+<td>Workers Comp Code</td>
+</tr>
+<tr>
+<td>Employee Phone Changes</td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01H1P8VFAFTSX80GAH609P2P6J"><span><span>Prerequisite</span></span></h1>
+<p><span><span>You need to add and configure the Paycom version 5 connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/1500001317662" rel="noopener noreferrer" target="_blank">Paycom Configuration Guide</a> for details.</span></span></p>
+<h1 id="h_01J9KDBQ74ECR64649P2SGV157">Aquera Integration Setup</h1>
+<p>You need to set up an integration in the Aquera Admin portal to receive and process the Paycom events.</p>
+<p>Perform the following steps to create an integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> on the left panel and click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>Integration</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the integration.</li>
+<li>Click <strong>Create</strong> to create the integration.</li>
+</ol>
+<p>In the Configuration panel, you must add the Paycom connector to be used in the integration. Perform the following steps to add the Paycom connector:</p>
+<ol>
+<li>Click the + icon next to the <strong>Connectors</strong> to display the <strong>Add Connector</strong> window.</li>
+<li>Select the Paycom connector from the <strong>Connector</strong> drop-down.</li>
+<li>Enter a unique variable name for the connector in the <strong>Variable</strong> field. This name will be used to refer to the connector in the script.</li>
+<li>Click the <strong>Add </strong>button to add the Paycom connector.<br/><img alt="Screenshot 2024-10-07 at 7.24.31 PM.png" height="301" src="./assets/71dd715b1308148b.bin" width="301"/>
+</li>
+</ol>
+<p>You must configure a trigger to run the integration when event notifications are sent from the Paycom application using Paycom webhooks.</p>
+<p>Perform the following steps to configure the trigger:</p>
+<ol>
+<li>Click the + icon next to the <strong>Trigger</strong> to display the <strong>Add Trigger</strong> window.</li>
+<li>Select the <strong>Trigger</strong> <strong>Type </strong>as <strong>Event</strong>.</li>
+<li>Select the Paycom connector from the <strong>Event Source</strong> drop-down list. A URL will be generated for the integration. This is the endpoint URL to which the configured events are sent from the Paycom application for processing.</li>
+<li>Copy the URL and paste it into the webhook setup of the Paycom application. </li>
+<li>Click <strong>Create Token</strong> to generate a token for authentication.<br/><br/><img alt="Paycom-CreateToken.png" height="370" src="./assets/1102ba69322bc112.bin" width="616"/>
+</li>
+<li>Copy this token by clicking the copy icon next to the generated token. The token must be securely stored and configured in Paycom's webhook setup for authentication purposes.<br/><img alt="Paycom-Token.png" height="457" src="./assets/e405d3315dc333c0.bin" width="610"/>
+</li>
+<li>Click <strong>Save</strong> to save the event trigger setup.</li>
+</ol>
+<p>In the Script panel, you can write JavaScript to process the Paycom events and synchronize them to any identity management systems.</p>
+<p>You can log the Paycom event request using the following format:</p>
+<p>log.info(JSON.stringify(request));</p>
+<p>For details on the functions supported in the script and how to work with the scripts, refer to the <a href="../Working-With-Integration-Scripts/" rel="noopener noreferrer" target="_blank">Working With Integration Scripts</a> guide.</p>
+<p><span dir="ltr" role="presentation">Employee Location Changes</span><span dir="ltr" role="presentation"></span></p>
+  </div>
+</body>
+</html>

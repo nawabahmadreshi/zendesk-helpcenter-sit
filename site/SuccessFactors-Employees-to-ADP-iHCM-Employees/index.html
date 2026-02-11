@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SuccessFactors Employees to ADP iHCM Employees</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>SuccessFactors Employees to ADP iHCM Employees</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating the integration of data across resource types. This guide covers the end-to-end tasks in setting up a data integration to sync the <em>Employees</em> resource of SuccessFactors to the <em>Employees</em> resource of ADP iHCM.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure following application connectors in the Aquera Admin portal to integrate with Microsoft Entra ID:
+<ul>
+<li>
+<strong>SuccessFactors</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360025229753" rel="noopener noreferrer" target="_blank">SuccessFactors Configuration Guide</a> for details.</li>
+<li>
+<strong>ADP iHCM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/16804103956759" rel="noopener noreferrer" target="_blank">ADP iHCM Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01J46B7Y1FJFZ9EF69E21925AA">Data Integration Setup</h1>
+<p>Aquera's data integration automatically imports employees from SuccessFactors and provisions these employees in ADP iHCM.  It also syncs the payroll data of employees.</p>
+<p>Aquera provides templates that are pre-configured integrations created for specific use cases. You can use these templates to create a data integration.</p>
+<p>Perform the following steps to create a data integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>integrations</strong> on the left panel.</li>
+<li>Click<strong> Create integration</strong>.</li>
+<li>Select a pre-built data integration template based on your requirements. For this use case, select the template <em>SuccessFactors Employees to ADP iHCM Employees</em>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select the SuccessFactors connector in the <strong>Source Application</strong> dropdown field.</li>
+<li>Select the ADP iHCM connector in the <strong>Target Application</strong> dropdown field.</li>
+<li>Click <strong>Continue</strong>. A new page with the fields and tabs to configure the data integration is displayed.</li>
+<li>You can update the configurations if required. For more details, refer to the <a href="../Data-Integration-Setup-Guide/#h_01EZA56Y42W6PYT30MAC9TBWV6" rel="noopener noreferrer" target="_blank">Data Integration Setup Guide</a>. </li>
+<li>Click <strong>Create</strong> to create the data integration.</li>
+</ol>
+<h2 id="h_01J4PAZQ130M14QJ5WWR1KVF5A">Attribute Mapping</h2>
+<p>The <strong>Attribute Map </strong>tab allows you to map employees from SuccessFactors to the Payroll resource of ADP iHCM.</p>
+<p>The following is a sample attribute mapping from SuccessFactors to ADP iHCM:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>SuccessFactors Attribute / Value / Expression</strong></td>
+<td><strong>ADP iHCM Attribute</strong></td>
+</tr>
+<tr>
+<td>SOURCE.email</td>
+<td>businessCommunication.emails</td>
+</tr>
+<tr>
+<td>SOURCE.hr.salary</td>
+<td>payDataInput.earnings</td>
+</tr>
+<tr>
+<td>SOURCE.empCompensation.endDate</td>
+<td>payDataInput.payPeriodEndDate</td>
+</tr>
+<tr>
+<td>SOURCE.empCompensation.startDate</td>
+<td>payDataInput.payPeriodStartDate</td>
+</tr>
+<tr>
+<td>SOURCE.dateOfBirth</td>
+<td>person.birthDate</td>
+</tr>
+<tr>
+<td>[{"formattedNumber" : SOURCE.perPerson.phoneNumbers[0].phoneNumber}]</td>
+<td>person.communication.mobiles</td>
+</tr>
+<tr>
+<td>SOURCE.gender</td>
+<td>person.genderCode.codeValue</td>
+</tr>
+<tr>
+<td>SOURCE.lastName</td>
+<td>person.legalName.familyName1</td>
+</tr>
+<tr>
+<td>SOURCE.firstName</td>
+<td>person.legalName.givenName</td>
+</tr>
+<tr>
+<td>SOURCE.salutation</td>
+<td>person.legalName.preferredSalutations</td>
+</tr>
+<tr>
+<td>[{"expectedStartDate" : SOURCE.hireDate,"hireDate" : SOURCE.hireDate}]</td>
+<td>workAssignments</td>
+</tr>
+<tr>
+<td>SOURCE.personKeyNav.personIdExternal</td>
+<td>workerID.idValue</td>
+</tr>
+</tbody>
+</table>
+<p>In the source attribute field, you can include source attributes or write JavaScript expressions to map to the corresponding target attribute. The target attributes marked with a red asterisk (<span>*</span>) are mandatory to be mapped.</p>
+<h2 id="h_01JD417X0N8F6HMPB4NQQTZ7HJ">SuccessFactors Employee Attributes</h2>
+<p>Refer to the following table for the SuccessFactors employee attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Attribute Name</span> </font> </strong></td>
+<td><strong> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Description</span> </font> </strong></td>
+<td><strong> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Data Type</span> </font> </strong></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>email</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The email ID of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>hr.salary</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The salary of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>empCompensation.endDate</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The employee compensation end date</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td>empCompensation.startDate <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span><br/></span> </font>
+</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The employee compensation start date </span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>person.dateOfBirth</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The birth date of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>perPerson.phoneNumbers[].phoneNumber</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The phone number of the employee </span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> gender</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The gender of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> lastName</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The last name of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> firstName</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The first name of the employee </span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td>salutation</td>
+<td>The salutation of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>hireDate</td>
+<td>The hire date of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>personKeyNav.personIdExternal</td>
+<td>The person ID of the employee</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h2 id="01JD419KSBZWWJMETD7T2W8C97">ADP iHCM Payroll Attributes</h2>
+<p>Refer to the following table for the ADP iHCM payroll attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong> <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">Attribute Name</font> </span> </strong></td>
+<td><strong> <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">Description</font> </span> </strong></td>
+<td><strong> <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">Data Type</font> </span> </strong></td>
+</tr>
+<tr>
+<td>businessCommunication.emails.emailUri<span>*</span>
+</td>
+<td>The email address used for business communication</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> payDataInput.earnings.earningRateValue</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The salary of the employee</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">payDataInput.payPeriodEndDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The pay period end date</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> payDataInput.payPeriodStartDate</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The pay period start date</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>person.birthDate<span>*</span></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The birth date of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> person.communication.mobiles</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The phone number of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> string array</span> </font></td>
+</tr>
+<tr>
+<td>person.genderCode.codeValue</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The gender of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td>person.legalName.familyName1</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The last name of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td>person.legalName.givenName</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The first name of the employee </span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td>person.legalName.preferredSalutations</td>
+<td>The salutation of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments</td>
+<td>The work assignment details of the employee</td>
+<td>string array</td>
+</tr>
+<tr>
+<td>workerID.idValue</td>
+<td>The worker ID of the employee</td>
+<td>
+<p>string</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01JD90F0KPF2YC4RXKVAYB2WYK">Running the Data Integration</h1>
+<p>You can click the <strong>Execute</strong> button at the top-right corner to manually run the data integration. You can also schedule the data integration to run automatically at specified intervals by configuring a frequency in the Schedule tab.</p>
+<p>You can navigate to <strong>Logs  &gt; Integrations</strong> in the Aquera Admin portal to view the integration execution logs.</p>
+<p>After the data integration is successfully executed, new employees will be created and existing employees will be updated in the ADP iHCM application.</p>
+  </div>
+</body>
+</html>

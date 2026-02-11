@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EntraID (Intune) to Paylocity Integration</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>EntraID (Intune) to Paylocity Integration</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01K7666D9B1E5AYCMWJ6P8JWYD">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>The integration connects <strong>Microsoft Entra ID (Intune)</strong> and <strong>Paylocity</strong> to keep device ownership records accurate and up to date. It uses <strong>Microsoft 365 App Registration</strong> for secure authentication, allowing Aquera to read device and user data. It reads device data such as <strong>serial number</strong>, <strong>userPrincipalName (email)</strong>, and <strong>companyName</strong> from Entra ID, and matches them with employee records in Paylocity using the configured <strong>custom text fields</strong> and <strong>company ID</strong>. Once matched, the integration updates or removes serial numbers in the employee’s Paylocity record to ensure each asset is correctly linked to its owner in Entra ID.</p><p>The integration identifies matching user records by comparing the <strong>userPrincipalName (email)</strong> and <strong>companyName</strong> attributes from Entra ID with the corresponding <strong>email address</strong> and <strong>company ID</strong> in Paylocity. If no matching employee is found in Paylocity, the device is moved to the <strong>free pool</strong>, indicating it is not currently assigned to any user.</p><h2 id="h_01K7666NAWMZ6GQG34NS7WT8XN">Key Functions</h2><p>The <strong>Microsoft Entra ID (Intune) to Paylocity Asset Synchronization</strong> integration performs the following key functions:</p><ul>
+<li data-list-item-id="ed9a5956bfd583ea0cf28292c99abb1b9">Uses the <strong>Microsoft 365 App Registration</strong> to connect securely with Microsoft services and access data from <strong>Intune</strong> and <strong>Entra ID.</strong>
+</li>
+<li data-list-item-id="e3f8a290264b7ab5ac264f3a420a7a20c">Reads device details such as <strong>serial number</strong>, <strong>email (userPrincipalName)</strong>, <strong>company name</strong>, and <strong>model</strong> from Microsoft Intune.</li>
+<li data-list-item-id="ea42a8993813466447693930c2634df9c">Retrieves employee records from <strong>Paylocity</strong> for the configured company IDs.</li>
+<li data-list-item-id="e78fbb392e9b84295f5928fa5a6773be2">Matches each device from Intune with the correct employee in Paylocity using <strong>email</strong> and <strong>company ID</strong>.</li>
+<li data-list-item-id="e7218420b682dc92442ff59e36dfde5ca">Updates or removes the <strong>serial number</strong> in Paylocity so that each device is linked to the right employee.</li>
+<li data-list-item-id="e9e0bb92ae3ef006c6c2b1520956ec6f0">Moves devices without a matching employee to the <strong>free pool</strong>, indicating they are unassigned.</li>
+<li data-list-item-id="e497f329e840b3bc02ab9b785fbbb49c1">Creates a summary report of all updates, skips, and errors, and can email the report to administrators.</li>
+</ul><h1 id="h_01K7666SRAE2ZMAJ482BAN150C">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ee95a1ed77e227125e639e5d79c01e8d1">
+<strong>Aquera Tenant Account:</strong> You must have a tenant account in the <strong>Aquera Admin Portal</strong>. Visit <a href="https://admin.aquera.io" target="_new">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io" target="_new">https://admin.eu.aquera.io</a>
+</li>
+<li data-list-item-id="e8c02059098b4888e63a34e29c812d523">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e15108ba3b6df90979fa5a82a3a759e45">
+<strong>Microsoft Intune</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/34718385736343-Microsoft-Intune-Configuration-Guide" rel="noopener noreferrer" target="_blank"><span><em>Microsoft Intune Configuration Guide</em></span></a> for connector setup details.</li>
+<li data-list-item-id="e1397cc57184798f40ac31b5d73af3cd7">
+<strong>Microsoft 365 (App Registration):</strong> Refer to the <a href="https://support.aquera.com/hc/en-us/articles/16828093288727-Microsoft-365-App-Registration-Configuration-Guide" rel="noopener noreferrer" target="_blank"><span><em>Microsoft 365 App Registration Configuration Guide</em></span></a> for setup and authentication details.</li>
+<li data-list-item-id="e4bd99b235e3c0134bb8530f94c204e8f">
+<strong>Paylocity:</strong> Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360014901433-Paylocity-Configuration-Guide" rel="noopener noreferrer" target="_blank"><span><em>Paylocity Configuration Guide</em></span></a> for setup and authentication details.  </li>
+</ul>
+</li>
+</ul><h2 id="h_01K766717B8VPCPTQT006FVCSS">Integration Setup</h2><p>This section outlines how the integration must be configured to synchronize device ownership and asset records between <strong>Microsoft Entra ID (Intune)</strong> and <strong>Paylocity</strong>.</p><h3 id="h_01K76676P27F29TCD10NQXFR2K">Create Integration</h3><p>Perform the following steps to create the integration:</p><ol type="1">
+<li data-list-item-id="efa68e76009c1d59a32e90f4fb0d89aaf">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="e5262a559bddd7a8c1f80cdaf6b4637be">Navigate to <strong>Integrations</strong> from the left-side panel.</li>
+<li data-list-item-id="e8e1857c3306c7eb92035e83e7001777a">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="ea9184a0cec17da7dcae804e77cd60824">Select <strong>Microsoft Entra ID (Intune) to Paylocity Asset Synchronization</strong> from the list of available integrations.</li>
+<li data-list-item-id="e2838540ad0e88d9a356835ddc5b58e19">Enter a <strong>name</strong> and a <strong>description</strong> for the integration.</li>
+<li data-list-item-id="ee912c82eb2baeb8ebfa6fb5c9e681d65">Select your connector instances for <strong>Microsoft Intune</strong>, <strong>Microsoft 365 App Registration</strong>, and <strong>Paylocity</strong>.</li>
+<li data-list-item-id="e3c5a5822ce2947b4eaa4b9da83417e4c">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration settings. </li>
+</ol><h2 id="h_01K7668JWCSEKYMBDR547KMP40">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01K7668R6GGY2YZQT3ZQ92EQ3W">Applications</h3><p>The <strong>Applications</strong> section displays the <strong>Microsoft Entra ID (Intune)</strong>, <strong>Microsoft 365 App Registration</strong>, and <strong>Paylocity</strong> application connectors used for the integration. You can change or update these connector instances if required.</p><h4 id="h_01K7668YMJFESBA44JXFHNACQV">Parameters</h4><p>The <strong>Parameters</strong> section allows you to customize the integration behavior according to your specific requirements. It includes the following settings:</p><h4 id="h_01K7669AC9YGFCM5PHYR33RAFX">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="eea0e4d35d463d6db2209b267adf285dc">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e3ba018d16cdc93e2fc06d9129546c77c">
+<strong>Enable Notifications</strong>: Select this checkbox to enable email notifications related to the integration. The <strong>Notifications</strong> section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="e26737de13868776c5a57b24cbf2414f2">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.</li>
+<li data-list-item-id="e2b9f607f6b9d8f7b05363ae594ab90e2">
+<strong>Enable Debug Mode</strong>: Select to generate logs outlining data changes that would occur for debugging.</li>
+<li data-list-item-id="e8c302d351cdcd42b8bc8556c6cc1a423">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. The <strong>Report Settings</strong> section will be displayed only when this checkbox is selected.</li>
+</ul><h4 id="h_01K7669JRK3JXW1AEWK32WPPQ3">Advanced Settings </h4><p>Configure the following advanced settings:</p><ul><li data-list-item-id="e175cb957bdf0fe9b31f80fd7f7de7fb2">
+<strong>Enable Asset Management: </strong>Select to activate the <strong>asset management</strong> feature for the company. When enabled, the integration manages device ownership in <strong>Paylocity</strong> based on asset data from <strong>Microsoft Entra ID (Intune)</strong>. </li></ul><h4 id="h_01K7669RPEDDW0996WBXEPQFE2">Asset Management</h4><p><strong>Source Settings</strong></p><p>Configure the following settings in EntraID:</p><ul>
+<li data-list-item-id="e65f4c72a2500e91df880e8b76903d02a">
+<strong>Advanced Sync &amp; Filters:</strong> Select to filter and synchronize device records during each run.<br/>Options include:<ul>
+<li data-list-item-id="e270c080897a06839120f94ed35aedba2">
+<strong>Source Filter:</strong> Apply a specific filter to limit the devices synchronized.</li>
+<li data-list-item-id="eeefe565a4d340d48a06481afb272d16f">
+<strong>Incremental Sync:</strong> Sync only updated records since the last run.</li>
+<li data-list-item-id="efbd0ffb90cbb4ba580d61b17434d2747">
+<strong>Full Run:</strong> Synchronize all available devices without filtering.</li>
+</ul>
+</li>
+<li data-list-item-id="e915f64838f1b9f091915785215bee9c8">
+<strong>Device Sync Filter:</strong> Select to define the attribute used to identify which devices are synchronized from Microsoft Entra ID (Intune).<br/>Options include:<ul>
+<li data-list-item-id="ecb3e3c2b05204e8056985c141e05bfcb">
+<strong>Microsoft Entra Device ID:</strong> Filter devices using their unique Entra device ID.</li>
+<li data-list-item-id="e91bd41b82f8b693ace2925e779aac0e6">
+<strong>Model:</strong> Filter devices based on the model type.</li>
+</ul>
+</li>
+<li data-list-item-id="e87e2d6006c2d6650f03ab74558b81f5d">
+<strong>Source Filter Value:</strong> Enter the value that corresponds to the selected device filter.<br/>The integration retrieves only those Intune devices that match this filter value.</li>
+</ul><p><strong>Target Settings</strong></p><p>Configure the following settings in Paylocity:</p><ul>
+<li data-list-item-id="e01534f086650968aaf38d796625aade5">
+<strong>Company IDs:</strong> Enter one or more <strong>Paylocity company IDs</strong> to specify which organizations will be managed in this integration. This defines the scope of employee data for synchronization.</li>
+<li data-list-item-id="ee2350a0eaa063a320b2e80edf83b4e2f">
+<strong>Number of Devices to Sync:</strong> Enter the maximum number of devices to include in a single integration run. Use this to limit batch size and improve performance when processing large datasets.</li>
+<li data-list-item-id="ef55cdf78e264e5bc5aa727820c3f3942">
+<strong>Custom Label Name for Correlation:</strong> Enter the name of the <strong>custom text field</strong> in Paylocity used to store and match device serial numbers. The integration uses this field to correlate and update device ownership records accurately.</li>
+</ul><h4 id="h_01K766A7P0N82B0TJAHGBPXQJ6">Log Settings</h4><p>Configure the following logging settings:</p><ul><li data-list-item-id="e4e1fd640ad8e5f728f919f06853751c8">
+<strong>Select the Log Detail Level</strong>:  Select the desired log detail level from the dropdown menu. <br/>The following are the available options:<ul>
+<li data-list-item-id="e9bd48e3e2334ca00fe7ece6edb9fa63c">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e2c12932a28c9133889d64c354520e4a7">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e2edbdaa52c641437a85077d8ec8fb738">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following option only appears when the dashboard detail level is set to <strong>Custom</strong>.<ul><li data-list-item-id="edec54f04b85626c9abae28a0ec9582f5">
+<strong>Attribute Filter</strong>: Controls which event attributes are included or excluded.   <ul>
+<li data-list-item-id="e26592b5b75048e0391a2bc92ba8785a7">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log.</li>
+<li data-list-item-id="e6aa6fc7d7b06d3b101aa04b81291b925">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01K766AT55FGJ59AMBWHTKCGME">Report Settings</h4><p>Configure the following settings to customize the CSV report:</p><ul><li data-list-item-id="eb9f1589b16765be1ae9bc6b6e34355be">
+<strong>Select Report Detail Level:</strong> Select the desired level of report detail from the dropdown menu.<br/>The following are the available options:<ul>
+<li data-list-item-id="efaf9c1f65f0bc3a17f66ccd7e3e4a878">
+<strong>Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ec09b3b3d9859d163a1c607c26a3b8111">
+<strong>Full Details:</strong> All attribute details are displayed.</li>
+<li data-list-item-id="e65956f66c43d31984e95c6d206811cf3">
+<strong>Custom:</strong> Includes or excludes selected attributes. The following options only appear when the report detail level is set to <strong>Custom</strong>.<ul><li data-list-item-id="e16961a82a00a04ef0fdefb90b6276d8e">
+<strong>Attribute Filter:</strong> Controls which attributes are included or excluded in the report.<ul>
+<li data-list-item-id="e302a871befe09241fa7b097c8993339c">
+<strong>Included Attributes:</strong> Select the attributes to be included in the CSV report.</li>
+<li data-list-item-id="e9bea2d9e3829ea6b27604cb578c21f42">
+<strong>Excluded Attributes:</strong> Select the attributes to be excluded from the CSV report.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01K766B179Q8KZJKZ7S2THQ34P">Notification Settings</h4><p>Configure the following settings for email notifications:</p><ul><li data-list-item-id="edd6cd215f0bafdbca66bb19037b2dc49">
+<strong>Notify Admin Via Email</strong>: Select to send email notifications to all admins.<ul>
+<li data-list-item-id="ece7cd3fe80e16e81d1e4ed6aba1a873d">
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications must be sent.</li>
+<li data-list-item-id="e147daba10423372263ade65f01586a14">
+<strong>Admin Email Subject:</strong> Enter the content that must be used as the email subject for the email notifications to the admins.</li>
+<li data-list-item-id="e919f2e2fc5cda2e634406abaffba676c">
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a report for all integration runs.</li>
+<li data-list-item-id="e6d4e1ca291e4e81f29c8c19208abdf5f">
+<strong>Select the Notification Report Detail Level</strong>: Select the desired level of notification detail from the dropdown menu.<br/>The following are the available options:<ul>
+<li data-list-item-id="ec3d8f241802eec73a49a2a95c1d4391b">
+<strong>Summary only</strong>: Attribute details are not populated, and it displays the count of CRUD operations.</li>
+<li data-list-item-id="ef4e0317f6faebcddd999659a965d5f0d">
+<strong>Full details</strong>: All attribute details are populated.</li>
+<li data-list-item-id="e881d67b326e983384cd2046660476f6f">
+<strong>Custom</strong>: Includes or excludes selected attribute details.</li>
+</ul>
+</li>
+<li data-list-item-id="e1360d562a451cf4e45e37ce563f97b83">
+<strong>Notify Employees via Email</strong>: Select to send email notifications to all employees.</li>
+</ul>
+</li></ul><h4 id="h_01K766B6W3QPS5BQAJ6DT451XB">Log Insights Settings</h4><p>Configure the following log insight settings:</p><ul>
+<li data-list-item-id="e53b4917c07806c358ee3de8832b407b2">
+<strong>Select the Log Insights Detail Level:</strong> Select the desired level of detail from the dropdown menu on the analytics dashboard.<br/>The following are the available options:<ul>
+<li data-list-item-id="e22a6b9777be779108cd3782236380e4a">
+<strong>Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e1c438304752395279c29e8dbae6c7588">
+<strong>Full Details:</strong> All attribute details are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="e2be843e362ae0e6f40afb119541c8e89">
+<strong>Custom Analytics Index Name:</strong> Enter a custom name for the analytics index to store and organize integration log data.</li>
+</ul><h1 id="h_01K766BM47FYF1N2JYW6YYQW3W">Attribute Map</h1><p>The <strong>Attribute Mapping</strong> tab defines how source system attributes from <strong>Microsoft Entra ID (Intune)</strong> correspond to target fields in <strong>Paylocity</strong>. Administrators can select the source system (<strong>Intune</strong>) for each mapping and specify the source attribute or expression that should populate a specific <strong>Paylocity custom field</strong>.</p><p>The mapping ensures that device and asset information from Microsoft Intune, such as <strong>Model</strong>, <strong>Device ID</strong>, <strong>Manufacturer</strong>, <strong>Operating System</strong>, and <strong>OS Version</strong>, are accurately reflected in Paylocity employee records.</p><p><strong>Note:</strong> The custom field names in Paylocity may vary depending on your company’s configuration. Verify that the selected fields match your organization’s defined custom text fields before running the integration.</p><h1 id="h_01K766BXX8KFNP9X6AY10F0TH7">Schedule</h1><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h2 id="h_01K766CFS8FA92B720CQCP3ESF">Execute Integration</h2><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h2 id="h_01K766CPZ0XX5SDVD2CPC4T8R2">Additional Options</h2><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+  </div>
+</body>
+</html>

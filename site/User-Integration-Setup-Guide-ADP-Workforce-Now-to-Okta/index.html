@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User Integration Setup Guide - ADP Workforce Now to Okta</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>User Integration Setup Guide - ADP Workforce Now to Okta</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01GBCREYQNB3YNEZW78KKP9GJZ">Overview</h1><p>This guide covers the end to end tasks involved in setting up an orchestration to sync users in ADP Workforce Now with Okta.</p><p>The following tasks are involved in setting up the orchestration from ADP Workforce Now to Okta:</p><ul>
+<li data-list-item-id="ead0c02cdf787a63c5db527f9088bbe97"><a href="#h_01F6EH0A638QSV3GWRKPF09R35" target="_self">Initial Preparation</a></li>
+<li data-list-item-id="eb85995312f7a13331ea08a6b71da4952"><a href="#h_01F6EH0MBC837JQFE5ZJRW7P94" target="_self">Configuring Applications in Aquera Admin</a></li>
+<li data-list-item-id="e022c9207d2eaadc54b35e39c092dfcf7"><a href="#h_01F6EH0W486EMXD6A000X2Z4YZ" target="_self">Orchestration Setup</a></li>
+<li data-list-item-id="e6fc519b6c578f012933c63e2f5545df7"><a href="#h_01F6EH144YSHC99KVTGPC8D65M" target="_self">Running Orchestration</a></li>
+</ul><h1 id="h_01F6EH0A638QSV3GWRKPF09R35">Initial Preparation</h1><h2 id="h_01GBCRFN192H7SXDMXDX3M01C7">ADP Workforce Now</h2><ol>
+<li data-list-item-id="e40b99dce59cd1403555c8545bd26721d" value="1">Log in to the <a href="https://apps.adp.com/en-US/pages/why-marketplace" rel="noopener noreferrer" target="_blank">ADP Marketplace</a> as an ADP Admin.</li>
+<li data-list-item-id="ef7386d9675354452bacdba80c124d314" value="2">Purchase Aquera's orchestration connector for ADP Workforce Now® edition from the <a href="https://apps.adp.com/en-US/apps/234247/aquera-identity-directory-sync-bridge-for-adp-workforce-now/editions" rel="noopener noreferrer" target="_blank">ADP Marketplace</a>. The connector to be selected from this page must be based on the number of employees (users).</li>
+<li data-list-item-id="ea7d64f011a33eefa5249a73de7bea99a" value="3">
+<p>After you purchase the connector app on the ADP Marketplace, you must give appropriate permissions to the app so that the app will have authorized access to your organization's data. Aquera generates a token to make the connection.</p>
+<ul>
+<li data-list-item-id="e23dca27238640d8be6b4432551d07b99">To authorize Aquera for the data access to your ADP instance, navigate to <strong>My Apps &gt; Aquera</strong> in the Marketplace.</li>
+<li data-list-item-id="e2afed061c441c41a3d6966971e01926c">For details on the required permissions and how to set them up, refer to the <strong>Setting  up Permissions</strong> and the <strong>Permissions Required</strong> sections in the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a>. </li>
+</ul>
+<p>The following screen is displayed in the ADP Marketplace when the authorization is successful:</p>
+<p><img alt="Authorize.png" src="./assets/1f620f8d11a8e80d.bin"/></p>
+</li>
+</ol><h2 id="h_01GBCRFTZZZEVGRW94AZN5MBJQ">Aquera Admin Console</h2><ol>
+<li data-list-item-id="e28da0ff86210ff743968383aedbbad47">Your IT admin must <a href="https://admin.aquera.io/home/register" rel="noopener noreferrer" target="_blank">register as an Aquera Admin</a>.</li>
+<li data-list-item-id="ef74246dc3df038d9fd1086a821b9e30f">Once registered successfully, Aquera creates a tenant for the IT Admin and provides access to it.</li>
+</ol><h1 id="h_01F6EH0MBC837JQFE5ZJRW7P94">Configuring Applications in Aquera Admin</h1><p>The following applications must be added and configured in Aquera Admin console:</p><ul>
+<li data-list-item-id="ef5c081be281c86e33552757ed66f3839">ADP Workforce Now. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li data-list-item-id="e08cef17829ec1bcaab39eef3d35ced74">Okta. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360039119053" rel="noopener noreferrer" target="_blank">Okta Configuration Guide</a> for details.</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Orchestration Setup</h1><p>This section details how the orchestration must be configured to allow data push from ADP Workforce Now to Okta. </p><p>It also describes the various analyses to be performed and the important points to be considered before setting up the orchestration.</p><h2 id="h_01GBCRGGAGPXB37X21GXE4ZN8J">Considerations</h2><ul>
+<li data-list-item-id="e0442449707daf91055948778ba410a09">Work email can be retrieved from the ADP Workforce Now system or be generated by Aquera orchestration and updated back to the system.</li>
+<li data-list-item-id="ecb3a9ea7d889746aece0f51ad3615c78">The criteria for matching a user record from ADP Workforce Now with that in the Okta.</li>
+</ul><h2 id="h_01GBCRGQ4DEMPE2W34GMET44BK">General Analysis Steps</h2><ul><li data-list-item-id="e17c53265b128afc5caae3ed5e0cdd768">Fill out the <a href="https://support.aquera.com/hc/article_attachments/4414481271063" rel="noopener noreferrer" target="_blank">mapping template attached with this guide</a> for mapping ADP Workforce Now user attributes to Okta user attributes. The most common attributes are mapped in the attached template. You can add more attribute maps to the sheet as per your requirement.</li></ul><p>You can analyze the users in ADP Workforce Now as well as in Okta using one of the following ways:</p><ul>
+<li data-list-item-id="e1aa0fd4ae4f063ede98eb465cae16870">Downloading the CSV file containing the list of all users through the <strong>Data</strong> tab on the <strong>Application</strong> page. For details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/4411279965463" rel="noopener noreferrer" target="_blank">User Reports Guide</a>.</li>
+<li data-list-item-id="e8ea9445240a33a7869e9145d5425faed">Using Script orchestration. For scripts, refer to the <a href="#h_01F6EGQ8TRT9E064C1YJVS653G" target="_self">Appendix</a>.</li>
+</ul><h2 id="h_01GBCRGXTZDX9F68EYE65SXMJ4">Building Orchestration</h2><p>This document describes how to set up the orchestration using the <em>Synchronization</em> orchestration method.</p><ul><li data-list-item-id="e5482792a7ed4125fa53ac152403bee3e">
+<strong>Synchronization Orchestration</strong> - In this orchestration, set <em>ADP Workforce Now</em> as the <strong>Source Application</strong> and <em>Okta</em> as the <strong>Target Application</strong>. Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">Synchronization Orchestration Guide</a> for details on the configurations.</li></ul><p>You can set the following configurations in the <em>Synchronization</em> orchestration:</p><ul>
+<li data-list-item-id="edc94e216771eab8c105f89fe05961148">Set the <strong>Admin Email Options</strong> to receive email notifications for success/failures during orchestration run.</li>
+<li data-list-item-id="e3e51c7f72ed762ef94d79b4f23131f88">Set the email list of the IT admin or manager to receive user creation notification emails and user deactivation notification emails.</li>
+<li data-list-item-id="efd6d88c7bc1c32f0962fd92ceb24ce13">Use tables for creating lookup tables based on location, department values from source.</li>
+<li data-list-item-id="e9bccac6dcde1fb98d9f303f2609c78b5">Enable Group management if Aquera has to manage the groups and group assignment rules based on your group analysis. Set the group names in restriction list for scoping of the groups which would be managed by Aquera.<ul><li data-list-item-id="e32ffd91028d1ae8a12bb8d1e8b7b7968">To retrieve only the supervisors/managers from ADP and add them to a group, you can create a group rule with the basic condition as follows:<br/><em><strong>SOURCE[IAN].managementPositionIndicator Equals true</strong></em><br/><img alt="Rule.png" height="416" src="./assets/d497a133021dde86.bin" width="394"/><br/>Make sure that the group name is configured in the <strong>Group Management Restriction List</strong> in the <strong>Configuration</strong> tab.</li></ul>
+</li>
+</ul><p>Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">Synchronization Orchestration Guide</a> for details on <em>Synchronization</em> orchestration configurations.</p><h2 id="h_01GBD13B6AYX8D7PKBNK25HDV1">Orchestration Expressions </h2><p>Expressions are necessary for complex data transformations. Aquera provides extensions to JavaScript expressions to support full JavaScript syntax, and the extensions are designed to make it easier to work with SCIM attributes.</p><p>Expressions are used in some configuration fields, the <strong>Attribute Map</strong> tab, and the <strong>Group Rules</strong> tab, when you setup orchestrations. For more details on the keywords, inbuilt methods and functions provided by Aquera, refer to <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Orchestration - Expressions</a>.</p><h3 id="h_01JQ8SJVA1QQSCY5EBPX1QN4MV">Expression to change the date format from source to target application</h3><p>The following is a sample expression to change the date format of an attribute value from source application to target application.</p><p>Example: If the date format received from source is <em>"YYYY-MM-DD", </em>then to change the date format to <em>"MM/DD/YYYY"</em> in the target application, use the below Javascript expression:</p><pre data-stringify-type="pre"><code>let hireDt = SOURCE[IAN].originalHireDate.split("-");
+
+hireDt[1]+"/"+hireDt[2]+"/"+hireDt[0];</code></pre><div><div data-qa="message_content" role="presentation"><div><div data-qa="message-text"><div data-qa="block-kit-renderer"><div><div dir="auto"><div></div></div></div></div></div></div></div></div><h1 id="h_01F6EH144YSHC99KVTGPC8D65M">Running Orchestration</h1><ul>
+<li data-list-item-id="e40bcde90a94d291b76060fd17cf13600">Enter the matching expression to match the source records with the destination records.</li>
+<li data-list-item-id="e573dfb172fe97076b871c6de02282199">Run the orchestration in<em> Report Only</em> mode and determine if the correct data is updated in Okta. If the data is not correctly updated, change the matching expression to correctly match users and/or update the data.</li>
+<li data-list-item-id="e675d43476dcac2ae03b3bf5a552cc187">Increment the <strong>Update Limit</strong> (maximum number of records to be updated in a single run) for each run in <strong>Report Only</strong> mode to ensure that the records are updated correctly when the records count is more.</li>
+<li data-list-item-id="e0591734fbe781cffb2baf77f353315f8">Modify the attributes mapping and repeat the process until the data is correctly updated.</li>
+<li data-list-item-id="ea4ac5f6ee3f58a4e6f6006908a637f7c">Monitor the orchestration logs thoroughly to ensure that no errors are encountered. Modify the orchestration configurations to fix any errors.</li>
+<li data-list-item-id="e013e2e428412b56cf1dc7641ff3567b4">Once all users are synced, user creations and updates are based on the incremental changes in ADP Workforce Now.</li>
+<li data-list-item-id="e1852265c704586bd17d716016edfb5d1">ADP Workforce Now does not return an event when a user's manager is removed. This is a limitation of the ADP Workforce Now.<span>  </span>Hence during incremental imports, when a user’s manager is removed from the ADP Workforce Now, the manager attribute values will not be removed from the target even if the Map Manager checkbox is selected. However, during full imports, the user’s manager will be removed from the target.</li>
+</ul><h1 id="h_01F6EGQ8TRT9E064C1YJVS653G">Appendix</h1><p>This section provides the scripts that may be used by the <strong>Customer Support</strong> team to analyze the existing users in ADP Workforce Now and Okta before setting up the orchestration. </p><p>This document explains how analyses can be done using a scheduled script orchestration. In this orchestration, add <em>ADP Workforce Now</em> and <em>Okta</em> applications and set the corresponding variable names. In the script, the variable names must be used to refer to the applications.<br/>For details on configuring the script orchestration, refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Custom Script Orchestration Guide</a>.</p><p>Few sample scripts are provided here for your reference. The scripts may vary based on your use case  and the attributes to be retrieved for analysis.</p><h2 id="h_01GBCRHXRYC1WWP87PXHE7WHEP">Analyzing the Users in ADP Workforce Now </h2><p>Use the below sample script in a scheduled script orchestration for generating a report from ADP Workforce Now for analysis of user status, location, department, and so on.</p><pre><code>let adp_users = ADP.getUsers();
+
+let i = 0;
+
+log.info('ADP ID,ADP STATUS,ADP EMPNO,ADP GIVENNAME,ADP FAMILYNAME,ADP WORK EMAIL,ADP LOCATION CODE,ADP JOBCODE,ADP DEPT');
+
+for (i = 0; i &lt; adp_users.length; i++) {
+
+    let adp_id = adp_users[i].id;
+
+    let adp_status = adp_users[i][IAN].status;
+
+    let adp_emp = adp_users[i][ENT].employeeNumber;
+
+    let adp_locationcode = adp_users[i][IAN].LocationCode || '';
+
+    let adp_job = adp_users[i][IAN].jobCode || '';
+
+    let adp_dept = adp_users[i][IAN].departmentCode || '';
+
+    let adp_given = adp_users[i].name.givenName;
+
+    let adp_family = adp_users[i].name.familyName;
+
+    let adp_work = adp_users[i].emails &amp;&amp; adp_users[i].emails.find(x =&gt; x.type == 'work') &amp;&amp; adp_users[i].emails.find(x =&gt; x.type == 'work').value || '';
+
+    log.info('"' 
+
+    + adp_id + '","' 
+
+    + adp_status + '","'
+
+    + adp_emp + '","'
+
+    + adp_given + '","' 
+
+    + adp_family + '","'
+
+    + adp_work + '","'
+
+    + adp_locationcode + '","'
+
+    + adp_job + '","'
+
+    + adp_dept + '"');
+
+}</code></pre><h2 id="h_01GBCRJ6EG12NRQ21FFDPHT3XS">Analyzing the Users in Okta</h2><p>Use the below sample script in a script orchestration for generating a report from Okta for analysis of user status, department, division, user type, and so on.</p><pre><code>log.info('OKTA ID, OKTA ACTIVE, OKTA EMPLOYEENUMBER, OKTA GIVENNAME, OKTA FAMILYNAME, OKTA USERNAME, OKTA MIDDLENAME, OKTA NICKNAME, OKTA TITLE, OKTA DEPARTMENT, OKTA DIVISION, OKTA USERTYPE');
+let users = okta.getUsers();
+for (let user of users) {
+log.info('"'
++ user.id + '","'
++ user.active + '","'
++ (user[ENT] &amp;&amp; user[ENT].employeeNumber || '') + '","'
++ user.name.givenName + '","'
++ user.name.familyName + '","'
++ user.userName + '","'
++ user.name.middleName + '","' 
++ user.name.nickName + '","'
++ user.title + '","'
++ user.department + '","'
++ user.division + '","'
++ user.userType +  '"');
+}</code></pre><p> </p>
+  </div>
+</body>
+</html>

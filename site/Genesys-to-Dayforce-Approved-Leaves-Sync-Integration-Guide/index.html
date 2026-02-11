@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Genesys to Dayforce Approved Leaves Sync Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Genesys to Dayforce Approved Leaves Sync Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to efficiently scale complex data management by automating the integration of diverse resource data across different applications and systems.</p>
+<p>The <em>Genesys to Dayforce Approved Leaves Sync</em> integration automates the process of synchronizing the approved leaves data of employees from Genesys to Dayforce.</p>
+<p>To identify matching user records across both systems, the integration uses the <strong>displayName</strong> and <strong>emails</strong> attributes of users from Genesys and matches them with the <strong>displayName</strong> and <strong>emails</strong> attributes of employees in Dayforce. The matching process first compares the <strong>displayName</strong> attributes and then the <strong>emails</strong> attributes across the applications. For data to sync, the attributes in both the source and target applications must match. If even one attribute does not match, the sync will fail.</p>
+<p>This integration is triggered based on the schedule that you set under the <strong>Schedule</strong> tab.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The Genesys to Dayforce Approved Leaves Sync integration provides the following functions:</p>
+<ul>
+<li>Looks for the approved leaves data in a specified management unit in Genesys.</li>
+<li>Retrieves the details of all the employee leaves approved within a specified number of past days from Genesys, during the first integration run. In the subsequent runs, only the leaves approved after the last run will be considered for the sync.<br/><strong>Note</strong>: Due to a limitation of the Genesys API, only the leave details from the past 33 days can be retrieved.</li>
+<li>Creates a CSV report of the changes in Dayforce based on a configuration in the integration.</li>
+</ul>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Genesys</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/9468827419159" rel="noopener noreferrer" target="_blank">Genesys Configuration Guide</a> for instructions on creating the Genesys application connector and setting up the authentication.</li>
+<li>
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for instructions on creating the Dayforce application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured to push approved leaves data from Genesys to Dayforce.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Genesys to Dayforce Approved Leaves Sync</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your Genesys and Dayforce connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="01JZSCGEFJCNXA1605VDMS55X8">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01JYJPX6603MY3JV444NV8R8F2">Global Settings</h4>
+<p>Configure the following global settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li>
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration execution report. If you prefer not to generate a report, leave the checkbox unselected.<br/><strong>Note</strong>: The <strong>Notification Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Analytics</strong>: Select this checkbox to analyze integration-related metrics in a dashboard.</li>
+</ul>
+<h4 id="h_01JY3QSHV7SJEDV0YNZJ7Z5A61">Source Settings</h4>
+<p>Configure the following source settings:</p>
+<ul>
+<li>
+<strong>Retrieve Approved Leaves from Past X Days for the first run</strong>: Enter the number of past days for which approved leave records must be retrieved from Dayforce during the first integration run. For example, 5. This parameter setting will be ignored in all subsequent runs.<br/><strong>Note</strong>: The maximum value allowed is 33 days. Due to a limitation of the Genesys API, only the leave details from the past 33 days can be retrieved.</li>
+<li>
+<strong>Management Unit Name(s)</strong>: Enter the list of management unit names in Genesys from which employees’ approved leave records must be retrieved. If you leave this field blank, the leave data will be retrieved from all management units in Genesys.</li>
+</ul>
+<h4 id="departments-sync">Target Settings</h4>
+<p>Configure the following target setting:</p>
+<ul>
+<li>
+<strong>Working Hours in a Day</strong>: Provide the standard number of working hours in a day to calculate the days to be deducted from the employees' leaves in Dayforce.</li>
+</ul>
+<h4 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h4>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to send an email with a CSV report of the integration run to the admin. When this checkbox is selected, the following parameters will be displayed:
+<ul>
+<li>
+<strong>Admin's Email Address</strong>: Enter the comma-separated email addresses of the admins to whom the email should be sent.</li>
+<li>
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject.</li>
+<li>
+<strong>Email Body</strong>: Enter the content that must be used as the email body for the email.</li>
+</ul>
+</li>
+</ul>
+<h2 id="h_01JZVZSXFGBPNMG18YR4D5W6P0">Tables</h2>
+<p>The <strong>Tables</strong> tab enables you to create a table containing the mapping of leave types between Genesys and Dayforce. The data is provided in the table as a key-value pair, where each key represents the leave type in Genesys and the value is the corresponding leave type in Dayforce. You can populate the table data by either using the <strong>Add Row</strong> option or uploading a CSV file containing the leave type mapping information.</p>
+<h2 id="h_01JZW0XZVVFA5NX7HTNQKCQ5HP">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.<br/> </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Greenhouse Onboarding to Okta Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Greenhouse Onboarding to Okta Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KEE800R05R79FX26PJBF2JQ6">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic identity provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This guide covers the end-to-end steps for setting up an integration to sync pre-hire and employee records from Greenhouse Onboarding to the Users resource in Okta.</p><p>To identify records across both systems, the integration uses a correlation attribute from Greenhouse Onboarding (for example, email) and matches it to a corresponding user profile attribute in Okta. This correlation attribute is used to accurately create, update, and delete user records in Okta.</p><h2 id="h_01KEE80KEAGFZM4XB3BQDZR4AS">Key Functions</h2><p>The Greenhouse Onboarding to Okta integration automates identity lifecycle management with the following primary capabilities:</p><ul>
+<li data-list-item-id="e1b254426649e96da4f120aa06ecf970d">Syncs pre-hire and employee records from Greenhouse Onboarding into Okta.</li>
+<li data-list-item-id="e282233ee2267834fe3a0410c0311f8c9">Creates new Okta users for pre-hires and employees.</li>
+<li data-list-item-id="e3c5d4296da7dda60392ddb1429c373a4">Updates the Okta user records when employee attributes change in Greenhouse.</li>
+<li data-list-item-id="ea267474c2b3ebc13bc3dadf825d6aba2">Deletes Okta users when corresponding employee records no longer exist in Greenhouse.</li>
+<li data-list-item-id="ee8a0e4e47b4dc660259a7219d5eb9dce">Allows records to be synchronized using full or incremental sync.</li>
+<li data-list-item-id="edef62c8277504632783478f51e2154d7">Supports filtering employees based on employment status.</li>
+<li data-list-item-id="e5b844396ccc364c493b318c197338b89">It utilises Okta Identity Source (XaaS) to perform bulk user creation, update, and deletion.</li>
+<li data-list-item-id="e9de23c72748a7c700d5342c701a27a4a">Handles rate limiting, retries, and batching automatically.</li>
+<li data-list-item-id="e3b32d311f020de1bc8d8506e3db0f7ad">Generates execution reports and logs.</li>
+<li data-list-item-id="efe98eac3e7dfb03ae0991cbe6d9dde15">Supports report-only mode for dry-run validation.</li>
+<li data-list-item-id="ed3deff5bbb2640e193c5b729623e5894">Sends email notifications after integration execution.</li>
+</ul><h2 data-end="2474" data-start="2458" id="h_01KEE853G6TJ9ZJD2ZY2WNXZKX">Prerequisites</h2><p data-end="2512" data-start="2476">The following are the prerequisites:</p><ul>
+<li data-list-item-id="e842328c7a45410f49c0c67d26d034f01">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e37a57017d3b831472326ce9b9f765db6">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ecbac57699da84f7e76ba947b33d7c6c6">
+<strong>Greenhouse Onboarding</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360050540634-Greenhouse-Onboarding-Configuration-Guide" rel="noopener noreferrer" target="_blank">Greenhouse Onboarding Configuration Guide</a> for details.</li>
+<li data-list-item-id="e09344d6f5c64eee115b46d2e58a13e6b">
+<strong>Okta</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360039119053-Okta-Configuration-Guide" rel="noopener noreferrer" target="_blank">Okta Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h2 data-end="3544" data-start="3526" id="h_01KEEDDJP8G6XJ04HYW6JKSJ2E">Source Priority</h2><p data-end="3709" data-start="3546">If your use case requires updating user attributes, such as email or username, in Okta, ensure that the source priority for these attributes is configured correctly.</p><p data-end="3772" data-start="3711">Perform the following steps to configure the source priority:</p><ol data-end="4172" data-start="3774">
+<li data-end="3847" data-list-item-id="e5711e52237b73ee7ebb4c2dbca8c2ab6" data-start="3774"><p data-end="3847" data-start="3777">In the Okta Admin Console, navigate to <strong data-end="3846" data-start="3816">Directory &gt; Profile Editor</strong>.</p></li>
+<li data-end="3879" data-list-item-id="e31aa510c4ecf3844e135e7ed16aad83c" data-start="3848"><p data-end="3879" data-start="3851">Select the <strong data-end="3878" data-start="3862">User Profile</strong>.</p></li>
+<li data-end="3920" data-list-item-id="e1be57cc8fd1c99b1140e94df15416445" data-start="3880"><p data-end="3920" data-start="3883">Scroll to the <strong data-end="3911" data-start="3897">Attributes</strong> section.</p></li>
+<li data-end="3966" data-list-item-id="ed314f1abb9120519bc5673a88775c74e" data-start="3921"><p data-end="3966" data-start="3924">Select the attribute (for example, email).</p></li>
+<li data-end="4172" data-list-item-id="eb94d415381ec55669c1734340bd6f3bc" data-start="3967">
+<p data-end="3994" data-start="3970">Set the Source Priority:</p>
+<ul data-end="4172" data-start="3998">
+<li data-end="4094" data-list-item-id="e054a03aba3a1e98b6a199123da06e952" data-start="3998"><p data-end="4094" data-start="4000">Select <strong data-end="4038" data-start="4007">Inherit from Profile Source</strong> if Greenhouse Recruiting should be the source of truth.</p></li>
+<li data-end="4172" data-list-item-id="ed97cba329c04e27b88a560a11250e24a" data-start="4098"><p data-end="4172" data-start="4100">Select <strong data-end="4128" data-start="4107">Inherit from Okta</strong> if the attribute should be managed in Okta.</p></li>
+</ul>
+</li>
+</ol><p data-end="4229" data-start="4174">Repeat the same steps for other attributes as required.</p><h2 data-end="4256" data-start="4236" id="h_01KEEDEMFVW7ASG2ZXMCZQ9T24">Integration Setup</h2><p data-end="4510" data-start="4258">This section details the configuration and mapping process for integrating Greenhouse Recruiting with Okta. It outlines the steps to create the integration, set up integration preferences, and define how employee data is mapped from Greenhouse to Okta.</p><h2 data-end="4538" data-start="4517" id="h_01KEEDEMFWD2HJ22JW8WNK1ZTQ">Create Integration</h2><p data-end="4594" data-start="4540">Perform the following steps to create the integration:</p><ol data-end="4914" data-start="4596">
+<li data-end="4633" data-list-item-id="ebfa642b61aaf16b36668076ff5dabb0e" data-start="4596"><p data-end="4633" data-start="4599">Log in to the Aquera Admin portal.</p></li>
+<li data-end="4691" data-list-item-id="e5f6ccb68d88ee12367d1f7919eecc262" data-start="4634"><p data-end="4691" data-start="4637">Navigate to <strong data-end="4665" data-start="4649">Integrations</strong> from the left side panel.</p></li>
+<li data-end="4724" data-list-item-id="e0ce1f89d50b181deebef164ab7749f24" data-start="4692"><p data-end="4724" data-start="4695">Click <strong data-end="4723" data-start="4701">Create Integration</strong>.</p></li>
+<li data-end="4769" data-list-item-id="eeb6060a5f1040bd226d8f29cd3dd1074" data-start="4725"><p data-end="4769" data-start="4728">Select <strong data-end="4768" data-start="4735">Greenhouse Onboarding to Okta</strong>.</p></li>
+<li data-end="4824" data-list-item-id="eb6a8eb7f365022c70405b409a7892e0a" data-start="4770"><p data-end="4824" data-start="4773">Enter a name and a description for the integration.</p></li>
+<li data-end="4891" data-list-item-id="eb90bae9c5725aaf7908744ebf8a3b6fb" data-start="4825"><p data-end="4891" data-start="4828">Select your Greenhouse Onboarding and Okta connector instances.</p></li>
+<li data-list-item-id="e7684947b3ccc2293c1ba90194b843825">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 data-end="4975" data-start="4959" id="h_01KEEDFEGVF57XC0TX65H8KSKW">Configuration</h2><p data-end="5041" data-start="4977">On the Configuration page, the following sections are displayed:</p><h3 id="h_01KEEDFEGW99EEH25BN8GYM15N">Applications</h3><p data-end="5239" data-start="5065">The Applications section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01KEEDFEGW93GF146MZ82GH6ZD">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4><p>Configure the following integration scenario settings:</p><ul><li data-list-item-id="e5eeb2eefe003f93ac18d954868f15dfd">
+<strong>Enable Okta Email Writeback</strong>: Select to update the email ID from Okta to Greenhouse Onboarding.</li></ul><h4 id="01KERNMJVMHXNECZARGMMST88N">Global Settings</h4><p>Configure the following global settings:</p><ul>
+<li data-list-item-id="e618acd7888c258711bf37eb914760190">
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e7fee37d33b2a64413b436d732467e39a">
+<strong>Enable Debug Mode</strong>: Select to generate logs outlining data changes that would occur for debugging.</li>
+<li data-list-item-id="e7d29c2cee95a0a499bc2c814f0752b46">
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li data-list-item-id="e4b89e75eaa39058da88bcdc33b383042">
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li data-list-item-id="ef93c18b7174292f533eae1d709c3bdcc">
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+<li data-list-item-id="e4d5405d13848f4e1fa1e095fd8a5dc6f">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+</ul><h3 id="h_01K0PGWJSDQBPT1BZ25EAQGNYR">Employee Management</h3><p>The <strong>Employee Management</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="ee694bf9da817ffc2962cb275995a8658">
+<strong>Create/Update Employment Status in Okta</strong>: Select Greenhouse employees whose status changes will create or update Okta records. The available options are full-time, contract, intern, part-time, and temporary.</li>
+<li data-list-item-id="e60254a6ca6d82f4138bc78084a317b08">
+<strong>Delete Condition</strong>: Enter the expression used to validate the deletion of users.</li>
+<li data-list-item-id="e080405be4acde9cf5030b6bd6e8c0773">
+<strong>Enable Incremental Mode</strong>: Select to run the integration in incremental mode.</li>
+</ul><h3 id="h_01KEVATB0WEJE6G7SSEKG5V69F">Debug Mode</h3><p>The <strong>Debug Mode</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="ebcffd85e3ef672afbfc85ae563575440">
+<strong>Source Filter</strong>: Select the Greenhouse Recruiting filter to filter the users while retrieving from Greenhouse Recruiting.</li>
+<li data-list-item-id="e3cb090833b503b43e10dea910c72e140">
+<strong>Import Limit</strong>: Specify the maximum number of employee records that can be imported from the source application during a single integration run.</li>
+</ul><h3 id="01K5TXWEG9QVYTG8WCYTN8SJ58">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul><li data-list-item-id="ea722d4b17ba10e50f5556bc4bf05c2a0">
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ed665c80295540072e0876ccf5d45da3a">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e1412e29d0c63d66ed37fff6e1d91f9fe">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li></ul><h3 id="01K5TY1G8QTYYA129P3KWESN2C">Report Settings</h3><p>The <strong>Report Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul><li data-list-item-id="e83fcbf748457b3fd099010382a9e6ab6">
+<strong>Select the Report Detail Level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eec2149834ef220523b4110d3e6693b8d">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ecd2f3a7849f23520bba3a4791c2db65c">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e31153e5afd3ec17f49e80e5d5eb0e8a4">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="ede48ff3e6e4592b146b510a5dce3d01b">
+<strong>Included Attributes</strong>: Select the attributes to be included in the report.</li>
+<li data-list-item-id="e59982e524a40ec93663b58c3e4f76b86">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="01K5TY2F66RQRGHM0D3B23C2S3">Notifications</h3><p>The <strong>Notifications</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p><h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4><p>Configure the following notification report settings:</p><ul>
+<li data-list-item-id="ee67e4cccc14bfd81b168fc89d308ef95">
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a CSV report for all integration runs.</li>
+<li data-list-item-id="e24abcec7bce649afe9c41fbda989ebc8">
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e0477fe2fff13b30870465ef82dcf1908">
+<strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li data-list-item-id="e8aa12077afffe78768c61ec29c8ae308">
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+</ul><h3 id="01K5TY3EN4QF917HX732APHYFT">Log Insights</h3><p>The <strong>Log Insights</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KFAZZE3VXE9CD3DYNAX93K24">Analytics Settings</h4><p>Configure the following analytics settings:</p><ul>
+<li data-list-item-id="e693a5036bed0d01f6d0dfc463c5bbe8f">
+<strong>Select the Log Insights Detail Level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e526bdf49ccd95a06d691a8ea229806be">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="eabb32413daf014131fff1f48d6bad678">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e71a72cb5163aa4b59744497d8c5fb7f3">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="e13909e12dc1f5b1a4a5c45d989684b07">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log insights.</li>
+<li data-list-item-id="e03cc26701d52ea36b5425e4ba66570d4">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log insights.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ea12e410e1bdf4033bcab80b6cf8ef360">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul><h4 id="h_01KFAZZE3VKMPJ7WF24BZ9T4AX">Unified Log Insights</h4><p>Configure the following unified log insights settings:</p><ul><li data-list-item-id="e1e0e543a3fcf30ac76fb688e034860fe">
+<strong>Unified Log Insights Detail: </strong>Select the unified log insights detail from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ec766c8ad71fc3d02f2a9d1c89a6ab3fa">Minimum – Operations only; no GUIDs or field values.</li>
+<li data-list-item-id="e17be38f92b575a73c05185b5eec41ebf">Metadata – Operations and field names; no GUIDs.</li>
+<li data-list-item-id="e3e68e7f55920c56ae13d6fd0e55d8317">Non-PII Data – Operations, field names, and selected non-PII values; no GUIDs.</li>
+<li data-list-item-id="e900d50cb13e49df753874e9c04ae3b82">GUID with Non-PII Data – GUIDs, operations, field names, and selected non-PII values.</li>
+</ul>
+</li></ul><h2 data-end="7379" data-start="7363" id="h_01KEEDGS40700EX5XH2DQZHH13">Attribute Map</h2><p>The Attribute Map tab in <strong>Greenhouse Onboarding</strong> to <strong>Okta</strong> Synchronization defines the default <strong>Greenhouse Onboarding</strong> attributes mapped to <strong>Okta</strong> attributes.</p><h2 data-end="8378" data-start="8367" id="h_01KEEDHB98YWC5NMCRFYK9R4CJ">Schedule</h2><p data-end="8536" data-start="8380">Integrations can be scheduled to run automatically at your preferred time. Refer to the <strong data-end="8515" data-start="8479">Integration Schedule Setup Guide</strong> for further details.</p>
+  </div>
+</body>
+</html>

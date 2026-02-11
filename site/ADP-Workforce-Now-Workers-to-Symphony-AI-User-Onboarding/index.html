@@ -1,0 +1,301 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now Workers to Symphony AI User Onboarding</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now Workers to Symphony AI User Onboarding</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JSF9GB3M652MHACPHVDNX71F">Overview </h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types.</p>
+<p>This Integration guide helps you retrieve employee details from ADP Workforce Now, format and sanitize the worker data, and create a user onboarding ticket in Symphony AI. The integration triggers when a candidate’s status changes to <strong>Hired</strong> in <strong>ADP Workforce Now </strong>using an event webhook.</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Retrieves employee details from ADP, including name, email, phone, department, job title, start date, and manager.</li>
+<li>Formats ADP data by combining fields (e.g., first, last name) and sanitizes the values (removing line breaks, escaping quotes).</li>
+<li>Generates a SymphonyAI ticket payload for onboarding with mapped ADP fields.</li>
+<li>Creates a SymphonyAI service request using an API and includes sync summaries and error details.</li>
+<li>Logs failures in OpenSearch with timestamps, error codes, and payloads for auditing.</li>
+<li>Sends email/SMS alerts to admins for unresolved errors.</li>
+<li>Generates a CSV compliance report listing synced employees, errors, and timestamps.</li>
+</ul>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for instructions on creating the ADP Workforce Now application connector and setting up the authentication.</li>
+<li>
+<strong>Symphony AI</strong>: Refer to the<a href="https://support.aquera.com/hc/en-us/articles/28945107696279-SymphonyAI-Configuration-Guide" rel="noopener noreferrer" target="_blank"> SymphonyAI Configuration Guide</a> instructions on creating the application connector and setting up the authentication.</li>
+</ul>
+</li>
+<li>
+<strong>Permissions to configure webhooks</strong>: Ensure the ADP Workforce Now worker has enough permissions to configure webhooks.</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section describes the integration process for integrating ADP Workforce Now with Symphony AI. It covers the details of creating the integration, configuring system preferences, and using event-driven triggers to enable real-time synchronization of new hire information from ADP Workforce Now to Symphony AI.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>ADP Workforce Now Workers to Symphony AI User Onboarding</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your ADP Workforce Now and Symphony AI connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h3 id="h_01JT7V3KX6TY5B4DRVWC11DBNP">Set Up Preferences</h3>
+<p>The Preferences section allows you to customize the User Onboarding service request automation. It includes the following parameters:</p>
+<ul>
+<li>
+<strong>Onboarding Service Request Type</strong>: Enter the exact name of the ticket type used to create onboarding requests. This is a required field. Providing an invalid name will prevent ticket creation and trigger error notifications to the configured email recipients.</li>
+<li>
+<strong>Recipient Email Addresses</strong>: Provide one or more valid email addresses, separated by commas, to receive automated ticket submission notifications. Ensure these emails have permission to create service requests; incorrect formatting or unauthorized addresses may cause submission failures.</li>
+<li>
+<strong>Send Email Notifications</strong>: Enable email alerts for ticket updates, approvals, and errors. When disabled, no notifications will be sent. Alerts are delivered to the addresses specified in the Recipient Email Addresses.</li>
+<li>
+<strong>Debug Mode</strong>: Enable this setting to generate detailed logs for troubleshooting integration issues. When active, logs capture step-by-step execution data, essential for diagnosing errors and failures.</li>
+<li>
+<strong>Default Email Recipient</strong>: Specify a fallback email address to receive notifications if no manager is assigned during onboarding. Use a valid email to ensure the delivery of essential alerts.</li>
+<li>
+<strong>Approver Email ID</strong>: <span>Specify the email address responsible for approving onboarding requests. Invalid or unreachable addresses may delay the approval process.</span>
+</li>
+<li>
+<strong>Request Instance</strong>: Assign the ticket to a valid department or instance to ensure correct routing and processing. Using an invalid name may cause misrouting or delays.</li>
+<li>
+<strong>Service Request Description</strong>: Provide a description for all auto-generated tickets to help teams quickly identify the request’s origin and purpose.</li>
+<li>
+<strong><span>Enable Integration Report Download</span></strong>: Select this option to allow exporting the onboarding data as a CSV file for auditing or reporting. </li>
+<li>
+<strong>Enable Dashboard Generation</strong>: Enable operational search and dashboard capabilities for querying onboarding data. </li>
+<li>
+<strong>Report Only</strong>: Enable this mode to restrict the system to read-only operations, preventing accidental changes to onboarding workflows. It is ideal for auditing or review phases.</li>
+</ul>
+<h1 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h1>
+<p>The<strong> ADP Workforce Now Workers to Symphony </strong>template maps the commonly used ADP Workforce Now and Symphony AI attributes.<br/>The following are the core user attributes that are mapped by default:</p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td><strong>ADP Workforce Now Workers API Attributes</strong></td>
+<td><strong>Symphony AI UI Field</strong></td>
+</tr>
+<tr>
+<td>givenName</td>
+<td>Employee First Name</td>
+</tr>
+<tr>
+<td>familyName</td>
+<td>Employee Last Name</td>
+</tr>
+<tr>
+<td>employee.title</td>
+<td>Title</td>
+</tr>
+<tr>
+<td>employeeID</td>
+<td>Employee ID</td>
+</tr>
+<tr>
+<td>phonenumber.value</td>
+<td>Office Phone</td>
+</tr>
+<tr>
+<td>locality </td>
+<td>City</td>
+</tr>
+<tr>
+<td>region </td>
+<td>State</td>
+</tr>
+<tr>
+<td>postalCode </td>
+<td>Postal Code</td>
+</tr>
+<tr>
+<td>Mobile</td>
+<td>Mobile Phone</td>
+</tr>
+<tr>
+<td>division </td>
+<td>Company </td>
+</tr>
+<tr>
+<td>country</td>
+<td>Country</td>
+</tr>
+<tr>
+<td>department </td>
+<td>Department </td>
+</tr>
+<tr>
+<td>N/A</td>
+<td>Office Location </td>
+</tr>
+<tr>
+<td>value </td>
+<td>Email </td>
+</tr>
+<tr>
+<td>managerEmail</td>
+<td>Manager</td>
+</tr>
+<tr>
+<td>originalHireDate</td>
+<td>Start Date</td>
+</tr>
+<tr>
+<td>N/A</td>
+<td>Re-hire </td>
+</tr>
+<tr>
+<td>workerTypeCodeValue </td>
+<td>Employee Type</td>
+</tr>
+<tr>
+<td>streetAddress </td>
+<td>Address</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01J6RRJMNFD5C1HMACKNNA2WQY">ADP Workforce Now Workers</h3>
+<p>The following table lists the ADP Workforce Now application UI field name, UI path, ADP Workforce Now attributes, and description:</p>
+<table border="1" id="1e7e6fe2-6a16-806a-b5eb-eb1f1491d3ea">
+<tbody>
+<tr id="1e7e6fe2-6a16-8096-9588-c2faae4035e0">
+<td id="b&gt;mq"><strong>ADP Workforce Now UI Field Name</strong></td>
+<td id="xJ|`"><strong>Application UI Path</strong></td>
+<td id="Ie|r"><strong>ADP Workforce Now API Attributes</strong></td>
+<td id="QiNQ"><strong>Description</strong></td>
+</tr>
+<tr id="1e7e6fe2-6a16-8097-89e3-c0d4de8f5856">
+<td id="b&gt;mq"><strong>Legal First Name</strong></td>
+<td id="xJ|`">People &gt; Worker Profile &gt; Personal &gt; Legal Name</td>
+<td id="Ie|r">employee.name.givenName</td>
+<td id="QiNQ">The employee's legally registered first name.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-80d7-8fce-e5c4fe830f49">
+<td id="b&gt;mq"><strong>Legal Last Name</strong></td>
+<td id="xJ|`">People &gt; Worker Profile &gt; Personal &gt; Legal Name</td>
+<td id="Ie|r">employee.name.familyName</td>
+<td id="QiNQ">The employee's legally registered surname.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-8036-bae8-f2ace0d30148">
+<td id="b&gt;mq"><strong>Job Title</strong></td>
+<td id="xJ|`">People &gt; Employment &gt; Position &gt; Job Title</td>
+<td id="Ie|r">employee.title</td>
+<td id="QiNQ">The employee's current role or position within the organization.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-8040-8b55-d3aed6b1f35b">
+<td id="b&gt;mq"><strong>Employee ID</strong></td>
+<td id="xJ|`">People &gt; Worker Profile &gt; Personal &gt; Worker ID</td>
+<td id="Ie|r">employeeID</td>
+<td id="QiNQ">A unique identifier assigned to each employee for internal tracking.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-80bd-9788-d734af242606">
+<td id="b&gt;mq"><strong>Home Phone</strong></td>
+<td id="xJ|`">People &gt; Contact Information &gt; Phone Numbers</td>
+<td id="Ie|r">phonenumber.value</td>
+<td id="QiNQ">The employee's residential telephone number.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-8027-8774-eb775a9651f2">
+<td id="b&gt;mq"><strong>Primary City</strong></td>
+<td id="xJ|`">People &gt; Addresses &gt; Primary Address</td>
+<td id="Ie|r">address.locality</td>
+<td id="QiNQ">The main city where the employee resides.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-80b0-8b85-f4a68944cf1f">
+<td id="b&gt;mq"><strong>Primary State/Province</strong></td>
+<td id="xJ|`">People &gt; Addresses &gt; Primary Address</td>
+<td id="Ie|r">address.region</td>
+<td id="QiNQ">The state or province of the employee's main residence.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-8051-b902-f27fe2638141">
+<td id="b&gt;mq"><strong>Primary Postal Code</strong></td>
+<td id="xJ|`">People &gt; Addresses &gt; Primary Address</td>
+<td id="Ie|r">address.postalCode</td>
+<td id="QiNQ">The postal or ZIP code for the employee's main address.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-8043-8842-c265e80eccd8">
+<td id="b&gt;mq"><strong>Mobile Phone</strong></td>
+<td id="xJ|`">People &gt; Contact Information &gt; Phone Numbers</td>
+<td id="Ie|r">phonenumber.value </td>
+<td id="QiNQ">The employee's personal mobile/cell phone number.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-80d5-8d45-c9d2ff3d6f5c">
+<td id="b&gt;mq"><strong>Division</strong></td>
+<td id="xJ|`">People &gt; Employment &gt; Organization &gt; Division</td>
+<td id="Ie|r">division</td>
+<td id="QiNQ">The organizational unit or branch where the employee works.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-80e4-907f-e0fb098b4eb1">
+<td id="b&gt;mq"><strong>Country</strong></td>
+<td id="xJ|`">People &gt; Addresses &gt; Primary Address</td>
+<td id="Ie|r">address.country</td>
+<td id="QiNQ">The country where the employee's primary residence is located.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-80c2-b0da-dba606e483ec">
+<td id="b&gt;mq"><strong>Department</strong></td>
+<td id="xJ|`">People &gt; Employment &gt; Organization &gt; Department</td>
+<td id="Ie|r">enterprise.department</td>
+<td id="QiNQ">The specific team or functional area where the employee works.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-801b-8ac0-c32dac586b53">
+<td id="b&gt;mq"><strong>Work Email</strong></td>
+<td id="xJ|`">People &gt; Contact Information &gt; Email Addresses</td>
+<td id="Ie|r">email.value</td>
+<td id="QiNQ">The employee's official company email address.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-8088-849e-ecc455aac656">
+<td id="b&gt;mq"><strong>Manager Email</strong></td>
+<td id="xJ|`">People &gt; Employment &gt; Reports To &gt; Manager</td>
+<td id="Ie|r">managerEmail</td>
+<td id="QiNQ">The corporate email address of the employee's direct supervisor.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-807a-a759-cc8aff59099d">
+<td id="b&gt;mq"><strong>Original Hire Date</strong></td>
+<td id="xJ|`">People &gt; Employment &gt; Employment Details</td>
+<td id="Ie|r">originalHireDate</td>
+<td id="QiNQ">The initial date when the employee first joined the organization.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-809c-bfc5-fa2366a1c11b">
+<td id="b&gt;mq"><strong>Worker Type</strong></td>
+<td id="xJ|`">People &gt; Employment &gt; Employment Details</td>
+<td id="Ie|r">workerTypeCodeValue </td>
+<td id="QiNQ">The employment classification indicating full-time, contractor, or other status.</td>
+</tr>
+<tr id="1e7e6fe2-6a16-80a4-bf0b-d1a82903cb77">
+<td id="b&gt;mq"><strong>Primary Street Address</strong></td>
+<td id="xJ|`">People &gt; Addresses &gt; Primary Address</td>
+<td id="Ie|r">address.streetAddress </td>
+<td id="QiNQ">The complete street address of the employee's main residence.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the <strong>Execution Status</strong> indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Run Integration</h1>
+<p>You can set up an event or schedule triggers to execute the integration. For further details, refer to the <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p>
+<p>Once the integration is successfully executed, Aquera syncs the workers created in ADP Workforce Now and creates a ticket in Symphony AI. </p>
+<p> </p>
+  </div>
+</body>
+</html>

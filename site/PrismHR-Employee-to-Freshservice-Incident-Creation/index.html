@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PrismHR Employee to Freshservice Incident Creation</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>PrismHR Employee to Freshservice Incident Creation</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JVC42RMFEG313DVJM3S2N72Q">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types.</p>
+<p>This integration automates creating and updating Freshservice tickets based on employee lifecycle events in PrismHR (onboarding, offboarding, employee transfers (moves). The integration runs on a scheduled basis, checking PrismHR for employee changes (new hires, terminations, and transfers), creating Freshservice incidents, and sending reports to administrators.</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Monitors employee onboarding, offboarding, and transfers in PrismHR and runs the integration process based on configured schedules or manual execution to process such events.</li>
+<li>Extracts key employee data from PrismHR, including the employee’s email (work email primarily, with fallback to contact email if enabled) for identification.</li>
+<li>Maps the employee’s email from PrismHR to Freshservice to uniquely identify and create or update tickets. </li>
+<li>Includes additional employee attributes (first name, last name, department, location, job code, reports to, last status change date, and last job change date) in the incident description of Freshservice tickets to provide support agents with detailed context about the employee’s status and organizational information.</li>
+<li>Supports filtering employee data based on either an absolute date (YYYY-MM-DD) or a relative duration (e.g., 5d for the last 5 days), allowing the integration to process only recent or relevant changes.</li>
+<li>Creates or updates Freshservice tickets for each qualifying employee event, applying preferences such as ticket priority and status. The ticket description also includes all selected additional fields.</li>
+<li>Maintains detailed logs of all operations, capturing both successes and failures for auditing and troubleshooting purposes.</li>
+<li>Generates CSV reports summarizing ticket creation and update results, with options for full or basic reports as configured in preferences.</li>
+<li>Sends summary emails to administrators containing operation results and optionally attaches CSV reports, formatted using customizable email templates.</li>
+<li>Handles errors, logs error details, and notifies administrators via email.</li>
+</ul>
+<h1 id="h_01JW8J96CS7C0EAEKRXPRHS4KQ">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>PrismHR</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/26717919543319-PrismHR-Configuration-Guide" rel="noopener noreferrer" target="_blank">PrismHR</a> for instructions on creating the PrismHR application connector and setting up the authentication.</li>
+<li>
+<strong>Freshservice</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360011194413-Freshservice-Configuration-Guide" rel="noopener noreferrer" target="_blank">Freshservice Configuration Guide</a> for instructions on creating the Freshservice application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details the configuration of the scheduled integration between PrismHR and Freshservice.  It covers creating an integration, setting up integration preferences, and configuring how employee lifecycle events are processed. The integration reads employee data changes from PrismHR, including onboarding, offboarding, and transfers, at scheduled intervals and creates or updates the corresponding incident in Freshservice. </p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>PrismHR Employees to Freshservice Tickets</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <em>PrismHR</em> and <em>Freshservice</em> connector instances.</li>
+<li>
+<span>Click <strong>Continue</strong>. The </span><strong>configuration </strong>appears to set up the integration.</li>
+</ol>
+<h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Set Up Preferences</h3>
+<p>The <strong>Preferences</strong> section contains essential parameters that determine how the integration operates. Each setting is crucial in customizing the integration's behavior to meet your organization's needs.</p>
+<ul>
+<li>
+<strong>Report Only: </strong>Generates a report outlining the data changes detected by the integration without making any updates or changes to the system.</li>
+<li>
+<strong>Enable Integration Report Download: </strong>Allows users to download the integration report in CSV format for further analysis or record-keeping.</li>
+<li>
+<strong>Report Type: </strong>Specifies the level of detail included in the generated report.</li>
+<li>
+<strong>Enable Dashboard Generation: </strong>Creates a dashboard to visually analyze the results of the integration.</li>
+<li>
+<strong>Recipients' Email Addresses: </strong>Comma-separated list of email addresses that will receive email notifications from the integration.</li>
+<li>
+<strong>Email Body on Successful Integration Execution: </strong>Customizable content that will be used as the body of email notifications sent when the integration runs successfully.</li>
+<li>
+<strong>Email Body on Failed Integration: </strong>Customizable content that will be used as the body of email notifications sent when the integration encounters errors.</li>
+<li>
+<strong>Debug Mode: </strong>Enables detailed logging to help identify and troubleshoot issues during integration execution.</li>
+<li>
+<strong>Ticket Priority: </strong>Sets the default priority level for tickets created by the integration. (Default: Medium)</li>
+<li>
+<strong>Ticket Status: </strong>Sets the default status for tickets created by the integration. (Default: Open)</li>
+<li>
+<strong>Additional Employee Fields for Onboarding: </strong>Lets you select extra employee details to include in the onboarding description field. Email and employee ID are always included by default.</li>
+<li>
+<strong>Additional Employee Fields for Offboarding: </strong>Lets you select extra employee details to include in the offboarding description field. Email and employee ID are always included by default.</li>
+<li>
+<strong>Additional Employee Fields for Transfers: </strong>Lets you select extra employee details to include in the transfer description field. Email and employee ID are always included by default.</li>
+<li>
+<strong>Enable Email Fallback: </strong>Allows use of the contact email if the work email is unavailable for the employee.</li>
+<li>
+<strong>PrismHR Client ID: </strong>The unique client ID provided by PrismHR, used to authenticate and enable the integration.</li>
+<li>
+<strong>Employee Data Filter by Date/Duration: </strong>Specify a date (YYYY-MM-DD) or duration (e.g., "2d" for 2 days) to retrieve and create tickets for employee data changes that have occurred since then.<br/><strong>Note</strong>:The Employee Data Filter by Date/Duration preference helps you control which employee changes are to be processed, so you only handle the most relevant updates. You can enter either a specific date (like 2025-05-20) or a duration (like 2d for the last two days). The integration will then only retrieve and create tickets for employee data changes that happened on or after this specified time.</li>
+</ul>
+<ul>
+<li>
+<ul>
+<li>If you enter a date (e.g., 2025-05-20), only changes from that date forward are included.</li>
+<li>If you enter a duration (e.g., 2d), only changes from the last two days are included.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01JW885GSCDXRTKYZ3FTAZPD71">Attribute Mapping</h1>
+<p>The integration of PrismHR to Freshservice incident creation maps the following attributes:</p>
+<table border="1" id="200e6fe2-6a16-8006-a5d5-d9bb6f9a8cf2">
+<tbody>
+<tr id="200e6fe2-6a16-8044-b3a7-e3c1e19b58aa">
+<td id="{GFe"><strong>PrismHR Employee Attributes</strong></td>
+<td id="T`et"><strong>Freshservice Attributes</strong></td>
+</tr>
+<tr id="200e6fe2-6a16-80c4-a820-e69a68621978">
+<td id="{GFe">workEmail or contactEmail</td>
+<td id="T`et">Work Email</td>
+</tr>
+</tbody>
+</table>
+<p>This integration requires only email mapping to identify the employees. The employee’s work email is used primarily, with an option to fall back to the contact email if the work email is unavailable and the fallback preference is enabled.</p>
+<p>In addition to email, the following fields are included in the incident description for onboarding, offboarding, and transfer tickets to provide context:</p>
+<table border="1" id="200e6fe2-6a16-80c8-9c42-df7d715f6ab2">
+<tbody>
+<tr id="200e6fe2-6a16-807d-b6e1-df422ad81360">
+<td id="jCRn"><strong>PrismHR Field</strong></td>
+<td id="o:i]"><strong> Freshservice Incident Description </strong></td>
+</tr>
+<tr id="200e6fe2-6a16-805c-9d9f-d3b9443a6770">
+<td id="jCRn">firstName</td>
+<td id="o:i]"> First Name</td>
+</tr>
+<tr id="200e6fe2-6a16-8085-868a-fc68e98ccb02">
+<td id="jCRn">lastName</td>
+<td id="o:i]">Last Name</td>
+</tr>
+<tr>
+<td>worker.client ID</td>
+<td>Employee ID</td>
+</tr>
+<tr id="200e6fe2-6a16-8021-aff9-f421d609ca3b">
+<td id="jCRn">lastStatusChangeDate</td>
+<td id="o:i]">Last Status Change Date</td>
+</tr>
+<tr id="200e6fe2-6a16-800d-b1c3-edc62b216d2d">
+<td id="jCRn">department</td>
+<td id="o:i]">Department</td>
+</tr>
+<tr id="200e6fe2-6a16-804e-bb6e-ca26e9a00129">
+<td id="jCRn">location</td>
+<td id="o:i]">Location</td>
+</tr>
+<tr id="200e6fe2-6a16-8049-9e3a-d123813dcd59">
+<td id="jCRn">jobCode</td>
+<td id="o:i]">Job Code</td>
+</tr>
+<tr id="200e6fe2-6a16-8080-9b17-ddd22bd3c6fd">
+<td id="jCRn">reportsTo</td>
+<td id="o:i]">Reports To</td>
+</tr>
+<tr id="200e6fe2-6a16-8064-9a1b-f53f312d7d0d">
+<td id="jCRn">lastJobChangeDate</td>
+<td id="o:i]">Last Job Change Date</td>
+</tr>
+</tbody>
+</table>
+<p>These fields help Freshservice agents understand the employee’s current status and organizational details when handling the incidents.  The following is a sample incident description generated by the integration for an offboarding event: <span><img src="./assets/436182486a657e1c.bin"/></span></p>
+<p>The description includes key employee details such as name, employee ID, email, department, and the last status change date. This format helps ensure that all necessary information is clearly presented to the support team for efficient processing of the offboarding request.</p>
+<h1 id="01JQQX8ZJ9C62RPE14W4DTF9PE">Run the Integration</h1>
+<p>The integration can be scheduled to run automatically at customizable intervals. Available frequencies include <strong>15 minutes, 30 minutes, 1 hour, 4 hours, 6 hours, 12 hours, or 24 hours</strong>. You can also enable <strong>recurring executions</strong> to run the integration continuously on your chosen schedule.</p>
+<p>On successful execution, the CSV file will be sent to the specified recipients. In case of integration errors, notifications and reports will also be sent to the email addresses.</p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.<br/><img alt="oi.jpg" src="./assets/6bd8a9131790dc7a.bin"/></p>
+  </div>
+</body>
+</html>

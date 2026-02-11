@@ -1,0 +1,289 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BambooHR Employees to Active Directory Users Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>BambooHR Employees to Active Directory Users Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KEXX15T30EC7JT4CJ6DQGYVY">Overview </h1><p>The Aquera platform enables scalable, automated data management across enterprise applications. Through seamless integrations, it helps organizations eliminate manual processes, ensure consistency, and optimize workflows across complex IT infrastructures.</p><p>The <strong>BambooHR Employees to Active Directory Users</strong> integration creates, updates, manages, and terminates user accounts in Active Directory based on the employee data retrieved from BambooHR. The integration manages the Organization Units (OUs) of the Active Directory users based on the employee data changes in BambooHR. </p><h2 id="h_01KEY2HRJ0M1SNH10YSRF63QF4">Key Functions</h2><p>The <strong>BambooHR Employees to Active Directory Users</strong> integration performs the following key functions:</p><ul>
+<li data-list-item-id="e72e8bdef4ddb4f59564062a4d8acba20">Retrieves data of all employees from your BambooHR instance</li>
+<li data-list-item-id="ef74b508376e0d0ef8486a60e52275279">Creates Active Directory users for new hires in BambooHR<ul>
+<li data-list-item-id="e711df37d45c1d9206521d4f665f4f019">Generates unique SAMAccountName, User Principal Name (UPN), Common Name, and Email ID for each user based on the format settings in the integration</li>
+<li data-list-item-id="eeab6eeec77a83ee852921fdfca51f80f">Sets the onboarding date for new users based on hire date, start date, or a custom date field in BambooHR</li>
+<li data-list-item-id="e21be6e630cb690981b912616910705c5">Supports creating user passwords following a password complexity policy</li>
+<li data-list-item-id="e65358855c8e4f7c81153db79e14ef2f6">Supports enforcing password change on the user's first login</li>
+<li data-list-item-id="ef384e386922632598c51ba42d56bd6d6">Supports creating users in inactive status</li>
+</ul>
+</li>
+<li data-list-item-id="e9a308511dd74a756f525b484734eed86">Updates existing Active Directory users when employee data changes in BambooHR</li>
+<li data-list-item-id="e0da1cd475e12c5b1cafcb18d13a1cc65">Disable or delete users, or reset user password in Active Directory when their accounts are terminated in BambooHR</li>
+<li data-list-item-id="ee9b7e78962afbeaa56b483aaa92ad08d">Assign or remove users in Active Directory OUs based on the OU assignment rules </li>
+<li data-list-item-id="e4f491f9c3695009977dfe11f274990cf">Updates the users' email IDs back to BambooHR from Active Directory based on a configuration</li>
+<li data-list-item-id="ed672d83d2cbac2c82665dc9eca548553">Generates audit logs, reports, and analytics.</li>
+<li data-list-item-id="e142fcf8880855bc16f1d4c8a770dacaa">Sends an email notification to admins for each integration run.</li>
+</ul><h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e0a8d1547b7c334cad75796e5234b72e8">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU or AU region, use the following URL to register:<ul>
+<li data-list-item-id="edc0068f2c440f831c191b00052895c97">
+<a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a> for EU region</li>
+<li data-list-item-id="e7586d9eaebf08caaab89f4ebb24c1be9">
+<a href="https://admin.au.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.au.aquera.io</a> for AU region</li>
+</ul>
+</li>
+<li data-list-item-id="e0ebc72ca2eb5657fdefb184e84ad92e7">
+<strong>Configure Connectors in the Aquera Admin Portal:</strong> You need to configure the following connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e42c5af4e1053d9d7a3123d4680c49bad">
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details. </li>
+<li data-list-item-id="e0666a4804a5e243791ab9fe7a29a7b91">
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/26093919567255" rel="noopener noreferrer" target="_blank">Active Directory Version 8 Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01KEXYT4S6PBGE446BGJJST3YJ">Integration Setup</h1><p data-end="188" data-start="23">This section describes the configuration steps required to set up <strong>ServiceNow / Active Directory - Group Management</strong> integration in Aquera.</p><h2 id="h_01KEXYT4S7MBFETFZYMR9QKS0M">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e93aca27a362bfa12aabf6f6a20ca3f15">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="e9aef5bab71ff63a4b058ea0f27652ec7">Navigate to <strong>Integrations</strong> from the left navigation panel.</li>
+<li data-list-item-id="eb76365d9f02c7554e68c4455c5d445d9">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="ed07928b510eb4a5db2a0b7a94038e9ce">Select <strong>ServiceNow / AD - Group Management.</strong>
+</li>
+<li data-list-item-id="e202d0fea0b1bee510dcaa248c8f63237">Enter a <strong>name</strong> and <strong>description</strong> for the integration.</li>
+<li data-list-item-id="ed9b8594bdd1ca43b004fe6e8e1d60f8e">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed.</li>
+</ol><h2 id="h_01KEXYT4SB88DN4JBNV7SJKRSV">Configuration</h2><p data-end="706" data-start="637">The following sections are available under the <strong data-end="701" data-start="684">Configuration</strong> tab:</p><h3 id="h_01KEXYT4SCB0P407JTJS4H9AYE">Applications</h3><p>The <strong>Applications</strong> section allows you to select the following connectors that are required for this integration:</p><ul>
+<li data-list-item-id="e36162f9a187277869e2957776da1e294">
+<strong>Active Directory:</strong> Select the Active Directory (Version 8) application from the drop-down list.</li>
+<li data-list-item-id="e8c1a08c04ec503497465deb54e6064dd">
+<strong>ServiceNow</strong>: Select the ServiceNow application from the drop-down list.</li>
+</ul><h3 id="h_01KEXZA87A280KAVD4N7YTWTXY">Parameters</h3><p>The <strong>Parameters</strong> section allows you to customize the integration preferences. These settings control the behavior of the integration and help tailor it to your organization’s requirements.</p><h4 id="h_01KEXZRH1Q7SDB2TMJ59K10QMY">Integration Scenarios </h4><p>Enable the following integration feature:</p><ul><li data-list-item-id="e021f990155303a7e3bac06d744cdda22">
+<strong>Enable Group Management</strong>: Select this checkbox to enable provisioning or deprovisioning users in specific groups in Active Directory based on the details provided in the ServiceNow Catalog requests. You <strong>must</strong> enable this option for the integration. The <a href="#h_01KFAPXA96ETTGW7ZSSS92A5RX"><strong>Group Management</strong></a> section is displayed when you enable this option.</li></ul><h4 id="h_01KEXZVYQPPTTTJJTT6X3K7JMH">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e5492145217be31e74012a337adb58259">
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e6f145283376046ba980977c30a218a1e">
+<strong>Enable Logging</strong>: Select this option to generate logs outlining the changes performed by the integration. The <strong>Logging</strong> section is displayed when you enable this option.</li>
+<li data-list-item-id="ef066aacee7e2c7b2623752426468c1d2">
+<strong>Enable Report Generation</strong>: Select this option to generate integration reports. The <strong>Reporting</strong> section is displayed when you enable this option.</li>
+<li data-list-item-id="e141187bf4683f8701319d3027514f1f3">
+<strong>Enable Notification:</strong> Select this option to send integration-related notification emails to admins, after each run. The <strong>Notification</strong> section is displayed when you enable this option.</li>
+<li data-list-item-id="e47dd1ccfb5d19a9409421f26db59c1aa">
+<strong>Enable Log Insights</strong>: Select this option to visualize the integration-related metrics. The <strong>Log Insights</strong> section is displayed when you enable this option.</li>
+</ul><h3 id="h_01KFAPXA96ETTGW7ZSSS92A5RX">Group Management</h3><p>This section includes the following options to configure the key functionality of the integration.</p><h4 id="h_01KFAPZDQZT2GDZX62Y58HQEE5">Source Configuration</h4><p>The following are the parameters under the <strong>Source Configuration</strong> section:</p><ul>
+<li data-list-item-id="e7aa3fbe6e1be5cef67a65542008f2ffd">
+<strong>Select Catalog</strong>: Select the ServiceNow catalog from which the requests must be picked by the integration. For example, <em>Add/Remove Users in a Group</em>.  Only the requests that are in the <em>Approved</em> status will be processed by the integration.</li>
+<li data-list-item-id="e2263e5dc4cb1d08fbf06f71d52bf4c25">
+<strong>Select Source Attribute</strong>: Select the source attribute that must be used by the integration to uniquely identify a user in ServiceNow. This attribute value will be matched against a specific Active Directory attribute to identify the matching user records between ServiceNow and Active Directory. For example, <em>Email</em>
+</li>
+<li data-list-item-id="e70797e521c176ce3f1b65b7fb0126d79">
+<strong>Select Operation Field</strong>: Select the field in the ServiceNow catalog that the integration must use to identify the type of operation (Add or remove user) to be performed in AD groups.</li>
+<li data-list-item-id="ef0e0c4df9631e9c4c5476389204f0cc9">
+<strong>Select Option for Add User</strong>: Select the value that the operation type field of the catalog must contain for the integration to perform an <em>Add</em> operation. For example, <em>Add</em>. The catalog field that you have selected in the <strong>Select Operation Field</strong> must contain this value for the integration to add a user to an AD group.</li>
+<li data-list-item-id="ec8df899331f43917d3d34fab6ba02d1d">
+<strong>Select Option for Remove User</strong>: Select the value that the operation type field of the catalog must contain for the integration to perform a <em>Remove</em> operation. For example, <em>Remove</em>. The catalog field that you have selected in the <strong>Select Operation Field</strong> must contain this value for the integration to remove a user from an AD group.</li>
+<li data-list-item-id="eea74d55f3cb563b7bd938910fd465fe8">
+<strong>Select AD Group Field</strong>: Select the field in the ServiceNow catalog that the integration must use to identify the AD group in which the action has to be performed. For example, <em>Group Name</em>
+</li>
+<li data-list-item-id="ed0427ea5290fab71fb83e40d903f4188">
+<strong>Select User Field</strong>: Select the section in the ServiceNow catalog where the integration must find the list of users for which the action has to be performed. For example, <em>Users</em>
+</li>
+</ul><h4 id="h_01KFAR68E39GPYW8TV3M3M9SZJ">Target Configuration</h4><p>The following parameter is available under the <strong>Target Configuration</strong> section:</p><ul><li data-list-item-id="e6a8eefabe5d515e11594526b5de8ea8f">
+<strong>Select Target Attribute</strong>: Select the target attribute that must be used by the integration to uniquely identify a user in Active Directory. The integration compares the value of the source attribute (selected in <strong>Select Source Attribute</strong>) against this Active Directory attribute value to identify the matching user records between ServiceNow and Active Directory. For example, <em>Mail</em>
+</li></ul><h3 id="h_01K0PGWJSDQBPT1BZ25EAQGNYR">Logging</h3><p>Configure the following settings to customize logging:</p><ul><li data-list-item-id="ecf797716569aa7c5de811cd5258b420c">
+<strong>Log Detail Level</strong>:  Select the desired log detail level from the dropdown menu. <br/>The following are the available options:<ul>
+<li data-list-item-id="ef82c3c5b26c4efad9d70a4c7e654e830">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of operations is shown.</li>
+<li data-list-item-id="e37844004ca6437bfd462edaa811d22dc">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e636a9b1de62471356736ef91da50a20d">
+<strong>Custom</strong>: Enables you to include or exclude specific attributes. The following option only appears when the log detail level is set to <strong data-end="475" data-start="465">Custom</strong>.<ul><li data-list-item-id="e76e6551e0c7754584f165ca6039409a2">
+<strong>Attribute Filter</strong>: Enables you to select whether you want to list the attributes that must be included or excluded. Select <strong>Included Attributes</strong> or <strong>Excluded Attributes</strong>.<ul>
+<li data-list-item-id="e805016ea86a185e882a45a3f185f443a">
+<p><strong>Attributes to Include in Logs</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to include in the logs.</p>
+<p>Or</p>
+</li>
+<li data-list-item-id="e5fcd01271aaf39e9b33755c999462ba1">
+<strong>Attributes to Exclude in Logs</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to exclude from the logs.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e064e248f89d3cd224b31a985a390cd5e">
+<strong>Show Attribute Values</strong>: Select this option if you want to include the attribute values also in the logs. This option is displayed only if you have selected <strong>Full Details</strong> or <strong>Custom</strong> in the <strong>Log Detail Level</strong> field.</li>
+</ul>
+</li></ul><h3 id="h_01KFB01MJEQGEFNBCW2WPM71S7">Reporting</h3><p>Configure the following settings to customize the reports that can be downloaded from the <strong>Execution Timeline</strong> panel:</p><ul><li data-list-item-id="e0d22857ca1cc852609aae06312ed4451">
+<strong>Report Detail Level</strong>:  Select the desired report detail level from the dropdown menu. <br/>The following are the available options:<ul>
+<li data-list-item-id="e7fa51d502ba410022b907e509a4d3f83">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of operations is shown.</li>
+<li data-list-item-id="efa5f536079cdb11f2f7ca6325504e2ae">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e9e15d5550f9b5b97d502ef06cec2f69e">
+<strong>Custom</strong>: Enables you to include or exclude specific attributes in the report. The following option only appears when the report detail level is set to <strong data-end="475" data-start="465">Custom</strong>.<ul><li data-list-item-id="e85d2236f27129e14bffb42530b0e4fdf">
+<strong>Attribute Filter</strong>: Enables you to select whether you want to list the attributes that must be included or excluded. Select <strong>Included Attributes</strong> or <strong>Excluded Attributes</strong>.<ul>
+<li data-list-item-id="e60deb93aa0a22ecde3ce8b4a43c36aea">
+<p><strong>Attributes to Include in Report</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to include in the report.</p>
+<p>Or</p>
+</li>
+<li data-list-item-id="ec56dda51a0637630f6c4d25d683aba5d">
+<strong>Attributes to Exclude in Report</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to exclude from the report.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KFAWRQ877J2T3ZB49RZTHEFD">Notification Center</h3><h4 id="h_01KGF28WHQSDN219RXX7BQ1RTC">General Notification Settings</h4><ul>
+<li data-list-item-id="e2e77dccf5a45d3e80e0e2c1256a11aa4">
+<strong>Enable Notifications</strong>: Select this checkbox to receive the notification related to the integration.</li>
+<li data-list-item-id="e57c0d89822f31250029a76769e525fb7">
+<strong>Enable Email Notifications</strong>: Select this checkbox to receive the notification related to the integration via email.</li>
+<li data-list-item-id="e38ad6dd046f05763b6bae324c008b27c">
+<strong>Enable Notification </strong><span><strong>with</strong></span><strong> (via) Messenger</strong>: Select this checkbox to receive the notification related to the integration via messenger.</li>
+<li data-list-item-id="efc343bc2d8b9dd98834412ef339d33be">
+<span><strong>Admin Notification Email ID's</strong></span><strong> Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e53d0e2319b4c7758ebe68ccad48e6bcd"> <strong>Send Email Notification On</strong>: Select one or more events from the dropdown that should be considered for sending the email notifications.</li>
+<li data-list-item-id="ee43b14a8ad724288fdbceda4922f4e4d">
+<span><strong>Include report as email attachment</strong></span><strong> Send Integration Report via Email</strong>: Select this checkbox to include the report as an attachment in the notification email.</li>
+<li data-list-item-id="ead0fb58baff9a6a6c2ebce767e12fd63">
+<strong>Select Report Type</strong>: Select the type of report to include as attachment in the notification email. The available options are <em>Minimum Changes</em>, <em>Metadata Changes</em>, <em>Non-PII Data Changes</em>, <em>GUID with Non-PII Data</em>, <em>Employee Number with Non-PII Data</em>, and <em>Employee Number with All Data Changes</em>.</li>
+<li data-list-item-id="e09ebd9eadde7ae4685bd4e2b3c23f837">
+<span><strong>Please</strong></span><strong> Select Report File Format</strong>: Select the file format of the report that should be attached in the notification email. The available options are <em>CSV Report</em> and <em>Excel Report</em>.</li>
+</ul><h4 id="h_01KGF4TM8NYGNCXDM89XGC8X0N">User Creation Notifications</h4><p>Configure the following user creation notifications:</p><ul>
+<li data-list-item-id="ebeda008a237c87c6823d92ad8c2bca30">
+<span><strong>Creation - Send To</strong></span><strong> Recipient's Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent upon successful user creation. The available options are <em>Admin</em>, <em>Supervisor</em>, <em>User's Work Email</em>, <em>User's Personal Email</em>, and <em>Custom</em>.<ul>
+<li data-list-item-id="e81dc3fb4ec687d5c8a9013c4ae1c46a3">Select <strong>Admin</strong> only if you want to send notifications to the administrator.</li>
+<li data-list-item-id="e11a28ef4fe9dae36d1d5e1c35c4160bf">Select <strong>Supervisor</strong> only if you want to send notifications to the supervisor.</li>
+<li data-list-item-id="ecbae4823c0a85c75928baf6dfe390e04">Select <strong>User's Work Email</strong> only if you want to send notifications to the user's work email address.</li>
+<li data-list-item-id="e35bf73ff0d05fcb425b5d0967746e61d">Select <strong>User's Personal Email</strong> only if you want to send notifications to the user's personal email address.</li>
+<li data-list-item-id="ec8df7a928701906e12090d8fa37ef9bd">Select <strong>Custom</strong> only if you want to customize the recipient's<strong> </strong>email addresses as your preference.</li>
+</ul>
+</li>
+<li data-list-item-id="ed9a5bdedf13002f8ccafef5b769c9cd7">
+<span><strong>Creation - Custom Recipients</strong></span><strong> Custom Recipient</strong>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select <strong>Custom</strong> in the <strong>Recipients' Email Addresses</strong> parameter.</li>
+<li data-list-item-id="e7a574a51a5d33b3bc4fca0a18e8ba6e7">
+<span><strong>Creation -</strong></span><strong> Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="ee302926a852599a0ae634ebbeb06ec24">
+<span><strong>Creation -</strong></span><strong> Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li data-list-item-id="e8fcb9212141482f267f02afd7470be10"> <span><strong>User Creation Email Template</strong></span><strong> Email Body on Successful User Creation</strong>: Enter the content that must be used as the email body for notifications sent upon successful user creation.</li>
+</ul><h4 id="h_01KGH6WTARVEH29V4HBAK6CZPB">User Update Notifications</h4><p>Configure the following user update notifications:</p><ul>
+<li data-list-item-id="e03d9ebc3d65fc5dc48ceace17e881e5f">
+<span><strong>Update - Send To</strong></span><strong> Recipient's Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent upon successful user updation. The available options are <em>Admin</em>, <em>Supervisor</em>, <em>User's Work Email</em>, <em>User's Personal Email</em>, and <em>Custom</em>.<ul>
+<li data-list-item-id="e0c119c36e629f3af09c2ce3293bb07df">Select <strong>Admin</strong> only if you want to send notifications to the administrator.</li>
+<li data-list-item-id="e7eec7faab1472205e933d841b6ee5c44">Select <strong>Supervisor</strong> only if you want to send notifications to the supervisor.</li>
+<li data-list-item-id="e7589d2f6f6a811275e49d0ca900db6a0">Select <strong>User's Work Email</strong> only if you want to send notifications to the user's work email address.</li>
+<li data-list-item-id="e5740d31614dea9d3511e9191b4243e00">Select <strong>User's Personal Email</strong> only if you want to send notifications to the user's personal email address.</li>
+<li data-list-item-id="eb7d5c52c0e609af45a773614ad4a51a6">Select <strong>Custom</strong> only if you want to customize the recipient's<strong> </strong>email addresses as your preference.</li>
+</ul>
+</li>
+<li data-list-item-id="ea02b3fad80efcaf56984b23ab3707214">
+<span><strong>Update - Custom Recipients</strong></span><strong> Custom Recipient</strong>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select <strong>Custom</strong> in the <strong>Recipients' Email Addresses</strong> parameter.</li>
+<li data-list-item-id="ee4d63a0f53cae5149a19be44260c5396">
+<span><strong>Update -</strong></span><strong> Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="ef6a769d4e3ff5aa237c84b8561d47722">
+<span><strong>Update -</strong></span><strong> Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li data-list-item-id="ea093c5225329c34bbffc7d4e5efbf0ec"> <span><strong>User Update Email Template</strong></span><strong> Email Body on Successful User Update</strong>: Enter the content that must be used as the email body for notifications sent upon successful user update.</li>
+</ul><h4 id="h_01KGH6WTAR95N8HVM5ENG4FCQN">User Terminate Notifications</h4><p>Configure the following user terminate notifications:</p><ul>
+<li data-list-item-id="ee9f3551a299ed3bae8096a7ff8017b78">
+<span><strong>Termination - Send To</strong></span><strong> Recipient's Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent upon user termination. The available options are <em>Admin</em>, <em>Supervisor</em>, <em>User's Work Email</em>, <em>User's Personal Email</em>, and <em>Custom</em>.<ul>
+<li data-list-item-id="e5cf8a929f6bfc6a82e70040a367b9d47">Select <strong>Admin</strong> only if you want to send notifications to the administrator.</li>
+<li data-list-item-id="e09a164231b7554077e461367b9671e05">Select <strong>Supervisor</strong> only if you want to send notifications to the supervisor.</li>
+<li data-list-item-id="ec3e0681e30d965854e9c480d110b7103">Select <strong>User's Work Email</strong> only if you want to send notifications to the user's work email address.</li>
+<li data-list-item-id="e3691e52efcb968e80c22f809eee5e13e">Select <strong>User's Personal Email</strong> only if you want to send notifications to the user's personal email address.</li>
+<li data-list-item-id="e71efccf3a9f9c2e44e9c6adb5ef59947">Select <strong>Custom</strong> only if you want to customize the recipient's<strong> </strong>email addresses as your preference.</li>
+</ul>
+</li>
+<li data-list-item-id="e6e7d35025a249e2e797c5a44a80c5f4b">
+<span><strong>Termination - Custom Recipients</strong></span><strong> Custom Recipient</strong>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select <strong>Custom</strong> in the <strong>Recipients' Email Addresses</strong> parameter.</li>
+<li data-list-item-id="ee9a6d7dd96c6b13928a34371059a043a">
+<span><strong>Termination -</strong></span><strong> Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e310680e3915152db754e7d50d431074f">
+<span><strong>Termination -</strong></span><strong> Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li data-list-item-id="e582c72e14bcbfcf8e5b397df92cc1eba"> <span><strong>User Termination Email Template</strong></span><strong> Email Body on User Termination</strong>: Enter the content that must be used as the email body for notifications sent upon user termination.</li>
+</ul><h4 id="h_01KGH6WTAR75056TKH062NYC30">Success Notification Settings</h4><p>Configure the following notification setting upon successful integration:</p><ul>
+<li data-list-item-id="e94a2edddb85e121722da3d8720ba82d2">
+<span><strong>Success - Send To</strong></span><strong> Recipient's Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent upon successful integration. The available options are <em>Admin</em>, <em>Supervisor</em>, <em>User's Work Email</em>, <em>User's Personal Email</em>, and <em>Custom</em>.<ul>
+<li data-list-item-id="e6af0e4c1b32781a3a79daa4c18044ec1">Select <strong>Admin</strong> only if you want to send notifications to the administrator.</li>
+<li data-list-item-id="e7ab0acd7bcb33c072a79f5dcc3251380">Select <strong>Supervisor</strong> only if you want to send notifications to the supervisor.</li>
+<li data-list-item-id="ee6ec23b0b86a45d1233d2b04b358f6ae">Select <strong>User's Work Email</strong> only if you want to send notifications to the user's work email address.</li>
+<li data-list-item-id="e8a4ec707bd3b34feefc4e4273a6670b7">Select <strong>User's Personal Email</strong> only if you want to send notifications to the user's personal email address.</li>
+<li data-list-item-id="ef958eb949286dfcc76818842f55cb7d9">Select <strong>Custom</strong> only if you want to customize the recipient's<strong> </strong>email addresses as your preference.</li>
+</ul>
+</li>
+<li data-list-item-id="e7c4e79721786d9b0acf45d1de53c338a">
+<span><strong>Success - Custom Recipients</strong></span><strong> Custom Recipient</strong>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select <strong>Custom</strong> in the Recipients' Email Addresses parameter.</li>
+<li data-list-item-id="e051e479f9952e01febfd23a01dff670d">
+<span><strong>Success -</strong></span><strong> Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e3239ac451ef4b0bfeeae2db528144475">
+<span><strong>Success -</strong></span><strong> Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li data-list-item-id="e1cdc22a333e91f63c43cc5c4ef1dc72f"> <span><strong>Success Event Email Template</strong></span><strong> Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body for notifications sent upon successful integration execution.</li>
+</ul><h4 id="h_01KGH6WTARY9FN34YCKVP8GR3G">Failure Notification Settings</h4><p>Configure the following notification setting upon integration failure:</p><ul>
+<li data-list-item-id="e80eb34c19d36fee91d430070f2d49fba">
+<span><strong>Failure - Send To</strong></span><strong> Recipient's Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent upon integration failure. The available options are <em>Admin</em>, <em>Supervisor</em>, <em>User's Work Email</em>, <em>User's Personal Email</em>, and <em>Custom</em>.<ul>
+<li data-list-item-id="e85b163a350aff1b86f7caa48558e091a">Select <strong>Admin</strong> only if you want to send notifications to the administrator.</li>
+<li data-list-item-id="ec13fa210bdfd2683df6b322f2983f59c">Select <strong>Supervisor</strong> only if you want to send notifications to the supervisor.</li>
+<li data-list-item-id="e9e262f67a7d1d6973f4610361b0cd3ae">Select <strong>User's Work Email</strong> only if you want to send notifications to the user's work email address.</li>
+<li data-list-item-id="eaa3a6e1a303bcb644ace5d421ab73d60">Select <strong>User's Personal Email</strong> only if you want to send notifications to the user's personal email address.</li>
+<li data-list-item-id="e65389b3388d714fcd43fecc649ee3ac4">Select <strong>Custom</strong> only if you want to customize the recipient's<strong> </strong>email addresses as your preference.</li>
+</ul>
+</li>
+<li data-list-item-id="e7b0b3cac9e79f2961fef2fc9a49a9c50">
+<span><strong>Failure - Custom Recipients</strong></span><strong> Custom Recipient</strong>: Enter the email addresses of external or personalized recipients who are not included in your default contact list. This parameter is displaced only if you select <strong>Custom</strong> in the Recipients' Email Addresses parameter.</li>
+<li data-list-item-id="e20c111dc31897af10fbbef322ac82290">
+<span><strong>Failure -</strong></span><strong> Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e11462eadcbefc76cdc44db3cc3b5bcdf">
+<span><strong>Failure -</strong></span><strong> Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li data-list-item-id="e359f524f3f12e95ef1ea98adb7b5a8f7"> <span><strong>Failure Event Email Template</strong></span><strong> Email Body for Integration Failure</strong>: Enter the content that must be used as the email body for notifications sent upon integration failure.</li>
+</ul><h3 id="h_01K0PGWJSDXT2R47JVRVF1X192">Operational Settings</h3><h4 id="h_01KGH16752CGR3XYGNH6CM7VMZ">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e6800f3744ae968cb58635f65aecc08ea">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e9ddc78f3b11ee2a6b8f3399de038d0fc">
+<span><strong>Run in Incremental Mode</strong></span><strong> Enable Incremental Mode</strong>: Select this checkbox to run the integration in incremental mode.</li>
+<li data-list-item-id="eb0bdc439524c60f761248812c565f72c">
+<span><strong>Debug Mode</strong></span><strong> Enable Debug Mode</strong>: Select this checkbox to generate logs outlining data changes that would occur for debugging.</li>
+<li data-list-item-id="ee4067dfce712769dcf0b3b4e451d646a">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes.</li>
+<li data-list-item-id="eb5553e7513cf171950008a23becd4729">
+<strong>Enable Log Insight</strong>: Select this checkbox to visualize the integration-related metrics.</li>
+<li data-list-item-id="e2e464ca55a9fafcfd0600eb988bcfc19">
+<strong>Enable Report </strong><span><strong>Generation</strong></span>: Select this checkbox to generate the integration report.</li>
+</ul><h4 id="h_01KGH6Q29ZXAZ7V9X56J7EHQDS">Debug <span>Mode</span> Settings</h4><p>Configure the following Debug settings:</p><ul><li data-list-item-id="ee1e1b3a6f8e35d4d7e36021766492740">
+<strong>Testing Mode</strong>: Select this checkbox to generate logs for testing purpose.</li></ul><h3 id="h_01KGH6WTARWY4XGRDAQ12CN8ZT">Log Insights</h3><p>Configure the following settings for Log Insights:</p><ul><li data-end="316" data-list-item-id="e3fdb84ee712a602797de1010cca8e08d" data-start="147">
+<strong data-end="185" data-start="147">Log Insights Detail Level:</strong> Select the desired level of details to be displayed on the analytics dashboard in Log Insights.<br/>The following are the available options:<ul>
+<li data-end="316" data-list-item-id="e9e998fdfcf47ebcf88a932a0628d6951" data-start="147">
+<strong data-end="337" data-start="320">Summary Only:</strong> Attribute details are not displayed. Only the count of operations is shown.</li>
+<li data-end="316" data-list-item-id="e45c48d38bb1d12d3dae6b37e452f5165" data-start="147">
+<strong data-end="440" data-start="423">Full Details:</strong> All attribute details are displayed.</li>
+<li data-end="316" data-list-item-id="eac4a0dbb5eabf2ff12770d7515b19cb8" data-start="147">
+<strong data-end="493" data-start="482">Custom:</strong> Includes or excludes selected attributes. The following option only appears when the log insights level is set to <strong data-end="635" data-start="625">Custom</strong>.<ul><li data-end="316" data-list-item-id="ebaf2b217877f0a8890f748f827c4a5d1" data-start="147">
+<strong data-end="661" data-start="640">Attribute Filter:</strong> Enables you to select whether you want to list the attributes that must be included or excluded. Select <strong>Included Attributes</strong> or <strong>Excluded Attributes</strong>.<ul>
+<li data-list-item-id="e1733c623c3bd2a8be4aba2837855b7c0">
+<p><strong>Attributes to Include in Log Insights</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to include in the Log Insights.</p>
+<p>Or</p>
+</li>
+<li data-list-item-id="ebf9da36b6a306d279a219319b6fa8311">
+<strong>Attributes to Exclude in Log Insights</strong>: Enter the comma-separated list of ServiceNow user attributes that you want to exclude from the Log Insights.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 data-end="613" data-start="601" id="h_01KEY0VRP28DFNKTTNRZ36WYVZ">Schedule</h3><p data-end="872" data-start="615">Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h3 data-end="902" data-start="879" id="h_01KEY0VRP38CCXNPB165EJ6C27">Execute Integration</h3><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01KFFKM4P3DR5KB72M9PPMF8AB">Integration Reports</h1><p>This section details the reports that are generated by the integration.</p><h2 id="h_01KFFKN67DT5JDRYB9NNVGXGCY">Integration Sync Summary</h2><p>This report is available in the body of the email that is sent by the integration on each run. It includes the following details:</p><ul>
+<li data-list-item-id="eccf88d6d5847628d01cdfd6eb4964897">The number of ServiceNow catalog requests analyzed </li>
+<li data-list-item-id="ea6b28ceafcb0e33c9fe8553a93c1919e">The number of requests successfully processed by the integration (successfully added or removed users in Active Directory groups)</li>
+<li data-list-item-id="ecac1336957081f2c7c5e5184c6e95e76">The number of failed operations</li>
+<li data-list-item-id="e84ad13e8da35c2a051e8abc16370341a">The number of Active Directory groups skipped by the integration (the groups where no users were added or removed)</li>
+</ul><h2 id="h_01KFFMWN7AV0F0DHYXGR828KBJ">Email Report</h2><p>A CSV report is attached to the email if the email notification feature is enabled in the integration. The CSV report has the following details:</p><ul>
+<li data-list-item-id="e2cba10817d0399601624865b8c670b2b">The request approval status</li>
+<li data-list-item-id="ec8920541ac5d2b37fab8d304bc0c218d">The group in which the operation was performed</li>
+<li data-list-item-id="ed741b1fba57d734f8abbedda540b169c">The type of operation (A<em>dd</em> or R<em>emove</em>)</li>
+<li data-list-item-id="e027fd0e5a2d61a96df6de70ccab3d91c">The Distinguished Name of the Active Directory user </li>
+<li data-list-item-id="e6acadd2a3760c2eaac2217cb66f5baa8">The operation status (<em>Success</em> or <em>Failure</em>)</li>
+<li data-list-item-id="ec7372b9e2ee0e6828c009f9413708f50">A message that indicates success or the reason of failure </li>
+</ul><p> </p>
+  </div>
+</body>
+</html>

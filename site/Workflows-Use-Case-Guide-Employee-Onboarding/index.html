@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Workflows Use Case Guide: Employee Onboarding</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Workflows Use Case Guide: Employee Onboarding</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01H667ZS86MZGKFVV2EDCN5CC2">Overview</h1>
+<p>Workflows facilitate the automation of highly complex business processes within an organization. Aquera's Workflows streamline processes related to employee onboarding, transitions, and offboarding, enabling IT departments to save time, enhance operational efficiency, cut costs, and boost productivity.</p>
+<p>By utilizing Workflows, organizations can accelerate the onboarding and offboarding of employees by managing application access for authorized users and revoking access and licenses for those who are no longer authorized.</p>
+<p>This guide elaborates on the utilization of Aquera's Workflows for the onboarding of new employees in an organization.</p>
+<p>The following are the tasks involved in setting up this use case:</p>
+<ol>
+<li>Retrieve new hires from an Applicant Tracking System (ATS).</li>
+<li>Create a user record in a Human Resource Information System (HRIS).</li>
+<li>Create a service ticket in an IT Service Management (ITSM) tool to generate an employee number and a company email ID and assign a laptop to the new hire.</li>
+<li>Send a welcome email to the new hire.</li>
+</ol>
+<p>To perform these tasks, it is essential to configure multiple workflows tailored to the requirements of specific departments such as Human Resources (HR), Information Technology (IT), and others. Consequently, the primary workflow can trigger sub-workflows associated with specific departments to distribute tasks relevant to the corresponding departments.</p>
+<p><strong>Notes</strong>: To understand how to set up workflows, refer to the <a href="../Workflow-User-Guide/" rel="noopener noreferrer" target="_blank">Workflows User Guide</a>. For details on configuring elements within workflows, refer to the <a href="../Workflow-Elements-Configuration-Guide/" rel="noopener noreferrer" target="_blank">Workflow Elements Configuration Guide</a>.</p>
+<h1 id="h_01H667ZYE6YDSZXYXB5GEFWG0R">Employee Onboarding Workflow</h1>
+<p>Create and set up an Employee Onboarding workflow that performs all the onboarding tasks for the new hires in an organization: </p>
+<ol>
+<li>Configure the <a href="../Workflow-User-Guide/#h_01HBAY8TNZ8D06AN1QXFZFCQ7J" rel="noopener noreferrer" target="_blank">Triggered By</a> option of the Employee Onboarding workflow based on your use case. For example, you can set a weekly schedule as shown here:<br/><img alt="EmployeeOnboard-Schedule.png" height="372" src="./assets/939b64e19ac41ee6.bin" width="384"/><br/><br/>
+</li>
+<li>Add an ATS application<em> </em>to be used in the Workflow by clicking <strong>Add Application</strong> in the Components panel. For example, you can use the <em>Greenhouse Recruiting </em>application to retrieve the new hires to be onboarded. Drag and drop the <em>Greenhouse Recruiting</em> element to the Workflow. Refer to the <a href="../Workflow-User-Guide/#h_01HBG6WEHCKCXF2AN9A8P0T03F" rel="noopener noreferrer" target="_blank">Add an Element</a> section of the Workflow User Guide for further details.<br/><br/>In the configuration of the <em>Greenhouse Recruiting</em> element, select the operation <em>Import All Candidates </em>and provide the filter condition to filter candidates based on their hired status. For details on configuring an Application element, refer to the <a href="../Workflow-Elements-Configuration-Guide/#h_01H5Q2NTPESMV22VAKW4PPC5XN" rel="noopener noreferrer" target="_blank">Applications</a> section of the Workflow Elements Configuration Guide.<br/><img alt="GHR.png" src="./assets/b7ad61ae6281fd46.bin"/><br/><br/>
+</li>
+<li>Add the <a href="../Workflow-Elements-Configuration-Guide/#h_01H5Q2N2SRZJ6MJ4SVYEWSGEQR" rel="noopener noreferrer" target="_blank">For-each</a> element to iterate over each hired candidate.<br/>
+<table>
+<tbody>
+<tr>
+<td><img alt="hiredCandidates.png" height="170" src="./assets/52756ec38c3128ba.bin" width="348"/></td>
+<td><img alt="step2-2.png" height="174" src="./assets/bb51b9416c312d83.bin" width="329"/></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Add the <a href="../Workflow-Elements-Configuration-Guide/#h_01HBG32XWDJJ390BMNGKBCTWB6" rel="noopener noreferrer" target="_blank">Invoke Workflow</a> element to invoke an <a href="#h_01HJT96EWY84KT130MJ3E073Z3">HR Workflow</a> that performs creating a new user record in an HRIS application for each new hire.<br/><br/>The input to the HR Workflow is a <em>candidate</em> object that contains the details required to create a user record. The output of the HR Workflow is a boolean value of <em>recordCreated </em>that indicates if the user record was successfully created or not.<br/><br/>For details on configuring the HR Workflow, refer to the <a href="#h_01HJT96EWY84KT130MJ3E073Z3">HR Workflow</a> section. <br/><img alt="Invoke HR.png" src="./assets/a2d7e5b104888ec5.bin"/><br/><br/>
+</li>
+<li>Click <strong>Mapper</strong> to open the <a href="../Workflow-Elements-Configuration-Guide/#h_01HJ0ZRVMN2KCW7ZXFNGY3GP0W" rel="noopener noreferrer" target="_blank">Attribute Mapper</a> and provide values for the attributes of the input object <em>candidate, </em>which will be passed to the HR Workflow. The right side shows the attributes of the <em>candidate</em> object. In the <strong>Value/Expression</strong> field, you can provide a value or expression to map to the attributes of the <em>candidate</em> object.<br/><img alt="AM-candidate.png" src="./assets/26cd5f59cb982064.bin"/><br/>The following is a sample candidate from the <em>Greenhouse Recruiting</em> application:<br/><img alt="GHR-candidate.png" src="./assets/048c562c8c993439.bin"/><br/>In the candidate schema, if the array attributes such as <em>emailAddresses</em>, <em>phoneNumbers</em>, and <em>addresses</em> have predefined (canonical) values for the <em>type</em> sub-attribute, they can be accessed using the <em>find</em> function as shown in the following example:<br/><em>hiredCandidate.emailAddresses.find(emailAddresses =&gt; emailAddresses.type == "personal").value</em><br/>This will retrieve the personal email address of the candidate.<br/><img alt="GHR-emailAddresses.png" height="234" src="./assets/98a3ef813083dce3.bin" width="539"/><br/>However, if array attributes such as <em>socialMediaAddresses</em> do not have sub-attributes with predefined (canonical) values, they can be accessed in the following format:<br/><em>&lt;objectVariableName&gt;.&lt;attributeName&gt;[indexValue].value</em><br/>For example, <em>hiredCandidate.socialMediaAddresses[0].value</em> will retrieve the value from the 0th index of the social media address.<br/><img alt="GHR-socialMediaAddresses.png" height="171" src="./assets/1074a3ee41419e83.bin" width="541"/><br/><br/>
+</li>
+<li>Add the <a href="../Workflow-Elements-Configuration-Guide/#h_01H5RZ5W78Q1AB2Y6S9AT7944J" rel="noopener noreferrer" target="_blank">If-else</a> element to evaluate the return value from the HR workflow.<br/><img alt="recordCreated.png" src="./assets/1ad61331a742a0cf.bin"/><br/><br/>
+</li>
+<li>After a user record is created in an HR application, add the <a href="../Workflow-Elements-Configuration-Guide/#h_01HBG32XWDJJ390BMNGKBCTWB6" rel="noopener noreferrer" target="_blank">Invoke Workflow</a> element to invoke an <a href="#h_01HJV1TDNFPZAW3Z8Q97PBAZGJ">IT Workflow</a> that performs creating a ticket in an ITSM tool to issue laptops for the new hires.<br/><br/>The input to the IT Workflow is an <em>employee</em> object that contains the details required to create a service ticket. The output is a <em>company</em> object that contains the employee data generated such as the employee number, company email ID, userName, and a temporary password for the company portal.<br/><br/>For details on configuring the IT Workflow, refer to the  <a href="#h_01HJV1TDNFPZAW3Z8Q97PBAZGJ">IT Workflow</a> section. <br/><img alt="invoke IT.png" src="./assets/16dd19531bf4c9d3.bin"/><br/><br/>
+</li>
+<li>Click <strong>Mapper</strong> to open the <a href="../Workflow-Elements-Configuration-Guide/#h_01HJ0ZRVMN2KCW7ZXFNGY3GP0W" rel="noopener noreferrer" target="_blank">Attribute Mapper</a> and provide values for the attributes of the input object <em>employee</em>, which will be passed to the IT Workflow. In the Value/Expression field, you can provide a value or expression to map to the attributes of the <em>employee</em> object. <br/><img alt="AM-employee.png" src="./assets/77f312a926ae9854.bin"/><br/><br/>
+</li>
+<li>
+<p>Add and configure the <a href="../Workflow-Elements-Configuration-Guide/#h_01HC1Y2EBHWARCVW9KF08TVDKR" rel="noopener noreferrer" target="_blank">Send Email</a> element to send welcome emails to the new employees.<br/><img alt="SendEmail.png" src="./assets/7cb23f6e06cecc2c.bin"/></p>
+</li>
+</ol>
+<h1 id="h_01HJT96EWY84KT130MJ3E073Z3">HR Workflow</h1>
+<p>Create and set up an HR workflow that creates user records in an HRIS application for the new hires:</p>
+<ol>
+<li>Configure the <a href="../Workflow-User-Guide/#h_01HBAY8TNZ8D06AN1QXFZFCQ7J" rel="noopener noreferrer" target="_blank">Triggered By</a> option of the HR workflow as shown here since the Employee Onboarding workflow triggers the HR workflow.<br/><img alt="StartWorkflow.png" height="230" src="./assets/4145fb53f856533a.bin" width="437"/><br/><br/>
+</li>
+<li>You can configure input parameters, a return, and variables for the workflow in the <a href="../Workflow-User-Guide/#01HHEH95QCK30K333HV41GK9BD" rel="noopener noreferrer" target="_blank">Definition</a> section.<br/><br/>
+</li>
+<li>Configure the input to be received by the HR workflow from the Employee Onboarding workflow. For this use case, define the input as an <em>Object</em>.<br/><img alt="HR-inputObject.png" height="313" src="./assets/0fd07a39e72e2e8e.bin" width="382"/><br/>You can define your own schema by selecting the option <a href="../Workflow-User-Guide/#h_01HHEHBDJ0KK2KEDB413DDHVC1" rel="noopener noreferrer" target="_blank">Define New</a> for the input object <em>candidate</em>.<br/><img alt="candidate - schema.png" src="./assets/aa6f5493f81a51d0.bin"/><br/><br/>
+</li>
+<li>
+<p>Configure the return to be sent by the HR workflow to the Employee Onboarding workflow. For this use case, define the return as a <em>Boolean</em> to indicate if the user record was created in the HRIS application.<br/><img alt="return-HT.png" height="265" src="./assets/268871d3b0122abc.bin" width="388"/><br/><br/></p>
+</li>
+<li>
+<p>Add an HRIS application to be used in the Workflow by clicking <strong>Add Application</strong> in the Components panel. For example, you can use the <em>BambooHR </em>application to create a user record for the new hire. Drag and drop the <em>BambooHR</em> element to the Workflow. Refer to the <a href="../Workflow-User-Guide/#h_01HBG6WEHCKCXF2AN9A8P0T03F" rel="noopener noreferrer" target="_blank">Add an Element</a> section of the Workflow User Guide for further details.<br/> <br/>In the configuration of the <em>BambooHR</em> application element, select the operation <em>Create User</em>. <br/><img alt="BambooHR.png" height="234" src="./assets/d496facc9d6ad66a.bin" width="600"/><br/><br/></p>
+</li>
+<li>
+<p>Click Mapper to open the <a href="../Workflow-Elements-Configuration-Guide/#h_01HJ0ZRVMN2KCW7ZXFNGY3GP0W" rel="noopener noreferrer" target="_blank">Attribute Mapper</a> and provide values for the attributes of the <em>BambooHR</em> user object. In the <strong>Value/Expression</strong> field, you can provide a value or expression to map to the attributes of the <em>BambooHR</em> user object. <br/><img alt="BambooHR-User.png" src="./assets/74fdb7c2e6a058dd.bin"/><br/><br/></p>
+</li>
+<li>
+<p>Add the <a href="../Workflow-Elements-Configuration-Guide/#h_01HC1YP9EZ8RNW0G5T17KQ2X0K" rel="noopener noreferrer" target="_blank">Set Variable</a> element to set a value for the output variable <em>recordCreated </em>to indicate that the user record is created. <br/><img alt="set variable.png" height="215" src="./assets/91d5b07968ccfc42.bin" width="324"/></p>
+</li>
+</ol>
+<h1 id="h_01HJV1TDNFPZAW3Z8Q97PBAZGJ">IT Workflow</h1>
+<p>Create and set up an IT workflow that creates service tickets in an ITSM tool to allocate laptops to the new employees:</p>
+<ol>
+<li>Configure the <a href="../Workflow-User-Guide/#h_01HBAY8TNZ8D06AN1QXFZFCQ7J" rel="noopener noreferrer" target="_blank">Triggered By</a> option of the IT workflow as shown here since the Employee Onboarding workflow triggers the IT workflow.<br/><img alt="StartWorkflow.png" height="230" src="./assets/4145fb53f856533a.bin" width="436"/>|<br/><br/>
+</li>
+<li>You can configure input parameters, a return, and variables for the workflow in the <a href="../Workflow-User-Guide/#01HHEH95QCK30K333HV41GK9BD" rel="noopener noreferrer" target="_blank">Definition</a> section.<br/><br/>
+</li>
+<li>Configure the input to be received by the IT workflow from the Employee Onboarding workflow. For this use case, define the input as an <em>Object</em>.<br/><img alt="IT - input.png" height="311" src="./assets/cc7638fc2371c2d0.bin" width="376"/><br/>You can define your own schema by selecting the option <a href="../Workflow-User-Guide/#h_01HHEHBDJ0KK2KEDB413DDHVC1" rel="noopener noreferrer" target="_blank">Define New</a> for the input object <em>employee</em>.<br/><img alt="employee-schema.png" src="./assets/ee5a5b5a1a10e607.bin"/><br/><br/>
+</li>
+<li>Configure the return to be sent by the IT workflow to the Employee Onboarding workflow. For this use case, define the return as an <em>Object</em>.<br/><img alt="IT-output.png" height="355" src="./assets/dba26b9897d2e984.bin" width="333"/><br/>You can define your own schema by selecting the option <a href="../Workflow-User-Guide/#h_01HHEHBDJ0KK2KEDB413DDHVC1" rel="noopener noreferrer" target="_blank">Define New</a> for the return object <em>company</em>.<br/><img alt="IT-OutputSchema.png" src="./assets/b4a32e1c87c6591f.bin"/><br/><br/>
+</li>
+<li>Add an ITSM tool to be used in the Workflow by clicking <strong>Add Application</strong> in the Components panel. For example, you can use <em>ServiceNow</em> to create a ticket for onboarding the new hire. Drag and drop the <em>ServiceNow</em> element to the Workflow. Refer to the <a href="../Workflow-User-Guide/#h_01HBG6WEHCKCXF2AN9A8P0T03F" rel="noopener noreferrer" target="_blank">Add an Element</a> section of the Workflow User Guide for further details.<br/><br/>In the configuration of the <em>ServiceNow</em> element, select the operation <em>Create Ticket </em>to create a ticket for assigning a laptop to the new hire. <em><br/><img alt="ServiceNow.png" src="./assets/ebcc5da4abd2f5e0.bin"/><br/></em><em><br/></em>
+</li>
+<li>Click <strong>Mapper</strong> to open the <a href="../Workflow-Elements-Configuration-Guide/#h_01HJ0ZRVMN2KCW7ZXFNGY3GP0W" rel="noopener noreferrer" target="_blank">Attribute Mapper</a> and provide values for the attributes of the <em>Ticket</em> object. In the Value/Expression field, you can provide a value or expression to map to the attributes of the <em>Ticket</em> object.<br/><img alt="AM-Ticket.png" src="./assets/a67f1fbcbb357a5b.bin"/><br/><br/>
+</li>
+<li>Once a ticket is open, this workflow generates an employee number, company email ID, userName, and a temporary password for the new hires. <br/>You can use the <a href="../Workflow-Elements-Configuration-Guide/#h_01HH1WTFXXE91W8B2ZA9WN9BG9" rel="noopener noreferrer" target="_blank">Persistent Data</a> element to store the last used employee number. <br/>
+<table>
+<tbody>
+<tr>
+<td><img alt="Get-PD-input.png" src="./assets/733f744c687290f0.bin"/></td>
+<td><img alt="Get-PD-output.png" src="./assets/60b53c57e60df82f.bin"/></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>When a new employee joins the organization, increment the value of the Persistent Data and set this as the employee number of the new employee. <br/><img alt="set PD.png" height="335" src="./assets/602696aade238473.bin" width="397"/><br/><br/>
+</li>
+<li>Add the <a href="../Workflow-Elements-Configuration-Guide/#h_01HHHG5ZBA16DQJH8W3ZJ5JKAH" rel="noopener noreferrer" target="_blank">Set Object</a> element to set a value for the return object <em>company</em>. <br/><img alt="set company object.png" height="346" src="./assets/c60370012990f645.bin" width="453"/><br/><br/>
+</li>
+<li>Click <strong>Mapper</strong> to open the <a href="../Workflow-Elements-Configuration-Guide/#h_01HJ0ZRVMN2KCW7ZXFNGY3GP0W" rel="noopener noreferrer" target="_blank">Attribute Mapper</a> and provide values for the attributes of the return object <em>company. </em>In the Value/Expression field, you can provide a value or expression to map to the attributes of the <em>company</em> <em>object</em>.  <br/><img alt="AM-company.png" src="./assets/a1e98a725e0d5f23.bin"/><br/>Following is a sample script for password generation that you can provide in the Value/Expression field: <br/>
+<div>
+<pre><code>let chars = "0123456789abcdefghijklmnopqrstuvwxyz@#$%^&amp;*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let passwordLength = 12;
+let password = "";
+for(var i = 0; i &lt;= passwordLength; i++){
+     let randomNumber = Math.floor(Math.random() * chars.length);
+     password += chars.substring(randomNumber, randomNumber +1); 
+}<br/>password;</code></pre>
+</div>
+</li>
+</ol>
+<h1 id="h_01G76SETEVZB66YG0Q0KNV66Y5">References</h1>
+<ul>
+<li><a href="../Workflow-User-Guide/" rel="noopener noreferrer" target="_blank">Workflows User Guide</a></li>
+<li><a href="../Workflow-Elements-Configuration-Guide/" rel="noopener noreferrer" target="_blank">Workflow Elements Configuration Guide</a></li>
+<li><a href="../Workflows-Use-Case-Guide-Create-Tickets-for-New-Hires/" rel="noopener noreferrer" target="_blank">Workflows Use Case Guide: Create Tickets for New Hires</a></li>
+<li><a href="../Accessing-Event-Requests-in-Workflows/" rel="noopener noreferrer" target="_blank">Accessing Event Requests in Workflows</a></li>
+</ul>
+<p> </p>
+<p> </p>
+<p> </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Groups Behavior in User Integration</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Groups Behavior in User Integration</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<p>This guide captures all the scenarios of group management in User Integration. This guide also covers the difference in group behavior between User Integration version 3 and version 2.  For details on managing groups, refer to the guide <a href="../Managing-Groups-in-User-Integrations/" rel="noopener noreferrer" target="_blank">Managing Groups in User Integrations</a>. </p>
+<p data-pm-slice='1 1 ["table",{"isNumberColumnEnabled":false,"layout":"default","__autoSize":false,"localId":"42250cad-4cff-4cf5-90e9-3166eba1e3b9"},"tableRow",null,"tableCell",{"colspan":1,"rowspan":1,"colwidth":null,"background":null},"bulletList",null,"listItem",null]'>The following table covers the scenarios for the behavior of groups in User Integration: </p>
+<p><strong>Note</strong>: For explaining the scenarios, we are considering sample group names G1, G2, G3, and G4.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong> Scenario</strong></td>
+<td><strong>Group Management Restriction List</strong></td>
+<td><strong>Group Rule</strong></td>
+<td><strong>Attribute Mapping</strong></td>
+<td><strong>Groups in the Target Application</strong></td>
+<td><strong>Behavior from Version 3 onwards</strong></td>
+<td><strong>Behavior in Version 2</strong></td>
+</tr>
+<tr>
+<td>1A</td>
+<td>empty</td>
+<td>No</td>
+<td>No mapping set for groups</td>
+<td>
+<p>G1, G2</p>
+<p>The user is part of G1 and G2.</p>
+</td>
+<td>
+<p>The user will be retained in G1 and G2.</p>
+</td>
+<td>
+<p>The user will be removed from G1 and G2.</p>
+<p>Integration will also try to remove users from read-only groups but integration fails with the message "<em>failure to modify groups: 403"</em>.</p>
+</td>
+</tr>
+<tr>
+<td>1B</td>
+<td>empty</td>
+<td>No</td>
+<td>No mapping set for groups</td>
+<td>
+<p>G1, G2</p>
+<p>The user is not part of G1 and G2. </p>
+</td>
+<td>
+<p>The user will not be added to G1 and G2.</p>
+</td>
+<td>
+<p>The user will not be added to G1 and G2. </p>
+</td>
+</tr>
+<tr>
+<td>1C</td>
+<td>G1,G4</td>
+<td>No</td>
+<td>No mapping set for groups</td>
+<td>
+<p>G1,G2, G3,G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>
+<p>The user will be retained in G1 and G2.</p>
+</td>
+<td>
+<p>The user will be removed from G1.</p>
+</td>
+</tr>
+<tr>
+<td>2</td>
+<td>empty</td>
+<td>G1,G4</td>
+<td>No mapping set for groups</td>
+<td>
+<p>G1, G2,  G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>The user will be retained in G1 and G2 and the user will be added to G4. </td>
+<td>
+<p>The user will be retained in G1, removed from G2, and added to G4.</p>
+<p>Integration will also try to remove users from read-only groups but integration fails with the message "<em>failure to modify groups: 403</em>".</p>
+</td>
+</tr>
+<tr>
+<td>3</td>
+<td>empty</td>
+<td>empty (no groups selected in the group rule)</td>
+<td>No mapping set for groups</td>
+<td>
+<p>G1, G2,  G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>
+<p>The user will be removed from all the groups G1 and G2.</p>
+<p>Integration will also try to remove users from read-only groups but integration fails with the message "<em>failed to remove from: &lt;GroupName&gt;".</em></p>
+</td>
+<td>
+<p>The user will be removed from G1 and G2.</p>
+<p>Integration will also try to remove the user from the read-only groups but integration fails with the message "<em>failure to modify groups: 403</em>".</p>
+</td>
+</tr>
+<tr>
+<td>4A</td>
+<td>G1,G3</td>
+<td>G1,G4</td>
+<td>No mapping set for groups </td>
+<td>
+<p>G1, G2,</p>
+<p>G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>
+<p>The user will be retained in G1 and G2 and the user will be added to G4. </p>
+</td>
+<td>
+<p>The user will be retained in G1 and G2. The user is not added/removed in any other groups.</p>
+</td>
+</tr>
+<tr>
+<td>4B</td>
+<td>G1,G2,G3,G4</td>
+<td>G1,G4</td>
+<td>No mapping set for groups </td>
+<td>
+<p>G1, G2, G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>
+<p>The user will be retained in G1 and G2 and the user will be added to G4. </p>
+</td>
+<td>
+<p>The user will be retained in G1. The user is removed from G2. The user is added to G4. </p>
+</td>
+</tr>
+<tr>
+<td>5</td>
+<td>empty<br/><br/>[Same as having all groups G1, G2, G3, G4]</td>
+<td>No</td>
+<td>Uses tables and the expression evaluates to G1, G4.</td>
+<td>
+<p>G1, G2, G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>
+<p>The user will be retained in G1, added to G4, and removed from G2.</p>
+<p>Integration will also try to remove users from read-only groups but integration fails with the message "<em>failed to remove from: &lt;GroupName&gt;".</em></p>
+</td>
+<td>
+<p>The user will be retained in G1. The user is removed from G2. The user is added to G4.</p>
+<p> </p>
+<p>Integration will also try to remove users from read-only groups but integration fails with the message "<em>failure to modify groups: 403</em>".</p>
+<p> </p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td>6A</td>
+<td>G1,G3</td>
+<td>No</td>
+<td>Uses tables and the expression evaluates to G1, G4.</td>
+<td>
+<p>G1, G2, G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>The user will be retained in G1 and G2. The user is not added to G4. </td>
+<td>The user will be retained in G1 and G2.</td>
+</tr>
+<tr>
+<td>6B</td>
+<td>G1,G3</td>
+<td>No</td>
+<td>Uses tables and the expression evaluates to G1, G4.</td>
+<td>
+<p>G1, G2, G3, G4</p>
+<p>The user is part of G1, G2, G4. The user is not part of G3.</p>
+</td>
+<td>The user will be retained in G1, G2, G4.</td>
+<td>The user will be retained in G1, G2, G4. </td>
+</tr>
+<tr>
+<td>6C</td>
+<td>
+<p>G1,G4</p>
+</td>
+<td>No</td>
+<td>Uses tables and the expression evaluates to G1, G4.</td>
+<td>
+<p>G1, G2, G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>
+<p>The user will be retained in G1 and G2. The user is not removed from G2. The user is added to G4. </p>
+<p> </p>
+</td>
+<td>
+<p>The user will be retained in G1 and G2. The user is not removed from G2. The user is added to G4. </p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td>6D</td>
+<td>G1,G2,G3,G4</td>
+<td>No</td>
+<td>Uses tables and the expression evaluates to G1, G4.</td>
+<td>
+<p>G1, G2, G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>
+<p>The user will be retained in G1. The user is removed from G2. The user is added to G4.</p>
+<p> </p>
+</td>
+<td>
+<p>The user will be retained in G1. The user is removed from G2. The user is added to G4.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td>7</td>
+<td>empty</td>
+<td>G1,G3</td>
+<td>Uses tables and the expression evaluates to G1, G4.</td>
+<td>
+<p>G1, G2, G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>The user will be retained in G1 and G2 and added to G3. </td>
+<td>
+<p>The user will be retained in G1, added to G3, and removed from G2. </p>
+<p> </p>
+<p>Integration will also try to remove users from read-only groups but integration fails with the message "<em>failure to modify groups: 403</em>".</p>
+</td>
+</tr>
+<tr>
+<td>8A</td>
+<td>G3,G4</td>
+<td>G1,G3</td>
+<td>Uses tables and the expression evaluates to G1, G4.</td>
+<td>
+<p>G1, G2, G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>The user will be retained in G1 and G2 and added to G3. </td>
+<td>The user will be retained in G1 and G2 and added to G3. </td>
+</tr>
+<tr>
+<td>8B</td>
+<td>G1,G2,G3,G4</td>
+<td>G1,G3</td>
+<td>Uses tables and the expression evaluates to G1, G4.</td>
+<td>
+<p>G1, G2, G3, G4</p>
+<p>The user is part of G1 and G2. The user is not part of G3 and G4.</p>
+</td>
+<td>The user will be retained in G1 and G2 and added to G3. </td>
+<td>The user will be retained in G1, added to G3, and removed from G2. </td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p>The following is the behavior of groups in Synchronization Integration version 3:</p>
+<ul>
+<li>Only when the checkbox <strong>Enable Group Management</strong> is selected in the configuration of integration, Aquera's integration will be able to manage the groups in the target application through Attribute Mapping or Group Rules.</li>
+<li>When the <strong>Group Management Restriction List </strong>is empty and you have not set any group rules and have not set any attribute mapping for groups, the users will not be added to/removed from groups. However, users will be retained in their existing groups in the target application. [Refer Scenario 1A,1B]</li>
+<li>When you have set valid group rules, users will be added/retained in the groups specified in the group rules. [Refer Scenario 2,4A,4B]<br/><strong>Note</strong>: The <strong>Group Management Restriction List </strong>should be left empty when you have set valid group rules. </li>
+<li>When the <strong>Group Management Restriction List</strong> is empty and you are managing groups via attribute mapping, if a group is part of the attribute mapping evaluation, the users are added/retained in that group. However, if a group is not part of the attribute mapping evaluation, the users are removed from that group. [Refer Scenario 5]</li>
+<li>When the <strong>Group Management Restriction List</strong> is not empty and you are managing groups via attribute mapping, then if a group is part of the attribute mapping evaluation and the group is mentioned in the restriction list, the users are added/retained in that group. However, if a group is not part of the attribute mapping evaluation and the group is mentioned in the restriction list, the users are removed from that group. [Refer Scenario 6A,6B,6C,6D]</li>
+<li>When you have set group rules and set groups via attribute mapping, the groups will be managed only by considering the groups in the group rules. [Refer Scenario 7,8A,8B]</li>
+<li>When the <strong>Group Management Restriction List</strong> is empty and you have created a group rule which does not have any groups selected in it, then the users will be removed from all the groups. [Refer Scenario 3] </li>
+<li>The <strong>Group Management Restriction List</strong> will not be considered if the groups are managed through Group Rules. However, the <strong>Group Management Restriction List</strong> will be considered if the groups are managed through Attribute Mapping.</li>
+<li>If the groups attribute mapping evaluation does not return any result for a particular user's preview, then this user will not be added to/removed from groups. </li>
+<li>When the <strong>Report Only</strong> checkbox is selected and the<strong> Report Mode</strong> is selected as normal, debug, or verbose, the integration logs will contain the details of the group names to which the users will be added.</li>
+<li>The group names containing a hyphen, underscore, or space are accepted.</li>
+</ul>
+<p data-pm-slice='1 1 ["table",{"isNumberColumnEnabled":false,"layout":"default","__autoSize":false,"localId":"42250cad-4cff-4cf5-90e9-3166eba1e3b9"},"tableRow",null,"tableCell",{"colspan":1,"rowspan":1,"colwidth":null,"background":null},"bulletList",null,"listItem",null]'>The following is the behavior of groups in Synchronization Integration version 2:</p>
+<ul>
+<li>Only when the checkbox <strong>Enable Group Management</strong> is selected in the configuration of an integration, it is possible to manage the groups in the target application.</li>
+<li>When the <strong>Group Management Restriction List </strong>is empty and you have not set any group rules and have not set any attribute mapping for groups, the users will be removed from all the groups. [Refer Scenario 1A,1B]</li>
+<li>When the <strong>Group Management Restriction List </strong>is empty and you have set valid group rules, users will be added/retained in the groups specified in the group rules and the user will be removed from all other groups. [Refer Scenario 2]</li>
+<li>When <strong>Group Management Restriction List </strong>is not empty and you have not set any group rules, users will be removed from all the groups mentioned in the restriction list.  [Refer Scenario 1C]</li>
+<li>When <strong>Group Management Restriction List </strong>is not empty and you have set valid group rules, if the group is specified in the group rules and the group is mentioned in the restriction list, the users are added to that group. However, if the group is not specified in the group rules and the group is mentioned in the restriction list, the users are removed from that group. [Refer Scenario 4A,4B] </li>
+<li>When the <strong>Group Management Restriction List</strong> is empty and you are managing groups via attribute mapping, if a group is part of the attribute mapping evaluation, the users are added/retained in that group. However, if a group is not part of the attribute mapping evaluation, the users are removed from that group. [Refer Scenario 5]</li>
+<li>When the <strong>Group Management Restriction List</strong> is not empty and you are managing groups via attribute mapping, then if a group is part of the attribute mapping evaluation and the group is mentioned in the restriction list, the users are added/retained in that group. However, if a group is not part of the attribute mapping evaluation and the group is mentioned in the restriction list, the users are removed from that group. [Refer Scenario 6A,6B,6C,6D]</li>
+<li>When you have set group rules and set groups via attribute mapping, the groups will be managed only by considering the groups in the group rules. [Refer Scenario 7,8A,8B]</li>
+<li>When the <strong>Group Management Restriction List</strong> is empty and you have created a group rule which does not have any groups selected in it, then the users will be removed from all the groups. [Refer Scenario 3]</li>
+<li>The group names containing a hyphen, underscore, or space are not accepted.</li>
+</ul>
+  </div>
+</body>
+</html>

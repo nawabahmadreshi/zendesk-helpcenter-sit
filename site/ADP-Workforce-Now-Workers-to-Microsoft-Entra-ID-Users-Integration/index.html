@@ -1,0 +1,552 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now Workers to Microsoft Entra ID Users Integration</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now Workers to Microsoft Entra ID Users Integration</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J46AGRGR00VNTVGR0PNNPBGG">Overview</h1>
+<p>Aquera provides an innovative platform that enables your organization to scale complex data management by automating the integration of workers from the ADP Workforce Now application with users in the enterprise application in Microsoft Entra ID.</p>
+<p>An enterprise application in Microsoft Entra ID refers to an application that enables integration with Microsoft Entra ID.</p>
+<p>You must have an enterprise application if you want to provision users from a source application to the Microsoft Entra ID using <strong>API-driven provisioning to Microsoft Entra ID</strong>, or users from a source application to on-premises AD using the <strong>API-driven provisioning to on-premises Active Directory</strong>.</p>
+<p>This guide covers the end-to-end tasks for setting up synchronization between the <em>Workers</em> resource of ADP Workforce Now and the <em>Users</em> resource of Entra ID.</p>
+<h1 id="h_01J46AGRGRQPVRAPETC1V9F4Q4">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li>
+<strong>Microsoft Entra ID</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/17672439129239" rel="noopener noreferrer" target="_blank">Microsoft Entra ID Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li>
+<strong>Enterprise application in Entra ID</strong>: You must have an enterprise application if you want to provision users from a source application to the Microsoft Entra ID using <strong>API-driven provisioning to Microsoft Entra ID</strong>, or users from a source application to on-premises AD using the <strong>API-driven provisioning to on-premises Active Directory</strong>.</li>
+</ul>
+<h1 id="h_01JSY0GHCC0WWW4G5EEF13P3RR">Creating an Enterprise Application in Entra ID</h1>
+<p>If your use case requires provisioning to Microsoft Entra ID, refer to the <a href="https://support.aquera.com/hc/en-us/articles/26122482259223#01HE0AC3EYKGMBG6Q25AFRMFEN">Creating Enterprise Application for API-driven Provisioning to Microsoft Entra ID</a> section of this guide to create an enterprise application.</p>
+<p>If your use case requires provisioning to an on-premises Active Directory, refer to the <a href="https://support.aquera.com/hc/en-us/articles/26122482259223#01J6YES5D3F71TQH3CBDCM0XSC">Creating Enterprise Application for API-driven Provisioning to On-Premises Active Directory</a> section of this guide to create an enterprise application.</p>
+<p>Once you have logged into the Microsoft Entra admin center, created the enterprise application, and finished the mappings, you must perform the following additional steps for the ADP Workforce Now to Entra ID integration:</p>
+<ol>
+<li>Select the <strong>Show advanced options</strong> checkbox on the <strong>Attribute Mapping</strong> page to display the <strong>Edit Attribute List</strong> page.</li>
+<li>Select the <strong>Required?</strong> checkbox for the <em>id</em> and <em>userName</em> attributes.</li>
+<li>Select the <strong>Primary Key</strong> and <strong>Required</strong> checkboxes for the <em>externalId</em> attribute.</li>
+<li>Select the <strong>Type</strong> as <em>Reference</em> and <strong>Referenced Object Attribute</strong> as
+<p><em>urn:ietf:params:scim:schemas:extension:enterprise:2.0:User</em> for the</p>
+<p><em>urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:manager</em> attribute as displayed below:<br/><img alt="ADP WFN to Entra ID Advanced Option.png" src="./assets/25e9511b07d073c5.bin"/></p>
+</li>
+</ol>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines the configuration required to integrate ADP Workforce Now with Entra ID, enabling the transfer of workers' data.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>ADP Workforce Now Workers to Entra ID Users</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your ADP Workforce Now and Entra ID connector instances.</li>
+<li>Click <strong>Continue</strong>. The <a href="#h_01JSP42NYMFNXEC80XYQFYYMVV">Configuration</a> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JSP42NYMFNXEC80XYQFYYMVV">Configuration</h2>
+<p>The <strong>Preferences</strong> section under <strong>Configuration</strong> enables you to customize the integration settings according to your specific use case. It has the following configuration parameter:</p>
+<p><strong>Report Only</strong>: Select this checkbox to generate a report that shows the data that would be changed, without actually making those changes. This can be selected for the first integration instance to identify any issues. You can clear this selection after verifying the report and confirming the expected result.</p>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h2>
+<p>The<strong> ADP Workforce Now Workers to Microsoft Entra ID Users </strong>template maps the commonly used ADP Workforce Now and Microsoft Entra ID attributes.<br/>The following are the core user attributes that are mapped by default:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>ADP Workforce Now API Attributes / Script Expression</strong></td>
+<td><strong>Entra ID User API Attributes</strong></td>
+</tr>
+<tr>
+<td>
+<p>worker.workerStatus.statusCode.codeValue</p>
+</td>
+<td valign="top">
+<p>active</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>worker.associateOID</p>
+</td>
+<td valign="top">
+<p>externalId</p>
+</td>
+</tr>
+<tr>
+<td>worker.associateOID</td>
+<td valign="top">
+<p>userName</p>
+</td>
+</tr>
+<tr>
+<td>worker.person.legalName.givenName + worker.person.legalName.familyName1</td>
+<td valign="top">
+<p>displayName</p>
+</td>
+</tr>
+<tr>
+<td>worker.workAssignments.filter[0].jobTitle</td>
+<td valign="top">
+<p>title</p>
+</td>
+</tr>
+<tr>
+<td>worker.languageCode.codeValue</td>
+<td valign="top">
+<p>preferredLanguage</p>
+</td>
+</tr>
+<tr>
+<td>worker.person.legalName.givenName</td>
+<td valign="top">
+<p>name.givenName</p>
+</td>
+</tr>
+<tr>
+<td>worker.person.legalName.familyName1</td>
+<td valign="top">
+<p>name.familyName</p>
+</td>
+</tr>
+<tr>
+<td>worker.businessCommunication.emails[0].emailUri</td>
+<td valign="top">
+<p>emails.value</p>
+</td>
+</tr>
+<tr>
+<td>worker.businessCommunication.mobiles[0].formattedNumber</td>
+<td valign="top">
+<p>phoneNumbers.value</p>
+</td>
+</tr>
+<tr>
+<td>worker.workAssignments[0].assignedWorkLocations[0].address.lineOne + worker.workAssignments[0].assignedWorkLocations[0].address.lineTwo + worker.workAssignments[0].assignedWorkLocations[0].address.lineThree</td>
+<td valign="top">
+<p>addresses.streetAddress</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>worker.workAssignments[0].assignedWorkLocations[0].address.cityName</p>
+</td>
+<td valign="top">
+<p>addresses.locality</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>worker.workAssignments[0].assignedWorkLocations[0].address.countrySubdivisionLevel1.codeValue</p>
+</td>
+<td valign="top">
+<p>addresses.region</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>worker.workAssignments[0].assignedWorkLocations[0].address.countrySubdivisionLevel1.shortName</p>
+</td>
+<td valign="top">
+<p>addresses.country</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>worker.workAssignments[0].assignedWorkLocations[0].address.postalCode</p>
+</td>
+<td valign="top">
+<p>addresses.postalCode</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>worker.workAssignments[0].reportsTo[0].associateOID</p>
+</td>
+<td valign="top">
+<p>ENT.manager.value</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>worker.workAssignments[0].homeOrganizationalUnits[0].codeValue == ('HomeDepartment' or 'Department').nameCode.shortName</p>
+<p>or</p>
+<p>worker.workAssignments[0].homeOrganizationalUnits[0].codeValue == ('HomeDepartment' or 'Department').nameCode.longName</p>
+<p>or</p>
+<p>worker.workAssignments[primary].homeOrganizationalUnits[0].nameCode.shortName</p>
+<p>or</p>
+<p>worker.workAssignments[primary].homeOrganizationalUnits[0].nameCode.longName</p>
+</td>
+<td valign="top">
+<p>ENT.department</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p>worker.workAssignments[0].homeOrganizationalUnits[0].codeValue == ('BusinessUnit' or 'Business Unit').nameCode.shortName</p>
+<p>or</p>
+<p>worker.workAssignments[0].homeOrganizationalUnits[0].codeValue == ('BusinessUnit' or 'Business Unit').nameCode.longName</p>
+<p>or</p>
+<p>worker.workAssignments[primary].homeOrganizationalUnits[0].nameCode.shortName</p>
+<p>or</p>
+<p>worker.workAssignments[primary].homeOrganizationalUnits[0].nameCode.longName</p>
+</td>
+<td valign="top">
+<p>ENT.division</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: The on-premises Active Directory attribute values will be mapped dynamically based on the Entra ID user API attributes.</p>
+<p>If you need to customize this mapping to align with your specific use case, contact <a href="https://support@aquera.com" rel="noopener noreferrer" target="_blank">Aquera Support</a>.</p>
+<h3 id="h_01J6RRJMNFD5C1HMACKNNA2WQY">ADP Workforce Now Workers</h3>
+<p>The following table lists the ADP Workforce Now application UI field name, UI path, and the corresponding Entra ID attribute:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>ADP Workforce Now UI Field Name</strong></td>
+<td><strong>Application UI Path</strong></td>
+<td>
+<p><strong>ADP Workforce Now API Attribute</strong></p>
+<p><strong>ADP Workforce Now API Attributes / Script Expression</strong></p>
+</td>
+<td><strong>Description</strong></td>
+</tr>
+<tr id="1e3e6fe2-6a16-8034-a904-fcbc2fcf2967">
+<td id="jrr]">Employment Status</td>
+<td id=":;tS">People &gt; Employment &gt; Status</td>
+<td>
+<p>worker.workerStatus.statusCode.codeValue</p>
+</td>
+<td>Determines if the user account is enabled.</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80fe-8616-c4dbdb052ccf">
+<td id="jrr]">Associate ID</td>
+<td id=":;tS">*N/A*</td>
+<td>
+<p>worker.associateOID</p>
+</td>
+<td>Unique identifier for the user (e.g., G1234567). Used to link ADP records to external systems</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80ad-b20f-ff30d98bf6dc">
+<td id="jrr]">Legal Name</td>
+<td id=":;tS">People &gt; Personal &gt; Legal Name</td>
+<td>
+<p>worker.person.legalName.givenName + worker.person.</p>
+<p>legalName.familyName1</p>
+</td>
+<td>Combines the user’s legal first and last name</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80ad-b20f-ff30d98bf6dc">
+<td id="jrr]">Job Title</td>
+<td id=":;tS">People &gt; Employment &gt; Job Title</td>
+<td>worker.workAssignments.filter[0].jobTitle</td>
+<td>The job title of the worker. Assumes workAssignments[0] is the active assignment</td>
+</tr>
+<tr id="1e3e6fe2-6a16-809c-b976-c10eb2f4ccad">
+<td id="jrr]">Correspondence Language</td>
+<td id=":;tS">People &gt; Personal &gt; Correspondence Language</td>
+<td>worker.languageCode.codeValue</td>
+<td>Refers to the language code (e.g., en-US). Must align with ISO 639-1 standards</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8048-a67b-d43c5ef8e184">
+<td id="jrr]">Legal First Name</td>
+<td id=":;tS">People &gt; Personal &gt; Legal Name</td>
+<td>worker.person.legalName.givenName</td>
+<td>The user’s legal first name</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8078-9827-cee9e1eff851">
+<td id="jrr]">Legal Last Name</td>
+<td id=":;tS">People &gt; Personal &gt; Legal Name</td>
+<td>
+<p> </p>
+<p>worker.person.legalName.familyName1</p>
+</td>
+<td>The user’s legal last name (surname)</td>
+</tr>
+<tr id="1e3e6fe2-6a16-808a-9f26-ff0e2506b0b4">
+<td id="jrr]">Work Email</td>
+<td id=":;tS">People &gt; Work Info &gt; Email</td>
+<td>worker.businessCommunication.emails[0].emailUri</td>
+<td>Primary work email address.</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8024-a6f7-f54fd89de31f">
+<td id="jrr]">Mobile Phone</td>
+<td id=":;tS">People &gt; Work Info &gt; Work Mobile</td>
+<td>worker.businessCommunication.mobiles[0].formattedNumber</td>
+<td>Formatted mobile number (e.g., +1 555-123-4567).</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8057-b937-e3ceee3943b8">
+<td id="jrr]">Work Address</td>
+<td id=":;tS">People &gt; Work Info &gt; Assigned Location</td>
+<td>worker.workAssignments[0].assignedWorkLocations[0].address.lineOne + worker.workAssignments[0].assignedWorkLocations[0].address.lineTwo + worker.workAssignments[0].assignedWorkLocations[0].address.lineThree</td>
+<td>Combined street address lines (e.g., 123 Main St, Suite 456). Empty lines are omitted.</td>
+</tr>
+<tr id="1e3e6fe2-6a16-808b-b817-ea93408d6308">
+<td id="jrr]">City</td>
+<td id=":;tS">People &gt; Work Info &gt; City</td>
+<td valign="top">
+<p>worker.workAssignments[0].assignedWorkLocations[0].address.cityName</p>
+</td>
+<td><span>City name for the work location</span></td>
+</tr>
+<tr id="1e3e6fe2-6a16-80fc-81c9-fc56ac0cf7fe">
+<td id="jrr]">Country</td>
+<td id=":;tS">People &gt; Work Info &gt; Country</td>
+<td valign="top">
+<p>worker.workAssignments[0].assignedWorkLocations[0].</p>
+<p>address.countrySubdivisionLevel1.codeValue</p>
+</td>
+<td>State/province code (e.g., CA for California).</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8001-8b84-d9733707a924">
+<td id="jrr]">State / Territory</td>
+<td id=":;tS">People &gt; Work Info &gt; State/Territory</td>
+<td valign="top">
+<p>worker.workAssignments[0].assignedWorkLocations[0].</p>
+<p>address.countrySubdivisionLevel1.shortName</p>
+</td>
+<td>State/province short name (e.g., CA or ON for Ontario)</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80d4-9342-efd305f4ac83">
+<td id="jrr]">Postal Code</td>
+<td id=":;tS">People &gt; Work Info &gt; Postal Code</td>
+<td valign="top">
+<p>worker.workAssignments[0].assignedWorkLocations[0].address.postalCode</p>
+</td>
+<td>ZIP/postal code (e.g., 90210).</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80ea-ba23-c3b79fad50e9">
+<td id="jrr]">Manager</td>
+<td id=":;tS">People &gt; Work Info &gt; Position &gt; Reports To </td>
+<td valign="top">
+<p>worker.workAssignments[0].reportsTo[0].associateOID</p>
+</td>
+<td>Manager’s unique associateOID. Ensure the manager exists in the target system.</td>
+</tr>
+<tr id="1e3e6fe2-6a16-806e-8b3e-e82abe47919f">
+<td id="jrr]">Department</td>
+<td id=":;tS">People &gt; Profiles</td>
+<td valign="top">
+<p>worker.workAssignments[0].homeOrganizationalUnits[0].codeValue == ('HomeDepartment' or 'Department').nameCode.shortName</p>
+<p>or</p>
+<p>worker.workAssignments[0].homeOrganizationalUnits[0].codeValue == ('HomeDepartment' or 'Department').nameCode.longName</p>
+<p>or</p>
+<p>worker.workAssignments[primary].homeOrganizationalUnits[0].nameCode.shortName</p>
+<p>or</p>
+<p>worker.workAssignments[primary].homeOrganizationalUnits[0].nameCode.longName</p>
+</td>
+<td>The department to which the worker belongs. </td>
+</tr>
+<tr>
+<td>Business Unit</td>
+<td id=":;tS">People &gt; Profiles &gt; Corporate Groups</td>
+<td valign="top">
+<p>worker.workAssignments[0].homeOrganizationalUnits[0].codeValue == ('BusinessUnit' or 'Business Unit').nameCode.shortName</p>
+<p>or</p>
+<p>worker.workAssignments[0].homeOrganizationalUnits[0].codeValue == ('BusinessUnit' or 'Business Unit').nameCode.longName</p>
+<p>or</p>
+<p>worker.workAssignments[primary].homeOrganizationalUnits[0].nameCode.shortName</p>
+<p>or</p>
+<p>worker.workAssignments[primary].homeOrganizationalUnits[0].nameCode.longName</p>
+</td>
+<td>The business unit to which the worker belongs. </td>
+</tr>
+</tbody>
+</table>
+<h3 id="01J6S7H1HTXX3N1FBWFPEQES7Y">
+<br/>Entra ID Users</h3>
+<p>The following table lists the Entra ID application UI field name, UI path, and the corresponding Entra ID attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Entra ID Field Name </strong></td>
+<td><strong>Application UI Path</strong></td>
+<td><strong>Entra ID User API Attribute</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr id="1e3e6fe2-6a16-8067-9e5f-f3a4400f81e8">
+<td id="[xpg">Account Enabled</td>
+<td id="jkj?">Account &gt; Account Status</td>
+<td valign="top">
+<p>active</p>
+</td>
+<td>The unique identifier from the HR source is assumed to be immutable. This value is used as a key to determine whether a new user needs to be created or an existing user needs to be updated.</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80fe-8e10-f22504e72d84">
+<td id="[xpg">External ID</td>
+<td id="jkj?">*N/A*</td>
+<td valign="top">
+<p>externalId</p>
+</td>
+<td>A unique identifier for the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8035-b08b-e2fa526d58ea">
+<td id="[xpg">User Principal Name (UPN)</td>
+<td id="jkj?">Directory &gt; People &gt; Identity &gt;  Username (UPN)</td>
+<td valign="top">
+<p>userName</p>
+</td>
+<td>The given name, or the first name of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80ad-b9a2-c6f33bce6eab">
+<td id="[xpg">Display Name</td>
+<td id="jkj?">Directory &gt; People &gt; Profile &gt; Display Name</td>
+<td valign="top">
+<p>displayName</p>
+</td>
+<td>The family name, or the last name of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8075-9d05-fd2f9c0ba419">
+<td id="[xpg">Job Title</td>
+<td id="jkj?">Directory &gt; People &gt; Job Information &gt; Position</td>
+<td valign="top">
+<p> </p>
+<p>title</p>
+</td>
+<td>The email ID of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-805c-a83b-ced7df2f58d0">
+<td id="[xpg">Preferred Language</td>
+<td id="jkj?">Directory &gt; People &gt; Preferences &gt; Language</td>
+<td valign="top">
+<p>preferredLanguage</p>
+</td>
+<td>The secondary email ID of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8098-8d66-e8687a0fbde9">
+<td id="[xpg">First Name</td>
+<td id="jkj?">Directory &gt; People &gt; Profile &gt; Name</td>
+<td valign="top">
+<p>name.givenName</p>
+</td>
+<td>The phone number of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-808c-920e-dda8fffe3b01">
+<td id="[xpg">Last Name</td>
+<td id="jkj?">Directory &gt; People &gt; Profile &gt; Name</td>
+<td valign="top">
+<p>name.familyName</p>
+</td>
+<td>The middle name of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-808c-9bbb-db8314b622bc">
+<td id="[xpg">Email Address</td>
+<td id="jkj?">Directory &gt; People &gt; Contact Information &gt; Email</td>
+<td valign="top">
+<p> </p>
+<p>emails.value</p>
+</td>
+<td>The honorific prefix of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-800a-9545-d651d31dc4c2">
+<td id="[xpg">Mobile Phone</td>
+<td id="jkj?">Directory &gt; People &gt; Contact Information &gt; Phone</td>
+<td valign="top">
+<p> </p>
+<p>phoneNumbers.value</p>
+</td>
+<td>The honorific suffix of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80ac-9053-c32b5a38d40e">
+<td id="[xpg">Street Address</td>
+<td id="jkj?">Directory &gt; People &gt; Addresses &gt; Street Address</td>
+<td valign="top">
+<p>addresses.streetAddress</p>
+</td>
+<td>The title of the user in the organization</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8071-abbd-cbb1564801d1">
+<td id="[xpg">City</td>
+<td id="jkj?">Directory &gt; People &gt; Addresses &gt; City</td>
+<td valign="top">
+<p>addresses.locality</p>
+</td>
+<td>The nickname of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8087-afa0-f549dd641f99">
+<td id="[xpg">State/Province</td>
+<td id="jkj?">Directory &gt; People &gt; Addresses &gt; Work Address</td>
+<td valign="top">
+<p> </p>
+<p>addresses.region</p>
+</td>
+<td>The primary phone number of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80db-a63a-d4a5bf273c8e">
+<td id="[xpg">Country</td>
+<td id="jkj?">Directory &gt; People &gt; Addresses &gt; State/Province</td>
+<td valign="top">
+<p> </p>
+<p>addresses.country</p>
+</td>
+<td>The street address of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80eb-9bba-eec6bc477d78">
+<td id="[xpg">Postal Code</td>
+<td id="jkj?">Directory &gt; People &gt; Addresses &gt; Postal Code</td>
+<td valign="top">
+<p> </p>
+<p>addresses.postalCode</p>
+</td>
+<td>The city of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8069-b1e7-e5dc5a11bf8c">
+<td id="[xpg">Manager</td>
+<td id="jkj?">Directory &gt; People &gt; Job Information &gt; Manager</td>
+<td valign="top">
+<p> </p>
+<p>ENT.manager.value</p>
+</td>
+<td>The state of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-80c8-bc3c-c4f048fec5ef">
+<td id="[xpg">Department</td>
+<td id="jkj?">Directory &gt; People &gt; Job Information &gt; Department</td>
+<td valign="top">
+<p> </p>
+<p>ENT.department</p>
+</td>
+<td>The zip code of the user</td>
+</tr>
+<tr id="1e3e6fe2-6a16-8082-9fd5-e3141576d159">
+<td id="[xpg">Division</td>
+<td id="jkj?">Directory &gt; People &gt;Job Information &gt; Division</td>
+<td valign="top">
+<p> </p>
+<p>ENT.division</p>
+</td>
+<td>The country code of the user</td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Run Integration</h1>
+<p>You can set up an event or schedule triggers to execute the integration. For further details, refer to the <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p>
+<p>Once the integration is successfully executed, Aquera syncs the workers created in ADP Workforce Now as users in Entra ID.</p>
+  </div>
+</body>
+</html>

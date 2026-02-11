@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>HR Onboarding Bridge</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>HR Onboarding Bridge</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h3 id="jump-to">Jump To</h3>
+<pre><a href="#h_01EKH7J0CY0G8K075Y8AGTKK8P" target="_self">source_scim</a><br/><a href="#h_01EKH7JDYCF5BYE6REMNNHAT75" target="_self">target-scim</a><br/><a href="#h_01EKH7JQS70EXXHPH34ZFTM5FK" target="_self">report_only</a><br/><a href="#h_01EKH7JZ8C5XJXCFX59QGQ1EET" target="_self">map</a><br/><a href="#h_01EKH7K6V4J2TQ6THH1YP9G26R" target="_self">Group Management</a> <br/><a href="#h_01EKH7KJHCDNTW5WSRAHB5RYXJ" target="_self">Email Templates</a> </pre>
+<p>The HR Onboarding Bridge Orchestration provides a one way synchronization from any Human Resources Management System to a directory or application.  The Orchestration can be scheduled to run on a frequency specified in the schedule section of the configuration.</p>
+<p> </p>
+<h1 id="orchestration-parameters">Orchestration Parameters</h1>
+<h2 id="h_01EKH7J0CY0G8K075Y8AGTKK8P">source_scim</h2>
+<p>This parameter to the orchestration defines the SOURCE system that the bridge will read information from.  This source must be configured as an application in the applications list for your tenant.  The application must have it's credential configured so that the orchestration can communicate to the source HR system to retrieve all of the records to be synchronized to the destination.</p>
+<h2 id="h_01EKH7JDYCF5BYE6REMNNHAT75">target_scim</h2>
+<p>This parameter to the orchestration defines the DESTINATION system that the bridge will write users to.  This destination must be configured as an application in the applications list for your tenant.  The application must have it's credential configured so that the orchestration can communicate to the target directory or application to create/update/delete users.</p>
+<h2 id="h_01EKH7JQS70EXXHPH34ZFTM5FK">report_only</h2>
+<p>This parameter when true directs the orchestration to run in read only mode to generate a report that can be examined to ensure that the users will be created/updated/deleted in the destination directory or application correctly.</p>
+<h2 id="h_01EKH7JZ8C5XJXCFX59QGQ1EET">map</h2>
+<p>This parameter is used to create a map of the user in the destination directory or application from expressions from the source system.  These expressions allow you to specify how each attribute will populated.</p>
+<p>active : this attribute determines the state of the user in the destination application or directory.  The most basic form will be an exact copy active = SOURCE.active.  But you can support other use cases:</p>
+<p>Employee Moving to Contractor:  When the title field in the Source HR is set to CONSULTANT then the user in the destitination will not be deactivated even after they are terminated.  active = SOURCE.title == 'CONSULTANT' || SOURCE.active will make this possible.</p>
+<p> </p>
+<h2 id="h_01EKH7K6V4J2TQ6THH1YP9G26R">Group Management</h2>
+<p>if the group expression is undefined then the group list will not be modified during the PUT or POST.  If you would like to remove a user from all of their groups then the expression must evaluate to the empty list [].</p>
+<p>The managed group list provides a list of groups that the Orchestration will manage.  Only these groups will be modified by the orchestration.  This allows the target to have groups that are managed in the target, for example AD security groups managed by AD and groups managed by the orchestration.</p>
+<p>The list of groups will be the displayName of each group.</p>
+<p>The groupDisplays must be unique in the target directory.  If the group name is redundant in the target then that group cannot be managed as the orchestration will not know which group of the two to add the user to.</p>
+<p> </p>
+<h2 id="h_01EKH7KJHCDNTW5WSRAHB5RYXJ">Email Templates</h2>
+<p>The email templates allow for customization of the onboarding and off boarding email messages that are sent to the manager and/or administrator.  These templates allow for substitution of attribute values of the corresponding user in the email message itself by utilizing {{attribute_name}}.</p>
+<p>For example to include an IAN attribute as part of the response you will need to include {{[IAN].Location}} for example.</p>
+<p> </p>
+  </div>
+</body>
+</html>

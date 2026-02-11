@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UKG Ready Timesheets to QuickBooks Desktop Enterprise Timesheets</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>UKG Ready Timesheets to QuickBooks Desktop Enterprise Timesheets</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating the synchronization of data across resource types. This guide covers the end-to-end tasks in setting up a script synchronization to sync timesheets from UKG Ready to QuickBooks Desktop Enterprise.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Admin Access to QuickBooks Desktop Enterprise:</strong> You must have admin access to your QuickBooks Desktop Enterprise instance. You can visit the QuickBooks Desktop Enterprise portal to get access to a QuickBooks Desktop Enterprise instance.</li>
+<li>
+<strong>Admin Access to UKG Ready:</strong> You must have admin access to your UKG Ready instance.</li>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure following application connectors in the Aquera Admin portal to integrate with QuickBooks Desktop Enterprise:
+<ul>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for details.</li>
+<li>
+<strong>QuickBooks Desktop Enterprise</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/24385272876055">QuickBooks Desktop Enterprise Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</h1>
+<p>This section details how the synchronization must be configured to allow data push from UKG Ready to QuickBooks Desktop Enterprise.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Script Synchronization</h2>
+<p>Perform the following steps to create a new script synchronization:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> from the left side panel.</li>
+<li>Click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>UKG Ready Timesheets to QuickBooks Desktop Enterprise Timesheets</strong>.</li>
+<li>Enter a name and a description for the synchronization.</li>
+<li>Select your UKG Ready and QuickBooks Desktop Enterprise connector instances.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the synchronization.</li>
+</ol>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h2>
+<p>The<strong> UKG Ready Timesheets to QuickBooks Desktop Enterprise Timesheets </strong>template script maps the commonly used UKG Ready and QuickBooks Desktop Enterprise attributes. You can customize it based on your use case.<br/>The following are the attributes that are mapped by default:</p>
+<table border="1">
+<thead>
+<tr>
+<th>UKG Ready Script Expression</th>
+<th>QuickBooks Desktop Enterprise Script Expression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>entry.date</td>
+<td>output.TxnDate</td>
+</tr>
+<tr>
+<td>entry.total</td>
+<td>output.Duration</td>
+</tr>
+<tr>
+<td>entry.notes</td>
+<td>output.Notes</td>
+</tr>
+<tr>
+<td>entry.empName</td>
+<td>output.EntityRef.FullName</td>
+</tr>
+<tr>
+<td>entry.cost_centers[].parentCc.details.name + entry.cost_centers[].name</td>
+<td>output.CustomerRef.FullName</td>
+</tr>
+<tr>
+<td>entry.cost_centers[].abbreviation / entry.cost_centers[].name / entry.time_off.external_id</td>
+<td>output.ItemServiceRef.FullName</td>
+</tr>
+<tr>
+<td>entry.cost_centers[].description</td>
+<td>output.ClassRef.FullName</td>
+</tr>
+<tr>
+<td>entry.cost_centers[].parentCc.details.name</td>
+<td>output.BillableStatus</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01HXV5081PWKBEKH540JBRRMQM">UKG Ready Employee Attributes</h2>
+<p>Refer to the following table for the UKG Ready employee attributes:</p>
+<table border="1">
+<thead>
+<tr>
+<th>UKG Ready Attribute Name</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>date</td>
+<td>The date of the time entry</td>
+<td>string (Date format)</td>
+</tr>
+<tr>
+<td>total</td>
+<td>The total time in hours and minutes</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>The additional notes for the time entry</td>
+<td>string</td>
+</tr>
+<tr>
+<td>empName</td>
+<td>The formatted name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>cost_centers[].name</td>
+<td>The name of the cost center</td>
+<td>string</td>
+</tr>
+<tr>
+<td>cost_centers[].description</td>
+<td>The description of the cost center</td>
+<td>string</td>
+</tr>
+<tr>
+<td>cost_centers[].parentCc.details.name</td>
+<td>The name of the parent cost center</td>
+<td>string</td>
+</tr>
+<tr>
+<td>cost_centers[].abbreviation</td>
+<td>The abbreviation of the cost center</td>
+<td>string</td>
+</tr>
+<tr>
+<td>time_off.external_id</td>
+<td>The external ID for time off entries</td>
+<td>string</td>
+</tr>
+<tr>
+<td>employee.account_id</td>
+<td>The employee's account ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>employee.name.formatted</td>
+<td>The formatted name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>id</td>
+<td>The time entry ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>time_off.id</td>
+<td>The time off entry ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>approval_status</td>
+<td>The approval status of the time entry</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01J7J8PJMMQ03F0EAVX6TSNR0P">QuickBooks Desktop Enterprise Timesheets</h2>
+<p>Refer to the following table for the QuickBooks Desktop Enterprise employee attributes:</p>
+<table border="1">
+<thead>
+<tr>
+<th>QuickBooks Desktop Enterprise Attribute Name</th>
+<th>Description</th>
+<th>Data Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TxnDate</td>
+<td>The transaction date</td>
+<td>string (Date format)</td>
+</tr>
+<tr>
+<td>Duration</td>
+<td>The time duration</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Notes</td>
+<td>The additional notes</td>
+<td>string</td>
+</tr>
+<tr>
+<td>EntityRef.FullName</td>
+<td>The entity reference full name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>CustomerRef.FullName</td>
+<td>The customer reference full name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>ItemServiceRef.FullName</td>
+<td>The item service reference full name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>ClassRef.FullName</td>
+<td>The class reference full name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>BillableStatus</td>
+<td>The status of billability</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h1 id="01J7J8NZBQRC3RCB2QF01GPYG9">Run Script Synchronization</h1>
+<p>You can set event or schedule triggers to run the script synchronization. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Trigger</a> section.</p>
+<p>After the script synchronization is successfully executed, Aquera syncs the timesheets created in UKG Ready to QuickBooks Desktop Enterprise.</p>
+  </div>
+</body>
+</html>

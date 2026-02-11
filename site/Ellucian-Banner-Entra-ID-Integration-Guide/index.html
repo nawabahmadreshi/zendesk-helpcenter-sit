@@ -1,0 +1,317 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ellucian Banner / Entra ID Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Ellucian Banner / Entra ID Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KG6QWCT4WRT0Q4BT7BRDVTER">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This guide outlines the end-to-end steps required to set up the integration that synchronizes employees and students data between Ellucian Banner and Entra ID.</p><p>To identify records across both systems, the integration uses the <strong>Banner ID</strong> from <strong>Ellucian Banner</strong> and matches it to the <strong>Employee ID</strong> in <strong>Entra ID</strong> as a correlation attribute.</p><h2 id="h_01KG6QY97ZJ49QJZ8YT6P8ZMAR">Key Functions</h2><p>This integration automates identity lifecycle management between Ellucian Banner (a higher education ERP system) and Entra ID (formerly Azure AD) with the following primary capabilities:</p><ul>
+<li data-list-item-id="ed25ac0dcc7f17712388dea1fe60ae65f">Synchronizes user records from Ellucian Banner to Microsoft Entra ID.</li>
+<li data-list-item-id="e6feab217b3aad2ebc9e945276dfa70f0">Creates new users in Entra ID when they are added in Ellucian Banner.</li>
+<li data-list-item-id="ee2f96a8549962e72576cc1d891afeb8e">Updates existing Entra ID users when their information changes in Ellucian Banner.</li>
+<li data-list-item-id="e07694d1ca25bda5bd0dd2adf52445d2d">Deactivates or deletes Entra ID users when they are no longer active in Ellucian Banner.</li>
+<li data-list-item-id="ebb2355eb42c0d397c30849e0d0b7dbe0">Assigns users to groups in Entra ID based on configured rules.</li>
+<li data-list-item-id="ee66f6598aaf8490533ae456a704d8031">Generates passwords, email IDs, and UPNs (User Principal Name) for users in Entra ID based on configured policies.</li>
+<li data-list-item-id="e4077a87f86c4939f8d394ccf2da0b704">Updates email IDs from Entra ID to Ellucian Banner (writeback).</li>
+<li data-list-item-id="e905b881b5e6f3b3787d1f954f37668c7">Supports both full synchronization and incremental synchronization to process only changed records.</li>
+</ul><h2 id="h_01KD80KT84CHY25GM05997PQ8Q">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="eb1337065d0a13f15e7e9941889f30b41">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e3692e8bf8514e737090c5f07e9dfb0a8">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e488df1a608f21d6ad818316689ca50b7">
+<strong>Ellucian Banner</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/7261735537815" rel="noopener noreferrer" target="_blank">Ellucian Banner Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="ebd0f42d6a08811ab097560ae49148c3f">
+<strong>Microsoft 365</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section details the configuration and mapping process for integrating Ellucian Banner with Entra ID. It outlines the steps to create the integration, set up integration preferences, and define how data is mapped.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e5c1f9f31af02c348fa127fc1da477499">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e4d88afb0a37517e3ac6c9a76c9ee8dff">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e614079c263f1d2bffcb7a2ef0e1d2a3a">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e8d51e3c291d9d6b95627b5f5a3002cc6">Select <strong>Ellucian Banner / Entra ID</strong>.</li>
+<li data-list-item-id="e9ed70b03b8912bf15b1dd1033751a6a5">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ec8ecf46651947cb1ec84c52555e6e35b">Select your <strong>Ellucian Banner</strong> and <strong>Microsoft 365</strong> connector instances.</li>
+<li data-list-item-id="ed605f70e7801803782a2218db5630909">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01K3TMT9CQB86XXAZ9FY9M1QYW">Configuration</h2><p>On the <strong>Configuration</strong> page, the following sections are displayed:</p><h3 id="h_01K3TMW0YGBNCAV57V69WX0VWV">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and general settings according to your specific use case.</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Scenarios</h4><p>Enable the following feature based on your requirements:</p><ul>
+<li data-list-item-id="e06958119b6b42f824047e8fcb601ebb0">
+<strong>Enable User Lifecycle Management</strong>: Select this checkbox to synchronize users' data from <strong>Ellucian Banner</strong> to <strong>Entra ID</strong>. When enabled, the <a href="#01K4A9WTC4984KJ3X6ABQ5B8WR">Manage Employees</a> section is displayed to configure further integration settings.</li>
+<li data-list-item-id="ee84de958a2a32b7711709142a1684583">
+<strong>Enable Group Assignment</strong>: Select this checkbox to enable group assignments in Entra ID. When enabled, the <a href="#h_01KGHGZ5FE22SFKHK1FVGD47EG">Group Assignments</a> section is displayed to configure further integration settings.</li>
+<li data-list-item-id="e3abd4d7c4922e86b9ef48f329377fc7b">
+<strong>Enable Email Writeback</strong>: Select this checkbox to enable updating the email ID of users from <strong>Entra ID</strong> to <strong>Ellucian Banner</strong>.</li>
+</ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e764bcc5e3e2eb903e233b089e0b7d93a">
+<strong>Enable Report Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e0aa2cfd80c7adb0e80521db1f2f7f780">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01KGHH3ZZ8TA8NBG5BHDVSRZBB">Logging</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e1d706a25e6972c35df2235e3ebf82c07">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01KGHH5EYXPD55T3QNB33EB738">Notification</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eade3b26670b425561315063aa4cab26c">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#h_01KGHFT7BX2WGGEDSQZ75MJ1TQ">Reporting</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eebaf3e51f188ad3aab4f30cd82d5c5b1">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the <a href="#h_01KGF6VEY028ED2AR4GQJQKE7F">Log Insights</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e4c916ce6cfda94c502c1447568791033">
+<strong>Enable Debug Mode</strong>: Select this checkbox to execute the integration in debug mode for debugging purposes. When enabled, the <a href="#h_01KGHCM05P16HDNGNGD0D9R5CG">Debug Mode</a> section is displayed for further configuration.</li>
+</ul><h3 id="01K4A9WTC4984KJ3X6ABQ5B8WR">Manage Employees</h3><p>The <strong>Manage Employees</strong> section enables you to customize the integration settings for employee lifecycle management according to your specific use case. It synchronizes employees and students data from <strong>Ellucian Banner</strong> to <strong>Entra ID</strong>.<br/><strong>Note</strong>: This section appears only if the <strong>Enable User Lifecycle Management</strong> setting is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following fields:</p><ul>
+<li data-list-item-id="eaf50883ee3b9e75e906023747fb168b8">
+<strong>Ellucian Banner Settings</strong>: This section allows you to configure settings for Ellucian Banner. The following parameters are displayed:<ul>
+<li data-list-item-id="e10099773cd568bf9a2514020e7c4ffc6">
+<strong>Ellucian Banner Correlation Attribute</strong>: Identifies the Ellucian Banner attribute used to uniquely identify and correlate users between Ellucian Banner and Entra ID.</li>
+<li data-list-item-id="ef259e6180a702cb7ce57633d40888ce5">
+<strong>User Lifecycle Management</strong>: Select the user lifecycle operations that will be allowed through this integration. For example, enter Create and Update if you want all create and update operations to be managed through this integration.</li>
+</ul>
+</li>
+<li data-list-item-id="e4831d3ba46a37f2e584a6be156e29152">
+<strong>User Type for Lifecycle Management</strong>: Select the type of users whose identities will be provisioned and managed through this integration. You can select one or both of the following options:<ul>
+<li data-list-item-id="e41b753fc86cf9f55315d5747745a1465">
+<strong>Employee</strong>: Select this to include employees.</li>
+<li data-list-item-id="e43f5b0d7d9f7d564781185790d28fb33">
+<strong>Student</strong>: Select this to include students.</li>
+</ul>
+</li>
+<li data-list-item-id="e191bf4f2f5520ca61dd58f3716937ba0">
+<strong>Data Sources</strong>: Select the data sources from Ellucian Banner that will be used to collect resource details for the integration.</li>
+<li data-list-item-id="e176da368c6227367c07b47a05279e0a2">
+<strong>Ignore Errors for Data Sources</strong>: Select the data sources for which API errors must be ignored during data processing.</li>
+<li data-list-item-id="efd2660ed60cd7693331a1cc0ac31e05f">
+<strong>Entra ID Settings</strong>: This section allows you to configure settings for Entra ID. The following parameters are displayed:<ul><li data-list-item-id="e68e4700475aa2c4f7f1e4bf84793bf27">
+<strong>Entra ID Correlation Attribute</strong>: Identifies the Entra ID attribute used to uniquely identify and correlate users between Entra ID and Ellucian Banner.</li></ul>
+</li>
+<li data-list-item-id="e326b8fdc51ae51ae28af2d59c5b14d9d">
+<strong>Create Settings</strong>: This section allows you to configure the create conditions. The following parameters are displayed:<ul><li data-list-item-id="ec37b2d4413aec84d70dcea508f317ef9">
+<strong>Create Condition</strong>: Select a create condition to define which new record from Ellucian Banner must be created in Entra ID. The following are the available options:<ul>
+<li data-list-item-id="ee6b3e2571d78914b07f301f2b36bdaf9">
+<strong>All</strong>: Select this if you want all new records to be created in Entra ID.</li>
+<li data-list-item-id="ea087777f29c5822e4cdcc8bb4aa7c465">
+<strong>Custom</strong>: Select this if you want to define a custom condition for creating users in Entra ID. When selected, the following field is displayed:<ul><li data-list-item-id="e8ac4ff8022d2aec3c369bd0ff101bd54">
+<strong>Custom Condition</strong>: Enter an expression to define which new records from Ellucian Banner must be created in Entra ID.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e86326fe0f9e0bd2d30f59bf162b9d286">
+<strong>Update Settings</strong>: This section allows you to configure the update conditions. The following parameters are displayed:<ul><li data-list-item-id="eb2f82be4f0e5175837428c1e69c2e855">
+<strong>Update Condition</strong>: Select the update condition to define which record from Ellucian Banner must be updated in Entra ID. The following are the available options:<ul>
+<li data-list-item-id="e6f88cc3c2d4fa7003b38e70010e388aa">
+<strong>All</strong>: Select this if you want all modified records to be updated in Entra ID.</li>
+<li data-list-item-id="eeed3ff6c4b55386f66e0a362db9d38bd">
+<strong>Custom</strong>: Select this if you want to define a custom condition for updating users in Entra ID. When selected, the following field is displayed:<ul><li data-list-item-id="e0a3d8f7a725eb4389b22d7060e63f554">
+<strong>Custom Condition</strong>: Enter an expression to define a custom condition for updating users in Entra ID.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e478ab19edac080d49cc1641dedae5f44">
+<strong>Delete Settings</strong>: This section allows you to configure the delete conditions. The following parameters are displayed:<ul>
+<li data-list-item-id="e25f10a045b3f7c5c19a4b640a2df6636">
+<strong>Delete Condition</strong>: Select a delete condition to define which record from Ellucian Banner must be <strong>deleted</strong> in Entra ID. The following are the available options:<ul>
+<li data-list-item-id="ef4ee0fd081e259b671f4af2e3162e9e1">
+<strong>All</strong>: Select this if you want all inactive records to be deleted in Entra ID.</li>
+<li data-list-item-id="e9fcfcb5e937761cb4aacdb5948309441">
+<strong>Custom</strong>: Select this if you want to define a custom condition for deleting users in Entra ID. When selected, the following field is displayed:<ul><li data-list-item-id="ef79922d1e9d4082f59a2e1d944c59fea">
+<strong>Custom Condition</strong>: Enter an expression to define a custom condition for deleting users in Entra ID.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ed544ffee01724733a25373c9917df11a">
+<strong>Delete Employee on Deactivation</strong>: Select this checkbox to automatically delete user from Entra ID when the corresponding record is deactivated in Ellucian Banner.</li>
+</ul>
+</li>
+</ul><h3 id="h_01KGF6VEY04BDF18MQR8SNQFJJ">Manage Policy</h3><p>This section enables you to configure the settings to generate password, UPN, and email ID during user creation in Entra ID.</p><p>It has the following fields:</p><ul>
+<li data-list-item-id="e62e1ad903d0d5544829b88d878703de1">
+<strong>Generate Password Settings</strong>: This section allows you to configure the policy for generating passwords for new users in Entra ID. The following parameters are displayed in this section:<ul><li data-list-item-id="ecf9c50cf8c79908b005d5515e11b1dfe">
+<strong>Password Generation Method</strong>: Select one of the following methods to generate a password for new users in Entra ID:<ul>
+<li data-list-item-id="ebdb1dcb01750238de9e6b218b1f03508">
+<strong>Auto Generate Password</strong>: Select this method if you want passwords to be generated automatically by the system.</li>
+<li data-list-item-id="e14eacd84b93ab2f1b2b8afaca6ada63c">
+<strong>Configure Password Policy</strong>: Select this if you want to define a policy for generating passwords. When selected, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="e8a2767bbb4fd7c0a8f1d010bea4eb4ea">
+<strong>Password Length</strong>: Enter the number to be </li>
+<li data-list-item-id="e3eef8a6c551aebd38c7878c96d0cabe8">
+<strong>Allowed Characters</strong>: Select the characters that are allowed to be included in password. For example, select <strong>Include Uppercase</strong>, <strong>Include Lowercase</strong>, and <strong>Include Special Characters </strong>to allow these characters in passwords.<br/>When <strong>Include Special Characters </strong>is selected, the following field is displayed for further configuration:<ul><li data-list-item-id="e8b835790fdee3aef88742796c9ab5bb1">
+<strong>Allowed Special Characters</strong>: Enter the special characters that are allowed to be included in passwords. Only the configured characters can be used when special characters are required.</li></ul>
+</li>
+</ul>
+</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="eef215480703e247a2921e8bd57e7b8ee">
+<strong>Generate UserPrincipalName (UPN) Settings</strong>: This section allows you to configure the policy for generating UPN for users in Entra ID. The following parameters are displayed in this section:<ul><li data-list-item-id="ed7c50e1adb207d2e087a08e3b9d940cb">
+<strong>Policy for Generating User's UserPrincipalName (UPN)</strong>: Enter your prompt to define the format to be used while generating UPN. After defining the format, click <strong>Analyse and Preview</strong> to view the output. You can also use the <strong>Advanced Preview Options</strong> to test the preview with custom values.<br/>To switch to a code-based view to edit the UPN generation logic directly instead of using plain text instructions, click <strong data-end="872" data-start="859">Code View</strong>.</li></ul>
+</li>
+<li data-list-item-id="ef997b7490bf619eb386eb44c25045b32">
+<strong>Generate Email Settings</strong>: This section allows you to configure the policy for generating email IDs for new users in Entra ID. The following parameters are displayed in this section:<ul><li data-list-item-id="e20db21d010429706d4d06690caa566d0">
+<strong>Email Generation Method</strong>: Select one of the following methods to generate email IDs for new users in Entra ID.<ul>
+<li data-list-item-id="eb6fb0cdfc36573d27c0e3f9565bc1231">
+<strong>Configure Email ID as UPN</strong>: Select this option if you want the email ID to be set to the same value as the user’s UPN.</li>
+<li data-list-item-id="ee147f999e04c73d6768873b224b3a7db">
+<strong>Configure Email Policy</strong>: Select this if you want to define a policy for generating email IDs. When selected, the following fields are displayed for further configuration:<ul><li data-list-item-id="e7fd3b7820b56f9a3057eb46ff11b8889">
+<strong>Policy for Generating User's Email</strong>: Enter your prompt to define the format to be used while generating email IDs for users in Entra ID.<br/>After defining the format, click <strong>Analyse and Preview</strong><span> </span>to view the output. You can also use the <strong>Advanced Preview Options</strong> to test the preview with custom values.<br/>To switch to a code-based view to edit the logic directly instead of using plain text instructions, click <strong data-end="872" data-start="859">Code View</strong>.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul><h3 id="h_01KGHGZ5FE22SFKHK1FVGD47EG">Group Assignments</h3><p>This section enables you to configure the group assignment rules that define how groups are managed through this integration.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Group Assignment</strong> setting is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following fields:</p><ul>
+<li data-list-item-id="ef46141c0dbd6b67f0886d9d12e2ae2ed">
+<strong>Assign License Groups if not in Selected Groups</strong>: Select this checkbox to assign license groups to a user only if the user is not already a member of any of the selected license groups. When enabled, the following field is displayed for further configuration:<ul><li data-list-item-id="e1fe33f6036058bdd890c2a5dbe607803">
+<strong>License Groups to Check Membership</strong>: Select the license groups that will be checked to determine whether a user already has a license group assigned. Only users who are not members of these groups will be considered for group assignment.</li></ul>
+</li>
+<li data-list-item-id="ecc012b2c553deb3d33288a1e6e2c8d9b">
+<strong>Assign License to Users</strong>: This field allows you to configure the group rules to assign license groups to users in Entra ID.<br/>Perform the following procedure to create the assignment rules:<ol>
+<li data-list-item-id="e537e43fb6d3dff4260bea3c7d8b68eb1">Click <strong>Add New Rule</strong> to create a new assignment rule.</li>
+<li data-list-item-id="ef59b6d8cd8e42495fd05c8b8f1722d63">Switch to Expression mode, and select one of the following based on your requirement:<ul>
+<li data-list-item-id="e945ea9596f626e078adabe48acea6e86">
+<strong>For Conditions Only</strong>: Select this if you want to write a JavaScript expression only for the conditions.<br/><img alt="2026-02-03_16-36-10.png" height="326" src="./assets/9764dd1bf5cab42c.bin" width="2146"/> </li>
+<li data-list-item-id="e2af0b7c43713145438c8c36f5e19a94b">
+<strong>For Conditions and Assignments</strong>: Select this if you want to write expression for both, conditions and assignments.<br/><img alt="2026-01-16_15-42-49.png" height="406" src="./assets/71275922bf1a557e.bin" width="2630"/>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e9e09d5f942984f8bf85f95a9b80efa40">Click <strong>Continue</strong> to configure the expression.</li>
+<li data-list-item-id="ece8e713af4c246c9b177be157f8d13fe">Enter you expression and configure the groups to be assigned then click <strong>Save Changes</strong>.</li>
+<li data-list-item-id="e081324ecd7e82046e402a79985e4e5b3">If required, click <strong>Add New Rule</strong> to add another assignment rule, as explained above.<br/><strong>Note</strong>: You can add any number of assignment rules. However, you can see only 5 rules on a single page. If you add more than 5 rules, navigation options will be available at the bottom of the page to navigate to other pages for configuring or viewing the remaining defined rules.</li>
+</ol>
+</li>
+</ul><h3 id="h_01KGHH3ZZ8TA8NBG5BHDVSRZBB">Logging</h3><p>This section enables you to customize the log generation settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Logging</strong> setting is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e41371baedeef066819d7e70dca17c30a">
+<strong>Log Detail Level</strong>: Select the log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e18fe7670a171c5dcf073ce93781088e4">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e228a4b4dcce0accff3ea9237fffa052c">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ed8004c51597549cda69c2bc8347ee0ce">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select Custom:<ul><li data-list-item-id="edc700437a2428fca185a27041613980d">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the log. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="e8f0cdbe821cf4d7ae7efea3b6d736c4f">
+<strong>Included Attributes</strong>: Configure the attributes to be included in the log. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute Filter</strong> parameter.</li>
+<li data-list-item-id="ec69587ea322a04c8d595659e3ff590b7">
+<strong>Excluded Attributes</strong>: Configure the attributes to be excluded in the log. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e40983453270a9411ffe4bb5ec40bbb13">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul><h3 id="h_01KGHH5EYXPD55T3QNB33EB738">Notification</h3><p>This section enables you to customize the notification settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Notifications</strong> setting is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following parameters:</p><ul>
+<li data-list-item-id="e0e0fd0e278ca89311436700412d245d7">
+<strong>Notification Report Settings</strong>: This section allows you to customize the notification report settings. The following fields are displayed in this section:<ul><li data-list-item-id="e5d723a1e2711259274d892d571ab6abb">
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for each integration execution. When enabled, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="e6cd7a15727274334ce28bd7b236e32ba">
+<strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e611f0f26e78e10164000d171aae57718">
+<strong>Summary Only</strong>: Select this if you want to see only the count of CRUD operations. Attribute details are not displayed.</li>
+<li data-list-item-id="e4681eeaffdd929cd193a802636d88d4e">
+<strong>Full Details</strong>: Select this to see all attribute details in report.</li>
+<li data-list-item-id="e315729062c75d9f01a8030c059445fbf">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select Custom:<ul><li data-list-item-id="ee27a23f0cfe3e65e85b30488fafeddd1">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in reports. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="efb5d9acab53bae8db6c0cc7358575163">
+<strong>Included Attributes</strong>: Enter the attributes to be included in reports. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute Filter</strong> field.</li>
+<li data-list-item-id="ebe842cc71348e1f4a309acfec5aebbab">
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from reports. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter</strong> parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e1fcdec0eaa968601285e3ee4fb984217">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="eff36268e335f21fa0a5e4892d2e664a3">
+<strong>Execution Success Notification</strong>: This section allows you to customize the notification for successful execution. The following fields are displayed in this section:<ul>
+<li data-list-item-id="e86afa56951e337045c64cb769325cbe7">
+<strong>Admin's Email Address</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e29312c41e24aae324dbc303d11d49d07">
+<strong>Success Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li data-list-item-id="e7e01be013c0d2e539753d2624e6ed7c3">
+<strong>Success Email Notification Body</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+</ul>
+</li>
+<li data-list-item-id="ef7cdfe0f358a87c092dfdd80a924f104">
+<strong>Execution Failure Notification</strong>: This section allows you to customize the notification for failed execution. The following fields are displayed in this section:<ul>
+<li data-list-item-id="e2f551567a28ffc76c100f73a95bcf0ad">
+<strong>Admin's Email Address</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="edd8a7d3aac8a3092f1cd8cc5300cb834">
+<strong>Failure Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li data-list-item-id="e76642f50b9107be7e1d49fa98390222b">
+<strong>Failure Email Notification Body</strong>: Enter the content that must be used as the email body in the notifications sent for integration errors.</li>
+</ul>
+</li>
+</ul><h3 id="h_01KGHFT7BX2WGGEDSQZ75MJ1TQ">Reporting</h3><p>This section enables you to customize the report generation settings.</p><p><strong>Note</strong>: This section appears only if the<strong> Enable Report Generation</strong> setting is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e139ba99acde8fa9a62bd087a6ef6d7ed">
+<strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e9dc21ebae70b707f207897096649a4c7">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e485fd1f278f54db7a5d19c411c89bb57">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e4b4e44b4e2914452f24e8935f63abfdb">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select Custom:<ul><li data-list-item-id="ead63cbf0443beff0b4a378dc0e858d2e">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in reports. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="e4a4c4b05bff40b1e9206cd8e768030d4">
+<strong>Included Attributes</strong>: Select the attributes to be included in the report. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute Filter</strong> parameter.</li>
+<li data-list-item-id="e5dd1c2dc4578375f4c014c9bfe63df8c">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded in the report. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e545f16b0037ec6ee95cbc230852f06ca">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul><h3 id="h_01KGF6VEY028ED2AR4GQJQKE7F">Log Insights Settings</h3><p>This section enables you to customize the log insight settings.</p><p><strong>Note</strong>: This section appears only if the<strong> Enable Log Insights</strong> setting is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="eabcee9ac316a646696b4b7ee83b7da19">
+<strong>Log Insights Detail Level</strong>: Select the level of detail from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e9febc733a34b5179368113c8cc4020d1">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e8292fd3b5149b7815c0ae29ce6c04928">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e8bd6167e29fd465525d31a6097914abb">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select Custom:<ul><li data-list-item-id="e2132ed4ea7594b98849996b1ba00ebc9">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the log insights. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="e19aa02d9ea788b4a5c39b12ff1b5dff2">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log insights. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute Filter</strong> parameter.</li>
+<li data-list-item-id="e4b533dbf6a9a8c682540f518ce44d3a6">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded from the log insights. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter</strong> parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KGHCM05P16HDNGNGD0D9R5CG">Debug Mode</h3><p>This section enables you to customize the debug mode settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Debug Mode</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="ec321257fbb6dc369f46d38585b13101a">
+<strong>Import Limit</strong>: Enter the maximum number of records that should be imported for debugging during each integration run. By default, the value is set to <em>unlimited</em>.</li>
+<li data-list-item-id="e3a2c8b8aa7e395333ede6e6c24df4882">
+<strong>Employee Filter</strong>: Select a filter criteria to filter employees in Ellucian Banner and run the integration for debugging purposes. The following are the available options:<ul>
+<li data-list-item-id="ee5e6f551076b8b89b8fe864e4936de7c">
+<strong>Filter By Banner ID</strong>: Select this to filter employees by banner ID.</li>
+<li data-list-item-id="e53f1595bb54850827dce81a9c3c64a31">
+<strong>Filter By Employee ID</strong>: Select this to filter employees by employee ID.</li>
+<li data-list-item-id="ee3cf4dee0b806be846857dad31db7fb0">
+<strong>Filter By Person ID</strong>: Select this to filter employees by person ID.</li>
+<li data-list-item-id="ea6bb15c8372b2bd35df4e833785b48b1">
+<strong>Filter By Start Date of Employee</strong>: Select this to filter employees by their start date.</li>
+</ul>
+</li>
+<li data-list-item-id="e06f47451037750b04d4fbc18597e351c">
+<strong>Employee Filter Value</strong>: Enter a value corresponding to the selected filter.</li>
+</ul><h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p><p> </p><p> </p><p> </p>
+  </div>
+</body>
+</html>

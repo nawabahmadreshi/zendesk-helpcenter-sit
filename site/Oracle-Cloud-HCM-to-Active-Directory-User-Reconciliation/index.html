@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Oracle Cloud HCM to Active Directory User Reconciliation</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Oracle Cloud HCM to Active Directory User Reconciliation</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. </p>
+<p>The <em>Oracle Cloud HCM to Active Directory (AD) User Reconciliation</em> integration automates the deactivation of user accounts in Active Directory when the termination date has passed or no work relationships exist for the users in Oracle Cloud HCM. It also reactivates the Active Directory users if the employee is rehired in Oracle Cloud HCM.</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Retrieves all the employees whose termination date has passed or matches the current date.</li>
+<li>Retrieves all the employees who do not have active work relationships in the Oracle Cloud HCM.</li>
+<li>Tracks how users are matched (by person number, person ID, email) and counts for processed, deactivated, skipped, and fetched users from Oracle HCM and Active Directory.</li>
+<li>Deactivates the corresponding user accounts in the Active Directory.</li>
+<li>Reactivates Active Directory accounts for employees rehired in Oracle HCM.</li>
+<li>Generates a CSV report with the list of users that are processed as well as deactivated based on a preference setting</li>
+<li>Collects and formats email recipients for notifications and reporting.</li>
+<li>Logs the current integration configuration, including run settings, deactivation and reporting flags, email recipients, and user filtering criteria.</li>
+<li>Initializes the CSV report with headers for audit and compliance tracking.</li>
+<li>Prints a detailed summary at the end of the run, including fetch stats, reconciliation results, matching breakdown, CSV reporting, and email status.</li>
+</ul>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Oracle Cloud HCM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360014797914" rel="noopener noreferrer" target="_blank">Oracle Cloud HCM Configuration Guide</a> for instructions on creating the Oracle Cloud HCM application connector and setting up the authentication.</li>
+<li>
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for instructions on creating the Active Directory application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details the configuration and execution process for integrating Oracle HCM with Active Directory. It covers creating the integration, configuring system preferences, and setting up reporting and notification mechanisms to automate the reconciliation of user accounts between Oracle HCM and Active Directory (AD).</p>
+<p>The integration extracts user data from Oracle HCM, identifies and processes corresponding accounts in Active Directory, and produces audit-ready reports. It automatically detects all employees who are no longer active in Oracle Cloud HCM (whether due to termination or the absence of active work relationships) and deactivates their associated user accounts in the Active Directory.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Oracle Cloud HCM to Active Directory User Deactivation</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your Oracle Cloud HCM and Active Directory connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Set Up Integration Parameters</h3>
+<p>The <strong>Parameters</strong> section allows you to customize the integration settings according to your use case. It has the following configuration options:</p>
+<ol>
+<li><span><strong>Enable Dashboard Generation:</strong> Provides a visual dashboard to review and analyze integration results.</span></li>
+<li><span><strong>Recipients' Email Addresses:</strong> List of email addresses that will receive notifications about integration runs and their outcomes.</span></li>
+<li><span><strong>Report Only:</strong> Runs the integration in simulation mode, reporting potential changes without applying them.</span></li>
+<li><span><strong>Enable Integration Report Download:</strong> Sends a CSV email report summarizing the integration execution details.</span></li>
+<li><span><strong>Send Email Notifications:</strong> Allows users to download the integration report from notification emails in CSV format.</span></li>
+<li><span><strong>Debug Mode:</strong> Generates detailed logs showing data changes during integration to assist with troubleshooting and debugging.</span></li>
+<li><span><strong>Deactivate Users Without Work Relationships:</strong> Automatically disables user accounts without active work relationships.</span></li>
+<li><span><strong>Deactivate Users Missing from Oracle HCM:</strong> Disables user accounts in the Active Directory for employees who are no longer found in the Oracle HCM system.</span></li>
+<li><span><strong>Log Missing Users from Oracle HCM:</strong> Records users found in Active Directory but missing from Oracle HCM to help identify data inconsistencies.</span></li>
+<li><span><strong>Match Users by Email if Person Number is Missing:</strong> Use the email address to identify users when the personnel number is unavailable during integration.</span></li>
+<li><span><strong>Email Notification for Failed Integration:</strong> Email alerts to specified recipients when an integration run encounters errors or fails.</span></li>
+<li><span><strong>Email Subject on Successful Integration Execution:</strong> Specifies the subject of email notifications sent after successful integration runs.</span></li>
+<li><span><strong>Email Subject on Failed Integration:</strong> Specifies the subject of email notifications sent when integration fails or encounters errors.</span></li>
+<li><span><strong>Send Integration Report via Email: </strong>Select to receive email notification with a CSV report for all integration runs.</span></li>
+<li><span><strong>Filter AD Users by Organizational Unit (OU):</strong> Limits integration processing to users within a specified Organizational Unit (OU) in Active Directory, allowing for targeted or scoped runs.</span></li>
+<li><span><strong>Reactivate Rehired Oracle HCM Users:</strong> Automatically reactivates Active Directory accounts for employees rehired in Oracle HCM.</span></li>
+<li><span><strong>Enable User Deactivation</strong>: Allows for the deactivation of user accounts, restricting access while preserving data for compliance and future reactivation. </span></li>
+<li><span><strong>Maximum Deactivation Count</strong>: Set the maximum number of users allowed to be deactivated at one time. Enter a numeric value to limit batch deactivations. </span></li>
+<li><span><strong>Retrieve Data from Source Condition</strong>: The Condition that determines which data is extracted from the source application during integration.</span></li>
+</ol>
+<p><span><!-- notionvc: 0c747e55-aeeb-44f8-a97d-45a3210c0b34 --></span></p>
+<h3 id="h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Triggers</h3>
+<p>You need to set up a trigger to execute the integration automatically. This integration supports scheduled triggers.</p>
+<p>You can set up the integration based on a basic or advanced schedule. For details on setting up a schedule, refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a>.</p>
+<h1 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Run the Integration</h1>
+<p>The integration can be scheduled to run automatically at customizable intervals. Available frequencies include 15 minutes, 30 minutes, 1 hour, 4 hours, 6 hours, 12 hours, or 24 hours. You can also enable recurring executions to run the integration continuously on your chosen schedule. You can also click <strong>Execute</strong> to run the integration manually.<br/>On successful execution, the CSV file will be sent to the specified recipients. In case of integration errors, notifications and reports will also be sent to the email addresses. </p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel. <br/>The CSV report is generated only if you have selected the <strong>Generate a CSV report</strong> option in the <strong>Preferences</strong> section.</p>
+<p><img alt="oi.jpg" src="./assets/f9768eb540f7c23f.bin"/></p>
+  </div>
+</body>
+</html>

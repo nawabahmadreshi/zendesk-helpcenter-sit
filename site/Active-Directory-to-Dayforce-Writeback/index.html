@@ -1,0 +1,397 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Active Directory to Dayforce Writeback</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Active Directory to Dayforce Writeback</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JPPJY3FDFB1DD9A9NW2CC2AE">Overview</h1>
+<p>The Aquera platform enables your organization to scale complex data management by automating the integration between various applications.</p>
+<p>Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide covers the end-to-end tasks in setting up the Active Directory to Dayforce Writeback integration to sync the <strong>Users</strong> resource of <strong>Active Directory (AD)</strong> to the <strong>Employees</strong> resource of <strong>Dayforce</strong>.</p>
+<p>This integration helps write back the <strong>Business Email</strong>, <strong>Business Mobile</strong>, <strong>SSO Login</strong>, <span>and</span> <strong>Business Phone</strong> to the Dayforce system. <br/><strong>Note</strong>: Candidates complete Dayforce onboarding using a personal email, after which Aquera writes back the business identifier (email or employee number) to Dayforce as the Federation ID used for Single Sign-On. For details, refer to the <a href="#h_01KGNYBRXDSZY0C2RWS7QXNG1C">Appendix</a>.</p>
+<p>This integration performs a full user sync from AD to Dayforce when you execute the integration for the first time, and then updates the record from AD to Dayforce incrementally.</p>
+<p>Refer to the <a href="#h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</a> section to know the list of supported attributes that can be updated.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin portal for the integration:
+<ul>
+<li>
+<strong>Active Directory</strong>: Ensure that you configure version 8 of the Active Directory (AD) connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/26093919567255" rel="noopener noreferrer" target="_blank">Active Directory (AD) Version 8 Configuration Guide</a> for details.</li>
+<li>
+<strong>Dayforce</strong>: Ensure that you configure version 25 or above of the Dayforce connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li>
+<strong>Patch/Post HR Bulk Job Features</strong>: The <strong>Patch/Post HR Bulk Job</strong> feature must be enabled in the <strong>Features</strong> tab.<img alt="FeatureBulkExportAPI.png" src="./assets/49d805aebafc7eda.bin"/>
+</li>
+<li>
+<strong>Permissions</strong>: The service account in Dayforce must have the required permissions. The following image shows the minimum required permissions that must be enabled in the <strong>Web Services Field-Level Access</strong><span> tab:</span><img alt="FielLevelAccess.png" src="./assets/4ea3a8159a8c1165.bin"/><br/>Refer to the <a href="#h_01K18HC0G1GS49W9ZK7M37PRZY">Configuring Field-Level Access in Dayforce</a> section for details on the required permissions to manage user information in Dayforce.</li>
+</ul>
+<h2 id="h_01K18HC0G1GS49W9ZK7M37PRZY">Configuring Field-Level Access in Dayforce</h2>
+<p>Perform the following steps to configure the Field-Level access in Dayforce:</p>
+<ol>
+<li>Log in to your Dayforce instance with the admin credentials.</li>
+<li>Click the hamburger icon on the top left corner of the page and navigate to <strong>System Admin</strong> &gt; <strong>Roles</strong>.</li>
+<li>Select the relevant role. For example,<em> Identity API Integration</em>.</li>
+<li>Go to the <strong>Web Services Field-Level Access</strong> tab. <br/><span>The <em><strong>Web Services Field-Level Access</strong> </em>tab provides a hierarchical view of the web services response types separated by the type of service (<strong>RESTful Services</strong> and <strong>SOAP Services</strong>) and the data entities and elements available within each.<br/><img alt="DF_Restful.png" src="./assets/cfb0fe5027b7e0b8.bin"/></span>
+</li>
+<li>E<span>xpand<strong> </strong><strong>Human Resources<span> </span></strong>under the<span> </span><strong>RESTful Services</strong>.</span>
+</li>
+<li>
+<span>Enable the fields based on your use cases.<br/></span>The following table lists the field-level access that must be enabled for the service account:<br/>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Attribute</strong></td>
+<td><strong>Field-Level Access</strong></td>
+<td><strong>Navigation Path in the Dayforce Application UI</strong></td>
+</tr>
+<tr>
+<td>SSOAccounts</td>
+<td>
+<p><img alt="8.png" height="80" src="./assets/b7a67e81243bd35e.bin" width="216"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee</p>
+</td>
+</tr>
+<tr>
+<td>Contacts</td>
+<td>
+<p><img alt="Contacts.png" height="585" src="./assets/5c90eef16f503a62.bin" width="245"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>EmploymentStatus</p>
+</td>
+<td>
+<p><img alt="employmentStatus.EmploymentStatus.png" height="218" src="./assets/c11748f7461ca104.bin" width="291"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee &gt;<br/>EmploymentStatuses</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>PayGroup</p>
+</td>
+<td>
+<p><img alt="employmentStatus.PayGroup.png" height="272" src="./assets/09f57412fb4ad824.bin" width="263"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee &gt;<br/>EmploymentStatuses</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>PayClass</p>
+</td>
+<td>
+<p><img alt="employmentStatus.PayClass.png" height="247" src="./assets/e8cdc38acc2076e8.bin" width="258"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee &gt;<br/>EmploymentStatuses</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>PayPolicy</p>
+</td>
+<td>
+<p><img alt="employmentStatus.PayPolicy.png" height="134" src="./assets/6093d3bb85d0d1d3.bin" width="269"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee &gt;<br/>EmploymentStatuses</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>PayType</p>
+</td>
+<td>
+<p><img alt="employmentStatus.PayType.png" height="345" src="./assets/b67e3164d929c71c.bin" width="290"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee &gt;<br/>EmploymentStatuses</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>PayrollPolicy</p>
+</td>
+<td><img alt="employmentStatus.PayrollPolicy.png" height="139" src="./assets/d074d5ddef97f500.bin" width="272"/></td>
+<td>Human Resources &gt; Employee &gt;<br/>EmploymentStatuses</td>
+</tr>
+<tr>
+<td>
+<p>Department</p>
+</td>
+<td>
+<p><img alt="WorkAssign_Department.png" height="152" src="./assets/d12c0363144705a4.bin" width="235"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee &gt; WorkAssignments &gt; Position</p>
+</td>
+</tr>
+<tr>
+<td>Job</td>
+<td>
+<p><img alt="WorkAssin_job.png" height="570" src="./assets/dbfe5a106f36f9a0.bin" width="296"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee &gt; WorkAssignments &gt; Position</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Position Code</p>
+</td>
+<td>
+<p><img alt="primaryWorkAssignment.Position.XRefCode.png" height="32" src="./assets/bb1b093768dbceda.bin" width="270"/></p>
+</td>
+<td>
+<p>Human Resources &gt; Employee &gt; WorkAssignments &gt; Position</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<h2 id="h_01K47TAFJV84W5W0T3YXWNY658">Authorization</h2>
+<p>Perform the following steps to enable the required permissions in the <strong>Authorizations</strong> tab:</p>
+<ol>
+<li>Go to the <strong>Authorizations</strong> tab and enable the following minimum required permissions:
+<table>
+<tbody>
+<tr>
+<td><strong>Name</strong></td>
+<td><strong>Can Create</strong></td>
+<td><strong>Can Read</strong></td>
+<td><strong>Can Update</strong></td>
+<td><strong>Can Delete</strong></td>
+</tr>
+<tr>
+<td>Employee Contact Information - Business</td>
+<td><img alt="Tick.jpeg" height="19" src="./assets/a3e9d63e93a19318.bin" width="19"/></td>
+<td><img alt="Tick.jpeg" height="19" src="./assets/a3e9d63e93a19318.bin" width="19"/></td>
+<td><img alt="Tick.jpeg" height="19" src="./assets/a3e9d63e93a19318.bin" width="19"/></td>
+<td> </td>
+</tr>
+<tr>
+<td>Employee Profile - Security Settings - SSO Logins</td>
+<td><img alt="Tick.jpeg" height="19" src="./assets/a3e9d63e93a19318.bin" width="19"/></td>
+<td><img alt="Tick.jpeg" height="19" src="./assets/a3e9d63e93a19318.bin" width="19"/></td>
+<td><img alt="Tick.jpeg" height="19" src="./assets/a3e9d63e93a19318.bin" width="19"/></td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details how the integration must be configured to push user's data from Active Directory (AD) to Dayforce.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Active Directory to Dayforce Writeback</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <strong>Active Directory (AD)</strong> (version 8) and <strong>Dayforce</strong> (version 25 or above) connector instances.</li>
+<li>
+<span>Click </span><strong>Continue</strong><span>. The <a href="#h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</a> page is displayed to configure the integration.</span>
+</li>
+</ol>
+<p>For further details on integrations, refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>On the <strong>Configuration</strong> page, the following sections are displayed:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to edit, remove, and refresh these application connectors.</p>
+<h3 id="h_01JZA4ZQMJWFD63PTD99SPN4R5">Global Settings</h3>
+<p>Configure the following global settings:</p>
+<ul>
+<li>
+<strong>Enable Notifications</strong>: Select this to enable the integration-related notifications.</li>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable</strong> <strong>Analytics</strong>: Select this to analyze integration-related metrics in a dashboard.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this to generate the integration report.</li>
+</ul>
+<h3 id="01K2KYWDXD94NXDGX62T4FF8AH">Source Settings</h3>
+<p><span>Configure the following source application settings:</span></p>
+<p><strong>Note</strong><span>: The parameters marked with a red asterisk (</span><span>*</span><span>) are mandatory.</span></p>
+<ul>
+<li>
+<strong>Active Directory Filter</strong><span>*</span>: <span>Select the filter to be applied for retrieving users from Active Directory.</span><br/><span>The following are the available filters:</span><br/>
+<ul>
+<li>
+<strong>None</strong>: <span>Select this to consider all AD users without applying any filters.</span>
+</li>
+<li>
+<strong>Employee Number</strong>: <span>Select this to filter a user by the employee number specified in the</span> <strong>Source Employee Number</strong> <span>field.</span><br/><strong>Note</strong>: <span>The Employee Number of a user in Active Directory is mapped to the Employee Number of a user in Dayforce.</span>
+</li>
+<li>
+<strong>Employee ID</strong>: <span>Select this to filter a user by the employee ID specified in the</span> <strong>Source Employee ID</strong><span> field.</span>
+</li>
+</ul>
+</li>
+<li><span><strong>Source Employee Number</strong><span>*</span>: Enter the employee number to use as a filter when <strong>Employee Number</strong> is selected as the <strong>Active Directory Filter</strong>. For example, 100078. This parameter is available only if you select <strong>Employee Number</strong> in the <strong>Active Directory Filter</strong> parameter.</span></li>
+<li>
+<strong>Source Employee ID</strong><span>*</span>: <span>Enter the employee ID to use as a filter when</span> <strong>Employee ID</strong> <span>is selected as</span> <span>the</span> <strong>Active Directory Filter</strong>. <span>For example, 440.</span> <span>This parameter is available only if you select <strong>Employee ID</strong> in the <strong>Active Directory Filter</strong> parameter.</span>
+</li>
+<li>
+<strong><strong>Active Directory </strong>Update Condition</strong><span>*</span>: <span>Select one of the following update conditions:</span>
+<ul>
+<li>
+<strong>All Users</strong>: <span>Select this to update all user records, including both active and inactive users.</span>
+</li>
+<li>
+<strong>Only Active Users</strong>: <span>Select this to update only users who are currently active in the system.</span>
+</li>
+<li>
+<strong>Custom</strong>: <span>Select this to apply custom criteria to determine which users should be updated.</span>
+</li>
+</ul>
+</li>
+<li>
+<strong>JavaScript Condition for Active Directory</strong><span>*</span>: <span>Enter an expression to define the update condition that will be applied during the update process. For example, <em>new Date(hireDate1) &lt;= new Date()</em> is used to update the employee record in Dayforce on the hire date of an employee.<br/><strong>Note</strong>: This parameter is available only if you select</span><span> </span><strong>Custom</strong><span> </span><span>in the</span><span> <strong><strong>Active Directory </strong>Update Condition </strong>parameter</span>.</li>
+</ul>
+<h3 id="01K2KZXZGAVW8RYTYTC2QWKKF3">Target Settings</h3>
+<p><span>Configure the following target application settings:</span></p>
+<p><strong>Note</strong>: <span>The parameters marked with a red asterisk (</span><span>*</span><span>) are mandatory.</span></p>
+<ul>
+<li>
+<strong>Active Directory Attributes to Match Dayforce Employee Number</strong><span>*</span>: <span>Select the Active Directory attributes that will be used to match the Dayforce Employee number attribute. The available options are</span> <strong>Employee Number</strong> <span>and</span> <strong>Employee ID</strong><em>.</em><br/><span>When both attributes are selected, they will be prioritized in the specified order. For example, if you select</span> <strong>Employee Number</strong> <span>and</span> <strong>Employee ID</strong><span>, the system will first attempt to use the Employee Number attribute. If it is not available for a user, it will use Employee ID.</span><br/><strong>Note</strong>: <span>Both attributes, or at least the Employee Number attribute must be available in the user record.</span>
+</li>
+<li>
+<span><strong>Dayforce attributes to be updated when user is hired</strong></span><span>: </span><span>Select the Dayforce attributes that need to be updated when a user is hired. The available options are</span> <strong>Business Email</strong>, <strong>Business Mobile</strong>, <strong>SSO Login</strong>, <span>and</span> <strong>Business Phone</strong>.<br/><strong>Note</strong>: <span>The phoneNumber value in Active Directory must be in the correct format, along with the country code. For example, <em>+1-201-555-0123.</em></span>
+</li>
+<li>
+<span><strong>Update attributes X days before employee is hired in Dayforce</strong>: Enter the number of days before an employee’s hire date to trigger the update of selected attributes. This parameter is available only when an option is selected in the <strong>Dayforce attributes to be updated when user is hired</strong> parameter.</span><br/><span><strong>Note</strong>: The <strong>HireDate</strong> attribute reflects the most recent hire date of the employee, not the original hire date.</span>
+</li>
+<li>
+<span><strong>Dayforce Update Condition </strong><strong>Type</strong><span>*</span></span><span>: </span><span>Select the Dayforce update condition.</span><span><br/></span><span>The following are the available update conditions:</span><span></span>
+<ul>
+<li>
+<span><strong>All Employees</strong></span><span>: </span><span>Select to update all Dayforce employees.</span><span><br/></span>
+</li>
+<li>
+<span><strong>Custom</strong></span><span>: </span><span>Select this to customize which users need to be updated.</span><span><br/></span>
+</li>
+<li>
+<span><strong>JavaScript Expression</strong></span><span>: </span><span>Select this to use a JavaScript condition.</span>
+</li>
+</ul>
+</li>
+<li>
+<span><strong>Dayforce Custom Condition</strong>: This section allows you to configure the Dayforce custom condition. The following parameters are available only when you select <strong>Custom</strong> in the <strong>Dayforce Update Condition </strong><strong>Type</strong> parameter:</span>
+<ul>
+<li>
+<span><strong>Select Conditions to Apply on Dayforce Employee</strong><span>*</span></span><span>: Select one or more Dayforce employee attributes to filter employees for the updated condition. The following parameters are available only if the corresponding attributes are selected in this parameter.</span><span></span>
+<ul>
+<li><span><strong>EmploymentStatus Codes</strong><span>*</span>: Enter the employment status codes.</span></li>
+<li><span><strong>Department Codes</strong><span>*</span>: Enter the department codes. </span></li>
+<li><span><strong>Job Codes</strong><span>*</span>: Enter the job codes.</span></li>
+<li><span><strong>Position Codes</strong><span>*</span>: Enter the position codes.</span></li>
+<li><span><strong>Pay Class Codes</strong><span>*</span>: Enter the pay class codes.</span></li>
+<li><span><strong>Pay Group Codes</strong><span>*</span>: Enter the pay group codes.</span></li>
+<li><span><strong>Pay Policy Codes</strong><span>*</span>: Enter the policy codes.</span></li>
+<li><span><strong>Pay Type Codes</strong><span>*</span>: Enter the pay type codes.</span></li>
+<li>
+<span><span><strong>Payroll Policy Codes</strong><span>*</span>: Enter the payroll policy codes.<br/></span></span><strong>Notes</strong><span>:</span>
+<ul>
+<li>
+<span>If you provide a single value in the above code fields, such as 12 in the</span> <strong>Department Codes</strong> <span>field and 34 in the</span> <strong>Employment Status Codes</strong> <span>field, only the users with Department Codes of 12 and Employment Status Codes of 34 will be updated.</span>
+</li>
+<li>
+<span>If you enter multiple values in the above code fields, such as <em>12</em> and <em>23</em> in the</span> <strong>Department Codes</strong> <span>field, and <em>34</em> and <em>45</em> in the</span> <strong>Employment Status Codes</strong> <span>field, only the users with Department Codes of <em>12 or 23</em> and Employment Status Codes of <em>34 or 45</em> will be updated.</span>
+</li>
+<li><span>To exclude a particular code from this condition, prefix the value with an exclamation mark (!).</span></li>
+</ul>
+<span></span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span><strong>JavaScript for Dayforce Update Condition</strong><span>*</span>: Provide a JavaScript condition (as a string) to decide whether an employee from the Dayforce API response to be <strong>upserted</strong>. The expression runs once for each employee object and must return either <strong>true</strong> or <strong>false</strong>. This parameter is available only if the <strong>JavaScript Expression</strong> is selected from the <strong>Dayforce Update Condition Type </strong>parameter.</span></li>
+</ul>
+<h3 id="h_01JZA59QC2M9E0JR9QKAD7BH53">Notification Settings</h3>
+<p><span>Configure the following settings for email notifications:</span></p>
+<h4 id="h_01K35WZKRXA2NSEVVFR3TECBRE"><span>Admin Notification Settings</span></h4>
+<p><span>Configure the following settings for admin notifications:</span></p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: <span>Enter the email addresses of the admins to whom the email notifications will be sent.</span>
+</li>
+<li>
+<strong>Admin Email Subject</strong>: <span>Enter the content that must be used as the email subject for sending email notifications to the admins.</span>
+</li>
+<li>
+<strong>Admin Email Notification Template</strong>: <span>Enter the content that must be used as the email body for all admin email notifications.</span>
+</li>
+<li>
+<strong>Send Integration Report via Email</strong>: <span>Select this to receive email notification with a report for all integration runs.</span>
+</li>
+</ul>
+<h4 id="h_01K35WZY8DNB9ZTMEG4QASVRNR"><span>Error Notification Settings</span></h4>
+<p><span>Configure the following settings for error notifications:</span></p>
+<ul>
+<li>
+<strong>Trigger Emails for Selected Errors</strong>: <span>Select the error that should trigger an error notification.</span>
+</li>
+<li>
+<strong>Recipients of Error Notifications</strong>: <span>Enter the email addresses of the recipients to whom the error notifications will be sent.</span>
+</li>
+<li>
+<strong>Error Email Subject</strong>: <span>Enter the content that must be used as the error email subject for sending email notifications.</span>
+</li>
+<li>
+<strong>Error Email Template</strong>: <span>Enter the content that must be used as the email body for all error email notifications.</span>
+</li>
+</ul>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</h2>
+<p><span>The Attribute Map tab in Active Directory to Dayforce Writeback defines the Active Directory attributes that are mapped to the Dayforce attributes for syncing SSO login, work email, and work phone number attribute records in the Dayforce system. Only the source attributes can be modified, as needed, to align with your specific use case.</span></p>
+<p id="h_01JVM0BYAR8F7HPMYPE25K7RGV"><strong>Note</strong>: <span>The</span> <strong>Telephone number</strong> <span>attribute in Active Directory is mapped to the</span> <strong>Business Phone</strong> <span>and</span> <strong>Business Mobile</strong> <span>attributes in Dayforce. Based on your selection in the</span> <strong>Dayforce Attributes to be Updated </strong><span>field in the</span> <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> <span>section, the corresponding attribute will be updated.</span><br/><img alt="2025-05-19_16-51-37.png" height="287" src="./assets/a6bbc1777768dac5.bin" width="189"/></p>
+<h2 id="01K35X0FBBA8Q8Y32XT818BY3B">Schedule</h2>
+<p><span>You can specify when the integration should run automatically. Refer to the</span> <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> <span>for further details.</span></p>
+<h1 id="01JPPN69EDYEQ0JSSDAS9ZQC6M">Run Integration</h1>
+<p><span>You can set up events or schedule triggers to run the integration. For more details, refer to the</span> <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> <span>guide.</span></p>
+<h1 id="h_01JPS6V3Y0HNKHRW8WJ77XH62E">Download CSV Report</h1>
+<p><span>You can download a report of an integration run in CSV format by clicking the execution status indicators in the</span> <strong>History</strong> <span>column and navigating to the</span> <strong>Execution Timeline</strong> <span>panel.</span></p>
+<h1 id="h_01KGNYBRXDSZY0C2RWS7QXNG1C">Appendix</h1>
+<h2 id="h_01KGNYCCCGTFPSV2TKBZBRR55E">Candidate Onboarding and Single Sign-On Setup</h2>
+<p>When a candidate is added to Dayforce, they receive a first-time access email at their personal email address. This email allows the candidate to begin and complete the Dayforce onboarding process.</p>
+<p>Once their onboarding process is completed in Dayforce and the Aquera integration finishes provisioning the employee to the Active Directory, the candidate’s business (work) email address is created. Aquera's <strong>Active Directory to Dayforce Writeback</strong> integration then writes the business email back to Dayforce. This information is stored in the Dayforce Federation ID, which is used as the Single Sign-On (SSO) login identifier.</p>
+<p>Depending on the organization’s configuration, either the business email address or the Employee Number can be used as the Federation ID. The configured identifier is then used by the Identity Provider (IdP) to authenticate the user and enable SSO access.</p>
+<p> </p>
+  </div>
+</body>
+</html>

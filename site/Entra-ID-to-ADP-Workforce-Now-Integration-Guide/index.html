@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Entra ID to ADP Workforce Now Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Entra ID to ADP Workforce Now Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J46AGRGR00VNTVGR0PNNPBGG">Overview</h1>
+<p>The Aquera platform enables your organization to scale complex data management by automating the integration between various applications. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide covers the end-to-end tasks in setting up the Entra ID to ADP Workforce Now integration. This integration helps synchronize users' work email addresses from Entra ID to ADP Workforce Now.</p>
+<p>To identify user records across both systems, the integration uses the <strong>employeeId</strong> attribute from <strong>Entra ID</strong> and matches it to the <strong>workerID.idValue</strong> in the <strong>ADP Workforce Now</strong> as a correlation attribute.</p>
+<p>This integration compares the work email addresses of users between Entra ID and ADP Workforce Now systems and performs the following actions:</p>
+<ul>
+<li>If the work email address is available in Entra ID but is missing in the ADP Workforce Now, the integration adds the email address in ADP Workforce Now.</li>
+<li>If the work email address in the ADP Workforce Now differs from the Entra ID, the integration updates the email address in ADP Workforce Now to match the record in Entra ID.</li>
+<li>If the work email address is not available in Entra ID but is available in the ADP Workforce Now, the integration deletes the email address from the user record in ADP Workforce Now.</li>
+</ul>
+<h1 id="h_01J46AGRGRQPVRAPETC1V9F4Q4">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin portal for the integration:
+<ul>
+<li>
+<strong>Entra ID</strong>: Ensure that you have configured an Entra ID connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32091350086423" rel="noopener noreferrer" target="_blank">Entra ID Configuration Guide</a> for details.</li>
+<li>
+<strong>ADP Workforce Now</strong>: Ensure that you have configured an ADP Workforce Now connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines the configuration required to integrate ADP Workforce Now with Entra ID, enabling the transfer of workers' data.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Entra ID to ADP Workforce Now</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your Entra ID and ADP Workforce Now connector instances.</li>
+<li>Click <strong>Continue</strong>. The <a href="#h_01JSP42NYMFNXEC80XYQFYYMVV">Configuration</a> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>On the <strong>Configuration</strong> page, the following sections are displayed:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to edit or remove these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration execution report. If you prefer not to generate a report, leave the checkbox unselected.</li>
+<li>
+<strong>Select the Report Detail Level</strong>: Select the level of detail for the generated report as follows:
+<ul>
+<li>
+<strong>Full</strong>: Select <strong>Full</strong> if you want all details in the report.</li>
+<li>
+<strong>Basic</strong>: Select <strong>Basic</strong> if you want only the basic details in the report.</li>
+</ul>
+</li>
+<li>
+<strong>Enable Dashboard Generation</strong>: Select this checkbox if you want to analyze the integration-related metrics in a dashboard.</li>
+<li>
+<strong>Select the Analytics Detail Level</strong>: Select the level of detail to be included for analytics and dashboard reporting.
+<ul>
+<li>
+<strong>Full</strong>: Select <strong>Full</strong> if you want all details to be included in the integration-related metrics in a dashboard.</li>
+<li>
+<strong>Basic</strong>: Select <strong>Basic</strong> if you want only the basic details to be included in the integration-related metrics in a dashboard.</li>
+</ul>
+</li>
+<li>
+<strong>Recipients' Email Addresses</strong>: Enter the comma-separated email addresses of the recipients to whom the email notifications will be sent.</li>
+<li>
+<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+<li>
+<strong>Email Body on Failed Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for integration errors.</li>
+<li>
+<strong>Debug Mode</strong>: Select this checkbox to generate logs outlining data changes that would occur for debugging.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable the integration-related notifications.</li>
+</ul>
+<h2 id="01JVC7QW1983644JGH2WGK8FWX">Tables</h2>
+<p>In the <strong>Tables</strong> tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener" target="_blank">Using Tables in Integrations</a> guide for more details.</p>
+<h2 id="h_01JVP6WJ681AK5EKZYA0EHHYMZ">Trigger</h2>
+<p>In the <strong>Trigger</strong> tab, you can schedule the execution of the integration.</p>
+<p>You can identify one of the following types to trigger the execution:</p>
+<ul>
+<li>
+<strong>Event</strong>: You can identify an event source to trigger the execution.</li>
+<li>
+<strong>Schedule</strong>: You can specify when the integration should run automatically. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener" target="_blank">Integration Schedule Setup Guide</a> for further details.</li>
+</ul>
+<h1 id="01JPPN69EDYEQ0JSSDAS9ZQC6M">Run Integration</h1>
+<p>You can set up events or schedule triggers to run the integration. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p>
+<h1 id="h_01JPS6V3Y0HNKHRW8WJ77XH62E">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<p> </p>
+<p> </p>
+  </div>
+</body>
+</html>

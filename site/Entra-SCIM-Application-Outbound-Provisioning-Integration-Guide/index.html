@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Entra / SCIM Application Outbound Provisioning Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Entra / SCIM Application Outbound Provisioning Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KD7Y3KD9MT7413QHSHAVZCNF">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>By default, the integration uses the <strong>User Principal Name (UPN)</strong> from Entra ID and matches it with the <strong>Username</strong> in the target application to identify records, unless custom correlation attributes are configured.</p><h2 id="h_01KD80JD2B42MPX32NQSRYS5EN">Key Functions</h2><p>This integration automates identity lifecycle management with the following primary capabilities:</p><p>Can have multiple target applications in this integration.</p><h2 id="h_01KD80KT84CHY25GM05997PQ8Q">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ed04390f8647a401a258bfff5547e168b">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e93c7c20666155db29a4ae5cf705298ff">
+<strong>User Account in Entra ID</strong>: You must have one user account in Azure AD with permission to configure provisioning (For example, Application Administrator, Cloud Application Administrator, Application Owner, or Global Administrator).</li>
+<li data-list-item-id="e6b5caca3c0b4ee9c1087d2a7115565e9">
+<strong>Enterprise Application in Entra ID</strong>: You must have an enterprise application in Entra ID for the integration. Refer to the <a href="#h_01KFNB31Z7EYRJ0C110SHFRBJ2">Creating an Enterprise Application in Entra ID</a> section for further details.</li>
+<li data-list-item-id="e187f860d3cde57b0c1a328bb523d0412">
+<strong>Microsoft 365 Application Connector in the Aquera Admin Portal</strong>: You need to configure the Microsoft 365 application connector in the Aquera Admin Portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="eb88fa09c70c264b8ddd8719f87b8af50">
+<strong>Target Application Connector in the Aquera Admin Portal</strong>: You need to configure a connector in the Aquera Admin Portal for your target application. For example, if Box is your target application, then you must have a Box application connector in the Aquera Admin Portal. Refer to the <a href="https://support.aquera.com/hc/en-us/categories/115000284613-Connectors" rel="noopener noreferrer" target="_blank">configuration guide</a> for your application connector for configuration details.<br/><strong>Note</strong>: If your use case requires multiple target applications, then you must have a connector for each target application.</li>
+</ul><h3 id="h_01KFNB31Z7EYRJ0C110SHFRBJ2">Creating an Enterprise Application in Entra ID</h3><p>You must have an enterprise application in Entra ID for the integration. This enterprise application will serve as a source for user records and will be used to provision users to the target applications.</p><p>Perform the following steps to create an enterprise application:</p><ol>
+<li data-list-item-id="e059cb76b96e4a6ee66577ed424793e08">Log in to your <a href="https://portal.azure.com/#home" rel="noopener noreferrer" target="_blank">Microsoft Azure portal</a>.</li>
+<li data-list-item-id="e53a40b322aedc1046936a008d8110f31">Search and select Enterprise Applications.<br/><img alt="2026-01-23_17-51-51.png" height="564" src="./assets/b0f1a24e829c6001.bin" width="1858"/>
+</li>
+<li data-list-item-id="e7b269f0fc1c375ba84bd65e193dc075c">Click <strong>New application</strong>.</li>
+<li data-list-item-id="e9111ae2c5349fed6fc42cd218ab43237">Search for the application for which you want to create an enterprise application, and select it from the search results. For example:<br/><img alt="2026-01-23_18-24-38.png" height="1028" src="./assets/a8245566e47ee08f.bin" width="1556"/>
+</li>
+<li data-list-item-id="e338601b59f6aa099972b6de09a8bb9a4">Enter a name for the application, and click <strong>Create</strong>.<br/><img alt="2026-01-23_18-28-09.png" height="1624" src="./assets/9098b34a67bf5f1b.bin" width="1138"/><br/>The enterprise application is created and will be available on the <strong>Enterprise applications</strong> page.</li>
+</ol><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><h2 id="h_01KFN5VN33W6V4TKMMX55CFV6R">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e26a76e8969e5dff83876947ec72ae591">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e22277af6bae13c582880477903b964ec">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ec47d42ef5106b02bd769fb41c758cb8d">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ed837bc1f54cc6897bd6036eba204bef2">Search and select <strong>Entra/SCIM Apps Provisioning</strong>. <span><strong>- This name might change. Confirm</strong></span>
+</li>
+<li data-list-item-id="e31f2d2dc3ae9555cf128387836573445">Enter a name and a description for the integration.</li>
+<li data-list-item-id="efd4aa8ec49f7d988a30caa06ef5bfba9">Click <strong>Continue</strong>. The <strong>Overview</strong> page is displayed.</li>
+</ol><h2 id="h_01K3TMT9CQB86XXAZ9FY9M1QYW">Overview</h2><p>On the Overview page, you can view details about the integration, including its configuration and related settings.<span><strong> - Image can be added</strong></span></p><h2 id="h_01KFZGBB1GN0RB6E0SP3SYR0BS">Applications</h2><p>Navigate to the Applications tab to configure the source and target settings for the integration. This page allows you to select the applications involved in the integration, choose the source and target systems, and set up their connection.</p><p>In the<strong> Provisioning</strong> section, the following fields are displayed:</p><h3 id="h_01KFZCQAMBH71P21137Z5QGG04">Source Application</h3><p>This section enables you to identify the Microsoft Entra ID application connector used for the integration. The following field is displayed:</p><ul><li data-list-item-id="eb2507f1119fa12c28b82d22f7c779733">
+<strong>Entra ID Application</strong>: Select the Entra ID connector that you have created in the Aquera Admin Portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul><h3 id="h_01KFZCWZ4MMSSWW2GKAWEK5ZJK">Application Provisioning Configuration</h3><p>This section enables you to define how records from Microsoft Entra ID are provisioned to a target application and how attributes are mapped between the two systems.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e2a49623340f64acfc55f1e13c440e2df">
+<strong>Entra ID Enterprise Application Name</strong><span><strong> / Entra ID Enterprise Application</strong></span>: Click the refresh icon next to the field to retrieve all enterprise applications available in your Azure portal, then select the enterprise application that you have created for your target application from the list.<br/><img alt="2026-01-27_15-55-58.png" height="188" src="./assets/e7d3ec6fc3708bc5.bin" width="1616"/><br/><strong>Notes</strong>:<ul>
+<li data-list-item-id="eeb0603040a35cecadb17fac114f58560">This field identifies the enterprise application created in the Azure portal to drive provisioning for this integration. This is the Entra ID application to which users or groups are assigned.</li>
+<li data-list-item-id="eb638bf1317ef79bff47ad08b64b19acd">The enterprise applications available for selection depend on the Entra ID application connector selected in the <a href="#h_01KFZCQAMBH71P21137Z5QGG04">Source Application</a> section.</li>
+</ul>
+</li>
+<li data-list-item-id="e3358961d95dbfa0507c0781d530051f2">
+<strong>Select Target Application </strong><span><strong>/ Target Application</strong></span>: Select the target application connector where records will be provisioned. For example, if your use case is to provision user records from Entra ID to the Box application, select the Box connector that you have created in the Aquera Admin portal for this integration. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available target application connectors.</li>
+<li data-list-item-id="e1a70b28a9619737712895ab607004060">
+<strong>Custom Lookup for User Correlation</strong><span><strong> / Set Custom Correlation Attributes</strong></span>: By default, user records are matched using the <strong>User Principal Name (UPN)</strong> from Entra ID and the <strong>Username</strong> in the target application. Select this checkbox to use a different source or target attribute for identifying the correlation attributes. When enabled, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="ed6d3980098e532da828a9d825257a45e">
+<strong>Entra ID Attribute Used For Lookup </strong><span><strong>/ Entra ID Correlation Attribute</strong></span>: Select the correlation attribute in Entra ID that uniquely identifies a user record in your target application. For example, select <em>employeeId</em> if you want to use it to match user records in the target application.</li>
+<li data-list-item-id="ef78009ed21669357e976d135796992a9">
+<strong>Target Application Attribute Used For Lookup </strong><span><strong>/ Target Application Correlation Attribute</strong></span>: Select the correlation attribute available in your target application that uniquely identifies a user record in Entra ID. For example, select <em>userName</em> if you want to use it to match user records in Entra ID.</li>
+</ul>
+</li>
+<li data-list-item-id="ea876a3541e0895e795cbfba0bb80e854">
+<strong>Generate Password</strong>: Select this checkbox if your use case requires generating a password for new users in the target application. When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="e487c0d2c7309f132a740fddcf5707c08">
+<strong>Password Generation Method</strong>: Select the method to generate passwords. This defines how passwords should be generated. The available options are as follows:<ul>
+<li data-list-item-id="ef15ca5b7fafbbf4549688839545a3dbb">
+<strong>Generate Random Password</strong>: Select this if you want passwords to be generated automatically by the system.</li>
+<li data-list-item-id="e5d53a493fee7d4adc7cedd31f0c47040">
+<strong>Generate Password Using Policy</strong>: Select this if you want passwords to be generated based on a defined password policy. When selected, the following fields are displayed for further configuration:<ul><li data-list-item-id="eb81ea1657fccb38536ab76099a6c0274">
+<strong>Select Password Policy</strong><span><strong> / Password Policy</strong></span>: Select the password policy to be used for this integration. All password policies created in the <a href="#h_01KH0TD0YN440QFMS1M2XSJAHQ">Policy</a> tab will be available for selection.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e5d0565827608ad32b91ec9f35a316650">
+<strong>Attribute Mapper</strong>: The <strong>Attribute Mapper</strong> section allows you to control how each attributes are synchronized between Entra ID and the target application.<br/>Source attributes are listed on the left side and the target attributes are listed on the right side of the page.<br/>You can modify only the source attributes as needed, to align with your specific use case.<br/>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. You can enter the expression directly in the source attribute field or click the Expand icon to write a longer expression.<br/>Attributes marked with a red asterisk (<span>*</span>) are required for successful provisioning.<br/>The Search Attributes field allows you to filter the list of available attributes for mapping.<br/>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</li>
+</ul><p>To add another target application in this integration, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button.<br/><img alt="2026-01-28_12-33-04.png" height="150" src="./assets/f0f63c73d349d339.bin" width="1262"/></p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).<br/><img alt="2026-01-28_12-37-49.png" height="150" src="./assets/5334854c9a981eb9.bin" width="1262"/></p><p>To delete a configuration, click the delete icon.<br/><img alt="2026-01-28_12-33-04.png" height="150" src="./assets/e73cd7db8e3c6cd1.bin" width="1262"/></p><p>To view the <strong>Application Provisioning Configuration</strong> section in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.<br/><img alt="2026-01-28_17-09-21.png" height="478" src="./assets/9916bb5266bdd87b.bin" width="2240"/></p><h2 id="h_01KH0TD0YN440QFMS1M2XSJAHQ">Policy</h2><p>The <strong>Policy</strong> tab allows you to configure various policies required for the integration. The following sections are displayed:</p><h3 id="h_01KH0WV80872D2612QFJY684S0">App Group Assignment</h3><p> </p><h3 id="h_01KG2E4KGJMSJ2PV6WHEJTWY81">Password Policy</h3><p>Navigate to the <strong>Password Policy</strong> section to define how passwords are generated in the target applications. This section allows you to configure password generation rules, complexity requirements, and length constraints.</p><p>This section has the following parameters for configuration:</p><ul>
+<li data-list-item-id="e6ebd613ddc38557705735c77e8127e47">
+<strong>Policy Name</strong>: Enter a unique name to identify the password policy.</li>
+<li data-list-item-id="edcc92b8ded0f9ca44f3ae86fa43d5292">
+<strong>Password Policy Generation Method </strong><span><strong>/ Password Generation Method</strong></span>: Select the method to generate passwords. This defines how passwords should be generated for SCIM applications. The available options are as follows:<ul>
+<li data-list-item-id="e3fd777dfa431b8c0ffdd4998f1146c6c">
+<strong>Auto Generated Password</strong>: Select this if you want passwords to be generated automatically by the system based on the defined complexity and length rules.</li>
+<li data-list-item-id="eb79588ed4794794c1bbfe4256870f136">
+<strong>Custom Password Policy</strong>: Select this if you want passwords to be generated by the administrator.</li>
+</ul>
+</li>
+<li data-list-item-id="ee80e5c6f2556c3157ae616be22d5ee75">
+<strong>Password Complexity Requirements</strong>: Select the password complexity requirements. This defines the character types that must be included in the password. The available options are as follows:<ul>
+<li data-list-item-id="e47f2227238cae0e5a94956c8bb07db6e">
+<strong>Require Uppercase Letters</strong>: Select this if you want passwords to include at least one uppercase character (A–Z).</li>
+<li data-list-item-id="e44f40fbdde5d4d330a0a4b9d8504801d">
+<strong>Require Lowercase Letters</strong>: Select this if you want passwords to include at least one lowercase character (a–z).</li>
+<li data-list-item-id="e752d4968aa6233b27ce97ada50e454c1">
+<strong>Require Numbers</strong>: Select this if you want passwords to include at least one numeric character (0–9).</li>
+<li data-list-item-id="e4b754b1aaac0e78aeacd242f92d3628b">
+<strong>Require Special Characters</strong>: Select this if you want passwords to include at least one special character.</li>
+</ul>
+</li>
+<li data-list-item-id="ea51b07f2666d537d94f8317e1db440d3">
+<strong>Minimum Password Length</strong>: Specify the minimum number of characters required for a password.</li>
+<li data-list-item-id="ef0f0af048873dd4caae2df28a6969bcc">
+<strong>Maximum Password Length</strong>: Specify the maximum number of characters allowed in a password.</li>
+<li data-list-item-id="ebbb6a7154af3df2b622cb4d1c25049f0">
+<strong>Allowed Special Characters</strong>: Select the special characters that are allowed to be included in passwords. Only the selected characters can be used when special characters are required.</li>
+</ul><p>To add another password policy, click the <strong>+</strong> icon.<br/><img alt="2026-01-28_18-44-40.png" height="232" src="./assets/a2e1e59efe0a895b.bin" width="1464"/></p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;). To delete a configuration, click the delete icon.</p><p>To view the configurations in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h2 id="h_01KG2E4KGJBQTWYRM77C2WVP8E">Rules</h2><p>In the <strong>Rules</strong> tab, the following sections are displayed:</p><h3 id="h_01KG2C9SH8E7ZHD7CDPX9ZWRNY">Assignment Rules</h3><p>This section allows you to define the group rules for the integration.</p><h3 id="01KEVCPV02BP8SAN60Y62Q2F7A"> </h3><h3 id="h_01KH0XEMMCPMH8FS4CSD2HAADE"> </h3><h3 id="h_01KH0XEMMCS2FKMJB7WST45KSS"> </h3><h3 id="h_01KH0XEMMC9H1J1VD4TD9RYB54"> </h3><h3 id="h_01KH0XEMMDM0CPH9AGQCV6Z4JH">Operational Settings</h3><p>This section enables you to customize the operational settings.</p><p id="01K5B9P929CY5YBAY51DATK62B">It has the following sub-sections:</p><h4 id="h_01KG2CNKQEEHJD2XAZ9GV147N5">General Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e132e5db92d8182f62b4cb9bcefeced3b">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K3JDHSDXSJJHPRZMHT47QV8A">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e18735a3f3ac2fbd6ae503f2f4671b974">
+<strong>Enable Reporting</strong>: Select this checkbox to generate the integration reports. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Reporting Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e0089e627109009383d9a5e4568bd8d00">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insight Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e75fba1b2ad4b7b294acba92945f601fe">
+<strong>Debug Mode</strong>: Select this checkbox to execute the integration with a test user for debugging purposes. When enabled, the <a href="#01K5V7T6T6MJ13XCZYCT1T59VP">Debug Mode</a> section is displayed for further configuration.</li>
+</ul><h4 id="h_01K3JDHSDXSJJHPRZMHT47QV8A">Define PII Attribute</h4><p>This section enables you to define the PII attributes. It has the following field for configuration:</p><ul><li data-list-item-id="e1069297016588ab9e1e29d39d6e2cb07">
+<strong>Select PII Attributes </strong><span><strong>/ PII Attributes</strong></span>: Select the attributes that you want to be considered as a Personally Identifiable Information (PII) attribute.</li></ul><h4 id="h_01KG2E4KGHCD65P9P0PY3KY9QD">Log Settings</h4><p>This section enables you to customize the log settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong data-end="1326" data-start="1308">Enable Logging</strong> setting in the <a href="#h_01KG2CNKQEEHJD2XAZ9GV147N5">General Settings</a> section.</p><p>It has the following fields:</p><ul><li data-list-item-id="ee892a68e18b7930ea3c02dfceb63e837">
+<strong>Select Log Type</strong><span><strong> / Log Type</strong></span>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:<ul>
+<li data-list-item-id="e37a8626df712a8ed7f98f248ecc21d9e">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e410976918b002bfaf75cc7f09e3f4fed">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ec2391df73eb7762ffcea2179c07931b2">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="edb08e5fa3d91b58517f364cad5d405c8">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e798fe22a307eab9bce9cdae89e1633d4">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e4f79c74e3b331b1853185bac31dd0dba">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.<br/><br/>The following fields are displayed for further configuration if <strong>Metadata</strong>, <strong>Non-PII Data</strong>, <strong>GUID with Non-PII Data</strong>, or <strong>Employee Number with Non-PII Data</strong> are selected:<ul><li data-list-item-id="e1a427f75063629c86c4c9da76c4b22d0">
+<strong>Select Log Level </strong><span><strong>/ Log Level</strong></span>: Select the log level. The following are the available options:<ul>
+<li data-list-item-id="e4940d7aaa1f3fc3616bbba20545f5b84">
+<strong>All</strong>: Select this to include all attribute details in logs.</li>
+<li data-list-item-id="e20df6d64482962974e2214a14acb670a">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="eef1c9ebf37dfaec9b07cb1ba0a41c3e0">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included. For example, <em>PersonNumber</em>.</li></ul>
+</li>
+<li data-list-item-id="e472509b44042d347b164e9fa24e15358">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="eed661eff875be9526ca9cfcfe168130a">
+<strong>Custom Exclusion list</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01K04B51EEX43EAV95YABBP3F5">Reporting Settings</h4><p>This section enables you to customize the report generation settings.</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Reporting</strong> setting in the <a href="#h_01KG2CNKQEEHJD2XAZ9GV147N5">General Settings</a> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e3a3b0c1d7ae23243964e13794497f169">
+<strong>Reporting Type</strong>: Select the reporting type. This will decide the level of details to be included in reports.<br/>The following are the available options:<ul>
+<li data-list-item-id="e3de72be57b5df5a12ebdb2884452d41f">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e28aa367df43daa785bbacf991861a789">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e082a6c90f84eaa1443406648f3ee92a7">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ec408065a0bef9693c523c848f9378bb5">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e5df4998d3c301339af82dfc1bc20652e">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e9e511907f77de04d5d2ede8933c0ece2">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.<br/><br/>The following fields are displayed for further configuration if <strong>Metadata</strong>, <strong>Non-PII Data</strong>, <strong>GUID with Non-PII Data</strong>, or <strong>Employee Number with Non-PII Data</strong> are selected:<ul><li data-list-item-id="e024cb99e1d73bc37649c087db0853b7f">
+<strong>Select Reporting Level </strong><span><strong>/ Reporting Level</strong></span>: Select the reporting level. The following are the available options:<ul>
+<li data-list-item-id="ed7fba4f410ef17e010ee24157578c17f">
+<strong>All</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="e88fea3caf8117f905c73f9b87918aa4e">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="ed57d42cd5bf6245d74c00717cfe5f9a1">
+<strong> Custom Inclusion List</strong>: Select the attributes to be included. For example, <em>PersonNumber</em>.</li></ul>
+</li>
+<li data-list-item-id="ef08f83e15da0988fc7bc724c3a2dcc5e">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="ea80d73f0e08b3293352b75c825fb5f79">
+<strong>Custom Exclusion list</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="efde5fef9901bba5b5a507515e25b8fee">
+<strong>Select Report Formate </strong><span><strong>/ Report Format</strong></span>: Select the file format of the report to be generated. The available options are <em>CSV Report</em> and <em>Excel Report</em>.</li>
+</ul><h4 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insight Settings</h4><p>This section enables you to customize the log insight settings.</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <a href="#h_01KG2CNKQEEHJD2XAZ9GV147N5">General Settings</a> section.</p><p id="01K5B9P929CY5YBAY51DATK62B">It has the following settings:</p><ul><li data-list-item-id="ee1b29092a560c0674fce795b386d2198">
+<strong>Select Log Insight Type </strong><span><strong>/ Log Insight Type</strong></span>: Select the log insight type. This will decide the level of detail to be included for log insight.<br/>The following are the available options:<ul>
+<li data-list-item-id="e260b66c7f45c36c9c971835820390006">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e742fc13d1682d606500c28ba18c03a9e">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e0394e51f370fe9a8a9cbd3bbfe21dabe">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e9dd04cbb69048af1961406f3befa2a51">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ee8bc5348ba32a46bde16712902456922">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e45ddbc5f55fdfbf8dcbceed61fa5a1ba">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.<br/><br/>The following fields are displayed for further configuration if <strong>Metadata</strong>, <strong>Non-PII Data</strong>, <strong>GUID with Non-PII Data</strong>, or <strong>Employee Number with Non-PII Data</strong> are selected:<ul><li data-list-item-id="ed1053001fdd606b14d82b09aadc1904d">
+<strong>Select Log Insights Level </strong><span><strong>/ Log Insight Level</strong></span>: Select the log insight level. The following are the available options:<ul>
+<li data-list-item-id="e5dc7b005383f2d42825dc5bf205b211d">
+<strong>All</strong>: Select this to include all attribute details for analysis.</li>
+<li data-list-item-id="ee86c4aae9d072d34e4af254c710b86c4">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included for analysis. When selected, the following field is displayed:<ul><li data-list-item-id="e154efac4944b2b73e823dbd34a4340a3">
+<strong>Log Insight Inclusion List</strong>: Select the attributes to be included. For example, <em>PersonNumber</em>.</li></ul>
+</li>
+<li data-list-item-id="eb3bc7bb5f2e9890de1feaa48bcb0b37e">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded from the analysis. When selected, the following field is displayed:<ul><li data-list-item-id="e942871aa8fe13481a4fb8d1a3b6bf506">
+<strong>Log Insight Exclusion List</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="01K5V7T6T6MJ13XCZYCT1T59VP">Debug Mode</h4><p>This section enables you to customize the debug mode settings.</p><p><strong>Note</strong>: This section appears only if you have enabled the<strong> Debug Mode</strong> setting in the <a href="#h_01KG2CNKQEEHJD2XAZ9GV147N5">General Settings</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e56f9242bed9921112e5dcf6429aaaddf">
+<strong>Testing Mode</strong>: Select this checkbox to simulate the synchronization for a test user. When selected, the following fields are displayed:<ul>
+<li data-list-item-id="ed94e69fc3b1d79df9f6f0e2ff6bba1cf">
+<strong>Test Candidate Email</strong>: Enter a valid email ID used for end-to-end testing.</li>
+<li data-list-item-id="ed26d03fe1ea4f40089b0af1214fe8f0e">
+<strong>Test Employee Number</strong>: Enter a valid employee number used for end-to-end testing.</li>
+</ul>
+</li></ul><h3 id="h_01KEVBSF1NCB75TGKYHG2Q3V98">Notification Center</h3><p>This section enables you to customize the notification settings.</p><p id="01K5B9P929CY5YBAY51DATK62B">It has the following settings:</p><ul><li data-list-item-id="efb137188426e7eff73910e2fe6263e1d">
+<strong>Enable Email Notifications</strong>: Select this checkbox to enable integration-related email notifications. When enabled, the following section is displayed:</li></ul><h4 id="h_01KG4JSB4MRYSX92ACQDWVBQ2T">Email Notification Settings</h4><p>This section allows you to configure the email notifications for provisioning events.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e33a48e90fbea82573252c47b02ab039e">
+<strong>Select Event for Notification </strong><span><strong>/ Event for Notification</strong></span>: Select the provisioning event that triggers an email notification. For example, select <strong>Account Provisioned</strong> to get email notifications every time accounts are provisioned to the target application.</li>
+<li data-list-item-id="e03a0b88f68fb1852866019cbb9c0bb67">
+<strong>Send To / </strong><span><strong>Send Notifications To</strong></span>: Enter the email IDs to receive email notifications.</li>
+<li data-list-item-id="e9619b6761bd4b385fada9b5a47defc9a">
+<strong>Subject Line / </strong><span><strong>Email Subject</strong></span>: Enter the content that must be used as the email subject.</li>
+<li data-list-item-id="e89f962e8493641500c0d5e9a8aa68c3a">
+<strong>Email Template / </strong><span><strong>Email Body</strong></span>: Enter the content that must be used as the email body for the email notifications. You can use available customization features, such as <em>variables</em> and <em>Improve Description</em> to configure the email body.</li>
+<li data-list-item-id="ecfc7ff9b6dea0f2436a3547b1260c327">
+<strong>Attach Report</strong>: Select this checkbox if you want to attach the provisioning report to the email as a downloadable file.</li>
+</ul><p>To add another notification setting, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button.<br/><img alt="2026-01-29_15-27-43.png" height="198" src="./assets/dd60108fe746363e.bin" width="1464"/></p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).<br/><img alt="2026-01-29_15-27-43.png" height="198" src="./assets/28649023ee397586.bin" width="1464"/></p><p>To delete a configuration, click the delete icon.<br/><img alt="2026-01-29_15-27-43.png" height="198" src="./assets/2e6e83d3e2c074fe.bin" width="1464"/></p><p>To view the notification settings in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.<br/><img alt="2026-01-29_15-30-56.png" height="548" src="./assets/8f1c65b26673ccf4.bin" width="1904"/></p><p><br/><br/><br/> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p>
+  </div>
+</body>
+</html>

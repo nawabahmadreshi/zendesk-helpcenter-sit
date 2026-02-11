@@ -1,0 +1,423 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>External Libraries Supported in Integration Scripts</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>External Libraries Supported in Integration Scripts</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JJXSRKM1GH1QP5TCHMN69696">Overview</h1>
+<p>Aquera's integration scripts are equipped with external libraries to facilitate seamless connections to various applications. This functionality allows you to perform a wide array of tasks directly on the applications, streamlining the process of data management.</p>
+<p>By leveraging the functions from the external libraries in integration scripts, you can perform several important tasks on the applications. For instance, you can retrieve specific data that meets certain criteria. Additionally, you can update existing records, ensuring that your data remains current and accurate. You can also insert new entries into applications, which is vital for maintaining an up-to-date record of information. Furthermore, if necessary, you can delete existing records, providing you with complete control over the data in your applications.</p>
+<p>This guide provides an overview of the external libraries available in Integration Scripts. It explains how to utilize their functions to connect to applications and perform tasks directly on those applications for better data management.</p>
+<h2 id="h_01JFW6NCSHAC9G593RYQXXY1V4">TDS (Tedious) Library</h2>
+<p>The Script Editor supports the Tedious library to connect to the Microsoft SQL Server application. You can use the functions available in the Tedious library to perform database table operations in Microsoft SQL Server.</p>
+<p>The Tedious package implements the TDS (Tabular Data Stream) protocol, developed by Microsoft for interacting with an SQL Server instance.</p>
+<p>To connect to the SQL Server, you must add the SQL Server application configured in your Aquera Admin tenant to the integration and use the application variable name in the script for the database connection.</p>
+<p>The functions built in the Tedious library can be invoked in the script using the format:</p>
+<pre><strong><em>tedious.&lt;FunctionName&gt;</em></strong></pre>
+<p>The following are the Tedious library functions leveraged by Aquera for the integration:</p>
+<ul>
+<li><a href="#01JFW8DE0GA318P3ZRN30CXF79">Connection</a></li>
+<li><a href="#h_01JGNQX59H6FJ07FJ8PCK03WK5">Request</a></li>
+</ul>
+<p>For further details, refer to the <a href="https://tediousjs.github.io/tedious/index.html" rel="noopener noreferrer" target="_blank">documentation for the Tedious package</a>.</p>
+<h3 id="01JFW8DE0GA318P3ZRN30CXF79">Connection</h3>
+<p>This function is used to connect to the SQL Server instance using the credentials configured in the SQL Server application connector. For this, you must add the SQL Server application configured in your Aquera tenant to the integration and assign a variable name to that application.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p>//Create a connection<br/>var connection = <strong>new tedious.Connection</strong>({ app: &lt;appVariableName&gt;, options: {}});</p>
+<p>// Setup event handler when the connection is established<br/>connection.on('connect', function(err) {<br/>if(err) {<br/>console.log('Error: ', err)<br/>}<br/>// If no error, then good to go<br/>executeStatement();<br/>});</p>
+<p>// Initialize the connection<br/>connection.connect();</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p>(mandatory) <strong>appVariableName</strong>: The SQL Server application variable name.</p>
+<p>(mandatory) <strong>options</strong>: This object includes the database name, encryption information, the connection time-out value in milliseconds, and the TDS version to be used.</p>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>
+<p>const connection = new tedious.Connection({ app: sqlserver, options: {</p>
+<p>encrypt: true,</p>
+<p>trustServerCertificate: true,</p>
+<p>database: "userdata",</p>
+<p>rowCollectionOnRequestCompletion: true,</p>
+<p>connectTimeout: 60000,</p>
+<p>tdsVersion: tedious.TDS_VERSION.TDS_8_0</p>
+<p>}})<br/><br/></p>
+<p>connection.on("connect", function(err) {<br/>if(err) {<br/>if (err instanceof tedious.ConnectionError) { <br/>log.info(`Connection Error: ${stringify(err)}`);<br/>} else {<br/>log.info(`Error: ${stringify(err)}` );<br/>}<br/>return reject(err);<br/>}</p>
+<p>log.info("Connection acquired");<br/>return resolve(connection);<br/>})<br/><br/></p>
+<p>connection.connect()</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: The default isolation level for new connections is set to READ_COMMITED. The isolation levels can be accessed using <strong>tedious.ISOLATION_LEVEL</strong>.</p>
+<h3 id="h_01JGNQX59H6FJ07FJ8PCK03WK5">Request</h3>
+<p>This function executes a request on a connection.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p>//Create a request<br/>var request = <strong>new tedious.Request</strong>(sql, function(err, rowCount, rows) {<br/>...<br/>});<br/>connection.execSql(request);</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p>(mandatory) <strong>sql</strong>: The SQL statement to be executed.</p>
+<p>(mandatory) <strong>function</strong>: This is the callback function called when the request has been completed, either successfully or with an error. </p>
+<ul>
+<li>
+<strong><em>err</em></strong>: If an error occurs, this returns error messages.</li>
+<li>
+<strong><em>rowCount</em></strong>: The number of rows emitted from executing the SQL statement.</li>
+<li>
+<strong><em>rows</em></strong>: Rows are the result of executing the SQL statement.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>
+<p>const request = new tedious.Request(script, ( err, rowCount, rows) =&gt; {<br/>if (err) {<br/>if (err instanceof tedious.RequestError) {<br/>log.info(`Request Error: ${stringify(err)}`);<br/>} else {<br/>log.info(`Error: ${stringify(err)}`);<br/>}<br/>reject(err);<br/>} else {<br/>resolve({<br/>rowCount,<br/>rows<br/>});<br/>}<br/>});</p>
+<p><br/>connection.execSql(request)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 data-testid="issue.views.issue-base.foundation.summary.heading" id="h_01JJXV69DTZ3KXZ845GF712E60">node-oracledb Library</h2>
+<p>The Script Editor supports the node-oracledb library to connect to the Oracle database application. You can use the functions available in the node-oracledb library to perform database table operations in the Oracle database.</p>
+<p>The node-oracledb is a database driver for high-performance Oracle Database applications. It connects to the Oracle database via thin client only.</p>
+<p>To connect to the Oracle database application, you must add the Oracle database application configured in your Aquera Admin tenant to the integration and use the application variable name in the script for the database connection.</p>
+<p>The functions built in the node-oracledb library can be invoked in the script using the format:</p>
+<pre><strong><em>oracledb.&lt;FunctionName&gt;</em></strong></pre>
+<p>The following are the node-oracledb library functions leveraged by Aquera for the integration:</p>
+<ul>
+<li><a href="#01JJXW10S356H89F743YF7W02B">getConnection</a></li>
+<li><a href="#h_01JJXW36ENE0MHNSHS8RD2T77G">createPool</a></li>
+</ul>
+<p>For further details, refer to the <a href="https://node-oracledb.readthedocs.io/en/latest/user_guide/introduction.html" rel="noopener noreferrer" target="_blank">documentation for the node-oracledb driver</a>.</p>
+<h3 id="01JJXW10S356H89F743YF7W02B">getConnection</h3>
+<p>This function obtains a connection from a pool in the connection pool cache or creates a new, standalone, non-pooled connection.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p><strong>oracledb.getConnection</strong>([String poolAlias | Object connAttrs])</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p><strong>poolAlias</strong>: The previously created pool in the connection pool cache to obtain the connection.</p>
+<p><strong>connAttrs</strong>: The configuration properties for the connection.</p>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>
+<p>for (let i = 1; i &lt; 10; i++) {<br/>utils.pause(200);<br/>}</p>
+<p>log.info("Connecting to the Oracle DB");</p>
+<p><br/>oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;</p>
+<p><br/>const connection = await oracledb.getConnection({<br/>app: &lt;appVariableName&gt;<br/>});</p>
+<p>log.info("Connected to the Oracle DB");<br/><br/></p>
+<p>const script = `SELECT userid as "id",userid as "title", givenName as "name.givenName", familyName as "name.familyName" FROM customtable_autoincrement3`;</p>
+<p> </p>
+<p>const result = await connection.execute(script);</p>
+<p>log.info(`Result : ${JSON.stringify(result, undefined, 4)}`);</p>
+<p> </p>
+<p>await connection.close(); </p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01JJXW36ENE0MHNSHS8RD2T77G">createPool</h3>
+<p>This function creates a pool of connections.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p><strong>oracledb.createPool</strong>(Object poolAttrs)</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p><strong>poolAttrs</strong>: The configuration properties for the connection.</p>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>
+<p>for (let i = 1; i &lt; 10; i++) {<br/>utils.pause(200);<br/>}</p>
+<p>log.info("Connecting to the Oracle DB");</p>
+<p><br/>oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;<br/><br/></p>
+<p>await oracledb.createPool({<br/>app: &lt;appVariableName&gt;<br/>})</p>
+<p>log.info("Created Pool");<br/><br/></p>
+<p>const connection = await oracledb.getConnection();</p>
+<p>log.info("Connected to the Oracle DB");<br/><br/></p>
+<p>const script = `SELECT userid as "id",userid as "title", givenName as "name.givenName", familyName as "name.familyName" FROM customtable_autoincrement3`;<br/><br/></p>
+<p>const result = await connection.execute(script);</p>
+<p>log.info(`Result : ${JSON.stringify(result, undefined, 4)}`);</p>
+<p> </p>
+<p>await connection.close(); </p>
+<p>await oracledb.getPool().close(0);</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01JMEZBAJPTW7PZTP4PCX2GXYY">ldapjs Library</h2>
+<p>The Script Editor supports the ldapjs library to connect to the Active Directory application. You can use the functions available in the ldapjs library to perform tasks such as searching, adding, updating, and deleting entries in the LDAP server.</p>
+<p>To connect to the Active Directory, you must add the Active Directory application configured in your Aquera Admin tenant to the integration and use the application variable name in the script.</p>
+<p>The functions built in the ldapjs library can be invoked in the script using the format:</p>
+<pre><strong><em>ldapjs.&lt;FunctionName&gt;</em></strong></pre>
+<p>These ldapjs library functions can be utilized when you use JavaScript for <a href="../Integration-Studio-Guide/#h_01JX9YC5EJAWTHGPS4C3B6KHCR" rel="noopener noreferrer" target="_blank">setting up an attribute map in script-based integrations</a>. </p>
+<p>The following are the ldapjs library functions leveraged by Aquera for the integration:</p>
+<ul>
+<li><a href="#h_01JMH5TS0B2V8M416VP3MACAE8">createClient</a></li>
+<li id="01JMH0QZCVH0MA7SHAQT7C9K3F"><a href="#h_01JMH5V1E8QSEGSKYXXF3C15FE">bind</a></li>
+<li><a href="#h_01JMH98PRWKXP27SVS3PAKMBKN">search</a></li>
+<li><a href="#h_01JMHBKHPZZYB72G4WCWT4QJGR">Change</a></li>
+<li><a href="#h_01JMH9Q7MQ08TE42B308GSWBKN">modify</a></li>
+<li><a href="#h_01JMHBZAGK77XMMWP96HDBHWD4">add</a></li>
+<li><a href="#01K41ZJZYZG3ZSZ1VZ5SJAAMXM">unbind</a></li>
+</ul>
+<p>For further details, refer to the <a href="https://github.com/ldapjs/node-ldapjs/tree/master/docs" rel="noopener noreferrer" target="_blank">documentation for the ldapjs library</a>.</p>
+<h3 id="h_01JMH5TS0B2V8M416VP3MACAE8">createClient</h3>
+<p>This function creates a new client.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p>const ldapClient = await <strong>ldapjs.createClient</strong>({<br/>&lt;appVariableName&gt;,<br/>connectTimeout: &lt;value&gt;<br/>tlsOptions: &lt;values&gt;<br/>});</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p><strong>&lt;appVariableName&gt;</strong>: The Active Directory application variable name. An LDAP URL with the hostname and port will be created from the Active Directory application's configuration page in the Aquera Admin portal. </p>
+<p><strong>connect timeout</strong>: Milliseconds client should wait before timing out on TCP connections.</p>
+<p><strong>tlsOptions</strong>: Additional options passed to TLS connection layer when connecting via ldaps:// </p>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>const ldapClient = await ldapjs.createClient({<br/>&lt;appVariableName&gt;, // URL from the tenant name will be passed<br/>connectTimeout: 10000,<br/>tlsOptions: { keepAlive: true, rejectUnauthorized: false, minVersion: "TLSv1" }<br/>});</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01JMH5V1E8QSEGSKYXXF3C15FE">bind</h3>
+<p>This function performs a bind operation (simple authentication) against the LDAP server. </p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;.bind</strong>(&lt;appVariableName&gt;, Control controls, Function callback)</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;</strong>: The return value from the createClient function.<br/><strong>&lt;appVariableName&gt;</strong>: The Active Directory application variable name.<br/><strong>controls</strong>: Array of control objects. This is optional.<br/><strong>callback</strong>: A callback function that receives an error if the bind fails. Callback is of the form f(err, res).</p>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>ldapClient.bind(&lt;appVariableName&gt;, connectionError =&gt; {<br/>if (connectionError) {<br/>log.info(`Error while connecting to ldap: ${connectionError}`);<br/>reject(connectionError);<br/>}<br/>log.info(`Bind successful`);<br/>resolve("Bind successful");<br/>});</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01JMH98PRWKXP27SVS3PAKMBKN">search</h3>
+<p>This function performs a search operation against the LDAP server.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;.search</strong>(string base, Object options, Control controls, Function callback)</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;</strong>: The return value from the createClient function.<strong><br/>base</strong>: The Distinguished Name in the tree to start searching at.<br/><strong>options</strong>: Object containing the following fields:</p>
+<ul>
+<li>
+<strong>scope</strong>: {String} One of base, one, or sub. Defaults to base.</li>
+<li>
+<strong>filter</strong>: {String} A string version of an LDAP filter or a programmatically constructed Filter object. Defaults to (objectclass=*).</li>
+<li>
+<strong>attributes</strong>: {Array} Attributes to select and return. Defaults to the empty set, which means all attributes. You can provide a string if you want a single attribute or an array of string for one or many.</li>
+<li>
+<strong>attrsOnly</strong>: {Boolean} Indicates whether you want the server to only return the names of the attributes, and not their values. Defaults to false.</li>
+</ul>
+<p><strong>controls</strong>: Array of control objects.<br/><strong>callback</strong>: Callback of the form f(err, res).</p>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>
+<p>ldapClient.search(BASE_DN, searchOptions, (err, res) =&gt; {<br/>if (err) return reject(`Search error: ${err}`);</p>
+<p>res.on('searchEntry', (entry) =&gt; {<br/>user = entry;<br/>});</p>
+<p>res.on('end', () =&gt; {<br/>resolve(user);<br/>});</p>
+<p>res.on('error', (err) =&gt; {<br/>reject(`LDAP search error: ${err}`);<br/>});<br/>});</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01JMHBKHPZZYB72G4WCWT4QJGR">Change</h3>
+<p>A Change object specifies the details of the update operation to be performed. The Changes object requires you to set the operation and modification.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p>const ldapChanges = <strong>new ldapjs.Change</strong>{<br/>operation: value,<br/>modification: {<br/>type: key <br/>values: values<br/>}<br/>});</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p><strong>operation</strong>: The operation to be performed. It is a string and must have one of the following values:</p>
+<ul>
+<li>
+<strong>replace</strong>: This operation replaces the attribute specified in the modification. If the modification has no values, it is equivalent to a delete.</li>
+<li>
+<strong>add</strong>: This operation adds the attribute value(s) specified in the modification. The attribute may or may not already exist.</li>
+<li>
+<strong>delete</strong>: This operation removes the attribute (along with all associated values) specified in the modification.</li>
+</ul>
+<p><strong>modification</strong>: The modification to be performed. It is a JavaScript object that contains the type and values:</p>
+<ul>
+<li>
+<strong>type</strong>: A string that defines the attribute type for the modification.</li>
+<li>
+<strong>values</strong>: Defines the values for modification. </li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>
+<p>const ldapChanges = new ldapjs.Change({<br/>operation: 'replace',<br/>modification: {<br/>"type": key,<br/>values: Array.isArray(value) ? value : [value]<br/>}<br/>});</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01JMH9Q7MQ08TE42B308GSWBKN">modify</h3>
+<p>This function performs a modify operation against the LDAP server. This API requires you to pass in a <strong>Change</strong> object. Note that you can pass in a single Change or an array of Change objects.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;.modify</strong>(String name, Change &lt;ldapChanges&gt;, Control controls, Function callback)</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;</strong>: The return value from the createClient function.</p>
+<p><strong>name</strong>: The Distinguished Name of the entry to modify.</p>
+<p><strong>&lt;ldapChanges&gt;</strong>: The return value from the Change function.</p>
+<p><strong>controls</strong>: Array of control objects.</p>
+<p><strong>callback</strong>: Callback of the form f(err, res).</p>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>
+<p>ldapClient.modify(distinguishedName, ldapChanges, (err) =&gt; {<br/>if (err) {<br/>return reject(`Update error: ${err}`);<br/>}<br/>log.info(`User updated successfully: ${dn}`);<br/>resolve(distinguishedName);<br/>});</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01JMHBZAGK77XMMWP96HDBHWD4">add</h3>
+<p>This function performs an add operation against the LDAP server.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;.add</strong>(String name, Object entry, Control controls, Function callback)</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;</strong>: The return value from the createClient function.</p>
+<p><strong>name</strong>: The Distinguished Name of the entry to add.</p>
+<p><strong>entry</strong>: An array of Attributes to be added or a JS object where the values are either a plain value or an array of values.</p>
+<p><strong>controls</strong>: Array of control objects.</p>
+<p><strong>callback</strong>: Callback of the form f(err, res).</p>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>
+<p>ldapClient.add(distinguishedName, userData, (err) =&gt; {<br/>if (err) {<br/>return reject(`Create error: ${err}`);<br/>}<br/>log.info(`User created successfully: ${distinguishedName}`);<br/>resolve(userData);<br/>});</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="01K41ZJZYZG3ZSZ1VZ5SJAAMXM">unbind</h3>
+<p>This function is used to close the connection with the LDAP server. The LDAP session will be terminated.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;.unbind</strong>(Function callback)</p>
+</td>
+</tr>
+<tr>
+<td><strong>Parameters</strong></td>
+<td>
+<p><strong>&lt;ldapClient&gt;</strong>: The return value from the createClient function.</p>
+<p><strong>callback</strong>: The function that will be invoked when the unbind operation completes.</p>
+</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>
+<p>ldapClient.unbind(() =&gt; {</p>
+<p>ldapClient._socket?.destroy();</p>
+<p>resolve("Unbind successful");</p>
+<p>});</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<h1 id="h_01JP55GEJC7YWVECQA6AG193GD">References</h1>
+<p><a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a></p>
+<p><a href="../Working-With-Integration-Scripts/" rel="noopener noreferrer" target="_blank">Working With Integration Scripts</a></p>
+  </div>
+</body>
+</html>

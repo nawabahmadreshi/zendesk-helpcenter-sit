@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EntraID to Dayforce (Write-Back)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>EntraID to Dayforce (Write-Back)</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01K711AM1AH7M80HHBK0AJ7YJF">Overview</h1><p>The Aquera platform enables scalable, automated data management across enterprise applications. Through seamless integrations, it helps organizations eliminate manual processes, ensure consistency, and optimize workflows across complex IT infrastructures.</p><p>This integration automates the write-back of employee contact and SSO information from <strong>Microsoft Entra ID</strong> to <strong>Dayforce</strong>. It continuously tracks user profile changes in Entra ID, including updates to <strong>Business Email</strong>, <strong>Business Phone</strong>, <strong>Business Mobile</strong>, and <strong>SSO Accounts</strong>, and applies those updates to matching employee records in Dayforce. '</p><p>To identify matching user records across both systems, the integration reads one of the selected identity fields from <strong data-end="394" data-start="382">Dayforce</strong> (such as <strong data-end="418" data-start="404">Work Email</strong>, <strong data-end="437" data-start="420">Person Number</strong>, or <strong data-end="453" data-is-only-node="" data-start="442">User ID</strong>). It matches it against the corresponding <strong data-end="517" data-start="496">UserPrincipalName</strong> or <strong data-end="530" data-start="521">Email</strong> attribute in <strong data-end="556" data-start="544">Entra ID</strong>, as specified in the integration configuration.</p><h2 id="h_01K711AZS55JZ1Z2WZJWEYAAH3">Key Functions</h2><p>This <strong>Entra ID to Dayforce integration</strong> keeps employee information consistent between both systems through the following main functions:</p><ul>
+<li data-list-item-id="e6947700b2e505324bab2c3e3460d2ed6">
+<strong>Monitors changes in Entra ID:</strong> Regularly checks for updates in user profiles, including <strong>Business Email</strong>, <strong>Business Phone</strong>, <strong>Business Mobile</strong>, and <strong>SSO Accounts</strong>.</li>
+<li data-list-item-id="e20e2dfecc3637ec53e90e034bcca97e2">
+<strong>Matches records accurately:</strong> Uses the <strong>Employee ID</strong> in Dayforce and the <strong>Employee ID (extension attribute)</strong> in Entra ID to ensure updates go to the correct employee.</li>
+<li data-list-item-id="ea9e973f18e8fc9ebbb74a46fed6c0960">
+<strong>Updates employee data in Dayforce:</strong> Automatically writes updated Entra ID details back to the corresponding Dayforce employee record.</li>
+<li data-list-item-id="ecd4d310095e41538a9b78f0eaf541426">
+<strong>Handles pre-hire employees:</strong> Saves data for future hires and syncs it automatically when the employee becomes active in Dayforce.</li>
+<li data-list-item-id="ef4f6bfb344bc0e6de5c72b8f998d2ae5">
+<strong>Generates detailed reports:</strong> Creates a CSV report summarizing all updated, skipped, and failed records and emails it to administrators for review.</li>
+</ul><h1 id="h_01K711B72D8BSCWGX69V40SS63">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="efe8e947bb3f1bb1f8b9f6e6c721d9991">
+<strong>Tenant Account in the Aquera Admin Portal: </strong>You need an active Aquera tenant with administrator privileges to manage the integration. Register for a tenant at <a href="https://admin.aquera.io" target="_new">https://admin.aquera.io</a>. <br/><strong>Note</strong>: If your organization operates in the EU region, use <a href="https://admin.eu.aquera.io" target="_new">https://admin.eu.aquera.io</a>. Contact your Aquera account manager to obtain tenant access if you do not already have it.</li>
+<li data-list-item-id="e660bb022fa85187a22e1c0d41ab3b945">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin Portal for the integration:<ul>
+<li data-list-item-id="eb07c70a3838e7601e970ada3aa08b615">
+<strong>Microsoft 365</strong>: Ensure you add and configure the Microsoft 365 (Client Credentials) connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711-Microsoft-365-Configuration-Guide" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for instructions on creating the Microsoft 365 application connector and setting up the authentication.</li>
+<li data-list-item-id="e1c7c77a1528607e3a18ecd53ce50ec5a">
+<strong>Dayforce: </strong>Ensure you add and configure the Dayforce connector in the Aquera Admin portal. Refer to the Dayforce Configuration Guide for instructions on creating the Dayforce application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul><h1 id="h_01K711BDCZYGGX877XPZHZTJ06">Integration Setup</h1><p>The <strong>Entra ID to Dayforce</strong> integration maps the <strong>Microsoft Entra ID</strong>  and <strong>Dayforce</strong> attributes.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol type="1">
+<li data-list-item-id="eef1fc96c7653b70b9b7dfcb74274ccec">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="e160d02700ab67d131f356f6f8c0038dc">Navigate to <strong>Integrations</strong> on the left panel.</li>
+<li data-list-item-id="e4fab8d3fd800482c58b52e451f677e46">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="ef27c9a5af8359d8db06d57b0fa5b7bb6">Select <strong>Entra ID to Dayforce Employee Data Sync</strong>.<br/>The <strong>Create New Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="ecd63dfe88d74d25eb9f860182687616d">Enter a <strong>name</strong> and <strong>description</strong> for the integration.</li>
+<li data-list-item-id="eae8cfa134b8aa99d2287abb316548ba6">Click <strong>Continue</strong>. The <strong>Configuration</strong> tab of the integration setup page is displayed.</li>
+<li data-list-item-id="e7f73e8f109ab54d4b928e30a53108465">Click <strong>Create</strong> to add the <strong>Entra ID to the Dayforce Employee Data Sync</strong> integration.</li>
+</ol><h2 id="h_01K711BN363CRMRK2R1S7N035V">Configuration</h2><p>On the <strong>Configuration</strong> page, the following sections are displayed:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to edit, remove, and refresh these application connectors.</p><h3 id="h_01K711FNTS2Q8PXZGB0WDVVD62">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p><h4 id="h_01K711GT63Q5R07P0TMEETMS0X">General Settings </h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e2e1b6e98bc253e57e8fda4bb4b84cd2f">
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e013efe9c00ba17780cb87b1f8a113590">
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+<li data-list-item-id="ee067a70ef1b684fecf845fad16706bd9">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+<li data-list-item-id="e7252d0b2abe9098a2e4c18131a7af773">
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li data-list-item-id="e361669d247653a907403d5204d69b27d">
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+</ul><h4 id="h_01K711M00WSET7SAMZ9MAF5KT1">Logging Settings</h4><p>Configure the following logging settings:</p><ul><li data-list-item-id="ebab1581ffaeda985c4a56c81402f63c1">
+<strong>Select the Log Detail Level: </strong>Select the desired log detail level from the dropdown menu. <br/>The following are the available options:<ul>
+<li data-list-item-id="e2f772f4c7c0fd640bd2b143265d5e044">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ee55581702ce68fee1730cadbfdc80edc">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li></ul><h4 id="h_01K711M7WKWV3SFX4A042Q10MC">Notification Settings</h4><p>Configure the following settings for email notifications:</p><ul><li data-list-item-id="ec3ff00bfdc06fbeb4902a8cb5897e6d8">
+<strong>Notify Admin Via Email</strong>: Select to send email notifications to all admins.<ul>
+<li data-list-item-id="e58457d75450466eb053f3a9764d48956">
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications must be sent.</li>
+<li data-list-item-id="e079f1fcc80944515afa7dacfab259714">
+<strong>Admin Email Subject:</strong> Enter the content that must be used as the email subject for the email notifications to the admins.</li>
+<li data-list-item-id="eb404cbdaf8917166f483bcd7d14d5e70">
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for the admin email notifications.</li>
+</ul>
+</li></ul><p>Configure the following settings for error notifications:</p><ul>
+<li data-list-item-id="e207e037f748233561cd87dca7f60f71e">
+<strong>Trigger Emails for Selected Errors: </strong>Choose specific error messages that should trigger email notifications. For example, selecting <strong>Login Name already exists for another user </strong>ensures that admins are alerted whenever duplicate login names are detected during the write-back process.</li>
+<li data-list-item-id="ef1a1c634f6ec3dd43304325e356018db">
+<strong>Recipients of Error Notifications: </strong>Enter the email addresses of individuals or groups who should receive error alerts. Multiple recipients can be added.</li>
+<li data-list-item-id="ef33c526edf04ce34140f271862a945c3">
+<strong>Error Email Subject: </strong>Define the subject line for the error notification email.</li>
+<li data-list-item-id="ec75e6d3ddf15f6b8c3e53af2196004bb">
+<strong>Error Email Template: </strong>Customize the body of the error email. This template is sent whenever a configured error is triggered.</li>
+</ul><h4 id="h_01K711MGFX9FTVASTZ0596XVYQ">Report Settings</h4><p>Configure the following settings to customize the CSV report:</p><ul>
+<li data-list-item-id="e775750ec6ea1f7858064abdc71ce60ee">
+<strong>Enable Integration Report Download</strong>: Select to allow downloading the integration report.</li>
+<li data-list-item-id="e943d8e965a4ef495c7e7e273abbba590">
+<strong>Select Report Detail Level:</strong> Select the desired level of report detail from the dropdown menu.<br/>The following are the available options:<ul>
+<li data-list-item-id="e01db803f467025499170a4dcc2f344bf">
+<strong>Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e2e8c0014948ce22fcaad1213f3f0c5b4">
+<strong>Full Details:</strong> All attribute details are displayed.</li>
+</ul>
+</li>
+</ul><h4 id="h_01K711MN9N24FPN6V1G22YW92W">Source Settings</h4><p>Configure the following settings for the source application:</p><ul>
+<li data-list-item-id="ed9bfbe1366fcd52ed78dc484f91a10e8">
+<strong>Entra ID Filter</strong>: Select the filter condition to limit which Entra ID users are included in the synchronization.<ul><li data-list-item-id="ee90028387a8b90ccefbaa2ad257af160">
+<strong>None:</strong> Processes all Entra ID users without restriction.<br/><strong>Note</strong>: This field can also be customized to target specific user groups, departments, or organizational units if needed.</li></ul>
+</li>
+<li data-list-item-id="ed6863472077cad4a7d9df2fa9460ab13">
+<strong>Entra ID Update Condition</strong>: Choose which Entra ID users should be evaluated for updates based on their account status.<ul>
+<li data-list-item-id="e26e5826c08e5b18d250ce153660b7813">
+<strong>All Users:</strong> Includes all Entra ID users in the update process.</li>
+<li data-list-item-id="e04d4d43b0b31fc40832787b57f498ea0">
+<strong>Only Active Users:</strong> Limits updates to users who are currently active in Entra ID.</li>
+<li data-list-item-id="e34d7ffa73ce5093926ce41bf79b15e44">
+<strong>Custom:</strong> Allows administrators to define specific update rules or conditions.</li>
+</ul>
+</li>
+<li data-list-item-id="e64bbbfc87bac85af71c2fa95f648cd19">
+<strong>Entra ID Attributes to Match Dayforce Employee Number</strong>: Select the Entra ID attribute used to locate and match the corresponding employee record in Dayforce. The integration uses <strong>Employee ID</strong> as the correlation attribute.</li>
+</ul><p><strong>Notes</strong>: </p><ul>
+<li data-list-item-id="e8433734cf1895d8ae2f1702956d6303e">When multiple attributes are selected, they are prioritized in order of selection. This ensures that each Entra ID user is accurately matched to their Dayforce employee record before updates are applied.</li>
+<li data-list-item-id="ebadc1abc0c17610048ef1340769f968b">Click the <strong>Refresh</strong> button to reload and display the latest list of available Entra ID attributes that can be selected for matching with the Dayforce employee number.</li>
+</ul><h4 id="h_01K711NAJMAAC2BQDC0R9N8R9F">Target Settings</h4><p>Configure the following settings for the target application:</p><ul>
+<li data-list-item-id="e3477a8c23bb95ab3aa587fd5b5239fb6">
+<p><strong>Update Attributes X Days Before Employee is Hired in Dayforce: </strong>Specify the number of days before the employee’s hire date that the selected attributes should be updated in Dayforce.<br/>For example, if set to <strong>10</strong>, the selected attributes will be written to Dayforce <strong>only when the set date condition is met</strong>, ensuring that updates occur exactly within the defined pre-hire window.</p>
+<p data-end="1262" data-start="793"><strong data-end="823" data-start="793">Notes: </strong></p>
+<ul>
+<li data-list-item-id="eb8aace8c43e60abf639b8de982d293eb"><p data-end="1262" data-start="793"><strong data-end="823" data-start="793">Future Hire-Date Handling:</strong> If the hire date is a future date and the number of days specified in <strong data-end="949" data-start="896">Update attributes X days before the employee is hired</strong> exceeds the current difference, and the user is updated in Entra ID, the selected attributes in the preferences should <strong data-end="1083" data-start="1076">not</strong> be updated in Dayforce. Instead, those attribute values should be fetched and stored temporarily, while <strong data-end="1230" data-start="1205">unselected attributes</strong> continue to update in Dayforce.</p></li>
+<li data-list-item-id="e5cfa3dd5f4126a15f769753fb5171c89"><p data-end="1533" data-start="1264">During the next incremental run, when the current date reaches the threshold defined in the <strong data-end="1409" data-start="1356">Update attributes X days before employee is hired</strong> setting, the integration will update the selected attributes in Dayforce and then remove them from the temporary variable.</p></li>
+</ul>
+</li>
+<li data-list-item-id="e176a6aaec151f49f8cd79e55c9f7df42">
+<strong>Dayforce Attributes to Be Updated When User Is Hired: </strong>Select the Dayforce attributes that should be updated when a user is marked as hired. For example, <strong>Business Mobile</strong>, <strong>SSO Login</strong>, <strong>Business Phone</strong>, and <strong>Business Email</strong> can be updated once the hire date is reached.<br/><strong>Notes</strong>:<ul>
+<li data-list-item-id="e3f80424b77aead8d0566cb80eb4b3b25"> If a user in Entra ID is updated with all four preferred attributes (<strong data-end="1622" data-start="1604">Business Email</strong>, <strong data-end="1642" data-start="1624">Business Phone</strong>, <strong data-end="1663" data-start="1644">Business Mobile</strong>, and <strong data-end="1682" data-start="1669">SSO Login</strong>) and the hire date matches the defined update threshold, those attributes will be written to Dayforce during that run.</li>
+<li data-list-item-id="e0aecf8630fcc8ab1fad399524dd12859"><p data-end="1999" data-start="1803">The <strong data-end="1825" data-start="1807">Business Phone</strong> and <strong data-end="1849" data-start="1830">Business Mobile</strong> numbers must include the country code and be in a valid format; otherwise, an <strong data-end="1952" data-start="1928">Invalid phone number</strong> or <strong data-end="1974" data-start="1956">Invalid format</strong> error will be generated.</p></li>
+<li data-list-item-id="e188740647a595f003a1e2a5d52360295">
+<p data-end="2373" data-start="2001">The integration also supports <strong data-end="2053" data-start="2031">removal or updates</strong> of existing <strong>Business Phone</strong> and <strong>Business Mobile</strong> attributes. If these numbers are updated or removed in Entra ID, the same changes are reflected in Dayforce.</p>
+<ul><li data-list-item-id="ee076328227ce03a0a99caed42745e73c"><p data-end="2373" data-start="2001">If the numbers are not removed immediately in Dayforce, the <strong data-end="2287" data-start="2269">Effective Date</strong> is updated, and the numbers are deleted automatically once the effective period ends.</p></li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e91551e1b4d4bfb6f4b8c99948192cc2a">
+<strong>Dayforce Update Condition Type: </strong>Define which employee records in Dayforce should be included in the update process.<ul>
+<li data-list-item-id="e1cf531a2f12ef52281c6d9144e535afc">
+<strong>All Employees:</strong> Updates all eligible employee records.</li>
+<li data-list-item-id="ee79a2f789617cb3c9a1647dd62d0b87e">
+<strong>Custom:</strong>  Select one or more conditions from Dayforce employee attributes to determine which Entra ID users should be processed. For example, you can define filters based on <strong data-end="1018" data-start="992">EmploymentStatus Codes</strong>, <strong data-end="1040" data-start="1020">Department Codes</strong>, <strong data-end="1055" data-start="1042">Job Codes</strong>, <strong data-end="1076" data-start="1057">Pay Class Codes</strong>, <strong data-end="1097" data-start="1078">Pay Group Codes</strong>, or <strong data-end="1120" data-start="1102">Pay Type Codes. </strong><br/><br/>Once <strong data-end="1878" data-start="1868">Custom</strong> is selected, the following <strong data-end="1942" data-start="1906">Dayforce Custom Condition fields (</strong>evaluated together using <strong data-end="1179" data-start="1172">AND</strong> logic) are enabled. You can choose one or multiple conditions to apply to the Dayforce employee, and based on your selections, the corresponding options will be displayed as follows:<ul>
+<li data-list-item-id="eb50538dab9e8a312dda25bda4f040084"><p data-end="1581" data-start="1381"><strong data-end="1408" data-start="1381">EmploymentStatus Codes:</strong> Specify the employment status codes to filter Dayforce employees. For example, <strong data-end="1500" data-start="1490">Active</strong> includes only active employees, while <strong data-end="1552" data-start="1539">!Prestart</strong> excludes prestart employees.</p></li>
+<li data-list-item-id="e722eb6bd01b558fc72d3ba8a34330788"><p data-end="1776" data-start="1583"><strong data-end="1604" data-start="1583">Department Codes:</strong> Specify the department codes to use as a filter. For example, <strong data-end="1683" data-start="1669">Consulting</strong> includes employees from the Consulting department, while <strong data-end="1748" data-start="1741">!HR</strong> excludes the HR department.</p></li>
+<li data-list-item-id="e38173c380a60b1d4607e5d9fc6240844"><p data-end="1954" data-start="1778"><strong data-end="1792" data-start="1778">Job Codes:</strong> Specify the job codes to use as a filter. For example, <strong data-end="1879" data-start="1850">Executive Assistant (CAN)</strong> includes employees with that job code, while <strong data-end="1936" data-start="1925">!Intern</strong> excludes interns.</p></li>
+<li data-list-item-id="e0f3d16b9240e511be4fcf96d5d3ed18c"><p data-end="2125" data-start="1956"><strong data-end="1976" data-start="1956">Pay Class Codes:</strong> Specify the pay class codes to use as a filter. For example, <strong data-end="2046" data-start="2040">FT</strong> includes only full-time employees, while <strong data-end="2095" data-start="2088">!PT</strong> excludes part-time employees.</p></li>
+<li data-list-item-id="e186c38077499e1c0bd5dbfee5e7352a5"><p data-end="2324" data-start="2127"><strong data-end="2147" data-start="2127">Pay Group Codes:</strong> Specify the pay group codes to use as a filter. For example, <strong data-end="2229" data-start="2211">CanadaBiWeekly</strong> includes the Canadian biweekly pay group, while <strong data-end="2291" data-start="2278">!HourlyUS</strong> excludes U.S. hourly pay groups.</p></li>
+<li data-list-item-id="e72d4c43a1ff623425eeaa7bf78101040">
+<p data-end="2503" data-start="2326"><strong data-end="2345" data-start="2326">Pay Type Codes:</strong> Specify the pay type codes to use as a filter. For example, <strong data-end="2420" data-start="2408">Salaried</strong> includes salaried employees, while <strong data-end="2469" data-start="2456">!Overtime</strong> excludes those paid for overtime.<br/><br/><strong>Note</strong>: </p>
+<ul>
+<li data-list-item-id="ea545b2cde0bd7f9208e855a0eec8a617"><p data-end="2503" data-start="2326">Each condition accepts one or more values, and specific entries can be excluded by prefixing them with an exclamation mark (<strong data-end="1254" data-start="1249">!</strong>). For example, to include only active employees, enter <strong data-end="1322" data-start="1312">Active</strong>. To exclude terminated employees, enter <strong data-end="1378" data-start="1363">!Terminated</strong>.</p></li>
+<li data-list-item-id="e67e1300f1095c4ba06728d516b985b00"><p data-end="2503" data-start="2326">Within each condition type (for example, <em>multiple EmploymentStatus Codes</em> or <em>multiple Department Codes, and so on</em>), the values are evaluated using <strong data-end="1439" data-start="1433">OR</strong> logic. If any of the overall <strong data-end="1499" data-start="1473">Custom conditions fail</strong>, the integration stops for that record and does not continue processing until all specified conditions are met.</p></li>
+<li data-list-item-id="e4f76d31fc2a5d7ea774af489c6da5388"><p data-end="2503" data-start="2326">The configured values for each condition must exactly match the corresponding <strong data-end="2641" data-start="2621">XReference Codes</strong> defined in Dayforce.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e6fc1a72254a320450d0607242f83ba88">
+<strong>JavaScript Expression:</strong> Enables advanced conditional logic using JavaScript to determine eligible updates. For example, <em>user.department =="Integration"</em>, and <em>user.accountEnabled ==true.</em>
+</li>
+</ul>
+</li>
+</ul><h1 id="h_01K711NJW18SVCBN7HPGAMYYVF">Attribute Map</h1><p>The <strong>Entra ID to Dayforce</strong> integration maps the <strong>Entra ID</strong> user attributes to the corresponding <strong>Dayforce</strong> employee attributes. Each mapping specifies a <strong>source attribute</strong> from Entra ID and a corresponding <strong>target attribute</strong> in Dayforce. The integration retrieves user data from Entra ID and updates the linked employee record in Dayforce based on these mappings.</p><p>The <strong>Refresh</strong> icon next to the mapping section can be used to reload the latest list of attributes from both applications, ensuring that any newly added or renamed attributes become available for selection.</p><p>When the integration runs, it compares the current Entra ID values for each mapped attribute against the existing data in Dayforce. If a difference is detected, the corresponding field in Dayforce is updated.</p><h2 id="h_01K711NZQS0GCMC24HS3ZVB6AT">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h2 id="h_01K711PXZZB3JZYJB29EM5FBJ8">Execute Integration</h2><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h2 id="h_01K711Q67MM112HYAT5KSS3CRX">Additional Options</h2><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p><p><br/> </p><p> </p>
+  </div>
+</body>
+</html>

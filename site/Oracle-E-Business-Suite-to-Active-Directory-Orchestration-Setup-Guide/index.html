@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Oracle E-Business Suite to Active Directory Orchestration Setup Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Oracle E-Business Suite to Active Directory Orchestration Setup Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview</h1>
+<p>This guide covers the end to end tasks involved in setting up an orchestration to sync users in Oracle E-Business Suite with Active Directory.</p>
+<p>The following tasks are involved in setting up the orchestration from Oracle E-Business Suite to Active Directory:</p>
+<ul>
+<li><a href="#h_01F6EH0A638QSV3GWRKPF09R35" target="_self">Initial Preparation</a></li>
+<li><a href="#h_01F6EH0MBC837JQFE5ZJRW7P94" target="_self">Configuring Applications in Aquera Admin</a></li>
+<li><a href="#h_01F6EH0W486EMXD6A000X2Z4YZ" target="_self">Orchestration Setup</a></li>
+<li><a href="#h_01F6EH144YSHC99KVTGPC8D65M" target="_self">Running Orchestration</a></li>
+</ul>
+<h1 id="h_01F6EH0A638QSV3GWRKPF09R35">Initial Preparation</h1>
+<h2 id="aquera-admin-console">Aquera Admin Console</h2>
+<ol>
+<li>Your IT admin must <a href="https://admin.aquera.io/home/register" rel="noopener" target="_blank">register as an Aquera Admin</a>.</li>
+<li>Once registered successfully, Aquera creates a tenant for the IT Admin and provides access to it.</li>
+</ol>
+<h2 id="active-directory">Active Directory</h2>
+<p>Determine the architecture to be followed for setting up communication between Aquera and the Windows Active Directory Domain Controller. Refer to this <a href="https://support.aquera.com/hc/en-us/articles/360052111073" rel="noopener" target="_blank">Aquera guide</a> for detail information on the different architecture approaches.</p>
+<p>Based on the selected approach, the following procedures may have to be performed:</p>
+<ul>
+<li>A Windows Server must be ready to deploy Aquera Agent on to the server where Domain Controller is present. For instructions on installing Aquera Agent, refer to the<a href="https://support.aquera.com/hc/en-us/articles/360010090513" rel="noopener" target="_blank"> Installation and Configuration Guide</a>.</li>
+<li>Firewall must be set up to allow communication with Aquera.</li>
+<li>The static IP address of Aquera needs to be whitelisted. Contact <a href="mailto:support@aquera.com" target="_self">Aquera Support team</a>.</li>
+</ul>
+<p>To allow Aquera to make updates to Active Directory (for creating, updating, and deleting users), LDAPS communication to Active Directory needs to be set up, which requires a TLS connection. Active Directory Certificate Services must be enabled for this. To install Active Directory Certificate Services, see <a href="https://docs.microsoft.com/en-us/windows-server/networking/core-network-guide/cncg/server-certs/install-the-certification-authority" rel="noopener" target="_blank">docs.microsoft.com</a>.</p>
+<h1 id="h_01F6EH0MBC837JQFE5ZJRW7P94">Configuring Applications in Aquera Admin</h1>
+<p>The following applications must be added and configured in Aquera Admin console:</p>
+<ul>
+<li>Oracle E-Business Suite. Refer to the <a href="https://support.aquera.com/knowledge/articles/360046936834/en-us?brand_id=114094784733&amp;return_to=%2Fhc%2Fen-us%2Farticles%2F360046936834" rel="noopener" target="_blank">Oracle E-Business Suite Configuration Guide</a> for details.</li>
+<li>Active Directory. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener" target="_blank">Active Directory Configuration Guide</a> for details.</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Orchestration Setup</h1>
+<p>This section details how the orchestration must be configured to allow data push from Oracle E-Business Suite to Active Directory. </p>
+<p>It also describes the various analyses to be performed and the important points to be considered before setting up the orchestration.</p>
+<h2 id="considerations">Considerations</h2>
+<ul>
+<li>Naming convention for the User Principal Name (UPN) in the Active Directory</li>
+<li>Naming convention for the SAM Account Name in the Active Directory</li>
+<li>Fields currently populated in the Active Directory</li>
+<li>The criteria for matching a user record from Oracle E-Business Suite with that in the Active Directory.</li>
+</ul>
+<h2 id="general-analysis-steps">General Analysis Steps</h2>
+<p>Before setting up the orchestration, the following analyses need to be done:</p>
+<ul>
+<li>Fill out the <a href="https://support.aquera.com/hc/article_attachments/4745984908567/Oracle_EBS_to_AD_attribute_mapping.xlsx" rel="noopener" target="_blank">attached mapping template</a> for mapping the Oracle E-Business Suite user attributes to Active Directory user attributes.</li>
+<li>Expression language can be used in the mapping to create UPNs and SAM Account Names without duplicates or errors. In the expressions, you can use the inbuilt methods such as <strong>toNormalizedDiacritics</strong>() and <strong>toSAMAccountName</strong>() for this purpose. You can also use the keywords such as <strong>%ATTEMPT, %USEQ, SEQUENCENUMBER</strong> to avoid duplicates. 
+<p>For details, refer to the <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener" target="_blank">Orchestration - Expressions Guide</a>.</p>
+</li>
+<li>
+<span></span>Define the logical OU mapping rules for user containers.</li>
+</ul>
+<p>For detail analyses of the Oracle E-Business Suite users and the users/groups in Active Directory using scripts, refer to the <a href="#h_01F6EGQ8TRT9E064C1YJVS653G" rel="undefined" target="_self">Appendix</a>.</p>
+<p>You can also analyze the users data using the <strong>Reports</strong> option in the <strong>Data</strong> tab of the <strong>Applications</strong> page in Aquera Admin console. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4411279965463" rel="noopener" target="_blank">User Reports Guide</a> for details.</p>
+<h2 id="building-orchestration">Building Orchestration</h2>
+<p>This document describes how to set up the orchestration using the <span><em>Synchronization</em></span> orchestration method.</p>
+<ul>
+<li>
+<strong>Synchronization Orchestration</strong> - In this orchestration, set <em>Oracle E-Business Suite</em> as the <strong>Source Application</strong> and <em>Active Directory</em> as the <strong>Target Application</strong>. Refer to the <a href="../Synchronization-V1-Orchestration-Guide/" rel="noopener" target="_blank">Synchronization Orchestration Guide</a> for details on the configurations.</li>
+</ul>
+<p><span>You can set the following configurations in the <em>Synchronization</em> orchestration:</span></p>
+<ul>
+<li>
+<span></span>Set the <strong>Admin Email Options</strong> to receive email notifications for success/failures during orchestration run.</li>
+<li>
+<span></span>Set the email list of the IT admin or manager to receive user creation notification emails and user deactivation notification emails.<span></span>
+</li>
+<li>
+<span></span>Use tables for creating lookup tables based on location, department values from the source.</li>
+<li>
+<span></span>Enable Group management if Aquera has to manage the groups and group assignment rules based on your group analysis. Set the group names in the restriction list for scoping of the groups which would be managed by Aquera.</li>
+</ul>
+<p>Refer to the <a href="../Synchronization-V1-Orchestration-Guide/" rel="noopener" target="_blank">Synchronization Orchestration Guide</a> for details on <span><em>Synchronization</em></span> orchestration configurations.</p>
+<table border="0">
+<tbody>
+<tr>
+<td>
+<p><strong>Note: </strong></p>
+</td>
+<td>
+<p>Any custom fields added by you in the Active Directory are not displayed automatically on the <strong>Attribute Map</strong> tab. You must manually add those custom attributes using the <strong>Add Row to Map </strong>option on the<strong> Attribute Map</strong> page and then complete the mapping.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="escaping-special-characters-in-ous-and-dns-for-active-directory">Escaping Special Characters in OUs and DNs for Active Directory</h3>
+<p>To escape any special characters in OUs and DNs in the expressions, use double-backslash before the special character. For example, if the OU name is<em> #Terminated</em>, mention it in the expression as \\<em>#Terminated</em>. </p>
+<p><em><strong>DEST[IAN].distinguishedName.split(",")[0] + ",OU=\\#Terminated, DC=local"</strong></em></p>
+<p>Double-backslash must be introduced before any of the following special characters:</p>
+<table border="1" cellpadding="0" frame="box" rules="all" width="500">
+<tbody>
+<tr>
+<td>Comma</td>
+<td>,</td>
+</tr>
+<tr>
+<td>Backslash character</td>
+<td>\</td>
+</tr>
+<tr>
+<td>Pound sign (hash sign)</td>
+<td>#</td>
+</tr>
+<tr>
+<td>Plus sign</td>
+<td>+</td>
+</tr>
+<tr>
+<td>Less than symbol</td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td>Greater than symbol</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>Semicolon</td>
+<td>;</td>
+</tr>
+<tr>
+<td>Double quote (quotation mark)</td>
+<td>"</td>
+</tr>
+<tr>
+<td>Equal sign</td>
+<td>=</td>
+</tr>
+<tr>
+<td>Leading or trailing spaces</td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01F6EH144YSHC99KVTGPC8D65M">Running Orchestration</h1>
+<ul>
+<li>
+<span></span>Enter the matching expression to match the source records with the destination records.</li>
+<li>
+<span></span>Run the orchestration in<em> Report Only</em> mode and determine if the correct data is updated in the Active Directory. <span></span>If the data is not correctly updated, change the matching expression to correctly match users and/or update the data, for example, employeeNumber, in the Active Directory.</li>
+<li><span>Increment the <strong>Update Limit</strong> (maximum number of records to be updated in a single run) for each run in <strong>Report Only</strong> mode to ensure that the records are updated correctly when the records count is more.</span></li>
+<li>
+<span></span>Based on your analysis and considerations,</li>
+<ul>
+<li>
+<span></span>Translate the logical maps to the Aquera attribute maps for the fields</li>
+<li>
+<span></span>Translate the logical OU/container locations into tables and expressions</li>
+<li>
+<span></span>Translate the logical group assignment rules into Aquera rules</li>
+</ul>
+<li>
+<span></span>Modify the attributes mapping and repeat the process until the data is correctly updated.</li>
+<li>Monitor the orchestration logs thoroughly to ensure that no errors are encountered. <span></span>Modify the orchestration configurations to fix any errors.</li>
+<li>
+<span></span>Once all users are synced, user creations and updates are based on the incremental changes in Oracle E-Business Suite.</li>
+</ul>
+<h1 id="h_01F6EGQ8TRT9E064C1YJVS653G">Appendix</h1>
+<p>This section provides the scripts that may be used by the <strong>Customer Support</strong> team to analyze the existing users in Oracle E-Business Suite and Active Directory before setting up the orchestration. It also provides the script to analyze the existing groups of the users in Active Directory.</p>
+<p>This document explains how analyses can be done using a scheduled script orchestration. In this orchestration, add <em>Oracle E-Business Suite </em>and <em>Active Directory</em> applications and set the corresponding variable names. In the script, the variable names must be used to refer to the applications.<br/>For details on configuring the script orchestration, refer to the <a href="../Integration-Studio-Guide/" rel="noopener" target="_blank">Custom Script Orchestration Guide</a>.</p>
+<p>A few sample scripts are provided here for your reference. The scripts may vary based on your use case and the attributes to be retrieved for analysis.</p>
+<h2 id="analyzing-the-users-in-oracle-e-business-suite">Analyzing the Users in Oracle E-Business Suite </h2>
+<p>Use the below sample script in a scheduled script orchestration for generating a report from Oracle E-Business Suite for analysis of user status, department, usertype, and so on. </p>
+<pre><span>log.info('OHCM ID, OHCM ACTIVE, OHCM GIVENNAME, OHCM FAMILYNAME, OHCM USERNAME, OHCM MIDDLENAME, OHCM TITLE, OHCM DEPARTMENT, OHCM DIVISION, OHCM USERTYPE');</span><br/><span>let users = oracle.importAllUsers();</span><br/><span>for (let user of users) {</span><br/><span>log.info('"'</span><br/><span>+ user.id + '","'</span><br/><span>+ user.active + '","'</span><br/><span>+ user.name.givenName + '","'</span><br/><span>+ user.name.familyName + '","'</span><br/><span>+ user.userName + '","'</span><br/><span>+ user.name.middleName + '","' </span><br/><span>+ user.title + '","'</span><br/><span>+ user.department + '","'</span><br/><span>+ user.division + '","'</span><br/><span>+ user.userType +  '"');</span><br/><span>}</span></pre>
+<p> </p>
+<h2 id="analyzing-the-users-in-active-directory">Analyzing the Users in Active Directory</h2>
+<p>Use the below sample script in a script orchestration for generating a report from Active Directory for analysis of user domain, status, and so on.</p>
+<pre><span>log.info('AD ID,AD ACTIVE,AD EMPNO,AD GIVENNAME,AD FAMILYNAME,AD USERNAME,AD SAMACCOUNT,AD DN');</span><br/>let users = AD.importAllUsers();<br/>for (let user of users) {<br/>log.info('"'<br/>+ user.id + '","'<br/>+ user.active + '","'<br/>+ (user[ENT] &amp;&amp; user[ENT].employeeNumber || '') + '","'<br/>+ user.name.givenName + '","'<br/>+ user.name.familyName + '","'<br/>+ user.userName + '","'<br/>+ user[IAN].sAMAccountName + '","'<br/>+ user[IAN].distinguishedName.split(',').slice(1).join(',') + '"');<br/>}</pre>
+<h2 id="analyzing-the-groups-in-active-directory">Analyzing the Groups in Active Directory</h2>
+<p>Use the below script to analyze the groups of existing users in the Active Directory.</p>
+<pre><span>let ad_users = AD.importAllUsers();</span><br/>let ad_users_length = ad_users.length;<br/>let i = 0;<br/>let total = ad_users_length;<br/>log.info('AD ID,GROUP NAME');<br/>for (i = 0; i &lt; total; i++) {<br/>let groups = ad_users[i].groups;<br/>if (groups) {<br/>for (let group of groups) {<br/>log.info(ad_users[i].userName + ',' + group.display);<br/>}<br/>}<br/>}</pre>
+  </div>
+</body>
+</html>

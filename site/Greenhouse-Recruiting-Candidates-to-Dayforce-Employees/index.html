@@ -1,0 +1,914 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Greenhouse Recruiting Candidates to Dayforce Employees</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Greenhouse Recruiting Candidates to Dayforce Employees</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JV6ZXVHFHSJWTMM6Z0DB0RE9">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types.</p>
+<p>This integration synchronizes the candidate data from <em>Greenhouse Recruiting</em> to <em>Dayforce</em>. It extracts the candidate data from <em>Greenhouse Recruiting candidates</em>, creates a new employee record in Dayforce employees, and generates a structured CSV export.</p>
+<p>The integration is triggered when a candidate's status changes in Greenhouse Recruiting, such as when a candidate is hired or completes onboarding.</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Maps and transforms the Greenhouse candidate data into the employee schema required by Dayforce. Converts date to a standard format, standardizes employment types and gender, and sets pay groups based on the office location.</li>
+<li>Sends the employee data to Dayforce and automatically retries if the system limits the request rate.</li>
+<li>
+<p>Logs integration settings and preferences to help monitor performance and troubleshoot issues.</p>
+</li>
+<li>Formats and sends notification emails about the integration status, including success or failure details.</li>
+<li>Handles errors with clear logging for troubleshooting API communication or data transformation issues.</li>
+</ul>
+<p><strong>Note</strong>: You must set up webhooks in the Greenhouse Recruiting application to send the candidate hire events to this Aquera integration. Refer to the <a href="#h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</a> for details.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Greenhouse Recruiting</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/10462467749911-Greenhouse-Recruiting-Configuration-Guide" rel="noopener noreferrer" target="_blank">Greenhouse Recruiting Configuration Guide</a> for instructions on creating the Greenhouse Recruiting application connector and setting up the authentication.</li>
+<li>
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853-Dayforce-Configuration-Guide" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for instructions on creating the Dayforce application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details the configuration process for integrating Greenhouse Recruiting candidates with Dayforce Employees. It covers creating the integration, configuring system preferences, and setting up event-driven triggers to automate the real-time transfer of new hire data from Greenhouse Recruiting candidates to Dayforce Employees.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Greenhouse Recruiting Candidates to Dayforce Employees</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your<em> Greenhouse Recruiting Candidates</em> and <em>Dayforce Employees</em> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h3 id="h_01JV91GD60Y8AGETNYSTFFZSDD">Set Up Preferences</h3>
+<ul>
+<li>
+<strong>Enable Dashboard Generation</strong>: Controls whether a dashboard is generated to visualize and analyze integration results, providing insights into data flow, errors, and performance metrics.</li>
+<li>
+<strong>Recipients Email Addresses: </strong>Specifies the list of email addresses, separated by commas, that will receive notifications related to integration events, such as success reports or error alerts.</li>
+<li>
+<strong>Role for New Employees: </strong>Defines the valid system role assigned automatically to newly created employee records, determining their permissions and access rights.</li>
+<li>
+<strong>Report Only</strong>: When selected, the integration runs in a simulation mode, generating a detailed report of potential data changes without applying any updates to the systems.</li>
+<li>
+<strong>Enable Integration Report Download</strong>: Allows users to download the integration report as a CSV file, facilitating offline review and record-keeping of integration activities and outcomes.</li>
+<li>
+<strong>Send Email Notification</strong>: Enables the automatic sending of email notifications to designated recipients regarding the status and results of the integration process.</li>
+<li>
+<strong>Department Location Code</strong>: A unique identifier representing the department location. </li>
+<li>
+<strong>Debug Mode</strong>: <span>Enables detailed logging and monitoring to help troubleshoot and diagnose issues during integration.</span>
+</li>
+</ul>
+<h2 id="h_01JV7067KZHZ9JKYY5N9R5WY1J">Set Up Event Triggers</h2>
+<p>You need to set up the event triggers to receive candidate hire events from the Greenhouse Recruiting application and run the integration.</p>
+<ol>
+<li>In the <strong>Trigger</strong> section, click<strong> Event</strong>.</li>
+<li>Select the Greenhouse Recruiting connector configured in your Aquera Admin tenant in the Event Source drop-down.<br/>The URL field displays the endpoint URL to which Greenhouse Recruiting will send the candidate hire events. This URL must be configured in the Greenhouse Recruiting application when configuring webhooks. For more details on configuring webhooks, see the setting up Webhooks in the Greenhouse Recruiting application.</li>
+<li>Click <strong>Create Token</strong> to generate a token. Save this token securely.</li>
+</ol>
+<h1 id="h_01JV70EMQ09RQMGRR9MTRHK104">Attribute Mapping</h1>
+<p>Integrating Greenhouse Recruiting Candidates to Dayforce provides the mapping between the commonly used Greenhouse Recruiting Candidates and Dayforce attributes: <br/>The following are the API attributes that are mapped by default:</p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td><strong><span>Greenhouse Field (Source) / Value Used</span></strong></td>
+<td><strong><span>Dayforce Field (Destination)</span></strong></td>
+</tr>
+<tr>
+<td>
+<span>candidate.id</span><span> <br/>or <br/></span><span>candidate.custom_fields.dayforce_employee_id.value</span><span></span>
+</td>
+<td>
+<span>xRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.first_name</span><span></span>
+</td>
+<td>
+<span>FirstName</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.last_name<br/></span><span> or<br/> </span><span>candidate.preferred_name</span><span></span>
+</td>
+<td>
+<span>LastName</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.custom_fields.date_of_birth.value</span><span></span>
+</td>
+<td>
+<span>BirthDate</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>offer.starts_at</span><span></span>
+</td>
+<td>
+<span>HireDate</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.custom_fields.gender.value</span><span></span>
+</td>
+<td>
+<span>Gender</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>job.departments.name</span><span></span>
+</td>
+<td>
+<span>WorkAssignments.Items.Position.Department.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.title</span><span></span>
+</td>
+<td>
+<span>WorkAssignments.Items.Position.Job.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>"Field Service Office 2 - Installation"</span><span></span>
+</td>
+<td>
+<span>WorkAssignments.Items.Location.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.custom_fields.start_date.value</span><span></span>
+</td>
+<td>
+<span>WorkAssignments.Items.EffectiveStart</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>true</span><span></span>
+</td>
+<td>
+<span>WorkAssignments.Items.IsPrimary</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<p><span>customFields.job_title.value</span><span> <br/>or </span></p>
+<p><span>candidate.title</span><span> <br/>or <br/></span><span>Production Oversight Manager</span></p>
+</td>
+<td>
+<span>WorkAssignments.Items.BusinessTitle</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.custom_fields.start_date.value</span><span></span>
+</td>
+<td>
+<span>EmploymentStatuses.Items.EffectiveStart</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>"ACTIVE"</span><span></span>
+</td>
+<td>
+<span>EmploymentStatuses.Items.EmploymentStatus.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>job.custom_fields.employment_type.value</span><span> <br/>or <br/></span><span>offer.custom_fields.employment_type.value</span><span></span>
+</td>
+<td>
+<span>EmploymentStatuses.Items.PayType.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>job.custom_fields.employment_type.value</span><span></span>
+</td>
+<td>
+<span>EmploymHelloentStatuses.Items.PayClass.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td><span>job.offices.location</span></td>
+<td>
+<span>EmploymentStatuses.Items.PayGroup.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.custom_fields.base_pay.value</span><span></span>
+</td>
+<td>
+<span>EmploymentStatuses.Items.BaseRate</span><span></span>
+</td>
+</tr>
+<tr>
+<td><span>ElectronicAddress</span></td>
+<td>
+<span>Contacts.Items.ContactInformationType.ContactInformationTypeGroup.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td><span>BusinessEmail</span></td>
+<td>
+<span>Contacts.Items.ContactInformationType.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.email_addresses.value</span><span> <br/>or <br/></span><span>candidate.email_addresses.value</span><span></span>
+</td>
+<td>
+<span>Contacts.Items.ElectronicAddress</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>true</span><span></span>
+</td>
+<td>
+<span>Contacts.Items.IsPreferredContactMethod</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>offer.starts_at</span><span> or </span><span>utils.today()</span><span></span>
+</td>
+<td>
+<span>Contacts.Items.EffectiveStart</span><span></span>
+</td>
+</tr>
+<tr>
+<td><span>Phone</span></td>
+<td>
+<span>Contacts.Items[1].ContactInformationType.ContactInformationTypeGroup.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td><span>HomePhone</span></td>
+<td>
+<span>Contacts.Items[1].ContactInformationType.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.phone_numbers.value</span><span></span>
+</td>
+<td>
+<span>Contacts.Items[1].ContactNumber</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>true</span><span></span>
+</td>
+<td>
+<span>Contacts.Items[1].IsPreferredContactMethod</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>offer.starts_at</span><span> or </span><span>utils.today()</span><span></span>
+</td>
+<td>
+<span>Contacts.Items[1].EffectiveStart</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>candidate.custom_fields.social_security_number.value</span><span> or </span><span>offer.id</span><span></span>
+</td>
+<td>
+<span>SocialSecurityNumber</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>true</span><span></span>
+</td>
+<td>
+<span>Roles.Items.IsDefault</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>newEmployeeRoles</span><span> </span>
+</td>
+<td>
+<span>Roles.Items.Role.XRefCode</span><span></span>
+</td>
+</tr>
+<tr>
+<td>
+<span>offer.starts_at</span><span> or </span><span>utils.today()</span><span></span>
+</td>
+<td>
+<span>Roles.Items.EffectiveStart</span><span></span>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01J6RRJMNFD5C1HMACKNNA2WQY">Greenhouse Recruiting Candidates</h3>
+<p>The following table lists the Greenhouse Recruiting application UI field name, UI path, Greenhouse Recruiting attributes, and description:</p>
+<table border="1" id="1e7e6fe2-6a16-806a-b5eb-eb1f1491d3ea">
+<tbody>
+<tr id="1e7e6fe2-6a16-8096-9588-c2faae4035e0">
+<td id="b&gt;mq"><strong>Greenhouse Recruiting UI Field Name</strong></td>
+<td id="xJ|`"><strong>Application UI Path</strong></td>
+<td id="Ie|r"><strong>Greenhouse Recruiting API Attributes</strong></td>
+<td id="QiNQ"><strong>Description</strong></td>
+</tr>
+<tr id="1e7e6fe2-6a16-8097-89e3-c0d4de8f5856">
+<td id="b&gt;mq"><strong>First Name</strong></td>
+<td id="xJ|`">Candidates &gt; (Click) any  Candidate from the list &gt; &lt;user&gt; Details &gt; First Name</td>
+<td>
+<span>candidate.first_name</span><span></span>
+</td>
+<td id="QiNQ">The employee's legally registered first name.</td>
+</tr>
+<tr>
+<td>
+<p><strong>Last name</strong></p>
+<p><strong>Preferred First Name </strong></p>
+</td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; &lt;user&gt; Details &gt; Last Name/ Preferred first name</td>
+<td>
+<span>candidate.last_name<br/></span><span> or<br/> </span><span>candidate.preferred_name</span><span></span>
+</td>
+<td>
+<p>The candidate’s legal last name.</p>
+<p>The candidate’s legal last name.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><strong>Date Of Birth</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Additional details &gt; Date of Birth</td>
+<td>
+<span>candidate.custom_fields.date_of_birth.value</span><span></span>
+</td>
+<td>The candidate’s date of birth.</td>
+</tr>
+<tr>
+<td><strong>Start date</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Offer details &gt; Start Date</td>
+<td>
+<span>offer.starts_at</span><span></span>
+</td>
+<td>The candidate’s anticipated or confirmed employment start date.</td>
+</tr>
+<tr>
+<td><strong>Gender</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Additional details &gt; Gender</td>
+<td>
+<span>candidate.custom_fields.gender.value</span><span></span>
+</td>
+<td>The candidate’s gender identity.</td>
+</tr>
+<tr>
+<td><strong>Department</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Additional details &gt; Department</td>
+<td>
+<span>job.departments.name</span><span></span>
+</td>
+<td>The department associated with the job opening.</td>
+</tr>
+<tr>
+<td><strong>Job Title</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Additional details &gt; Job Title </td>
+<td>
+<span>candidate.title</span><span></span>
+</td>
+<td>
+<p>The employee’s official position or role within the company.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>"Field Service Office 2 - Installation"</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Start Date </strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Additional details &gt; Start Date</td>
+<td>
+<span>candidate.custom_fields.start_date.value</span><span></span>
+</td>
+<td>
+<p>The official date when the employee’s employment begins.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>true</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Job Title </strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Additional details &gt; Job Title </td>
+<td>
+<p><span>customFields.job_title.value</span><span> <br/>or </span></p>
+<p><span>candidate.title</span><span> <br/>or <br/></span><span>Production Oversight Manager</span></p>
+</td>
+<td>The employee’s official position or role within the company.</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>"ACTIVE"</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Employment Type</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Offer &gt;  Employment Type</td>
+<td>
+<span>job.custom_fields.employment_type.value</span><span> <br/>or <br/></span><span>offer.custom_fields.employment_type.value</span><span></span>
+</td>
+<td>
+<p>The classification of employment is full-time, part-time, or contractor.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><strong>Company Location</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Additional details &gt; Company Location</td>
+<td><span>job.offices.location</span></td>
+<td>
+<p>The physical or regional location where the employee is based.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><strong>Base Pay</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Additional details &gt; Company Location</td>
+<td>
+<span>candidate.custom_fields.base_pay.value</span><span></span>
+</td>
+<td>
+<p>The employee’s standard salary or hourly wage before bonuses or deductions.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><strong>Email Address</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; &lt;user&gt; Details &gt; Email Address</td>
+<td><span>ElectronicAddress</span></td>
+<td>
+<p>The primary email address used for official communication.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><strong>Email Address (Work)</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; &lt;user&gt; Details &gt; Email Address &gt; (Work)</td>
+<td><span>BusinessEmail</span></td>
+<td>
+<p>The primary email address used for official communication.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><strong>Email Address</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; &lt;user&gt; Details &gt; Email Address &gt;</td>
+<td>
+<span>candidate.email_addresses.value</span><span> <br/>or <br/></span><span>candidate.email_addresses.value</span><span></span>
+</td>
+<td>
+<p>The primary email address used for official communication.</p>
+</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>true</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Start Date</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Offer details &gt; Start Date</td>
+<td>
+<span>offer.starts_at</span><span> or </span><span>utils.today()</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Phone number </strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; &lt;user&gt; Details &gt; Phone number</td>
+<td><span>Phone</span></td>
+<td>
+<p>The employee’s primary contact phone number.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><strong>Phone number (Home)</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; &lt;user&gt; Details &gt; Phone number</td>
+<td><span>HomePhone</span></td>
+<td>
+<p>The employee’s personal or home phone number.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><strong>Phone number</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; &lt;user&gt; Details &gt; Phone number</td>
+<td>
+<span>candidate.phone_numbers.value</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>true</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Opening ID</strong></td>
+<td>Candidates &gt; (Click) any  Candidate from the list &gt; Offer details &gt; Opening ID</td>
+<td>
+<span>candidate.custom_fields.social_security_number.value</span><span> or </span><span>offer.id</span><span></span>
+</td>
+<td>
+<p>The unique identifier for the job opening or requisition.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>true</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>newEmployeeRoles</span><span> </span>
+</td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dayforce Employees</strong><br/>The following table lists the Dayforce application UI field name, UI path, and the corresponding Dayforce attributes:</p>
+<table border="1" id="1e7e6fe2-6a16-806a-b5eb-eb1f1491d3ea">
+<tbody>
+<tr id="1e7e6fe2-6a16-8096-9588-c2faae4035e0">
+<td id="b&gt;mq"><strong>Dayforce UI Field Name</strong></td>
+<td id="xJ|`"><strong>Application UI Path</strong></td>
+<td id="Ie|r"><strong>Dayforce API Attributes</strong></td>
+<td id="QiNQ"><strong>Description</strong></td>
+</tr>
+<tr id="1e7e6fe2-6a16-8097-89e3-c0d4de8f5856">
+<td id="b&gt;mq">NA</td>
+<td id="xJ|`">NA</td>
+<td>
+<span>xRefCode</span><span></span>
+</td>
+<td id="QiNQ">NA</td>
+</tr>
+<tr>
+<td><strong>First Name</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt; Personal &gt; Contact Information &gt; First Name </td>
+<td>
+<span>FirstName</span><span></span>
+</td>
+<td>The employee’s given (first) name.</td>
+</tr>
+<tr>
+<td><strong>Last Name </strong></td>
+<td>People &gt; (Click any Employee in the list) &gt; Personal &gt; Contact Information &gt; Last Name </td>
+<td>
+<span>LastName</span><span></span>
+</td>
+<td>The employee’s family (last) name.</td>
+</tr>
+<tr>
+<td><strong>Birth Date</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt; Personal &gt; Confidential Information &gt; Birth Date</td>
+<td>
+<span>BirthDate</span><span></span>
+</td>
+<td>The employee’s date of birth.</td>
+</tr>
+<tr>
+<td><strong>Effective From</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Employment &gt; Employment Settings &gt; General &gt;  Effective From</td>
+<td>
+<span>HireDate</span><span></span>
+</td>
+<td>The employee’s employment date.</td>
+</tr>
+<tr>
+<td><strong>Gender</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt; Personal &gt; Confidential Information &gt; Gender</td>
+<td>
+<span>Gender</span><span></span>
+</td>
+<td>The employee’s gender</td>
+</tr>
+<tr>
+<td><strong>Department </strong></td>
+<td>People &gt; (Click any Employee in the list) &gt; Overview  Work Assignment &gt; Department </td>
+<td>
+<span>WorkAssignments.Items.Position.Department.XRefCode</span><span></span>
+</td>
+<td>The code identifies the department to which the employee is assigned.</td>
+</tr>
+<tr>
+<td><strong>Job</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;  Work Assignment &gt; Job</td>
+<td>
+<span>WorkAssignments.Items.Position.Job.XRefCode</span><span></span>
+</td>
+<td>The code represents the employee’s job position.</td>
+</tr>
+<tr>
+<td><strong>Location</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Work Assignment &gt; Location</td>
+<td>
+<span>WorkAssignments.Items.Location.XRefCode</span><span></span>
+</td>
+<td>The code for the employee’s work location.</td>
+</tr>
+<tr>
+<td><strong>Effective From</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Work &gt; Job Work Assignments &gt; General &gt; Effective From </td>
+<td>
+<span>WorkAssignments.Items.EffectiveStart</span><span></span>
+</td>
+<td>The start date of the employee’s current job assignment.</td>
+</tr>
+<tr>
+<td><strong>Primary </strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Work &gt; Job Work Assignments &gt; General &gt; Primary </td>
+<td>
+<span>WorkAssignments.Items.IsPrimary</span><span></span>
+</td>
+<td>Indicates if this job assignment is the employee’s primary role.</td>
+</tr>
+<tr>
+<td><strong>Buisiness Title</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Work &gt; Job Work Assignments &gt; General &gt; Buisiness Title</td>
+<td>
+<span>WorkAssignments.Items.BusinessTitle</span><span></span>
+</td>
+<td>The employee’s official business title.</td>
+</tr>
+<tr>
+<td><strong>Effective From</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Employment &gt; Employment Settings &gt; Effective From</td>
+<td>
+<span>EmploymentStatuses.Items.EffectiveStart</span><span></span>
+</td>
+<td>
+<p>The date the current employment status became effective.</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><strong>Employment Status</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Employment &gt; Employment Settings &gt; Employment Status</td>
+<td>
+<span>EmploymentStatuses.Items.EmploymentStatus.XRefCode</span><span></span>
+</td>
+<td>The employee’s current employment status code (e.g., active, terminated).</td>
+</tr>
+<tr>
+<td><strong>Pay Type</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Employment &gt; Employment Settings &gt; Pay Type</td>
+<td>
+<span>EmploymentStatuses.Items.PayType.XRefCode</span><span></span>
+</td>
+<td>The pay the employee receives (e.g., salary, hourly).</td>
+</tr>
+<tr>
+<td><strong>Pay Class</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Employment &gt; Employment Settings &gt; Pay Class</td>
+<td>
+<span>EmploymHelloentStatuses.Items.PayClass.XRefCode</span><span></span>
+</td>
+<td>The classification of the employee’s pay level or grade.</td>
+</tr>
+<tr>
+<td><strong>Pay Group</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Employment &gt; Employment Settings &gt; Pay Group</td>
+<td>
+<span>EmploymentStatuses.Items.PayGroup.XRefCode</span><span></span>
+</td>
+<td>The group or category used for payroll processing.</td>
+</tr>
+<tr>
+<td><strong>Base Rate</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Employment &gt; Employment Settings &gt; Base Rate</td>
+<td>
+<span>EmploymentStatuses.Items.BaseRate</span><span></span>
+</td>
+<td>The employee’s base pay rate.</td>
+</tr>
+<tr>
+<td> </td>
+<td>People &gt; (Click any Employee in the list) &gt;   Personal &gt; Contact Information &gt; Email Addresses </td>
+<td>
+<span>Contacts.Items.ContactInformationType.ContactInformationTypeGroup.XRefCode</span><span></span>
+</td>
+<td>The employee’s email addresses and indication of preferred contact method.</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>Contacts.Items.ContactInformationType.XRefCode</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Email Addresses </strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Personal &gt; Contact Information &gt; Email Addresses </td>
+<td>
+<span>Contacts.Items.ElectronicAddress</span><span></span>
+</td>
+<td>The employee’s email addresses</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>Contacts.Items.IsPreferredContactMethod</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Effective Date</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Personal &gt; Contact Information &gt; Email Address &gt; Effective Date</td>
+<td>
+<span>Contacts.Items.EffectiveStart</span><span></span>
+</td>
+<td>The date from which the email address is valid.</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>Contacts.Items[1].ContactInformationType.ContactInformationTypeGroup.XRefCode</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>Contacts.Items[1].ContactInformationType.XRefCode</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Phone Numbers </strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Personal &gt; Contact Information &gt; Phone Numbers </td>
+<td>
+<span>Contacts.Items[1].ContactNumber</span><span></span>
+</td>
+<td>The employee’s phone numbers and preferred contact indication.</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td>
+<span>Contacts.Items[1].IsPreferredContactMethod</span><span></span>
+</td>
+<td> </td>
+</tr>
+<tr>
+<td><strong>Effective Start</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Personal &gt; Contact Information &gt; Phone Numbers &gt; Effective Start</td>
+<td>
+<span>Contacts.Items[1].EffectiveStart</span><span></span>
+</td>
+<td>The date from which the phone number is valid.</td>
+</tr>
+<tr>
+<td><strong>National ID Number</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Personal &gt;Confidential Information &gt; National ID Number</td>
+<td>
+<span>SocialSecurityNumber</span><span></span>
+</td>
+<td>The employee’s national identification or social security number.</td>
+</tr>
+<tr>
+<td><strong>Roles </strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Personal &gt;Security Settings &gt;Roles </td>
+<td>
+<span>Roles.Items.IsDefault</span><span></span>
+</td>
+<td>The security roles assigned to the employee define access and permissions.</td>
+</tr>
+<tr>
+<td><strong>Roles </strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Personal &gt;Security Settings &gt;Roles </td>
+<td>
+<span>Roles.Items.Role.XRefCode</span><span></span>
+</td>
+<td>The code assigned to the role. </td>
+</tr>
+<tr>
+<td><strong>Start Date</strong></td>
+<td>People &gt; (Click any Employee in the list) &gt;   Personal &gt;Security Settings &gt;Roles &gt; Start Date</td>
+<td>
+<span>Roles.Items.EffectiveStart</span><span></span>
+</td>
+<td>The date when the assigned role became effective.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="01JQQX8ZJ9C62RPE14W4DTF9PE">Run the Integration</h1>
+<p>The integration runs when a candidate in the Greenhouse Recruiting application is hired. It processes the event received from Greenhouse Recruiting and creates a new employee record in the Dayforce application.</p>
+<p>The system automatically sends confirmation emails to the HR teams when a new employee is successfully onboarded. Suppose any issues occur during the setup (like missing information or system errors). </p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<h1 id="h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</h1>
+<h2 id="h_01ESN6XGCPQRMFGWGTMB3YVH03">Setting Up Webhooks in Greenhouse Recruiting</h2>
+<p id="h_01HHC42H2XCK08HVK2G9A6Y6DE">This section details how to set up webhooks in the Greenhouse Recruiting application to send the candidate hire events to the Aquera integration for processing.</p>
+<ol>
+<li>Log in to the Greenhouse Recruiting application.</li>
+<li>Click the <em>Configure</em> icon on the navigation bar.</li>
+<li>Click <strong>Dev Center</strong> on the left navigation pane and click <strong>Webhooks</strong>.</li>
+<li>Enter the following fields to configure your new webhook:
+<ul>
+<li>
+<strong>Name this webhook</strong>: Enter the name that specifies what the webhook is being used for. For example, <em>Aquera Integration</em>
+</li>
+<li>
+<strong>When</strong>: Select the event, <em>Candidate has been hired</em>, from this drop-down list. </li>
+<li>
+<strong>Endpoint URL</strong>: Copy the URL from the<strong> Trigger </strong>section on the <em>Greenhouse Recruiting Candidates to the Freshservice</em> integration setup page of the Aquera Admin portal and paste it into this field. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details.</li>
+<li>
+<strong>Secret key</strong>: Enter the token generated in the <strong>Trigger </strong>section on the <em>Greenhouse Recruiting Candidates to Freshservice </em>integration setup page of the Aquera Admin portal. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details.</li>
+<li>
+<strong>Deactivated?</strong>: Make sure that the <em>No</em> option is selected.<br/><img alt="GHRNew1.png" src="./assets/e02f8a6a38234e69.bin"/>
+</li>
+</ul>
+</li>
+<li>Click <strong>Advanced Settings</strong> and then provide the <strong>Basic Authorization Credentials,</strong> where the token generated in the Aquera Admin portal must be provided as the password for authentication. The username can be any random string. Refer to the <a href="../Greenhouse-Recruiting-Candidates-to-Freshservice-User-Onboarding-Ticket/#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details on obtaining the token.<br/><img alt="GHRNew2.png" src="./assets/004bbe71cf73e3b5.bin"/>
+</li>
+<li>Click <strong>Create webhook</strong> to complete the webhook setup.</li>
+</ol>
+<p>When you create a new webhook, Greenhouse Recruiting will ping the Aquera endpoint to verify the connection is working. If the ping is accepted successfully, the webhook will be created. If the ping is unsuccessful, Greenhouse Recruiting will save the configuration but deactivate the webhook.</p>
+<p><strong>Note</strong>: If the webhook is deactivated automatically because the endpoint ping failed, scroll down to the <strong>Edit Webhook</strong> section and edit the configuration to fix the error. After you have fixed the configuration issue, make sure that you set the <strong>Deactivated.</strong> Option to <em>No</em>.</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UKG Ready Employee to Acumatica Employee Synchronization Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>UKG Ready Employee to Acumatica Employee Synchronization Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J46AGRGR00VNTVGR0PNNPBGG">Overview</h1>
+<p>Aquera provides an innovative platform that allows your organization to scale complex data management by automating the synchronization of employees from the UKG Ready application to the employees in the Acumatica application.</p>
+<p>This guide covers the end-to-end tasks in setting up synchronization to synchronize UKG Ready employees to Acumatica employees. </p>
+<h1 id="h_01J46AGRGRQPVRAPETC1V9F4Q4">Prerequisite</h1>
+<p><strong>Tenant account in the Aquera Admin portal</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.</p>
+<p><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a></p>
+<h1 id="h_01F6EH0MBC837JQFE5ZJRW7P94">Configure Applications in the Aquera Admin Portal</h1>
+<p>Aquera provides SCIM Gateway connectors to support employee lifecycle management. Aquera's connectors use the SCIM protocol to perform the read and write operations on the applications. </p>
+<p>You must add and configure the following connectors in the Aquera Admin portal:</p>
+<ul>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for details.</li>
+<li>
+<strong>Acumatica</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/22469599108887" rel="noopener noreferrer" target="_blank">Acumatica Configuration Guide</a> for details.</li>
+</ul>
+<h1 id="h_01J46B7Y1FJFZ9EF69E21925AA">Synchronization Setup</h1>
+<p>Aquera's Synchronization automatically synchronizes data from a source to the target application.</p>
+<p> </p>
+<p> </p>
+<h1 id="h_01J46AK2H42JBWFD9RD2EPT9A3">UKG Ready Employee Data</h1>
+<table cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td valign="top"><strong>Application Field Name</strong></td>
+<td><strong>Application UI Path</strong></td>
+<td valign="top"><strong>SCIM Attribute</strong></td>
+<td valign="top"><strong>Description</strong></td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>Employee ID</p>
+</td>
+<td>My Team &gt; Employee Information &gt; Personal Information</td>
+<td valign="top">employeeId</td>
+<td valign="top">The employee number of the employee. This will not change for the lifetime of the employee even after they have been terminated.</td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>Username</p>
+</td>
+<td>My Team &gt; Employee Information &gt; Account Information</td>
+<td valign="top">username</td>
+<td valign="top">A unique identifier of an employee to log into UKG Ready</td>
+</tr>
+<tr>
+<td valign="top"><strong>active</strong></td>
+<td> </td>
+<td valign="top"> </td>
+<td valign="top">Indicates if the employee is active or not </td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>First Name<br/><br/></p>
+</td>
+<td>My Team &gt; Employee Information &gt; Account Information</td>
+<td valign="top">firstName</td>
+<td valign="top">The first name of the employee</td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>Last Name<br/><br/></p>
+</td>
+<td>My Team &gt; Employee Information &gt; Account Information</td>
+<td valign="top">lastName</td>
+<td valign="top">The last name of the employee</td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>Middle</p>
+</td>
+<td>My Team &gt; Employee Information &gt; Account Information</td>
+<td valign="top">middleName</td>
+<td valign="top">The middle initial of the employee</td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p><strong>Account Status<br/></strong><strong><br/></strong></p>
+</td>
+<td>My Team &gt; Employee Information &gt; Personal Information</td>
+<td valign="top">status</td>
+<td valign="top">The status of the employee such as Active or Terminated</td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>Locked<br/><br/></p>
+</td>
+<td>My Team &gt; Employee Information &gt; Account Information</td>
+<td valign="top">locked</td>
+<td valign="top">The current account status of the employee</td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>Primary Email</p>
+</td>
+<td>My Team &gt; Employee Information &gt; Personal Information</td>
+<td valign="top">primaryEmail</td>
+<td valign="top">The work email of the employee</td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>Work Phone</p>
+</td>
+<td>My Team &gt; Employee Information &gt; Personal Information</td>
+<td valign="top">phones.workPhone</td>
+<td valign="top">The work phone number of the employee</td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>Home Phone</p>
+</td>
+<td>My Team &gt; Employee Information &gt; Personal Information</td>
+<td valign="top">phones.homePhone</td>
+<td valign="top">The home phone of the employee</td>
+</tr>
+<tr>
+<td valign="top">
+<p> </p>
+<p>Cell Phone</p>
+</td>
+<td>My Team &gt; Employee Information &gt; Personal Information</td>
+<td valign="top">phones.cellPhone</td>
+<td valign="top">The cell phone number of the employee</td>
+</tr>
+<tr>
+<td valign="top">
+<p>Birthday<br/><br/></p>
+</td>
+<td>My Team &gt; Employee Information &gt; Dates</td>
+<td valign="top">dates.birthday</td>
+<td valign="top">The birthday date of the employee</td>
+</tr>
+<tr>
+<td valign="top"><strong>Managers_EmplRef_AccountId</strong></td>
+<td> </td>
+<td valign="top">managers[].emplRef.accountId</td>
+<td valign="top"><strong>The account ID of the referral manager</strong></td>
+</tr>
+<tr>
+<td valign="top">
+<p>Department</p>
+</td>
+<td>My Team &gt; Employee Information &gt; Extra Fields</td>
+<td valign="top">department</td>
+<td valign="top">The department name of the employee</td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01J46AK2H5SCDRRTMYHM3TAZ23">Acumatica Employee Data</h1>
+<table cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td valign="top"><strong>Application Field Name</strong></td>
+<td valign="top"><strong>OpenAPI Property/Parameter</strong></td>
+<td valign="top"><strong>Description</strong></td>
+</tr>
+<tr>
+<td valign="top">Date of Birth</td>
+<td valign="top"> </td>
+<td valign="top">Employees Birth Date.</td>
+</tr>
+<tr>
+<td valign="top">Email</td>
+<td valign="top"> </td>
+<td valign="top">Work Email Address of the Employee</td>
+</tr>
+<tr>
+<td valign="top">Fax</td>
+<td valign="top"> </td>
+<td valign="top">The fax number for this employee</td>
+</tr>
+<tr>
+<td valign="top">FaxType</td>
+<td valign="top"> </td>
+<td valign="top">This value is always “Fax”</td>
+</tr>
+<tr>
+<td valign="top">FirstName</td>
+<td valign="top">FirstName</td>
+<td valign="top">The first name of the employee</td>
+</tr>
+<tr>
+<td valign="top">LastName</td>
+<td valign="top">LastName</td>
+<td valign="top">The last name of the employee</td>
+</tr>
+<tr>
+<td valign="top">MiddleName</td>
+<td valign="top"> </td>
+<td valign="top">Middle Initial for the employee</td>
+</tr>
+<tr>
+<td valign="top">Phone1</td>
+<td valign="top"> </td>
+<td valign="top">Business Phone Number</td>
+</tr>
+<tr>
+<td valign="top">Phone1Type</td>
+<td valign="top"> </td>
+<td valign="top">This value is always “Business 1”</td>
+</tr>
+<tr>
+<td valign="top">Phone2</td>
+<td valign="top"> </td>
+<td valign="top">Cell Phone number for the employee</td>
+</tr>
+<tr>
+<td valign="top">Phone2Type</td>
+<td valign="top"> </td>
+<td valign="top">This value is always “Cell”</td>
+</tr>
+<tr>
+<td valign="top">Phone3</td>
+<td valign="top"> </td>
+<td valign="top">Home number of the employee</td>
+</tr>
+<tr>
+<td valign="top">Phone3Type</td>
+<td valign="top"> </td>
+<td valign="top">This value is always “Home”</td>
+</tr>
+<tr>
+<td valign="top">Title</td>
+<td valign="top"> </td>
+<td valign="top">This is the job title of the employee.</td>
+</tr>
+<tr>
+<td valign="top">EmployeeID</td>
+<td valign="top">EmployeeID</td>
+<td valign="top">This is the employee number of the employee.  This will be used to link the UKG Ready record to the Acumatica Record. This is immutable.  The employee Number will not change.</td>
+</tr>
+<tr>
+<td valign="top">EmployeeName</td>
+<td valign="top">EmployeeName</td>
+<td valign="top">This will always be the first and last name of the employee</td>
+</tr>
+<tr>
+<td valign="top">BranchID</td>
+<td valign="top">BranchID</td>
+<td valign="top">This is the branch name where the employee works</td>
+</tr>
+<tr>
+<td valign="top">Calendar</td>
+<td valign="top">Calendar</td>
+<td valign="top">This is the work schedule when the employee can work</td>
+</tr>
+<tr>
+<td valign="top">CurrencyID</td>
+<td valign="top">CurrencyID</td>
+<td valign="top">This is the currency that this employee will be paid with</td>
+</tr>
+<tr>
+<td valign="top">DepartmentID</td>
+<td valign="top">DepartmentID</td>
+<td valign="top">The department to which the employee belongs</td>
+</tr>
+<tr>
+<td valign="top">EmployeeClass</td>
+<td valign="top">EmployeeClass</td>
+<td valign="top">The class of the employee</td>
+</tr>
+<tr>
+<td valign="top">EnableCurrencyOverride</td>
+<td valign="top"> </td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">EnableRateOverride</td>
+<td valign="top"> </td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">RegularHoursValidation</td>
+<td valign="top"> </td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">ReportsTo</td>
+<td valign="top"> </td>
+<td valign="top">The employee ID of the manager of this employee</td>
+</tr>
+<tr>
+<td valign="top">RouteEmails</td>
+<td valign="top"> </td>
+<td valign="top">True or false</td>
+</tr>
+<tr>
+<td valign="top">TimeCardIsRequired</td>
+<td valign="top"> </td>
+<td valign="top">True or false</td>
+</tr>
+<tr>
+<td valign="top">APAccount</td>
+<td valign="top">APAccount</td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">APSubaccount</td>
+<td valign="top">APSubaccount</td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">ExpenseAccount</td>
+<td valign="top">ExpenseAccount</td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">ExpenseSubaccount</td>
+<td valign="top">ExpenseSubaccount</td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">SalesAccount</td>
+<td valign="top">SalesAccount</td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">SalesSubaccount</td>
+<td valign="top">SalesSubaccount</td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">Terms</td>
+<td valign="top">Terms</td>
+<td valign="top"> </td>
+</tr>
+<tr>
+<td valign="top">Status</td>
+<td valign="top">Status</td>
+<td valign="top">"Active" or ""</td>
+</tr>
+</tbody>
+</table>
+<p><strong> </strong></p>
+<h1 id="h_01J4PAZQ130M14QJ5WWR1KVF5A">Attribute Mapping</h1>
+<table cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td valign="top"><strong>UKG Ready Attribute / Value / Expression</strong></td>
+<td valign="top"><strong>Acumatica Attribute</strong></td>
+</tr>
+<tr>
+<td valign="top">Dates_Birthday</td>
+<td valign="top">Date of Birth</td>
+</tr>
+<tr>
+<td valign="top">primaryEmail</td>
+<td valign="top">Email</td>
+</tr>
+<tr>
+<td valign="top">“484-961-5970” or “484-941-5970” or Blank (Need Logic)</td>
+<td valign="top">Fax</td>
+</tr>
+<tr>
+<td valign="top">“Business 1” or “Fax” or “HomeFax” (need logic)</td>
+<td valign="top">FaxType</td>
+</tr>
+<tr>
+<td valign="top">firstName</td>
+<td valign="top">FirstName</td>
+</tr>
+<tr>
+<td valign="top">lastName</td>
+<td valign="top">LastName</td>
+</tr>
+<tr>
+<td valign="top">middleName</td>
+<td valign="top">MiddleName</td>
+</tr>
+<tr>
+<td valign="top">Phones_WorkPhone</td>
+<td valign="top">Phone1</td>
+</tr>
+<tr>
+<td valign="top">“Business 1” hard coded</td>
+<td valign="top">Phone1Type</td>
+</tr>
+<tr>
+<td valign="top">Phones_CellPhone</td>
+<td valign="top">Phone2</td>
+</tr>
+<tr>
+<td valign="top">“Cell” hard coded</td>
+<td valign="top">Phone2Type</td>
+</tr>
+<tr>
+<td valign="top">Phones_HomePhone</td>
+<td valign="top">Phone3</td>
+</tr>
+<tr>
+<td valign="top">“Home” hard coded</td>
+<td valign="top">Phone3Type</td>
+</tr>
+<tr>
+<td valign="top">employeeID</td>
+<td valign="top">EmployeeID</td>
+</tr>
+<tr>
+<td valign="top">firstName + lastName</td>
+<td valign="top">EmployeeName</td>
+</tr>
+<tr>
+<td valign="top">“RJBCONTRACTING” hard coded</td>
+<td valign="top">BranchID</td>
+</tr>
+<tr>
+<td valign="top">“OFFICE” hard coded</td>
+<td valign="top">Calendar</td>
+</tr>
+<tr>
+<td valign="top">“USD” hard coded</td>
+<td valign="top">CurrencyID</td>
+</tr>
+<tr>
+<td valign="top">“EXECUTIVE” hard coded</td>
+<td valign="top">DepartmentID</td>
+</tr>
+<tr>
+<td valign="top">“HOURLY” or “SALARIED” (need logic)</td>
+<td valign="top">EmployeeClass</td>
+</tr>
+<tr>
+<td valign="top">false</td>
+<td valign="top">EnableCurrencyOverride</td>
+</tr>
+<tr>
+<td valign="top">false</td>
+<td valign="top">EnableRateOverride</td>
+</tr>
+<tr>
+<td valign="top">None or Validate (need logic)</td>
+<td valign="top">RegularHoursValidation</td>
+</tr>
+<tr>
+<td valign="top">&lt;lookup based on Managers_EmplRef_AccountId&gt;</td>
+<td valign="top">ReportsTo</td>
+</tr>
+<tr>
+<td valign="top">true</td>
+<td valign="top">RouteEmails</td>
+</tr>
+<tr>
+<td valign="top">All true except for one false (need logic)</td>
+<td valign="top">TimeCardIsRequired</td>
+</tr>
+<tr>
+<td valign="top">Hard coded to 2010</td>
+<td valign="top">APAccount</td>
+</tr>
+<tr>
+<td valign="top">Hard coded to 00</td>
+<td valign="top">APSubAccount</td>
+</tr>
+<tr>
+<td valign="top">5010 or 7010 (need logic)</td>
+<td valign="top">ExpenseAccount</td>
+</tr>
+<tr>
+<td valign="top">00, 01, 02, 03, 04, 05 (Lookup:ESA)</td>
+<td valign="top">ExpenseSubaccount</td>
+</tr>
+<tr>
+<td valign="top">Always 4010</td>
+<td valign="top">SalesAccount</td>
+</tr>
+<tr>
+<td valign="top">00, 01, 02, 03, 04, 05 (need logic)</td>
+<td valign="top">SalesSubAccount</td>
+</tr>
+<tr>
+<td valign="top">Most are DUENOW or blank (need logic)</td>
+<td valign="top">Terms</td>
+</tr>
+<tr>
+<td valign="top">Active or Inactive this will be mapped from Status Active or Terminated</td>
+<td valign="top">Status</td>
+</tr>
+</tbody>
+</table>
+<p><strong> </strong></p>
+<h1 id="h_01J4PB14C55SZB265467VRWEV0">Running Synchronization</h1>
+  </div>
+</body>
+</html>

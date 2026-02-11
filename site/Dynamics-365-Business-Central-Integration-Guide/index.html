@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dynamics 365 Business Central Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dynamics 365 Business Central Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide outlines the end-to-end tasks for setting up an integration that assigns MEM and PLM licenses using Dynamics 365 Business Central and Microsoft Entra ID.</p>
+<p>This integration automates the license assignment process by identifying the <span>group code</span> in Dynamics 365 Business Central and assigning MEM, PLM, or both licenses accordingly.</p>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connector in the Aquera Admin Portal:</strong> You need to configure the Dynamics 365 Business Central application connector in the Aquera Admin portal.<br/><strong>Note</strong>: While configuring the connector, all Aquera tenant attributes are mandatory for this integration.</li>
+<li>
+<strong>License</strong>: You must have a valid license assigned to the user before security entities can be applied.</li>
+<li>
+<strong>Web services</strong>: You must enable the required web services. Refer to the <a href="#h_01K1Z0EHX9WNZ8MSHHR7XW41V8">Setting Up Web Services</a> section for more details.</li>
+</ul>
+<h2 id="h_01K1Z0EHX9WNZ8MSHHR7XW41V8">Setting Up Web Services</h2>
+<p id="h_01K1Z0DV56PSQ73EFPKXFVJ4BK">Perform the following steps to add (publish) web services in Dynamics 365 Business Central:</p>
+<ol>
+<li>Log in to <a href="https://www.microsoft.com/en-in/dynamics-365/products/business-central/sign-in" rel="noopener noreferrer" target="_blank">Dynamics 365 Business Central Client</a>.</li>
+<li>Use the search bar to find <strong>Web Services</strong>, then click <strong>Web Services</strong> from the search results.</li>
+<li>On the <strong data-end="313" data-start="297">Web Services</strong> page, check if a web service with the required <strong data-end="376" data-start="361">Object Type</strong> and <strong data-end="394" data-start="381">Object ID</strong> already exists. If found, you can reuse the existing service.<br/><img alt="Dynamics_365_1.png" src="./assets/d553454523b71a88.bin"/><br/>The following are the object IDs (Page IDs) for different Web Services:
+<ul>
+<li><span>Users: 9800</span></li>
+<li><span>SecurityGroupMembers: 9869</span></li>
+<li>MEM Licensed Users: 70210976</li>
+<li>PLM Licensed Users: 70701596</li>
+<li>Approval User Setup: 663</li>
+<li>User Setup: 119</li>
+<li>Sales People Purchasers: 5116</li>
+</ul>
+</li>
+<li>If no matching web service is found, then click <strong data-end="507" data-start="498">+ New</strong> to create a new one. Fill in the following details:
+<ul>
+<li>
+<strong data-end="584" data-start="568">Object Type:</strong> Select <strong data-end="600" data-start="592">Page</strong> from the dropdown.</li>
+<li>
+<strong data-end="639" data-start="625">Object ID:</strong> Enter the relevant Page ID.</li>
+<li>
+<strong data-end="721" data-start="704">Service Name:</strong> Enter a unique name for the service. This will appear in the endpoint URL.</li>
+<li>
+<strong data-end="816" data-start="802">Published:</strong> Check the box to publish the service.<br/><img alt="Dynamics_365_2.png" src="./assets/c847182bc3e0b51e.bin"/>
+</li>
+</ul>
+</li>
+<li>Once the web service is published, Dynamics 365 Business Central will generate an OData V4 URL automatically.</li>
+<li>Copy the <strong data-end="974" data-start="958">OData V4 URL</strong> and use it in your integration setup.</li>
+</ol>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>The integration must be configured to assign MEM and PLM licenses using Dynamics 365 Business Central.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Dynamics 365 Business Central License Management.</strong>
+</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <strong>Dynamics 365 Business Central</strong> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the application connectors for the integration. This section allows you to search and update application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case.</p>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Global Settings</h4>
+<p>Configure the following global settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only</strong> <strong>Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Maximum Limit</strong>: Enter the maximum number of users to process in the integration run.</li>
+</ul>
+<h4 id="01K470EHYNN8ARCXT00DPRZ4ZR"><span>Users Settings</span></h4>
+<p>Configure the following users' settings:</p>
+<ul>
+<li>
+<strong>OData V4 API Endpoint for Users</strong><span>*</span>: Enter the OData V4 API URL for the users.</li>
+</ul>
+<h4 id="01K470ERJX1WEMAGJKAQHPP35S"><span>Group Members Settings</span></h4>
+<p>Configure the following group members' settings:</p>
+<ul>
+<li>
+<strong>OData V4 API Endpoint for Group Members</strong><span>*</span>: Enter the OData V4 API URL for the group members.</li>
+</ul>
+<h3 id="h_01K1WJRWZW9KZD7Y6ZYS6X36PR">MEM License</h3>
+<p>The <strong>MEM License</strong> section enables you to customize the MEM License settings according to your specific use case.</p>
+<h4 id="01K1WRR0NASS7WG7NGWHKVNWEF">MEM License Settings</h4>
+<p>Configure the following MEM License Settings:</p>
+<ul>
+<li>
+<strong>Security Group Code of MEM Licensed Users</strong>: Enter the security group code of MEM licensed users.</li>
+<li>
+<strong>OData V4 API Endpoint for MEM Licensed Users</strong>: Enter the OData V4 API URL for MEM licensed users.</li>
+</ul>
+<h4 id="01K470RX56PK0XH9K1SNSEAS4G"><span>MEM Location Settings</span></h4>
+<p>Configure the following MEM Location Settings:</p>
+<ul>
+<li>
+<strong>MEM Location Attribute Name in the Microsoft Entra ID (API Name)</strong>: Enter the API name of the MEM location attribute as defined in Microsoft Entra ID.<br/><strong>Notes</strong>:
+<ul>
+<li>Refer to the <a href="https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0#properties" rel="noopener noreferrer" target="_blank">Microsoft Entra ID</a> to obtain the API names.</li>
+<li>If the location attribute contains nested objects, specify it using dot notation. For example, for the attribute:<br/>
+<pre data-stringify-type="pre">{
+  "onPremisesExtensionAttributes": {
+      "extensionAttribute10": "entity1-entity2"
+   }
+}    </pre>
+Enter the location attribute as:<br/>
+<pre data-stringify-type="pre">onPremisesExtensionAttributes.extensionAttribute10 </pre>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01K1WJSA92CTXHEWKB17WQYC8P">PLM License</h3>
+<p>The <strong>PLM License Settings</strong> section enables you to customize the PLM License settings according to your specific use case.</p>
+<h4 id="01K1WRS0JT6VC5EF210BKVZPAV">PLM License Settings</h4>
+<p>Configure the following PLM License Settings:</p>
+<ul>
+<li>
+<strong>Security Group Code of PLM Licensed Users</strong>: Enter the security group code of PLM licensed users.</li>
+<li>
+<strong>OData V4 API for PLM Licensed Users</strong>: Enter the OData V4 API URL for PLM licensed users.</li>
+</ul>
+<h3 id="h_01K1WJT1S5JN1H7P8E6MMTZCH7">Approval User Setup</h3>
+<p>The <strong>Approval User Setup</strong> Settings section enables you to customize the Approval User Setup settings according to your specific use case.</p>
+<h4 id="01K1WS0MKESWNEMYM7YXFJKC8B">Approval User Setup Settings</h4>
+<p>Configure the following Approval User Setup Settings:</p>
+<ul>
+<li>
+<strong>OData V4 API for Approval User Setup</strong>: Enter the OData V4 API URL to retrieve approval user setup details.</li>
+<li>
+<strong>OData V4 API for Sales People and Purchasers</strong>: Enter the OData V4 API URL to retrieve data for sales people and purchasers.</li>
+<li>
+<span><strong>Approval User Setup Group Codes</strong></span>: Select the group to manage approval user configurations.</li>
+</ul>
+<h3 id="h_01K1WJT6BKAQWP9N7P556PMJ2W">User Setup</h3>
+<p>The <strong>User Setup Settings</strong> section enables you to customize the User Setup settings according to your specific use case.</p>
+<h4 id="01K1WS1QK70YFF5SBT6Y568RDS">User Setup Settings</h4>
+<p>Configure the following User Setup Settings:</p>
+<ul>
+<li>
+<strong>OData V4 API for User Setup</strong>: Enter the OData V4 API URL to retrieve user setup details.</li>
+<li>
+<span><strong>User Setup Group Codes</strong></span>: Select the group to manage user configurations.</li>
+</ul>
+<h2 id="01JVC7QW1983644JGH2WGK8FWX">Tables</h2>
+<p>In the <strong>Tables</strong> tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

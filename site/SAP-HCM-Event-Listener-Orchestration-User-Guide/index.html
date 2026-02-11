@@ -1,0 +1,1117 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SAP HCM Event Listener Orchestration User Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>SAP HCM Event Listener Orchestration User Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview</h1>
+<p>This guide explains the event listener orchestration to be set up in the Aquera Admin application to receive employee events from the SAP HCM application and process them for identity management systems. It also explains the basic configurations to be done in the SAP system to send those employee events to Aquera's HR Onboarding gateway.</p>
+<h2 id="employee-data-transmission-from-sap-hcm">Employee Data Transmission from SAP HCM</h2>
+<p>SAP HCM transmits employee data with other systems in the IDOC (Intermediate Document) format through the ALE (Application Link Enabling) interface. Aquera Engine reads the IDOC format and converts it into the SCIM format  before sending it to the identity providers. </p>
+<h3 id="jump-to">Jump to</h3>
+<pre><a href="#h_01EWFYTCMYQHF3VFDXNKMGGMCJ" target="_self">Creating Orchestration in Aquera Admin</a><br/><a href="#h_01EWFRZ7JYPW0K3W8C1CYHK8Q4" target="_self">Basic Configurations in SAP System</a><br/>   <a href="#h_01EVRR6VZNSSK79CQT816PV3CN" target="_self">Logging on to SAP</a><br/>   <a href="#h_01EVRR7757HZZ61TAWPE3QW4R8" target="_self">Creating Users for ALE Transfer</a><br/>   <a href="#h_01EVRDFM1S2CAND008SK17RA63" target="_self">Defining Logical System</a><br/>   <a href="#h_01EVRR8FZTFHHJN3REN5KNV3W2" target="_self">Setting Up SSL for Secure Transactions</a><br/>   <a href="#h_01EVRR8WY0M14BBSK8X4M61JZY" target="_self">Creating an RFC Connection</a><br/>   <a href="#h_01EVRR97K0DMSYPEQ60XAEWNP9" target="_self">Configuring IDOC Port</a><br/>   <a href="#h_01EVRR9JBT29FFBYV6HSVVSCSG" target="_self">Creating Partner Profile for the Logical System</a><br/>   <a href="#h_01EVRR9VFVKXYZWGXR4012ZBB8" target="_self">Creating the Distribution Model</a><br/>   <a href="#h_01EWFRNMR9A7C5JSTMAGQF7BVS" target="_self">Activating Change Pointers</a><br/>   <a href="#h_01EWFRPR3RBH0J53ZRBDZZF7E2" target="_self">Customization of Info Types 0000, 0001, and 0002</a><br/>   <a href="#h_01EWFMXX128DTC08Y703VY5ATT" target="_self">Distribution of Changes</a><br/>   <a href="#h_01EXP7VA98Z26AHWTF265S3GVK" target="_self">Verification of iDOC Creation</a><br/>   <a href="#h_01EWFRS5A2F6ZYF3QBHRCN9X9V" target="_self">Processing of Inbound IDOCs</a><br/><a href="#h_01EF1T00FZFD9PTRW96H0X0PV0" target="_self">Schema Discovery</a></pre>
+<h1 id="h_01EWFYTCMYQHF3VFDXNKMGGMCJ">Creating Orchestration in Aquera Admin</h1>
+<p>The following procedures are involved in the orchestration setup:</p>
+<ul>
+<li>Adding the SAP HCM Application - Refer to the <a href="https://support.aquera.com/hc/en-us/articles/1500005206161" rel="noopener" target="_blank">SAP HCM Configuration Guide</a> for details on configuring the SAP HCM application in the Aquera Admin console.</li>
+<li><a href="#h_01EXP46KM8ZMTQPHWWP2Y21TDQ" target="_self">Setting up SAP HCM Event Listener Orchestration</a></li>
+</ul>
+<h2 id="h_01EXP46KM8ZMTQPHWWP2Y21TDQ">Setting up SAP HCM Event Listener Orchestration</h2>
+<div>
+<ol>
+<li>On the Aquera Admin Home page, navigate to <strong>Orchestrations </strong>module, and click on <strong>Create Orchestration</strong>. </li>
+<li>Enter the following details on the <strong>Add Orchestration</strong> page:
+<ul>
+<li>Enter a <strong>Name</strong> for the orchestration.</li>
+<li>Select <em>SAP HCM Event Listener</em> <span>from the orchestration type drop-down list</span>. </li>
+</ul>
+</li>
+<li>Enter the following on the <strong>Configuration</strong> page:  
+<ul>
+<li>Select the SAP HCM application, which you have created in the previous procedure, as the <strong>Source Application</strong>.</li>
+<li>Select the <strong>Target</strong> <strong>Application</strong> to which the events received from the SAP HCM system must be sent.</li>
+<li>Enter other details on the page, according to your requirement.</li>
+</ul>
+</li>
+</ol>
+<p>4. Click <strong>Create</strong>.</p>
+<p>5. Click the <strong>Event Detail</strong> tab to see the event URL. This event URL contains the <strong>Host</strong> and the <strong>Path Prefix</strong> values that need to be configured while <a href="#h_01EVRR8WY0M14BBSK8X4M61JZY" target="_self">Creating an RFC Connection</a> in the SAP system.  <img alt="Event_URL.png" src="./assets/cdeec7e9d1b6f984.png"/></p>
+<p>6. Click <strong>Create Token</strong> to generate a token. <img alt="Token_Created.png" height="250" src="./assets/baba04507c5ded3f.png" width="488"/></p>
+<p>7. Copy the token and save it securely. This token needs to be entered as the<strong> Password</strong> in the <strong>Logon &amp; Security tab</strong> while <a href="#h_01EVRR8WY0M14BBSK8X4M61JZY" target="_self">Creating an RFC Connection</a> in the SAP system.</p>
+<p>8. Close the pop-up window.</p>
+<p>9. Click <strong>Save changes</strong> to finish the orchestration setup.</p>
+</div>
+<h1 id="h_01EWFRZ7JYPW0K3W8C1CYHK8Q4">Basic Configurations in SAP System</h1>
+<p>Make sure that the following configurations are set in the SAP system before creating the orchestration in Aquera Admin. <span>To send and receive IDOCS, the ALE subsystem must be configured accordingly. </span></p>
+<p><span><strong>NOTE 1:</strong> The screenshots provided in this section contain sample data. The actual data to be entered vary based on your requirements.</span></p>
+<p><span><strong>NOTE 2</strong>: If you need to add or modify any configurations in SAP and the screen is in the <em>Display</em> mode, you must click the <img alt="Edit_icon.png" height="33" src="./assets/31159cd1a2d44823.png" width="35"/> icon below the screen title to switch to the <em>Change</em> mode. Clicking the icon again switches the screen to <em>Display </em>mode.</span></p>
+<p>The following procedures must be followed in SAP to configure the ALE subsystem and the structure of IDOC:</p>
+<ol>
+<li><a href="#h_01EVRR6VZNSSK79CQT816PV3CN" target="_self">Logging on to SAP</a></li>
+<li><a href="#h_01EVRR7757HZZ61TAWPE3QW4R8" target="_self">Creating Users for ALE Transfer</a></li>
+<li><a href="#h_01EVRDFM1S2CAND008SK17RA63" target="_self">Defining Logical System</a></li>
+<li><a href="#h_01EVRR8FZTFHHJN3REN5KNV3W2" target="_self">Setting Up SSL for Secure Transactions</a></li>
+<li><a href="#h_01EVRR8WY0M14BBSK8X4M61JZY" target="_self">Creating an RFC Connection</a></li>
+<li><a href="#h_01EVRR97K0DMSYPEQ60XAEWNP9" target="_self">Configuring IDOC Port</a></li>
+<li><a href="#h_01EVRR9JBT29FFBYV6HSVVSCSG" target="_self">Creating Partner Profile for the Logical System</a></li>
+<li><a href="#h_01EVRR9VFVKXYZWGXR4012ZBB8" target="_self">Creating the Distribution Model</a></li>
+<li><a href="#h_01EWFRNMR9A7C5JSTMAGQF7BVS" target="_self">Activating Change Pointers</a></li>
+<li><a href="#h_01EWFRPR3RBH0J53ZRBDZZF7E2" target="_self">Customization of Info Types 0000, 0001, and 0002</a></li>
+<li><a href="#h_01EWFMXX128DTC08Y703VY5ATT" target="_self">Distribution of Changes</a></li>
+<li><a href="#h_01EVRRAND24A0HGYJPMZ77V3AT" target="_self">Verification of IDOC Creation</a></li>
+<li><a href="#h_01EWFRS5A2F6ZYF3QBHRCN9X9V" target="_self">Processing of Inbound IDOCs</a></li>
+</ol>
+<h2 id="h_01EVRR6VZNSSK79CQT816PV3CN">Logging on to SAP</h2>
+<ol>
+<li>Open the SAP Logon (SAP GUI) application.</li>
+<li>
+<span>Click <strong>Connections</strong> and double-click on the SAP system to which you want to connect.</span> <img alt="Logon.png" src="./assets/a32b135e370db090.png"/>
+</li>
+<li value="3">Enter the user credentials (for example, <em>SAP*</em> or <em>DDIC</em>) provided by SAP.</li>
+<li>After you log on to an SAP system, the <strong>SAP Easy Access</strong> screen appears. This is the user-specific point of entry into the SAP system.</li>
+</ol>
+<h2 id="h_01EVRR7757HZZ61TAWPE3QW4R8">Creating Users for ALE Transfer</h2>
+<p>This procedure explains how to create a user <span> and assign proper authorizations to the user. This user account is required to perform the IDOC transfers. The transfer of IDOCs will be done through RFC (Remote Function Call) and this user will be tied to that communication process.</span></p>
+<p>1. Execute the <em>SU01</em> (User Maintenance) transaction code in the <strong>Command</strong> field on the<span> <strong>SAP Easy Access</strong> screen</span>.</p>
+<p><img alt="SU01.png" src="./assets/80ac436ded1dafcf.png"/></p>
+<p>The <strong>User Maintenance: Initial Screen</strong> is displayed.</p>
+<p>2. Enter the username for the new user in the <strong>User</strong> field, and click the <em>Create</em> icon.</p>
+<p><img alt="Create_Usr.png" src="./assets/4e37018c16eb337a.png"/></p>
+<p>3. Add other details of the user, as required, on the <strong>Maintain Users</strong> screen.</p>
+<p><img alt="Usr_Details.png" src="./assets/484cfe117bf0e8fa.png"/></p>
+<p>4. In the <strong>Logon Data</strong> tab, enter the following:</p>
+<ul>
+<li>Select the <strong>User Type</strong> as <em>Dialog</em><strong>.</strong>
+</li>
+<li>Enter the initial password for the user in the <strong>New Password</strong> and <strong>Repeat Password</strong> fields. <span>On first login, the user will be prompted to reset their password.<br/><strong>Note</strong>: The password must be of minimum 8 characters in length and must contain at least one capital letter and one number.<br/></span>
+</li>
+</ul>
+<p><img alt="User_Create_New.png" height="647" src="./assets/df9c84a6240aec54.png" width="624"/></p>
+<p>5. In the <strong>Profiles</strong> tab, assign the following profiles to the user for full authorization:</p>
+<ul>
+<li>SAP_ALL</li>
+<li>SAP_NEW</li>
+<li>S_A.CPIC</li>
+<li>S_A.SYSTEM</li>
+</ul>
+<p><img alt="User_prof-Perm.png" src="./assets/235ece8625fe049c.png"/></p>
+<p>These profiles determine the authorizations of the user.</p>
+<p>6. Click the <em>Save</em> icon to create the user. </p>
+<p>The user has to be configured for every instance of SAP, for example, <em>test, production</em>.</p>
+<p>7. Log out and log in with the new user account that you have created now. </p>
+<h2 id="h_01EVRDFM1S2CAND008SK17RA63">Defining Logical System</h2>
+<p>A logical system must be defined for the Aquera endpoint (target system) to send IDOCs from SAP. This logical system must be assigned to a SAP client. <span>This enables the </span>system<span> to recognize the target</span> system<span> as an RFC (Remote Function Call) destination.</span></p>
+<p>1. Execute the <em>SALE</em> transaction code in the <strong>Command</strong> field on the<span> <strong>SAP Easy Access</strong> screen</span>.</p>
+<p><img alt="Sale_Tran_Code.png" src="./assets/9548f44943d0a991.png"/></p>
+<p>The <strong>Display IMG</strong> screen is displayed.</p>
+<p><img alt="Define_LS.png" src="./assets/5188e33f4d51c80e.png"/></p>
+<p>2. Navigate to <strong>Basic Settings &gt; Logical Systems</strong> and click <strong>Define Logical System</strong>. The <strong>Change View Logical Systems </strong>screen is displayed.</p>
+<p><img alt="LS1.png" src="./assets/6808be9438d1ec4a.png"/></p>
+<p>3. Click <strong>New Entries</strong>. </p>
+<p>4. Add a logical system entry.</p>
+<p><img alt="LS2.png" src="./assets/1bf40bad57dd8128.png"/></p>
+<ul>
+<li>
+<span>In the </span><strong><span>Log.System</span></strong><span> column, enter a name for the logical system that you want to create. The following naming convention is recommended for the logical systems: <em>&lt;XXX&gt;</em>CLNT<em>&lt;NNN&gt;</em> where <em>&lt;XXX&gt;</em> is the system name and <em>&lt;NNN&gt;</em> is the client.</span>
+</li>
+<li><span>In the<span> </span><strong><span>Name</span></strong><span> </span>column, enter a description of the logical system.</span></li>
+</ul>
+<p><span>5. Click the <em>Save</em> icon. </span><span>A workbench request is generated. </span></p>
+<p><span><img alt="WB_Request.png" src="./assets/b139dc8f06342554.png"/></span></p>
+<p><span><strong>Note</strong>: If the request number is not displayed, you must create the request number by clicking the <em>Create Request</em> icon on this window. Click the <em>Save</em> icon after entering a short description.</span></p>
+<p><span><img alt="LS_Req.png" height="375" src="./assets/648e24c4c74d6c5d.png" width="585"/></span><span></span></p>
+<p>5. Click <em>OK</em> to create the transport request.</p>
+<h2 id="h_01EVRR8FZTFHHJN3REN5KNV3W2"><span>Setting Up SSL for Secure Transactions</span></h2>
+<p><span>This section explains the following procedures </span>that are required to set up SSL for secured transactions of data from SAP:</p>
+<ol>
+<li>Downloading Security Certificates from Amazon Trust Services</li>
+<li>Creating SSL Client Identity Entry for PSE</li>
+<li>Creating PSE </li>
+<li>Uploading Amazon Trust Certificates</li>
+</ol>
+<h3 id="downloading-security-certificates-from-amazon-trust-services">Downloading Security Certificates from Amazon Trust Services</h3>
+<p>1. Open the following link in a browser: <a href="https://aws.amazon.com/blogs/awsforsap/sap-idoc-integration-with-amazon-s3-by-using-amazon-api-gateway/" rel="noopener" target="_blank">https://aws.amazon.com/blogs/awsforsap/sap-idoc-integration-with-amazon-s3-by-using-amazon-api-gateway/</a>.</p>
+<p><img alt="Amazon_Link.png" src="./assets/262fdc57a2efac94.png"/></p>
+<p>2. Scroll down to the <strong>Configure RFC connection in SAP</strong> section of the page and click the <strong>Amazon Trust Services</strong> link.</p>
+<p><img alt="Cert_Dwnld.png" src="./assets/6a9f5e61ef932c25.png"/></p>
+<p>3. Download each of the certificates listed in the table in DER format to your system. The certificates are created in the system with the following names:</p>
+<ul>
+<li>AmazonRootCA1.cer</li>
+<li>AmazonRootCA2.cer</li>
+<li>AmazonRootCA3.cer</li>
+<li>AmazonRootCA4.cer</li>
+<li>SFSRootCAG2.cer</li>
+</ul>
+<h3 id="creating-ssl-client-identity-entry-for-pse">Creating SSL Client Identity Entry for PSE</h3>
+<p>An entry must be created for SSL client PSE (Personal Security Environment).</p>
+<p><span>1. Execute the <em>STRUST</em> transaction code in the <strong>Command</strong> field on the <strong>SAP Easy Access</strong> screen. The <strong>Trust Manager</strong> screen is displayed.</span></p>
+<p><span><img alt="Trust_Mgr.png" src="./assets/6a55953b0ef1784c.png"/></span></p>
+<p><span>2. Click </span><strong>Environment &gt; SSL Client Identities</strong>. A message box is displayed indicating that the table is cross-client.</p>
+<p>3. Click <em>OK</em>.  The <strong>Change View "SSL Client Identities of System"</strong> screen is displayed.</p>
+<p>4. Click <strong>New Entries</strong>. Note: Click the <em>Edit</em> icon to switch to the <em>Edit</em> mode.</p>
+<p><img alt="Client_identity_Edit.png" src="./assets/aecdd9a005b0dc9c.png"/></p>
+<p>5. Indicate Identity code and description for this new record.</p>
+<p><span><img alt="ID_Code_Desc.png" src="./assets/bcf8742089116689.png"/></span></p>
+<p>6. Click the <em>Save</em> icon.</p>
+<h3 id="creating-pse">Creating PSE </h3>
+<p>A PSE (Personal Security Environment) must be created to store the Amazon security certificates that you have downloaded.</p>
+<p><span>1. Execute the <em>STRUST</em> transaction code in the <strong>Command</strong> field on the <strong>SAP Easy Access</strong> screen. The <strong>Trust Manager</strong> screen is displayed.</span></p>
+<p>2. Right-click on the new SSL Client Identity and click <strong>Create</strong>.<br/><strong>Note</strong>: If the Trust Manager screen is in <em>View</em> mode, switch to the <em>Change</em> mode first. </p>
+<p><img alt="CreatePSE1.png" src="./assets/749b8e99acd48c17.png"/></p>
+<p>The following screen is displayed.</p>
+<p><img alt="Algo_setting.png" height="325" src="./assets/859ec5b822212459.png" width="562"/></p>
+<p>3. Enter the name, organization, encryption algorithm, and key strength.</p>
+<p>4. Click <em>OK</em>.</p>
+<p><img alt="CreatePSE3.png" src="./assets/a2b69627ee11c20b.png"/></p>
+<p>A new PSE is now available to upload the Amazon trust certificates.</p>
+<h3 id="uploading-amazon-trust-certificates">Uploading Amazon Trust Certificates</h3>
+<p>1. Select the PSE that you have created on the <strong>Trust Manager</strong> screen.</p>
+<p>2. Perform the following steps to upload each Amazon trust certificate that you have downloaded:</p>
+<ul>
+<li>Click the <em>Import <img alt="Import.png" height="38" src="./assets/675cdee55edcba17.png" width="29"/></em>  button available at the bottom of the right pane. The <strong>Import Certificate</strong> window is displayed.</li>
+</ul>
+<p><img alt="Import_browse.png" height="424" src="./assets/1aefe96abbe1301e.png" width="493"/></p>
+<ul>
+<li>Click the <strong>Browse</strong> icon next to File Path to navigate to the folder where you have saved the Amazon trust certificates.</li>
+</ul>
+<p><img alt="Browse.png" src="./assets/10bf1f024c57a033.png"/></p>
+<ul>
+<li>Select a certificate and click <strong>Open</strong>.</li>
+<li>Click <strong>Add to Certificate List</strong>.</li>
+<li>Click the <em>Save</em> icon to save the uploaded certificate.</li>
+</ul>
+<p>3. Repeat the above steps to upload and save each certificate, as shown below:</p>
+<p><img alt="Cert_Upload.png" src="./assets/d9afa072d553fded.png"/></p>
+<p>All certificates are now uploaded.</p>
+<p><img alt="Certs.png" src="./assets/c4a210be949dd851.png"/></p>
+<h2 id="h_01EVRR8WY0M14BBSK8X4M61JZY">Creating an RFC Connection</h2>
+<p><span>An HTTP connection must be established from the SAP system (client) to the HTTP server.</span></p>
+<p><span><strong>NOTE:</strong> Do not edit any of the existing connections configured in the system.</span></p>
+<p><span>1. Execute the <em>SM59</em> transaction code in the <strong>Command</strong> field on the <strong>SAP Easy Access</strong> screen. The <strong>Configuration of RFC Connections</strong> screen is displayed.</span></p>
+<p><span>2. Click <strong><span>HTTP Connections to External Server</span></strong> and then click the <em><span>Create</span></em> icon. The RFC Destination screen is displayed.</span></p>
+<p><img alt="Create_RFC_Conn.png" src="./assets/711e73790fc4fe4a.png"/></p>
+<p><span>3. Enter a name for the RFC destination in the <strong>Destination</strong> field and select the <strong>Connection Type</strong> as <strong>HTTP connection to external server</strong><em>.</em></span></p>
+<p><span>4. Click OK and enter the following details.</span></p>
+<p><img alt="Tech_Set.png" height="613" src="./assets/20dae2ac788bcb1f.png" width="638"/></p>
+<ul>
+<li><span>Enter a description for the RFC destination.</span></li>
+<li>
+<span>Click the <strong>Technical Settings</strong> tab and enter the following details.</span>
+<ul>
+<li>
+<ul>
+<li><span><strong>Host</strong>: Enter the host name or the IP address of the target system to which the SAP client needs to be connected. For example, <em>events.aquera.com</em>.  This is available in the event URL in the <a href="#h_01EXP46KM8ZMTQPHWWP2Y21TDQ" rel="noopener" target="_blank">Setting up SAP HCM Event Listener Orchestration</a> section. </span></li>
+<li><span><strong>Service No</strong>: Enter the port number. The destination host has to be configured in such a way that the specified port understands the corresponding protocol (HTTP or HTTPS). For example, <em>443</em>.</span></li>
+<li><span><strong>Path Prefix</strong>: The sub path that needs to be inserted before <samp>~request_uri. </samp>When the connection to this destination is initiated, the system inserts this sub-path before <samp>~request_uri</samp>. Refer to the <a href="#h_01EXP46KM8ZMTQPHWWP2Y21TDQ" rel="noopener" target="_blank">Setting up SAP HCM Event Listener Orchestration</a> section for information on the event URL that contains the sub path to be configured here. The sub path is the one after <em>aquera.events.com</em> in the URL (including the slash).</span></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><span>4. Click the <em>Save</em> icon. The following message box is displayed.</span></p>
+<p><span><img alt="RFC_Save.png" height="163" src="./assets/d5093a7c4b38764b.png" width="588"/></span></p>
+<p><span>5. Click <strong>OK</strong>.</span></p>
+<p><span>6. Click the <strong>Logon &amp; Security</strong> tab and enter the following details.</span></p>
+<p><img alt="logon_Sec.png" height="869" src="./assets/24c56afed64aa8ef.png" width="677"/></p>
+<ul>
+<li><span>Select <strong>Basic Authentication</strong> and enter the username and password. When the user accesses the target system, the user ID and password must be provided for authentication. Refer to the <a href="#h_01EXP46KM8ZMTQPHWWP2Y21TDQ" target="_self">Setting up SAP HCM Event Listener Orchestration</a> section for information on the token number that needs to be entered here as the password.</span></li>
+<li><span>Select <strong>Do Not Send Logon Ticket</strong>.</span></li>
+<li><span>Select <strong>SSL</strong> as <em>Active</em>.</span></li>
+<li><span>Select the  SSL client PSE, which contains the certificate that is to be used for the authentication. The target system treats the <span>SAP system as a trusted system.</span></span></li>
+</ul>
+<p><span><span>7. Click the <strong>Special Option</strong> tab and enter the following details.</span></span></p>
+<p><span><span><img alt="Special_Opt.png" src="./assets/80a21ac3a7050fbf.png"/></span></span></p>
+<ul>
+<li><span><strong>Timeout</strong>: <em>ICM Default Timeout</em>. It indicates the maximum response time for the HTTP request.</span></li>
+<li>
+<strong>HTTP Version</strong>:<em> HTTP 1.1</em>
+</li>
+<li>
+<strong>Compression</strong>: <em>Inactive</em>
+</li>
+<li>
+<strong>Compressed Response</strong>: <em>Yes</em>
+</li>
+<li>
+<strong>Accept Cookies</strong>: <em>No</em>
+</li>
+</ul>
+<p>8. Click the <strong>Save</strong> icon and click<strong> Connection Test</strong> to verify that the connection can be established. The username and password has to be provided while testing the connection.</p>
+<h2 id="h_01EVRR97K0DMSYPEQ60XAEWNP9">Configuring IDOC Port</h2>
+<p>Configure an IDOC port of type XML HTTP using the RFC destination created in the previous procedure.</p>
+<p><span>1. Execute the <em>WE21</em> transaction code in the <strong>Command</strong> field on the <strong>SAP Easy Access</strong> screen. The <strong>Ports in IDOC Processing</strong> screen is displayed.</span></p>
+<p><img alt="Ports_IDOC.png" src="./assets/bb7fbf3c7ead8aea.png"/></p>
+<p><span>2. Click <strong>XML HTTP</strong> and click the <em>Create</em> icon. The <strong>Add XML HTTP Port</strong> screen is displayed.</span></p>
+<p><span>3. Enter the following details.</span><span></span></p>
+<p><img alt="XML_HTTP.png" src="./assets/83f8174b9e6f0f0f.png"/></p>
+<ul>
+<li>Enter a name for the <strong>Port</strong> and a <strong>Description</strong>.</li>
+<li>Select the <strong>RFC destination</strong> created in the previous step from the drop-down list.</li>
+<li>Select the <strong>Content Type</strong> as <em>Text/XML</em>.</li>
+</ul>
+<p>4. Click the <strong>Save</strong> icon.</p>
+<h2 id="h_01EVRR9JBT29FFBYV6HSVVSCSG"><span>Creating Partner Profile for the Logical System</span></h2>
+<p><span>A partner must be created for the Logical System that you have created earlier in the <a href="#h_01EVRDFM1S2CAND008SK17RA63" target="_self">Defining Logical System</a> section.</span></p>
+<p><span>1. Execute the <em>WE20</em> transaction code in the <strong>Command</strong> field on the <strong>SAP Easy Access</strong> screen. The <strong>Partner profiles</strong> screen is displayed.</span></p>
+<p><span><img alt="Partner_1.png" src="./assets/0e9c6548adfcf58d.png"/></span></p>
+<p><span>2. Click the <strong>Create</strong> icon.</span></p>
+<p><img alt="Create_part_prof.png" src="./assets/87011065babb272c.png"/></p>
+<p><span>3. Enter the name of the logical system created previously in the <strong>Partner No</strong> field.</span></p>
+<p><span>4. Enter the <strong>Partn. Type</strong> as <em>LS</em>, which indicates logical system, </span>and specify the SAP user that was created in the <a href="#h_01EVRR7757HZZ61TAWPE3QW4R8" target="_self">Creating Users for ALE Transfer</a> section in the <strong>Agent </strong>field.</p>
+<p>5. Click the <em>Save</em> icon.</p>
+<p>6. Create Outbound parameter for the partner profile as follows.</p>
+<p><img alt="Cr_Out.png" src="./assets/73cd0e80eecd0e9f.png"/></p>
+<ul>
+<li>Click the <img alt="Outbound_icon.png" height="25" src="./assets/b684cd803fd81492.png" width="25"/> (<em>Create outbound parameter</em>) icon below the <strong>Outbound</strong> section on the screen. For outbound parameters, we must provide port and IDOC details because port describes the system to which the IDOC has to flow. </li>
+<li>Enter the Message Type as HRMD_A.</li>
+<li>Enter the IDOC port that was created in the previous procedure in the <strong>Receiver port</strong> field.</li>
+<li>Select the <strong>Transfer/Pass IDoc Immed</strong> option.</li>
+<li>Enter the IDOC Type as HRMD_09.</li>
+<li>Click the <strong>Save</strong> icon.</li>
+</ul>
+<p><img alt="Cr_Out2.png" src="./assets/1ce7b99e799db71a.png"/></p>
+<p>7. Similarly, create the Inbound parameter. Mention the process code details which determines the inbound function module for processing the incoming data.</p>
+<p><img alt="Create_Inb.png" src="./assets/42646bcf83ff2c48.png"/></p>
+<p><img alt="Inb_setup.png" src="./assets/ff5e348561e71252.png"/></p>
+<p>8. Click the <em>Save</em> icon.</p>
+<p>9. Return to the previous screen and click the <strong>Classification</strong> tab.</p>
+<p>10. Enter the partner status as <em>Active</em> as shown below.</p>
+<p><img alt="Active_Partner.png" src="./assets/f1e0f8297613c5bd.png"/></p>
+<p>11. Click the <em>Save</em> icon.</p>
+<h2 id="h_01EVRR9VFVKXYZWGXR4012ZBB8">Creating the Distribution Model</h2>
+<p>The distribution model defines the sender, the receiver, and the types of information that are transmitted.</p>
+<p><span>1. Execute the <em>SALE</em> transaction code in the <strong>Command</strong> field on the <strong>SAP Easy Access</strong> screen. The <strong>Display IMG</strong> screen is displayed.</span></p>
+<p><span><img alt="Dist_Model.png" height="431" src="./assets/678284f9ae7ac12f.png" width="649"/></span></p>
+<p><span>2. Expand <strong>Modelling and Implementing Business Processes</strong> and  click <strong>Maintain Distribution Model and Distribute Views</strong>.The <strong>Display Distribution Model</strong> screen is displayed.</span></p>
+<p><span>3. Switch to <em>Edit</em> mode, and click <strong>Create Model View.</strong> </span></p>
+<p><img alt="Create_Model_V.png" src="./assets/47fd1e68a3557664.png"/></p>
+<p><span>The <strong>Create Model View</strong> window is displayed.</span></p>
+<p><span><img alt="Create_Model_View.png" height="193" src="./assets/79a15a98c2050a9e.png" width="603"/></span></p>
+<p><span>4. Enter a description of the model view and a technical name in the <strong>Short text</strong> and <strong>Technical name</strong> fields respectively.</span></p>
+<p><span>5. Click <em>OK</em> to create the model view.</span></p>
+<p><span>6. Select the model view and click <strong>Add message type</strong>. </span></p>
+<p><img alt="Add_M_type.png" src="./assets/73ccafd6771f080f.png"/></p>
+<p><span>The <strong>Add Message Type</strong> window is displayed.</span></p>
+<p><span><img alt="Add_MT_2.png" height="205" src="./assets/e707534c0280ada5.png" width="323"/></span><span></span></p>
+<p><span>7. Enter the Client ID of your SAP instance as the <strong>Sender</strong>, the logical system defined in the <a href="#h_01EVRDFM1S2CAND008SK17RA63" target="_self">Defining Logical System</a> section as the <strong>Receiver</strong>, and <em>HRMD_A</em> as the <strong>Message Type.</strong></span></p>
+<p><span>8. Click <em>OK</em> and click the <em>Save</em> icon.<img alt="No_Filter_set.png" src="./assets/feeecb443ed803d6.png"/></span></p>
+<p><span>9. Expand the model view that you have created and double-click on <strong>No filter set</strong>.The <strong>Change Filter</strong> screen is </span>displayed.</p>
+<p><img alt="Data_Filter.png" src="./assets/1ca1bad79766c47b.png"/></p>
+<p>10. Click <strong>Data filtering</strong> and click <strong>Create</strong> <strong>Filter Group</strong>.</p>
+<p><img alt="Infotype_new.png" height="448" src="./assets/e8782f9fd616c7c9.png" width="424"/></p>
+<p>11. Double-click on <strong>Infotype</strong>. The following window is displayed.</p>
+<p><img alt="Insert_Row.png" src="./assets/c7dae2872bfb7440.png"/></p>
+<p>12. Click the<em> Insert Row</em> icon to enter the types of information to be sent to the receiver. The list of all available info types are displayed.</p>
+<p><img alt="All_infotypes.png" height="447" src="./assets/845cff23d1ab5240.png" width="291"/></p>
+<p><span>13. Select the info types of users that must be communicated through IDOC. The following information types must be added to the data filter. Based on the types of information to be transferred, more info types need to be added.</span><span></span></p>
+<ul>
+<li><span>0000 - Actions, such as, any updates to a user.</span></li>
+<li><span>0001 - Organizational assignment</span></li>
+<li>
+<span>0002 - Personal data</span><span></span>
+</li>
+<li><span>0006 - Address</span></li>
+<li><span>0105 - Communication data such as user's email address</span></li>
+</ul>
+<p><span>14. Double-click on <strong>Type of related object</strong> and add the following types of objects that need to be sent through IDOC:</span></p>
+<p><span><img alt="Type_Object.png" height="645" src="./assets/11a52eaf55c88ffd.png" width="605"/></span></p>
+<ul>
+<li><span><strong>K</strong> - Cost Center</span></li>
+<li><span><strong>P</strong> - Person (employees)</span></li>
+<li><span><strong>S</strong> - Position of employees in the organization</span></li>
+</ul>
+<p><span>15. Double-click on <strong>Object type</strong> and add the following types of objects: <strong>K</strong>, <strong>P</strong>, and <strong>S</strong></span></p>
+<p><span>16. Click <em>OK</em> and click the <em>Save</em> icon.</span></p>
+<p><span><img alt="Aq_Infotypes.png" src="./assets/e195bee2e7e4d735.png"/></span></p>
+<h2 id="h_01EWFRNMR9A7C5JSTMAGQF7BVS">Activating Change Pointers</h2>
+<p><span>You have to activate change pointers in SAP. Only the changed user data needs to be sent from the SAP system. A change pointer can identify the changed user data. </span></p>
+<p><span>1. Execute the <em>BD61</em> transaction code on the <strong>SAP Easy Access</strong> screen. The <strong>Activate Change Pointers Generally</strong> screen is displayed.</span></p>
+<p><span>Or <br/>Navigate to the <strong>Activate Change Pointers Generally</strong> screen as follows:</span><span></span><span></span></p>
+<ul>
+<li>
+<span> Execute the <em>SALE</em> transaction code in the <strong>Command</strong> field on the <strong>SAP Easy Access</strong> screen. The <strong>Display IMG</strong> screen is displayed.</span><span></span>
+</li>
+<li><span>Expand <strong>Modeling and Implementing Business Processes &gt; Master Data Distribution</strong> &gt; <strong>Replication of Modified Data &gt; Activate Change Pointers - Generally</strong>.</span></li>
+</ul>
+<p><span><img alt="Change_Gen_checkbox.png" src="./assets/979b6f399ad3fd77.png"/></span></p>
+<p><span>2. Verify that the <strong>Change pointers activated (in general)</strong> checkbox is selected. If not, select it and save the change.</span></p>
+<p><span>3. Click the <em>Back</em> button on the menu bar and enter the transaction code, BD50, on the <strong>SAP Easy Access</strong> screen. The <strong>Change View "Activate Change pointers for Message Type": Overview</strong> screen is displayed.</span></p>
+<p><span>4. Activate the change pointer for the message type, <em>HRMD_A</em>.</span></p>
+<p><img alt="Chg_Pointer_HRMDA.png" src="./assets/b737e8cddf67f644.png"/></p>
+<p>This step ensures that all changes to personnel numbers or the organizational structure are transferred automatically through IDOCs. <span>The change pointers can be activated for each functional module in SAP, as per your requirements.</span></p>
+<p>A request is generated.</p>
+<p><img alt="chg_pt_req.png" height="130" src="./assets/ec99ba99df349b56.png" width="476"/></p>
+<h2 id="h_01EWFRPR3RBH0J53ZRBDZZF7E2">Customization of Info Types 0000, 0001, and 0002</h2>
+<p>This step is for validation purpose.</p>
+<p><span>1. Execute the <em>PA30</em> transaction code on the <strong>SAP Easy Access</strong> screen. The <strong>Maintain HR master Data</strong> screen is displayed.</span></p>
+<p><span>2. </span>Check the existing personnel actions defined in the system for Hiring, Organizational reassignment /change, Leaving, and Rehiring.</p>
+<p>3. Customize the values for SAP system infotype 0000 (Actions) as follows. The actions are configured based on the country where the organization is located. The codes indicated below for personal actions are sample codes.</p>
+<ul>
+<li>Enter the employee number, select the <em>Actions</em> infotype and click the <em>Edit</em> icon.</li>
+</ul>
+<p><img alt="IT_Actions1.png" src="./assets/e96d7e5af0223532.png"/></p>
+<ul>
+<li>Select to use the following personnel action types:
+<ul>
+<li>Code <strong>01</strong> for<span>  </span><strong>Hiring</strong>
+</li>
+<li>Code <strong>02</strong> for <strong>Organizational reassignment/changes</strong>
+</li>
+<li>Code <strong>10</strong> for <strong>Leaving<span> </span></strong>
+</li>
+<li>Code <strong>12</strong> for <strong>Reentry into company /Rehiring</strong>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong><img alt="IT_Actions2.png" src="./assets/50b55e55dae136e4.png"/></strong></p>
+<ul>
+<li>Set the <strong>Employment</strong> status<span> as follows.</span>
+<ul>
+<li>Code<strong> 0</strong> for<span>  </span><strong>Withdraw</strong>n (used for personnel actions type 10)</li>
+<li>Code<strong> 1</strong><span>  </span>for <strong>Inactive</strong> (used when an employee is suspended)</li>
+<li>Code <strong>2</strong> for<span>  </span><strong>Retiree</strong> (used for personnel action type 10)</li>
+<li>Code <strong>3</strong> for <strong>Active</strong> <span> </span>(used for personnel action types 01, 02, and 12)</li>
+</ul>
+</li>
+</ul>
+<p><span><img alt="IT_Actions3.png" src="./assets/137ad5a5319ccbca.png"/></span></p>
+<p>4. Customize the values for SAP system infotype 0001 (Organizational Assignment) as follows. The values mentioned here are sample values.</p>
+<ul>
+<li>Enter the employee number, select the <em>Organizational Assignment</em> infotype and click the <em>Edit</em> icon.</li>
+</ul>
+<p><img alt="Org_Assign.png" src="./assets/0369c5296edfac97.png"/></p>
+<ul>
+<li>The following fields need to be set based on your requirements:
+<ul>
+<li>
+<strong>CoCode</strong>: Company Code. At least one company code must be configured for each country.</li>
+<li>
+<span><strong>Cost Ctr</strong>: Cost center. If</span><span></span> it is necessary to transfer the configuration of cost centers between systems, it has to be managed with a separate IDOC of message type: COSMAS. We are currently not configuring the cost centers with the Aquera interface.</li>
+<li>
+<strong>Pers.area</strong> and <strong>Subarea</strong>: Personnel areas and sub areas. You can have multiple personnel area codes and sub areas codes configured for each company code.</li>
+<li>
+<strong>EE group</strong>: Employee groups. You <span></span>can have multiple employee groups configured for each country to distinguish between various categories of employees.</li>
+<li>
+<strong>EE subgroup</strong>: Employee sub-groups. You <span></span>can have multiple employee sub groups configured for each country<span> </span>to distinguish between various categories of employees.</li>
+<li>
+<strong>Payr.area</strong>: Payroll area. You<span></span> can have multiple payroll areas configured for each country to distinguish between various categories of payment algorithms.</li>
+</ul>
+</li>
+</ul>
+<p><strong>NOTE</strong>: All HR functions (except <em>Organizational Management</em>) must be in one regional system. You cannot divide them between different systems and then distribute their data.</p>
+<h2 id="h_01EWFMXX128DTC08Y703VY5ATT">Distribution of Changes</h2>
+<p>For each change in the filter table, a distribution of the related objects is necessary.<span> </span></p>
+<p>This is achieved with an automatic job running after RBDMIDOC with variant HRMD_A.</p>
+<p><span>1. Execute the <em>BD21</em> transaction code on the <strong>SAP Easy Access</strong> screen. The <strong>Creating IDoc Type from Change Pointers</strong> screen is displayed.</span></p>
+<p><span>Or <br/>Navigate to the <strong>Creating IDoc Type from Change Pointers</strong> screen as follows:</span><span></span><span></span></p>
+<ul>
+<li>
+<span> Execute the <em>SALE</em> transaction code in the <strong>Command</strong> field on the <strong>SAP Easy Access</strong> screen. The <strong>Display IMG</strong> screen is displayed.</span><span></span>
+</li>
+<li><span>Expand <strong>Modeling and Implementing Business Processes &gt; Master Data Distribution</strong> &gt; <strong>Replication of Modified Data &gt; Creating IDocs from Change Pointers &gt; Define Variants</strong>.</span></li>
+</ul>
+<p>2. Create running variant HRMD_A with message type HRMD_A as follows:</p>
+<p><img alt="Variant.png" height="176" src="./assets/138b2de439891cdb.png" width="616"/></p>
+<ul>
+<li>Click the <em>Save</em> icon. The <strong>Variant Attributes</strong> screen is displayed.</li>
+</ul>
+<p><img alt="Variant2.png" src="./assets/7a5afaa793898e75.png"/></p>
+<ul>
+<li>Enter the variant name as HRMD_A and enter a description.</li>
+<li>Click the <em>Save</em> icon.</li>
+</ul>
+<p>3. Define a job to generate an IDOC automatically for changes in employee data, as follows: </p>
+<ul>
+<li><span>Execute the <em>SM36</em> transaction code on the <strong>SAP Easy Access</strong> screen. The <strong>Define Job</strong> screen is displayed.<br/><img alt="Job_create1.png" src="./assets/16c182fb6c1263b8.png"/><br/></span></li>
+<li>
+<span>Enter a name for the job and click the <strong>Step</strong> icon to define the job steps.<br/><img alt="Job_step.png" src="./assets/c558325ad44974f0.png"/><br/><br/></span><span></span>
+</li>
+<li><span>Enter <em>RBDMIDOC</em> as the the ABAP program name and select the <em>HRMD_A</em> variant, and then click the <em>Save</em> icon.</span></li>
+<li><span>Return to the <strong>Define Job</strong> screen and click the <strong>Start condition</strong> icon. The <strong>Start Time</strong> screen is displayed.<br/><img alt="Start_Time.png" src="./assets/76f95d3154e5a50d.png"/><br/></span></li>
+<li><span>Click <strong>Date/Time</strong> and set the date and time when the job must run for the first time.</span></li>
+<li><span>Click <strong>Period Values</strong> to set the frequency by which the job must run.<br/><img alt="Frequency.png" src="./assets/fa513b8de0eaee99.png"/><br/></span></li>
+<li>
+<span>Set the frequency as <strong>Hourly</strong> and click the <em>Save</em> icon. The job is created.</span><span></span><span>You can review the details of the job by executing the transaction code, <em>SM37</em>.</span>
+</li>
+</ul>
+<h2 id="h_01EXP7VA98Z26AHWTF265S3GVK"><span>Verification of iDOC Creation</span></h2>
+<p><span>After all the above configurations are completed, verify that an IDOC can be generated.</span></p>
+<p><span>1. Execute the <em>PFAL</em> transaction code in the <strong>Command</strong> field on the <strong>SAP Easy Access</strong> screen. The <strong>HR: ALE Distribution of HR Master Data</strong> screen is displayed.</span></p>
+<p><span>2. Enter the following details.</span></p>
+<p><img alt="IDOC_verify.png" src="./assets/0fa3e76480c0ea92.png"/></p>
+<ul>
+<li>
+<strong>Plan Version</strong>: 01</li>
+<li>
+<strong>Object type</strong>: P</li>
+<li>
+<strong>Object ID</strong>: The employee number(s) whose records need to be transferred. Leave this field blank to generate an IDOC for the entire list of employees.</li>
+<li>Select one of the following <strong>Transfer modes</strong>:<br/>
+<ul>
+<li>
+<strong>Insert</strong>: If data is being sent for the first time to the target system</li>
+<li>
+<strong>Update</strong>:  If personnel details are already available in the target system</li>
+</ul>
+</li>
+<li>
+<strong>Receiv. Partner No.</strong>: The name of the logical system</li>
+<li>
+<strong>Message type</strong>: HRMD_A</li>
+</ul>
+<div>3. Execute the program by clicking the Execute icon on the menu bar.</div>
+<div>4. <span>Execute the <em>WE05</em> transaction code in the <strong>Command</strong> field and v</span>erify that the IDOC is generated.</div>
+<div></div>
+<h3 id="h_01EWFRRRKZ3PF558M3H84KRZYF">Sending Employee Data Modifications</h3>
+<p>The change pointer for the message type HRMD_A was switched on to track all changes for HR master data and organizational data automatically.</p>
+<p>The RBDMIDOC report creates the outbound IDOCs for the ALE transfer.We have already created a job in the <a href="#h_01EWFMXX128DTC08Y703VY5ATT" target="_self">Distribution</a> section to run the report automatically on an hourly basis.</p>
+<p>When you create or change user data, change pointers mechanism flags those changes in the change pointers table BDCP2. The program RBDMIDOC reads this table and creates master and communication IDOCs.</p>
+<h2 id="h_01EWFRS5A2F6ZYF3QBHRCN9X9V">Processing of Inbound IDOCs</h2>
+<p><span>1. Execute the <em>OYEB</em> transaction code on the <strong>SAP Easy Access</strong> screen. </span></p>
+<p><img alt="Act_IB.png" height="193" src="./assets/36dbe198c14ef9cb.png" width="486"/></p>
+<p>2. Click <strong>Yes</strong> to activate inbound IDOCs.</p>
+<p>3. <span>Execute the <em>BD51</em> transaction code on the <strong>SAP Easy Access</strong> screen.</span></p>
+<p><span><img alt="Debug_Enable.png" height="426" src="./assets/f21829c0f670d714.png" width="559"/></span></p>
+<p><span>4. Enable the <em>IDOC_INPUT_HRMD</em> option to allow debugging.</span></p>
+<p>The basic configurations in the SAP HCM system are now completed. </p>
+<div>
+<h1 id="h_01EF1T00FZFD9PTRW96H0X0PV0">Schema Discovery</h1>
+<p><strong>SCIM Attributes</strong></p>
+<table border="3" width="866">
+<tbody>
+<tr>
+<td><span><strong>Field</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+<td><span><strong>Data Type</strong></span></td>
+<td><span><strong>Required</strong></span></td>
+<td><span><strong>Example Values</strong></span></td>
+<td><span><strong>Mutability</strong></span></td>
+</tr>
+<tr>
+<td>userName</td>
+<td>The unique username of the user</td>
+<td>string</td>
+<td>Yes</td>
+<td>bjensen1</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>active</td>
+<td>Indicates whether the user account is enabled</td>
+<td>boolean</td>
+<td>No</td>
+<td>true/false</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.formatted</td>
+<td>The full name of the user, which
+<div>
+<div><span>includes title, first name, middle name, last name, and suffix</span></div>
+</div>
+</td>
+<td>string</td>
+<td>No</td>
+<td>
+<div>
+<div><span>Ms. Barbara J Jensen, III</span></div>
+</div>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>name.familyName</td>
+<td>The family name or the last name of the user</td>
+<td>string</td>
+<td>Yes</td>
+<td>Jensen</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.givenName</td>
+<td>The given name or the first name of the user</td>
+<td>string</td>
+<td>Yes</td>
+<td>Barbara</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.middleName</td>
+<td>The middle name of the user</td>
+<td>string</td>
+<td>No</td>
+<td>John</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.honorificPrefix</td>
+<td>
+<p>The honorific prefix of the user, or title in most Western languages</p>
+</td>
+<td>string</td>
+<td>No</td>
+<td>Ms.</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>name.honorificSuffix</td>
+<td>
+<p>The honorific suffix of the user</p>
+</td>
+<td>string</td>
+<td>No</td>
+<td>III</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td>The display name of the user</td>
+<td>string</td>
+<td>No</td>
+<td>Barbara</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>emails[0].value</td>
+<td>The email ID of the user</td>
+<td>string</td>
+<td>No</td>
+<td>
+<p>bjensen@example.com</p>
+</td>
+<td>readWrite</td>
+</tr>
+<tr>
+<td>emails[0].type</td>
+<td>The type of the email ID</td>
+<td>string</td>
+<td>No</td>
+<td>work</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>emails[0].primary</td>
+<td>Indicates whether the email ID is the primary contact preference of the user</td>
+<td>boolean</td>
+<td>No</td>
+<td>true/false</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>userType</td>
+<td>Used to identify the relationship between the organization and the user. </td>
+<td>string</td>
+<td>No</td>
+<td>Contractor</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>nickName</td>
+<td>The casual name to address the user in real life.</td>
+<td>string</td>
+<td>No</td>
+<td>Bobby</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>addresses[0].formatted</td>
+<td>The full mailing address, formatted for display or use with a mailing label. This attribute may contain newlines.</td>
+<td>string</td>
+<td>No</td>
+<td>
+<p>100 Universal City Plaza\nHollywood, CA 91608 USA</p>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>addresses[0].streetAddress</td>
+<td>The full street address which may include house number, street name, post box, and multi-line extended street address information. This attribute may contain newlines.</td>
+<td>string</td>
+<td>No</td>
+<td>
+<p>100 Universal City Plaza</p>
+ </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>addresses[0].locality</td>
+<td>The city or locality</td>
+<td>string</td>
+<td>No</td>
+<td>
+<p>Old Plainsboro</p>
+</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>addresses[0].region</td>
+<td>The state or region</td>
+<td>string</td>
+<td>No</td>
+<td>
+<p>New Jersey</p>
+ </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>addresses[0].postalCode</td>
+<td>The zip code or postal code</td>
+<td>string</td>
+<td>No</td>
+<td>
+<p>769009</p>
+ </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>addresses[0].country</td>
+<td>The country name</td>
+<td>string</td>
+<td>No</td>
+<td>Unites States </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>addresses[0].type</td>
+<td>The type of the address</td>
+<td>string</td>
+<td>No</td>
+<td>work/home/other</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>addresses[0].primary</td>
+<td>Indicates if the address is the primary contact preference of the user</td>
+<td>boolean</td>
+<td>No</td>
+<td>true/false</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>employeeNumber</td>
+<td>
+<p>The employee number of the user in the organization</p>
+</td>
+<td>string</td>
+<td>No</td>
+<td>EMP37 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>costCenter</td>
+<td>
+<p>The name of the cost center</p>
+</td>
+<td>string</td>
+<td>No</td>
+<td>4130 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>organization</td>
+<td>The organization to which the user belongs.</td>
+<td>string</td>
+<td>No</td>
+<td>Aquera </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>division</td>
+<td>
+<p>The division in which the user works in the organization</p>
+</td>
+<td>string</td>
+<td>No</td>
+<td> IT</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>department</td>
+<td>The department to which the user belongs</td>
+<td>string</td>
+<td>No</td>
+<td> Operations</td>
+<td>readOnly</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p><strong>Custom Attributes</strong></p>
+<table border="3" width="866">
+<tbody>
+<tr>
+<td><span><strong>Field</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+<td><span><strong>Data Type</strong></span></td>
+<td><span><strong>Required</strong></span></td>
+<td><span><strong>Example Values</strong></span></td>
+<td><span><strong>Mutability</strong></span></td>
+</tr>
+<tr>
+<td>tableStructure</td>
+<td>The name of the table structure</td>
+<td>string</td>
+<td>No</td>
+<td>EDI_DC40</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>sapInstanceClient</td>
+<td>The SAP client instance from which the IDOC was generated</td>
+<td>string</td>
+<td>No</td>
+<td>100</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>docNumber</td>
+<td>The IDOC number</td>
+<td>string</td>
+<td>No</td>
+<td>000002012</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>sapRelease</td>
+<td>The release version of the SAP instance</td>
+<td>string</td>
+<td>No</td>
+<td>754</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>idocStatus</td>
+<td>The status of the IDOC</td>
+<td>string</td>
+<td>No</td>
+<td>30 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>outputMode</td>
+<td>The output mode</td>
+<td>string</td>
+<td>No</td>
+<td>2 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>idocDirect</td>
+<td>The direction of IDOC. 1-Outbound, 2-Inbound</td>
+<td>string</td>
+<td>No</td>
+<td> 1</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>idocType</td>
+<td>The IDOC basic type</td>
+<td>string</td>
+<td>No</td>
+<td>HRMD_A09 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>idocMessageType</td>
+<td>The message type</td>
+<td>string</td>
+<td>No</td>
+<td>HRMD_A </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>senderPort</td>
+<td>The sender port</td>
+<td>string</td>
+<td>No</td>
+<td>SAPS4H </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>senderPartnerNumber</td>
+<td>The partner number of the sender</td>
+<td>string</td>
+<td>No</td>
+<td>S4HCLNT100</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>senderPartnerType</td>
+<td>The partner type of the sender</td>
+<td>string</td>
+<td>No</td>
+<td> LS</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>receiverPort</td>
+<td>The port number of the receiver</td>
+<td>string</td>
+<td>No</td>
+<td> AQUERA</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>receiverPartnerNumber</td>
+<td>The partner number of the receiving system</td>
+<td>string</td>
+<td>No</td>
+<td> AQUERA</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>receiverPartnerType</td>
+<td>The partner type of the receiver</td>
+<td>string</td>
+<td>No</td>
+<td>LS </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>idocCreatedDate</td>
+<td>The date on which the IDOC was created</td>
+<td>string</td>
+<td>No</td>
+<td> 20210118</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>idocCreatedTime</td>
+<td>The time when the IDOC was created in the format, <em>hhmmss</em>
+</td>
+<td>string</td>
+<td>No</td>
+<td>123736 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>idocSerialization</td>
+<td>The IDOC serial number</td>
+<td>string</td>
+<td>No</td>
+<td>20210118123561 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>plvar</td>
+<td>Plan version</td>
+<td>string</td>
+<td>No</td>
+<td>01 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>otype</td>
+<td>Object type</td>
+<td>string</td>
+<td>No</td>
+<td>P </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>opera</td>
+<td>Operation indicator</td>
+<td>string</td>
+<td>No</td>
+<td> U</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>objid</td>
+<td>Object ID</td>
+<td>string</td>
+<td>No</td>
+<td>00000036</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>seqNumber</td>
+<td>The number of infotype record with the same key</td>
+<td>string</td>
+<td>No</td>
+<td> 000</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>actionType</td>
+<td>The action type</td>
+<td>string</td>
+<td>No</td>
+<td> 51</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>payrollStatus</td>
+<td>The status of the payroll</td>
+<td>string</td>
+<td>No</td>
+<td> </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>personnelNumber</td>
+<td>The unique employee personnel number</td>
+<td>string</td>
+<td>No</td>
+<td>00000036</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>employeeGroup</td>
+<td>The group to which the employee belongs</td>
+<td>string</td>
+<td>No</td>
+<td>1 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>employeeSubGroup</td>
+<td>The sub group to which the employee belongs</td>
+<td>string</td>
+<td>No</td>
+<td>U4 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>employeePersonnelArea</td>
+<td>The geographical location of the company where the employee works.</td>
+<td>string</td>
+<td>No</td>
+<td>US01 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>actionBeginDate</td>
+<td>The action begin date</td>
+<td>string</td>
+<td>No</td>
+<td>18000101 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>actionEndDate</td>
+<td>The action end date</td>
+<td>string</td>
+<td>No</td>
+<td>99991231 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>changedPersonName</td>
+<td>The name of the person who changed the object</td>
+<td>string</td>
+<td>No</td>
+<td>BPINST </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>countryCode</td>
+<td>The country code</td>
+<td>string</td>
+<td>No</td>
+<td>US </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>personnelSubArea</td>
+<td>The personnel sub area</td>
+<td>string</td>
+<td>No</td>
+<td> 0009</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>businessArea</td>
+<td>The business area</td>
+<td>string</td>
+<td>No</td>
+<td>25</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>payrollArea</td>
+<td>The payroll area</td>
+<td>string</td>
+<td>No</td>
+<td>99 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>jobKey</td>
+<td>The unique key to identify the job</td>
+<td>string</td>
+<td>No</td>
+<td> 50000830</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>organizationKey</td>
+<td>The organizational key</td>
+<td>string</td>
+<td>No</td>
+<td>US01 </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>payrollAdmin</td>
+<td>The payroll administrator</td>
+<td>string</td>
+<td>No</td>
+<td>Admin1</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>nameFormat</td>
+<td>The formatted name of the employee or applicant</td>
+<td>string</td>
+<td>No</td>
+<td>Barbara H Benson </td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>initials</td>
+<td>The initials of the employee</td>
+<td>string</td>
+<td>No</td>
+<td>H</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>ssn</td>
+<td>The social security number</td>
+<td>string</td>
+<td>No</td>
+<td>-</td>
+<td>readOnly</td>
+</tr>
+<tr>
+<td>birthDate</td>
+<td>The date of birth</td>
+<td>string</td>
+<td>No</td>
+<td>05051975</td>
+<td>readOnly</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+</div>
+  </div>
+</body>
+</html>

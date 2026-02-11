@@ -1,0 +1,414 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now to Active Directory Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now to Active Directory Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01K4VQP7EP4P6SXM7M6TQN8XKJ">Overview </h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p data-end="616" data-start="0">This integration keeps Active Directory (AD) user accounts in sync with ADP Workforce Now, covering both employees and candidates (pre-hires). The integration securely connects to AD via LDAP, fetches updated worker and candidate records from ADP, and compares them with existing AD accounts. Using the configured matching attributes, it decides whether to create, update, or delete accounts. It can also generate strong passwords, follow flexible username-naming rules, and update only the fields that have changed. </p>
+<p data-end="616" data-start="0">With configurable filters, correlation attributes, and naming policies, it gives you full control over automating the end-to-end provisioning, updating, and de-provisioning of AD accounts as workers' and candidates' data in ADP change.</p>
+<h2 id="h_01K41YQJT00GQAKZB0Y2Q00QVW">Key Functions</h2>
+<p data-end="110" data-start="21">The ADP Workforce Now to Active Directory integration provides the following functions:</p>
+<ul>
+<li>
+<p data-end="369" data-start="112"><strong data-end="148" data-start="112">Collects workforce data from ADP</strong> by retrieving current employees and candidates (pre-hires), including incremental updates since the last successful run. This ensures the integration always works with the most accurate hiring, status, and profile information.</p>
+</li>
+<li>
+<p data-end="603" data-start="371"><strong data-end="416" data-start="371">Reads and compares Active Directory users</strong> to gather existing AD accounts and attributes, then matches them to ADP records using configurable correlation attributes.</p>
+</li>
+<li>
+<p data-end="878" data-start="605"><strong data-end="649" data-start="605">Creates, updates, or deletes AD accounts</strong> by building the required payloads from ADP data. It generates unique usernames and email addresses based on naming policies, updates only fields that have changed, and safely removes accounts that are no longer needed.</p>
+</li>
+<li>
+<p data-end="1128" data-start="880"><strong data-end="937" data-start="880">Generates secure passwords and manages account states</strong> by producing strong, policy-compliant passwords when new accounts are created and setting the correct userAccountControl flags to enable, disable, or require password changes as specified.</p>
+</li>
+</ul>
+<h1 id="h_01K2F6ANZ30WMRWZ3HS0H8MAZN">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access. <br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<p data-end="909" data-start="650"><strong data-end="672" data-start="650">ADP Workforce Now:</strong> Add and configure the ADP Workforce Now connector in the Aquera Admin portal with the appropriate API credentials. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933-ADP-Workforce-Now-Configuration-Guide" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details on creating the connector and setting up authentication.</p>
+</li>
+<li>
+<p data-end="1191" data-is-last-node="" data-start="912"><strong data-end="940" data-start="912">Active Directory (LDAP):</strong> Add and configure the Microsoft Active Directory connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934-Active-Directory-AD-Configuration-Guide" rel="noopener noreferrer" target="_blank">Active Directory Configuration Guide</a> for instructions on creating the connector, setting up authentication, setting up a secure LDAP connection, and providing the required service account credentials.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01K4VR82PMZ74SB8XEH52WM96T">Integration Setup</h1>
+<p data-end="168" data-start="25">This section describes the configuration required to set up the ADP Workforce Now to Active Directory integration in the Aquera Admin Portal.</p>
+<h2 data-end="194" data-start="170" id="h_01K94HP47CT71FHBPSSZ9JF4GR">Create Integration</h2>
+<p data-end="252" data-start="196">Perform the following steps to create the integration:</p>
+<ol data-end="922" data-is-last-node="" data-is-only-node="" data-start="254">
+<li data-end="297" data-start="254">Log in to the Aquera Admin portal.</li>
+<li data-end="363" data-start="298">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-end="398" data-start="364">Click <strong data-end="395" data-start="373">Create Integration</strong>.</li>
+<li data-end="491" data-start="399">Select <strong data-end="460" data-start="409">ADP Workforce Now to Active Directory</strong> as the integration template.</li>
+<li data-end="578" data-start="492">Enter a name and a description for the integration.</li>
+<li data-end="725" data-start="579">Select your <strong data-end="645" data-start="605">ADP Workforce Now</strong> and your <strong data-end="708" data-start="669">Active Directory</strong> connector instances.</li>
+<li data-end="922" data-is-last-node="" data-start="726">Click <strong data-end="747" data-start="735">Continue. </strong>The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K4VRSDA5P0T0JE5XZZ5HS76N">Integration Scenarios</h4>
+<p>Configure the following integration scenarios:</p>
+<ul>
+<li>
+<strong>Enable User LifeCycle Management</strong>: Select this option to automatically create, update, and delete Active Directory user accounts based on ADP Workforce Now data. Selecting this option enables the following settings:
+<ul>
+<li>
+<strong>Select User Type</strong>: Select the user type from the drop-down menu. The available options are <strong>Candidates</strong> and <strong>Workers</strong>.<br/><strong>Note</strong>: The <strong>Manage Candidates</strong> section appears under the <strong>Configuration</strong> tab when <strong>Candidates</strong> is selected, the <strong>Manage Workers</strong> section appears when <strong>Workers</strong> is selected, and both sections appear when both options are selected.</li>
+</ul>
+</li>
+<li>
+<strong>Enable Group Assignment</strong>: Select this option to enable group assignment functionality for this integration. When enabled, the system allows automatic or manual assignment of users to groups based on defined rules, mappings, or attributes (such as department, role, or region). When disabled, group membership updates and assignments are skipped during user synchronization or provisioning.</li>
+</ul>
+<h4 id="h_01K421SEM89261VNA9S1Q7KWBV">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this option to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Logging</strong>: Select this option to generate logs that outline data changes.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this option to generate the integration report.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this option to enable notifications related to integration.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select this option to visualize the integration-related metrics.</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select this option to generate logs outlining data changes that would occur for debugging.</li>
+</ul>
+<h3 id="h_01K4W4EFX81YEQ52GB2ZS3J422">Manage Candidates</h3>
+<p>Configure the following user lifecycle management settings for candidates (pre-hires):</p>
+<ul>
+<li>
+<p data-end="349" data-start="127"><strong data-end="154" data-start="127">Enable ADP Worker Sync:</strong> Select to synchronize ADP employee records with Active Directory.<br/>For example, enabling this creates an AD account such as<span> </span><a data-end="305" data-start="285" rel="noopener"><span><strong data-end="307" data-start="283">jane.doe@company.com</strong></span></a><span><span aria-hidden="true"></span> </span>automatically when Jane is hired in ADP.</p>
+<ul>
+<li data-end="620" data-start="353">
+<p data-end="620" data-start="355"><strong data-end="392" data-start="355">ADP Worker Correlation Attribute:</strong> Select to choose the ADP field used to match employee records with Active Directory users. For example, set this to <strong data-end="532" data-start="516">associateOID</strong> so each ADP worker is matched to an AD user whose employeeID equals that associateOID.</p>
+</li>
+<li data-end="882" data-start="624">
+<p data-end="882" data-start="626"><strong data-end="667" data-start="626">AD Correlation Attribute for Workers:</strong> Select to choose the Active Directory field that must match the selected ADP worker attribute. For example, choose <strong data-end="804" data-start="790">employeeID</strong> so the integration pairs ADP’s associateOID with the employeeID field in AD.</p>
+</li>
+<li>
+<p data-end="1134" data-start="886"><strong data-end="916" data-start="886">Enable ADP Candidate Sync:</strong> Select to synchronize ADP candidate records with Active Directory.<br/>For example, enabling this allows the system to create pre-hire accounts like <a data-end="1095" data-start="1069" rel="noopener"><span><strong data-end="1097" data-start="1067">candidate.john@company.com</strong></span></a><span aria-hidden="true"></span> for interview or onboarding access.</p>
+</li>
+</ul>
+</li>
+<li data-end="1458" data-start="1138">
+<p data-end="1458" data-start="1140"><strong data-end="1183" data-start="1140">Fetch Candidates by Application Status:</strong> Select to filter candidate records by chosen ADP application statuses when retrieving job applications. For example, selecting| and for <strong data-end="1339" data-start="1315">Pre-Hire Not Started</strong> and <strong data-end="1372" data-start="1344">Background Check Cleared</strong> to pull only candidates who have accepted offers and passed their background checks.</p>
+</li>
+<li data-end="1758" data-start="1462">
+<p data-end="1758" data-start="1464"><strong data-end="1503" data-start="1464">Delete Users by Application Status:</strong> Select to remove candidate accounts in Active Directory when their ADP application status matches the chosen de-provisioning status. For example, set this to <strong data-end="1687" data-start="1669">Offer Declined</strong>, so candidate accounts are deleted when a candidate declines an offer.</p>
+</li>
+<li data-end="2001" data-start="1762">
+<p data-end="2001" data-start="1764"><strong data-end="1789" data-start="1764">Workforce Now Filter:</strong> Select to apply a filter to limit which employee records are retrieved during synchronization. For example, use the filter <strong data-end="1945" data-start="1920">location eq 'Seattle'</strong> to sync only employees who work in the Seattle office.</p>
+</li>
+<li data-end="2263" data-start="2005">
+<p data-end="2263" data-start="2007"><strong data-end="2026" data-start="2007">Creation Limit:</strong> Enter a numeric value to limit the number of new Active Directory accounts created in a single synchronization run. For example, set the limit to <strong data-end="2186" data-start="2180">10</strong> so no more than ten new AD accounts are created during a single sync cycle.</p>
+</li>
+</ul>
+<h3 id="h_01K997TH2H98G126J9D2C4BH5P">Manage Workers</h3>
+<p>Configure the following user lifecycle management settings for workers:</p>
+<h4 id="h_01K997YCN7PX0MWE7W57CEVR4H">Correlation and Filters</h4>
+<ul>
+<li>
+<strong>Workforce Now Filter</strong>: Select a filter to limit which employee records are retrieved during synchronization. For example, choose <strong>Active Workers</strong> from the drop-down menu to sync only employees with an active status in ADP Workforce Now.</li>
+<li>
+<strong>Select Correlation Attribute from ADP</strong>: Select the correlation attribute in ADP Workforce Now that is used to match users with Active Directory records as a correlation during synchronization. For example, <em>associateOID</em>.</li>
+<li>
+<strong>Select Correlation Attribute from Active Directory</strong>: Select the corresponding correlation attribute in Active Directory that is used to match users with ADP Workforce Now records as a correlation during synchronization. For example, <em>employeeID</em>.</li>
+</ul>
+<p>Create &amp; Update Workers</p>
+<ul>
+<li>
+<strong>Map Manager For Worker</strong>: Select this option to include manager reference.</li>
+</ul>
+<h3 data-end="3158" id="h_01K94HJ4VRD3Z51KDD0GHGF1AR"><span>Naming Policy</span></h3>
+<p><span>Configure the following naming policy settings:</span><span></span></p>
+<p><strong><span>Generate sAMAccountName</span></strong></p>
+<ul>
+<li>
+<p><strong>Enter Your Prompt to Create sAMAccountName</strong>: Enter your policy for generating the sAMAccountName. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote>
+<p><em>Generate three username outputs using the following rule:</em></p>
+<p><em>Take the first name and create three variants by using its first 1, 2, and 3 letter, respectively.</em></p>
+<p><em>Combine these first-name letters with the truncated last name to form three usernames, inserting the middle initial in between.</em></p>
+<p><em>Make sure that the total length does not exceed 10 characters.</em></p>
+<p><em>All characters must be in lowercase and contain no spaces.</em></p>
+</blockquote>
+<p><strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: Alexander, <strong>Last Name</strong>: Johnson, <strong>Middle Name</strong>: Michael), the generated sAMAccountName values are amjohnson, almjohnson, and alemjohnso, as displayed under the <strong>Preview</strong> section. To view the default name values, turn on the <strong>Advanced Preview Options</strong> toggle.<br/><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name, middle name, and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated sAMAccountName values will appear in the <strong>Preview</strong> section.</p>
+</li>
+</ul>
+<p><strong>Generate Common Name (CN)</strong></p>
+<ul>
+<li>
+<strong>Generate Common Name (CN) using</strong>: Select the drop-down option for generating a common name for the user. The following are the available options:
+<ul>
+<li>
+<strong>Use sAMAccountName as CN</strong>: Select this option to use the sAMAccountName generated from the <strong>Generate sAMAccountName</strong> section as the common name.</li>
+<li>
+<strong>Create Policy to Generate CN</strong>: Select this option to define a custom policy for generating the Common Name. Selecting this option enables the following settings:
+<ul>
+<li>
+<strong>Enter Your Prompt to Create a Common Name</strong>: Enter your policy for generating the common name. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:<br/>
+<blockquote>
+<p>Generate a first name where the first character of the first name is capitalized, followed by a space and a last name where the first character is capitalized, followed by numbers up to 2, but the first one should be without a number.</p>
+</blockquote>
+<p><strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: john, <strong>Last Name</strong>: smith), the generated common name values are John Smith, John Smith1, and John Smith2, as displayed under the <strong>Preview</strong> section. To view the default name values, turn on the <strong>Advanced Preview Options</strong> toggle.<br/><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated common name values will appear in the <strong>Preview</strong> section.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Generate UserPrincipalName (UPN)</strong></p>
+<ul>
+<li>
+<strong>Generate User Principal Name (UPN) using</strong>: Select the drop-down option for generating a user principal name for the user. The following are the available options:
+<ul>
+<li>
+<strong>Use sAMAccountName as UPN</strong>: Select this option to use the sAMAccountName generated from the <strong>Generate sAMAccountName</strong> section as the user principal name.</li>
+<li>
+<strong>Create Policy to Generate UPN</strong>: Select this option to define a custom policy for generating the user principal name. Selecting this option enables the following settings:
+<ul>
+<li>
+<strong>Enter Your Prompt to Create a UPN</strong>: Enter your policy for generating the User Principal Name (UPN). For example, enter the following prompt and click <strong>Analyze and Preview</strong>:<br/>
+<blockquote>
+<p><em>Generate three username outputs using the following rule:</em></p>
+<p><em>Take the first name and create three variants by using its first 1, 2, and 3 letter, respectively.</em></p>
+<p><em>Combine these first-name letters with the truncated last name to form three usernames, inserting the middle initial in between.</em></p>
+<p><em>Make sure that the total length does not exceed 10 characters.</em></p>
+<p><em>All characters must be in lowercase and contain no spaces.</em></p>
+</blockquote>
+</li>
+<li>
+<p><strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: Alexander, <strong>Last Name</strong>: Johnson, <strong>Middle Name</strong>: Michael), the generated user principal name values are amjohnson, almjohnson, and alemjohnso, as displayed under the <strong>Preview</strong> section. To view the default name values, turn on the <strong>Advanced Preview Options</strong> toggle.</p>
+</li>
+<li>
+<p><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name, middle name, and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated common name values will appear in the <strong>Preview</strong> section.</p>
+</li>
+</ul>
+</li>
+<li>
+<strong>Active Directory Domain (DNS Name)</strong>: Enter the primary DNS domain name used for your Active Directory (AD), as well as for UPN and email suffixes. For example, <em>contoso.com</em>.<br/><strong>Notes</strong>:
+<ul>
+<li>Provide a fully qualified domain name such as contoso.com (without protocols, paths, or a trailing dot).</li>
+<li>This value is case-insensitive and will be used to
+<ul>
+<li>Construct userPrincipalName values (for example, jdoe@contoso.com).</li>
+<li>Normalize email addresses.</li>
+<li>Infer DC components if no Base DN is provided (e.g., contoso.com → DC=contoso, DC=com).</li>
+</ul>
+</li>
+<li>If multiple domains are accepted in your organization, provide the default or primary domain used by most users.</li>
+<li>This value is not confidential.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Generate Email</strong></p>
+<ul>
+<li>
+<strong>Generate Email using</strong>: Select the drop-down option for generating an email for the user. The following are the available options:
+<ul>
+<li>
+<strong>Use sAMAccountName as Email</strong>: Select this option to use the sAMAccountName generated from the <strong>Generate sAMAccountName</strong> section for the email generation.</li>
+<li>
+<strong>Use Common Name (CN) as Email</strong>: Select this option to use the common name generated from the <strong>Generate Common Name (CN)</strong> section for the email generation.</li>
+<li>
+<strong>Use UserPrincipalName (UPN) as Email</strong>: Select this option to use the user principal name generated from the <strong>Generate</strong> <strong>UserPrincipalName (UPN)</strong> section for the email generation.</li>
+<li>
+<strong>Create Policy to Generate Email</strong>: Select this option to define a custom policy for generating the email. Selecting this option enables the following settings:
+<ul>
+<li>
+<strong>Enter Your Prompt to Generate an Email</strong>: Enter your policy for generating the email. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:<br/>
+<blockquote>
+<p>Generate three username outputs using the following rule:<br/>Take the first name and create three variants by using its first 1, 2, and 3 letters, respectively.<br/>Combine these letters from the first name with the truncated last name to form three usernames.<br/>All usernames must be in lowercase and contain no spaces.</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Preview</strong>: Based on the prompt and the default input (First Name: John, Last Name: Smith), the generated email name values are jsmith, josmith, and johsmith, as displayed under the <strong>Preview</strong> section. To view the default name values, turn on the Advanced Preview Options toggle.</p>
+</li>
+<li>
+<p><strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated common name values will appear in the <strong>Preview</strong> section.</p>
+</li>
+</ul>
+</li>
+<li>
+<strong>Active Directory Domain (DNS Name) For Email</strong>: Enter the primary DNS domain name used for your Active Directory (AD), as well as for UPN and email suffixes. For example, <em>contoso.com</em>.<br/><strong>Notes</strong>:
+<ul>
+<li>Provide a fully qualified domain name such as contoso.com (without protocols, paths, or a trailing dot).</li>
+<li>This value is case-insensitive and will be used to
+<ul>
+<li>Construct userPrincipalName values (for example, jdoe@contoso.com).</li>
+<li>Normalize email addresses.</li>
+<li>Infer DC components if no Base DN is provided (e.g., contoso.com → DC=contoso, DC=com).</li>
+</ul>
+</li>
+<li>If multiple domains are accepted in your organization, provide the default or primary domain used by most users.</li>
+<li>This value is not confidential.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 data-end="3158" id="01K973S8HT3RKTMNDDBW21XRHS"><span>Password Policy</span></h3>
+<p><span>Configure the following password policy settings:</span></p>
+<ul>
+<li>
+<p data-end="2507" data-start="2269"><strong data-end="2291" data-start="2269">Generate Password:</strong> Select this option to automatically create a secure password for each new Active Directory user based on the selected type and length.<br/><strong>Note</strong>: Enabling this ensures each new user receives a randomly generated, policy-compliant password during provisioning.</p>
+<ul data-end="2881" data-start="2513">
+<li data-end="2711" data-start="2513">
+<p data-end="2711" data-start="2515"><strong data-end="2533" data-start="2515">Password Type:</strong> Select the desired password complexity level from the drop-down menu. The following are the available options:</p>
+<ul data-end="2881" data-start="2513">
+<li data-end="2711" data-start="2513">
+<strong>Basic</strong>: Includes uppercase letters, lowercase letters, and digits.</li>
+<li data-end="2711" data-start="2513">
+<strong>Strong</strong>: Includes uppercase letters, lowercase letters, digits, and special characters.</li>
+<li data-end="2711" data-start="2513">
+<strong>Advanced</strong>: Includes all of the above, with additional checks and exclusion of ambiguous characters.</li>
+</ul>
+</li>
+<li data-end="2881" data-start="2717">
+<p data-end="2881" data-start="2719"><strong data-end="2739" data-start="2719">Password Length: </strong>Specify the desired length of the generated password. For example, enter 12 to generate a 12-character password instead of the default length of 8.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K5RAXMQQAWTTT5GM0YKX2RKZ">Log Settings</h3>
+<p>Configure the following logging settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting this option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01JZ7GJ97ZX233WAF2MGX9PFME">Report Settings</h3>
+<p>Configure the following report settings:</p>
+<ul>
+<li>
+<strong>Select the Report Detail Level: </strong> Select the desired report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting this option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes: </strong> Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes: </strong> Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K5XVFZRJYTGXBGXBVCAGA4HN">Notification Settings</h3>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
+<li>
+<strong><strong>Admin Email Notification Template On Successful Integration: </strong></strong>Enter the content that must be used as the email body for admin email notifications upon successful integration.</li>
+</ul>
+<h3 id="h_01K5TEHNZK8ZQ1P48ZQSRAR19M">Log Insights Settings</h3>
+<p>Configure the following log insight settings:</p>
+<ul>
+<li>
+<strong>Select the Log Insights Detail Level: </strong> Select the desired log insights detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The ADP Workforce Now to Active Directory User Sync integration maps the ADP Workforce Now and Active Directory attributes. Modify the source attributes, if required, based on your use case.</p>
+<h2 id="h_01K06FVR3HY5TQCJK1AC2W07CZ">Tables</h2>
+<p id="h_01J7XEGA5M57172Y4JT9508Q9D"><span>Tables enable you to update specific data of a resource in a target application during integration runs when that data is missing in the source application from which the resource data is retrieved. </span></p>
+<p><span>You can add tables in integrations to sync the values in tables to another application. Tables are used to update an attribute value in another application when the application attribute does not provide specific data.</span></p>
+<p><span>The following tables are available:</span></p>
+<ul>
+<li>
+<p><span><strong>Active Directory OU Mapping Table</strong>: <span>Click the table row to display the <strong>Update Table</strong> pop-up window. </span></span><span>Each row in the table corresponds to a key name and key value pair. You can add rows to the table using one of the following options: </span></p>
+<ul>
+<li>
+<strong>Add Row</strong>: Click <strong>Add Row</strong> to manually add a row by providing a key name and a key value.</li>
+<li>
+<span><strong>Upload CSV</strong>: Click <strong>Upload CSV File </strong>to upload rows to the table using a CSV file. The CSV file should have two columns with headings 'NAME' and 'VALUE.'<br/></span><strong>Notes</strong>:
+<ul>
+<li>The key name within a table should be unique. The key name can include a combination of letters and numbers.</li>
+<li>
+<span>The key name supports all the special characters except the following:</span>
+<ul>
+<li>
+<span>/ (forward slash) </span><span></span>
+</li>
+<li>
+<span>\ (backslash)</span><span></span>
+</li>
+<li><span>" " (double quotes)</span></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><span>Click <strong>Save</strong> to save the changes made.</span></p>
+</li>
+</ul>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span><span></span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

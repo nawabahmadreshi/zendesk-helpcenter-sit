@@ -1,0 +1,276 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Setting Up Script Orchestration to Use Greenhouse Recruiting Webhooks </title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Setting Up Script Orchestration to Use Greenhouse Recruiting Webhooks </h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h3 id="h_01HHC41VMP1MB1C8R4WXJEGM6Y">Jump To</h3>
+<pre><a href="#h_01EQTBF15TZFA3C21C1Y2V9VHE">Overview</a><br/><a href="#h_01EQTBFD1TN7JMTPNEER5YSYVJ">Setting Up Script Orchestration in Aquera</a><br/>  <a href="#h_01HHC41VMP7AJY93R49D7X7JJ5">Prerequisite</a><br/>  <a href="#h_01HHF2MCH46TGFSCRTYK4HTZC7">Configuration and Trigger Setup</a><br/>  <a href="#h_01HHF2T4XX58FGTVYPKFV6Z2XP">Write Script to Process Events from Greenhouse Recruiting</a><br/><a href="#h_01HHC42H2XCK08HVK2G9A6Y6DE">Setting Up Web Hooks</a></pre>
+<h1 id="h_01EQTBF15TZFA3C21C1Y2V9VHE">Overview</h1>
+<p>This guide covers information on how a script orchestration can be set up in the Aquera Admin portal to use the Greenhouse Recruiting web hooks. It also details the webhook setup to be done in the Greenhouse Recruiting system to send events to Aquera.</p>
+<p><span>When an event occurs in Greenhouse Recruiting – for example, when a candidate is hired – and a webhook is configured for this event, data about the event is sent to the Aquera endpoint. The events for which this orchestration needs to be triggered have to be configured in the Greenhouse Recruiting application.</span></p>
+<p>Once the setup is complete, when an event configured in the web hook setup occurs in the Greenhouse Recruiting system, it will be sent to Aquera and the script orchestration is triggered for processing that event.</p>
+<p>The following procedures are involved in the Webhook setup:</p>
+<ul>
+<li><a href="#h_01EQTBFD1TN7JMTPNEER5YSYVJ">Setting Up Script Orchestration in Aquera</a></li>
+<li><a href="#h_01ESN6XGCPQRMFGWGTMB3YVH03">Setting Up Web Hooks in Greenhouse Recruiting</a></li>
+</ul>
+<h1 id="h_01EQTBFD1TN7JMTPNEER5YSYVJ"><span>Setting Up Script Orchestration in Aquera</span></h1>
+<h2 id="h_01HHC41VMP7AJY93R49D7X7JJ5">Prerequisite</h2>
+<p><span>Make sure that the Greenhouse Recruiting application connector is configured successfully in the Aquera Admin portal. For details on how to configure the connector, refer to the <a href="https://support.aquera.com/hc/en-us/articles/10462467749911" rel="noopener" target="_blank">Greenhouse Recruiting Configuration Guide.</a></span></p>
+<h2 id="h_01HHF2MCH46TGFSCRTYK4HTZC7"><span>Configuration and Trigger Setup</span></h2>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to the <strong>Orchestrations </strong>module, and click <strong>Create Orchestration</strong>.</li>
+<li>Enter the following details on the <strong>Add Orchestration</strong> pop-up window and click <strong>Done</strong>:
+<ul>
+<li>Provide a name for the orchestration.</li>
+<li>Select <em>Script</em> from the list of orchestration types drop-down.<br/><img alt="ghr orch type.png" height="559" src="./assets/e95368f4c5d80b1a.bin" width="375"/><br/>The <strong>Configuration</strong> tab is displayed.</li>
+</ul>
+</li>
+<li>Perform the following setup in the <strong>Configuration</strong> tab: 
+<ul>
+<li>In the <strong>Connections</strong> section, click <strong>Add Application</strong> and then select the name of the Greenhouse Recruiting application connector from the <strong>Applications</strong> drop-down.</li>
+<li>
+<span>Enter the <strong>Variable</strong> name that is used to refer to the Greenhouse Recruiting application in the script. For example, <em>greenhouse</em><br/></span><span></span>
+</li>
+</ul>
+</li>
+<li>Click <strong>Create</strong> at the top-right corner of the page.</li>
+<li>Set the trigger for the orchestration as follows:
+<ul>
+<li>Click the <strong>Trigger</strong> tab and then click <strong>Event </strong>in the <strong>Add Trigger</strong> section.</li>
+<li>Select the name of the Greenhouse Recruiting application connector from the <strong>Select Source</strong> drop-down. A URL is displayed as follows:<br/><img alt="ghr1.png" src="./assets/6d4ea131371d1395.bin"/><br/>This is the Aquera endpoint to which events will be sent from the Greenhouse Recruiting application.<br/><br/>
+</li>
+<li>Click <strong>Create Token</strong> to generate a token.<br/><img alt="ghr token.png" src="./assets/2b638d75ea123669.bin"/>
+</li>
+</ul>
+</li>
+<li>
+<p>Copy the token for future reference and close the <strong>Generate Token</strong> pop-up window.</p>
+</li>
+<li>Click <strong>Save Changes</strong> at the top-right corner of the page.</li>
+</ol>
+<h2 id="h_01HHF2T4XX58FGTVYPKFV6Z2XP">Write Script to Process Events from Greenhouse Recruiting</h2>
+<p>This section details how to access Greenhouse Recruiting events in scripts. For guidance on writing scripts in the script editor area of the script orchestration, refer to the <a href="../Working-With-Integration-Scripts/" rel="noopener noreferrer" target="_blank">Script Orchestration: Working with Scripts</a> guide.</p>
+<p>Greenhouse sends a payload of JSON data containing the details of an event when the event occurs in Greenhouse Recruiting application. To know the list of common attributes that are included in the payload for all types of events, refer to the<a href="https://developers.greenhouse.io/webhooks.html#common-attributes" rel="noopener noreferrer" target="_blank"> Greenhouse Recruiting Web Hooks documentation</a>. To know the specific set of attributes that are sent for any of the following events, refer to those specific sections in the Greenhouse Recruiting documentation:</p>
+<ul>
+<li>Application events</li>
+<li>Candidate events</li>
+<li>Interview events</li>
+<li>Job events</li>
+<li>Organization events</li>
+</ul>
+<p><span>You can use the following format in the script to access any of the attributes sent via the webhook events: </span><strong>request.&lt;requestAttribute&gt;</strong></p>
+<p><strong>Note</strong>: To print all the data received from an event, enter the following in the script area:<br/><strong><em>log.info(JSON.stringify(request));</em></strong></p>
+<p>The following is a sample script:</p>
+<div>
+<pre><span>const</span><span> action=request.action</span><br/><br/><span>log.info(</span><span>"The following event is received via webhooks: "</span><span> +action)</span><br/><br/><span>log.info(</span><span>"The candidate ID is " </span><span>+request.payload.application.id)</span><br/><br/><span>log.info(</span><span>JSON</span><span>.stringify(request));</span></pre>
+</div>
+<h3 id="h_01HHHA3S7Q4SWA42PS78GSRS4Z">Event Types and Event Names</h3>
+<p>The following table lists the various event types that can be configured in Greenhouse Recruiting web hooks and the corresponding value that will be sent in the <strong>action</strong> attribute of the web hook payload.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Event Types</strong></td>
+<td><strong>action Attribute Value</strong></td>
+</tr>
+<tr>
+<td colspan="2"><strong>Application Events</strong></td>
+</tr>
+<tr>
+<td>Application created</td>
+<td>new_candidate_application</td>
+</tr>
+<tr>
+<td>Application deleted</td>
+<td>delete_application</td>
+</tr>
+<tr>
+<td>Application updated</td>
+<td>application_updated</td>
+</tr>
+<tr>
+<td>Offer created</td>
+<td>offer_created</td>
+</tr>
+<tr>
+<td>Offer approved</td>
+<td>offer_approved</td>
+</tr>
+<tr>
+<td>Offer updated</td>
+<td>offer_updated</td>
+</tr>
+<tr>
+<td>Offer deleted</td>
+<td>offer_deleted</td>
+</tr>
+<tr>
+<td>Prospect created</td>
+<td>new_prospect_application</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Candidate Events</strong></td>
+</tr>
+<tr>
+<td>Candidate deleted</td>
+<td>
+<p>delete_candidate</p>
+</td>
+</tr>
+<tr>
+<td>Candidate hired</td>
+<td>hire_candidate</td>
+</tr>
+<tr>
+<td>Candidate merged</td>
+<td>merge_candidate</td>
+</tr>
+<tr>
+<td>Candidate stage change</td>
+<td>
+<p>candidate_stage_change</p>
+</td>
+</tr>
+<tr>
+<td>Candidate unhired</td>
+<td>unhire_candidate</td>
+</tr>
+<tr>
+<td>Candidate rejected</td>
+<td>
+<p>reject_candidate</p>
+</td>
+</tr>
+<tr>
+<td>Candidate unrejected</td>
+<td>
+<p>unreject_candidate</p>
+</td>
+</tr>
+<tr>
+<td>Candidate updated</td>
+<td>
+<p>update_candidate</p>
+</td>
+</tr>
+<tr>
+<td>Candidate anonymized</td>
+<td>
+<p>candidate_anonymized</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Interview Events</strong></td>
+</tr>
+<tr>
+<td>Interview deleted</td>
+<td>interview_deleted</td>
+</tr>
+<tr>
+<td>Scorecard deleted</td>
+<td>scorecard_deleted</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Job Events</strong></td>
+</tr>
+<tr>
+<td>Job created</td>
+<td>job_created</td>
+</tr>
+<tr>
+<td>Job deleted</td>
+<td>job_deleted</td>
+</tr>
+<tr>
+<td>Job updated</td>
+<td>job_updated</td>
+</tr>
+<tr>
+<td>Job approved</td>
+<td>job_approved</td>
+</tr>
+<tr>
+<td>Job Post created</td>
+<td>job_post_created</td>
+</tr>
+<tr>
+<td>Job Post updated</td>
+<td>job_post_updated</td>
+</tr>
+<tr>
+<td>Job Post deleted</td>
+<td>job_post_deleted</td>
+</tr>
+<tr>
+<td>Job Stage deleted</td>
+<td>job_interview_stage_deleted</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Organization Events</strong></td>
+</tr>
+<tr>
+<td>Department deleted</td>
+<td>department_deleted</td>
+</tr>
+<tr>
+<td>Office deleted</td>
+<td>office_deleted</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p><strong>Sample Webhook Payload in JSON format:</strong></p>
+<p><span><img src="./assets/46dfa7f8ab33547c.bin"/></span></p>
+<p> </p>
+<h1 id="h_01ESN6XGCPQRMFGWGTMB3YVH03"><span>Setting Up Web Hooks in Greenhouse Recruiting</span></h1>
+<h2 id="h_01HHC41VMPD8EWXBW695HVZFX3">Prerequisite</h2>
+<p><span>Make sure that the Greenhouse Recruiting application user has permissions to manage and configure web hooks.</span></p>
+<h2 id="h_01HHC42H2XCK08HVK2G9A6Y6DE"><span>Setting Up Web Hooks</span></h2>
+<ol>
+<li><span>Log in to the Greenhouse Recruiting application.</span></li>
+<li><span>Click the <em>Configure</em> icon on the navigation bar.</span></li>
+<li><span>Click <strong>Dev Center</strong> &gt; <strong>Web Hooks</strong> on the left navigation pane.</span></li>
+<li><span>Click <strong>Web Hooks</strong>. The <strong>Create A New Web Hook</strong> page is displayed.</span></li>
+<li>
+<span>Enter the following fields to configure your new web hook:</span>
+<ul>
+<li>
+<strong>Name this webhook</strong>: Enter the name that specifies what the webhook is being used for.</li>
+<li>
+<strong>When</strong>: Select the event in Greenhouse Recruiting that causes the webhook to activate.</li>
+<li>
+<strong>Endpoint URL</strong>: Copy the URL from the<strong> Trigger</strong> tab in the Aquera Admin Portal and paste it in this field. Refer to the <a href="#h_01EQTBFD1TN7JMTPNEER5YSYVJ">Setting Up Script Orchestration in Aquera</a> section for details.</li>
+<li>
+<strong>Secret key</strong>: Enter <span>the token generated in</span> the<strong> Trigger</strong> tab on the Aquera Admin Portal. Refer to the <a href="#h_01HHF2MCH46TGFSCRTYK4HTZC7">Configuration and Trigger Setup </a> section for details on the token.</li>
+</ul>
+</li>
+<li>
+<span>Click <strong>Advanced settings</strong> and then provide the <strong>Basic Authorisation Credentials</strong> where in the token generated </span>from the<strong> Trigger</strong> tab in the Aquera Admin Portal must be provided as the password for authentication. The username can be any random string. Refer to the <a href="#h_01HHF2MCH46TGFSCRTYK4HTZC7">Configuration and Trigger Setup</a> section for details on the token.<br/><img alt="webhook.png" src="./assets/c02b59d13880057c.bin"/>
+</li>
+<li>
+<span>Click </span><strong>Create web hook</strong><span> to complete the webhook setup. A confirmation message, <em>Webhook created successfully</em>, is displayed.</span>
+</li>
+</ol>
+<p><span>When you create a new web hook, Greenhouse Recruiting will send a ping to the Aquera endpoint to verify the connection is working. If the ping is accepted successfully, the web hook will be created. If the ping is unsuccessful, Greenhouse Recruiting will save the configuration but deactivate the web hook.</span></p>
+<p><span><strong>Note</strong>: If the web hook is deactivated automatically because the endpoint ping failed, scroll down to the <strong>Edit Web Hook</strong> section and edit the web hook configuration to fix the error. Ensure that you have selected <em>No</em> under <strong>Deactivated</strong>.<br/></span></p>
+<p><img alt="image.png" src="./assets/00d58dd15bea6d7e.bin"/></p>
+  </div>
+</body>
+</html>

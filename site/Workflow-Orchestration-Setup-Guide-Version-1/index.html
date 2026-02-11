@@ -1,0 +1,572 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Workflow Orchestration Setup Guide (Version 1)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Workflow Orchestration Setup Guide (Version 1)</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview</h1>
+<p>This guide explains how you can create an orchestration of type <em>workflow</em>. This orchestration enables you to set up a workflow of actions to be performed on users data across applications without actually writing the script. The various actions that can be performed on users data are import, create, update, delete, and so on. A javascript is internally created based on the workflow that you have setup. When the orchestration runs, this script is executed.</p>
+<p>You can set the orchestration to run based on a schedule or based on the events (user data changes) in an application.</p>
+<h1 id="setting-up-a-workflow-orchestration">Setting Up a Workflow Orchestration</h1>
+<p>You can achieve automatic user onboarding process from an application to multiple applications with a single workflow orchestration setup. You can add multiple applications to the workflow, as required.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Make sure that the application connectors are added and configured correctly in Aquera Admin console before creating the orchestration. Refer to the respective Aquera connector configuration guides for details.</p>
+<h2 id="creating-the-orchestration">Creating the Orchestration</h2>
+<ol>
+<li value="1">Log in to the Aquera Admin.</li>
+<li value="2">Navigate to <strong>Orchestrations</strong> and click<strong> Create Orchestration</strong>. The <strong>Add Orchestration</strong> pop-up window is displayed.
+<p> </p>
+</li>
+<li value="3">Enter a name for the orchestration in the <strong>Orchestration Name</strong> field.</li>
+<li value="4">Click the <strong>Workflow</strong> tab and select <strong>Workflow</strong>.</li>
+<li value="5">Click <strong>Done</strong>. The following page is displayed to setup the workflow. 
+<p> </p>
+</li>
+<li value="6">Click <strong>Create</strong> to create the orchestration record. A confirmation message is displayed on the page.</li>
+</ol>
+<p>The following procedures are involved in the <em>Workflow</em> orchestration setup:</p>
+<ul>
+<li><a href="#h_01FGP0B9G7XCE0VPEYP2K686EH" target="_self">Setting a Trigger for the Orchestration</a></li>
+<li>
+<a href="#h_01F1FG2844DSQF5P015MPCJW9C" target="_self">Designing the Workflow</a>
+<ul>
+<li><a href="#h_01FJEAYDCP0FNDA1MDMZT612Y7" target="_self">Actions</a></li>
+<li><a href="#h_01FJEAYT7SY050P7EQBADWTDR7" target="_self">Flows</a></li>
+<li><a href="#h_01FJEAZ3294FDM8D33KM6S18NZ" target="_self">Functions</a></li>
+<li><a href="#h_01FJEAZBY1NSMWEME7ARZBCNX0" target="_self">Tasks</a></li>
+<li><a href="#h_01FJEAZK2MJXFB4ZKDR1H07N33" target="_self">Variables</a></li>
+</ul>
+</li>
+<li><a href="#h_01EZA57HHFYXW0XVGJC7FA15DH" target="_self">Adding Tables</a></li>
+</ul>
+<h1 id="h_01FGP0B9G7XCE0VPEYP2K686EH">Setting a Trigger for the Orchestration</h1>
+<p>You can set one of the following triggers for the orchestration.</p>
+<h2 id="event-trigger">Event Trigger</h2>
+<p>The orchestration is triggered when specific events occur in an application. </p>
+<p><img alt="Screenshot_2021-09-28_at_4.00.15_PM.png" src="./assets/1d2747cd0d9fcbcd.bin"/></p>
+<ol>
+<li value="1">In the <strong>Add Trigger</strong> section, select <strong>Event</strong> and then select the application from the <strong>Select Source</strong> drop-down list. The workflow will be executed when a specific event (for example, user creation) occurs in the selected application. <br/>When you click <strong>Create</strong> to create the workflow orchestration, a URL is generated for event orchestration. This is the URL to which all events from the selected application will be sent for processing. You have to copy this URL and paste it in the appropriate setup section of the application from which the event data needs to be received.</li>
+<li value="2">Click <strong>Create Token</strong> to generate a token for authentication purpose. This token has to be saved securely and needs to be configured in the Identity Service Provider or in the specific application based on your use case.
+<p><img alt="Token.png" height="199" src="./assets/daf245c7b131641d.bin" width="536"/></p>
+</li>
+</ol>
+<p> </p>
+<h2 id="schedule">Schedule</h2>
+<p>The orchestration runs based on the schedule set for the orchestration. For details on the schedule setup, refer to <a href="#h_01F1FG2RY7XF86JJ76WMR84X2E" target="_self">Scheduling the Orchestration Run</a>.</p>
+<p> </p>
+<h1 id="h_01F1FG2844DSQF5P015MPCJW9C">Setting Up the Workflow</h1>
+<p>You can set up the workflow of tasks that must be executed when the orchestration runs. The workflow contains the series of operations that must be performed on the user objects across the selected applications. The following options are available to setup the workflow:</p>
+<ul>
+<li>Actions</li>
+<li>Flows</li>
+<li>Functions</li>
+<li>Tasks</li>
+<li>Variables</li>
+</ul>
+<p>Each of these options is explained in the following sections.</p>
+<h2 id="h_01FJEAYDCP0FNDA1MDMZT612Y7">Actions</h2>
+<p>The <strong>Actions</strong> option enables you to add the required applications to the orchestration. You can also add the various methods (operations) and the Open API methods that need to be performed on users in those applications. Only the methods supported by a specific application connector are available for inclusion in the workflow. </p>
+<h3 id="adding-applications">Adding Applications</h3>
+<p>The following procedure is used to add the applications in which the various user operations need to be performed.</p>
+<ol>
+<li value="1">Click the <strong>Actions</strong> icon <img alt="ACtion_icon.png" height="25" src="./assets/a8679fe1fa1add97.bin" width="29"/>  and click <strong>Add Applications</strong>. A pop-up window is displayed as follows.
+<p> </p>
+</li>
+<li value="3">In <strong>Application Name</strong>, search for the application to be added to the workflow and select the required application.</li>
+<li value="4">In the <strong>Variable</strong> field, enter the variable name that must be used to refer to the application in the workflow. The orchestration script will have with this variable to refer to the application.</li>
+<li value="5">Click <strong>Add</strong> to add the application to the <strong>Actions</strong> pane.
+<p> </p>
+<p>You can add as many applications as required by following the above steps. </p>
+<p><img alt="Apps_List.png" height="303" src="./assets/961e917c7883893d.bin" width="306"/></p>
+<table border="0">
+<tbody>
+<tr>
+<td>
+<p><strong>Note: </strong></p>
+</td>
+<td>
+<p>You can edit the application variable name or delete an application from the orchestration using the <em>Edit</em> and <em>Delete</em> options next to an application.</p>
+<p><img alt="Ed_Del_App.png" height="251" src="./assets/91bbdc96f9666f3c.bin" width="342"/></p>
+<p>You can delete an application only if it is not added to the workflow. If the application is added to the workflow, you must first remove it from the workflow before deleting it.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li value="6">Click <strong>Save Changes </strong>at the top right corner of the page to update the application details in the orchestration. A confirmation message is displayed on the page.</li>
+</ol>
+<h3 id="adding-and-configuring-application-methods">Adding and Configuring Application Methods</h3>
+<p>You can add the application methods for performing the required operations on user objects within an application.  For example, <em>Import All Users</em>, <em>Create User, Update User,</em> and so on. You can drag and drop the required operations from the <strong>Actions</strong> panel to the workflow editor area.</p>
+<p>Expand an application on the <strong>Actions</strong> panel. The list of all application methods (operations) and Open API methods supported by that application is displayed.</p>
+<p><img alt="Methods_List.png" height="766" src="./assets/ddd6c6dbb6958b96.bin" width="367"/></p>
+<p>Drag and drop the required method from the application to the workflow editor area.</p>
+<p><img alt="BHR_Import.png" src="./assets/d5d24c9c17bfaa5c.bin"/></p>
+<p>Refer to the <a href="#h_01F1FBHKVHZ6DEK9KZVSW16T2V" target="_self">Dragging and Dropping Workflow Items</a> section for details on dragging and dropping methods from the panel to the workflow editor area.</p>
+<p>The following table lists the standard SCIM actions that can be added to the workflow and the corresponding descriptions.</p>
+<table border="1" width="992">
+<tbody>
+<tr>
+<td><span><strong>Action</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td><img alt="Import_All.png" height="43" src="./assets/3dbb8085806af33f.bin" width="228"/></td>
+<td>
+<p><span>Returns all the users in the application. It will be an array of user objects.</span></p>
+<p><img alt="IMport_Alll_WF.png" src="./assets/7d6b337d9ac776ba.bin"/></p>
+<p><span>In the <strong>Output</strong> section, enter the name of the variable to store the array of imported users.</span></p>
+<p><span>By default, the variable name is created in the format, <em>&lt;app_variable_name&gt;Users_&lt;sequence_number&gt;</em>. For the first instance of an application method in the workflow, the sequence number is not appended to the variable name. From the second instance onwards, the sequence number will be appended as 1, 2, and so on. For example, bambooUsers, bambooUsers_1, bambooUsers_2.</span></p>
+</td>
+</tr>
+<tr>
+<td><img alt="Find_User.png" height="49" src="./assets/954e03def426f873.bin" width="210"/></td>
+<td>
+<p><span>Searches for a specific user in an application and returns the user object if it is found. If no user is found, then it returns null.</span><span></span></p>
+<p><img alt="Fnd_User1.png" src="./assets/8939d7428f66da6c.bin"/></p>
+<p><span>In the <strong>Input</strong> section, you must select a user attribute and enter the attribute value based on which a particular user has to be searched in the application. You can search for a user by <em>id</em> or <em>userName</em> only. The application connector must support the operation of retrieving users by their userName or ID.</span></p>
+<p><span><img alt="Fnd_User2.png" src="./assets/f4135741e6422b15.bin"/></span></p>
+<p><span>In the following example, a user with the <strong>userName</strong> <em>bjensen@example.com</em> will be searched in the application.</span></p>
+<p><img alt="Find_User.png" height="297" src="./assets/a8cfffe2ab59cf33.bin" width="614"/></p>
+<p>In the <strong>Output</strong> section, enter the name of the variable to store the user object.</p>
+<p><span>By default, the variable name is created in the format, <em>&lt;app_variable_name&gt;User_&lt;sequence_number&gt;</em>. For the first instance of an application method in the workflow, the sequence number is not appended to the variable name. From the second instance onwards, the sequence number will be appended as 1, 2, and so on. For example, bambooUser, bambooUser_1, bambooUser_2.</span></p>
+</td>
+</tr>
+<tr>
+<td><img alt="Create_User.png" height="49" src="./assets/d1f215497e4b5f36.bin" width="198"/></td>
+<td>
+<p><span>Creates a new user in the application and returns the user object that was created.</span></p>
+<p><img alt="Create_User1.png" src="./assets/774cee94d3291f16.bin"/></p>
+<p><span>In the <strong>Input</strong> section, you must select the required user attributes and enter the corresponding attribute values for the user to be created.</span></p>
+<p><span><img alt="Create_User2.png" src="./assets/d303e5aedfb84d46.bin"/></span></p>
+<p><span>In the <strong>Output</strong> section, enter the name of the variable to store the user object.</span></p>
+<p><span>By default, the variable name is created in the format, <em>&lt;app_variable_name&gt;User_&lt;sequence_number&gt;</em>. For the first instance of an application method in the workflow, the sequence number is not appended to the variable name. From the second instance onwards, the sequence number will be appended as 1, 2, and so on. For example, bambooUser, bambooUser_1, bambooUser_2.</span></p>
+</td>
+</tr>
+<tr>
+<td><img alt="Update_User.png" height="53" src="./assets/bc73efa710b27761.bin" width="188"/></td>
+<td>
+<p><span>Updates an existing user in the application.</span></p>
+<p><img alt="Update_User.png" src="./assets/cac436aa46f960d4.bin"/></p>
+<p><span>You can enter either the user ID or a userName to look for the user to be updated. In the <strong>User</strong> field, select the attributes to be updated and enter the values corresponding to each attribute.</span></p>
+<p><span><img alt="Update2.png" src="./assets/15f05ae5d837bf5d.bin"/></span></p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td><img alt="Delete_user.png" height="52" src="./assets/08691074d559b608.bin" width="184"/></td>
+<td>
+<p><span>Deletes a user in the application.</span></p>
+<p><img alt="Del_User.png" src="./assets/8f79e916f0a050d7.bin"/></p>
+<p><span>You must enter the user ID or the attributes of user object to be deleted.</span></p>
+<p><span><img alt="Delete2.png" src="./assets/2712b139c56b0056.bin"/></span></p>
+</td>
+</tr>
+<tr>
+<td><img alt="Set_pswd.png" height="44" src="./assets/aec198927a08a6e1.bin" width="248"/></td>
+<td>
+<p><span> Sets the password of a user in the application.</span></p>
+<p><img alt="SUP1.png" src="./assets/feff22398431b56f.bin"/></p>
+<p><span>You must enter the user ID or the user object, and the password string to be set for the user.</span><span></span></p>
+</td>
+</tr>
+<tr>
+<td><img alt="SW_Activate1.png" height="52" src="./assets/9ea85a6941a96c61.bin" width="209"/></td>
+<td>
+<p><span>Activates a user in the application.</span></p>
+<p><img alt="SW_Activate.png" src="./assets/fde763c8c4317c60.bin"/></p>
+<p><span>You must enter the user ID or the userName of the user to be activated.</span><span></span></p>
+</td>
+</tr>
+<tr>
+<td><img alt="SW_Deact1.png" height="58" src="./assets/02f173be77f2cbb6.bin" width="225"/></td>
+<td>
+<p><span>Deactivates a user in the application.</span></p>
+<p><img alt="SW_Deact2.png" src="./assets/c3d87e3cb7ea9e3c.bin"/></p>
+<p><span>You must enter the user ID or the userName of the user to be deactivated.</span><span></span></p>
+</td>
+</tr>
+<tr>
+<td><img alt="Import_From.png" height="50" src="./assets/7bb9fa62ab41f155.bin" width="224"/></td>
+<td>
+<p><span>Returns an array of all users that are assigned to specific groups in the application.</span></p>
+<p><img alt="ImportAllFromGrp.png" src="./assets/b17becedf43b761f.bin"/></p>
+<p><span>You have to enter the group IDs or group display names to which the users are assigned. You can also enter the name of the variable that stores the array of imported users. By default, the variable name is created in the format, <em>&lt;app_variable&gt;Users_&lt;sequence_number&gt;</em>.</span><span></span></p>
+</td>
+</tr>
+<tr>
+<td><img alt="Wo_Add_User.png" height="51" src="./assets/536f9f612ad25de0.bin" width="206"/></td>
+<td>
+<p><span>Adds a user to a specific group.</span></p>
+<p>&lt;screenshot&gt;</p>
+<p>You must enter the following details:</p>
+<ul>
+<li>The group ID or the group name of the group to which a user has to be added.</li>
+<li>The user object, the <span>ID</span> or userName of the user to be added to the group.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><img alt="Remove_User.png" height="57" src="./assets/106476dfa5eea2b7.bin" width="247"/></td>
+<td>
+<p><span>Removes a user from a specific group</span></p>
+<p> </p>
+<p>You must enter the following details:</p>
+<ul>
+<li>The group ID or the group name of the group object from which a user has to be removed.</li>
+<li>The user object, the ID or the username of the user to be removed from the group.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><img alt="IsSub.png" height="64" src="./assets/9362c8f2e5d4bc4a.bin" width="258"/></td>
+<td>
+<p>Checks if a user is a subordinate of another user (manager). The usernames of the user and the manager have to be entered.</p>
+<p> </p>
+<p>In the <strong>Output</strong> section, enter the name of the variable to store the user object, if the user is a subordinate of the manager.</p>
+</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+<h3> </h3>
+<p>The actions in the workflow editor area will be executed when the orchestration runs. You can identify the application on which an action is performed with the help of the <span>logo on the action. </span></p>
+<h3 id="h_01FJEAYT7SY050P7EQBADWTDR7">Flows</h3>
+<p><span>This option includes the various conditional statements and iterations (for example,  <em>IF</em>, <em>For Each</em>), which control the flow of operations in the workflow.</span></p>
+<p>The <strong>Flows</strong> option lists the <em>IF</em> condition and the <em>For Each</em> loop that can be added to the workflow.</p>
+<p><img alt="Flows.png" height="319" src="./assets/38f6f6d65852f41e.bin" width="346"/></p>
+<p>You can drag and drop these items to the workflow editor area. Refer to the <a href="#h_01F1FBHKVHZ6DEK9KZVSW16T2V" target="_self">Dragging and Dropping Workflow Items</a> section for details on dragging and dropping items from the panel to the workflow editor area.</p>
+<p>Each of the flows is explained in detail in the following table.</p>
+<table border="1" width="905">
+<tbody>
+<tr>
+<td><span><strong>Flow</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td><img alt="If.png" height="64" src="./assets/ceaf7919af0e5723.bin" width="127"/></td>
+<td>
+<p>The <em>IF</em> statement is used to set a condition. </p>
+<p><img alt="If.png" src="./assets/3d71e276ae92937b.bin"/></p>
+<p>In this scenario, the <em>Log</em> function is executed only when the status of the user is active.</p>
+<p>If the specified condition is met, the tasks under <em>Yes</em> will be executed. If the condition is not met, the tasks under <em>No</em> will be executed.</p>
+</td>
+</tr>
+<tr>
+<td><img alt="FE.png" height="63" src="./assets/c7b12771676b8032.bin" width="176"/></td>
+<td>
+<p>The <em>For Each</em> statement is used to execute a function or a block of code once for each item in an array.</p>
+<p><img alt="For_each__new.png" src="./assets/a902864ce607ced1.bin"/></p>
+<p>In this scenario, each user in the users array is checked to see if the user is active. </p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01FJEAZ3294FDM8D33KM6S18NZ">Functions</h3>
+<p>The <strong>Functions</strong> list provides standard javascript functions that can be added to the workflow.</p>
+<p>You can drag and drop the required functions to the workflow editor area. Refer to the <a href="#h_01F1FBHKVHZ6DEK9KZVSW16T2V" target="_self">Dragging and Dropping Workflow Items</a> section for details on dragging and dropping items from the panel to the workflow editor area.</p>
+<p>The following table lists the functions available in the panel.</p>
+<table border="1" width="957">
+<tbody>
+<tr>
+<td><span><strong>Function</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td><img alt="Log.png" height="53" src="./assets/cfe4186be108f038.bin" width="146"/></td>
+<td>
+<p>Prints a message in the log when the orchestration runs.</p>
+<p><img alt="Log_msg.png" src="./assets/1dedbc030759cd42.bin"/></p>
+<p>Enter the message to be printed in the field. It can be any string or any specific user attribute(s).</p>
+</td>
+</tr>
+<tr>
+<td><img alt="Email.png" height="49" src="./assets/ed3c8931367387d1.bin" width="155"/></td>
+<td>
+<p>Sends an email when the orchestration runs.</p>
+<p><img alt="Email_body.png" src="./assets/e377f895010de6c3.bin"/></p>
+<p>You can enter the list of email IDs in the <em>To</em>, <em>CC</em>, and <em>BCC</em> fields, and set the email subject and body.</p>
+<p><strong>Note</strong>: The email will be sent from support@aquera.com.</p>
+</td>
+</tr>
+<tr>
+<td><img alt="Update_Table.png" height="51" src="./assets/ea807dac144827df.bin" width="199"/></td>
+<td>
+<p>Used to<span> update the Key-Value pair in a table during run-time.</span></p>
+<p><img alt="WF_Orch_Update_table.png" src="./assets/a7f4e1c815498e6c.bin"/></p>
+<p>Enter the key and value pair to be updated in the table.</p>
+<p>Refer to<span> the Tables section</span> for detais on tables.</p>
+</td>
+</tr>
+<tr>
+<td><img alt="WF_Delete_tab.png" height="55" src="./assets/948b2f8b1cb3a14a.bin" width="211"/></td>
+<td>Used to <span>delete the Key-Value pair from a table during orchestration run-time.</span>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<h3 id="h_01FJEAZBY1NSMWEME7ARZBCNX0">Tasks</h3>
+<p>You can add people tasks to the workflow orchestration. People tasks can be created in Aquera Admin console for any critical tasks that need people involvement. For detail information about People Tasks, refer to the <a href="../People-Tasks-User-Guide/" rel="noopener" target="_blank">People Tasks User Guide</a>.</p>
+<p>When you click the Tasks icon, all the people tasks that have bee created so far in the Admin console are listed. You can drag an drop the required pople tasks that must be part of the workflow to the workflow editor area.</p>
+<p><img alt="Peopl_Tasks.png" src="./assets/b75266f99d9a20b2.bin"/></p>
+<p>The following fields are displayed in all People Tasks:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><span><strong>Field</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td>Assigned To</td>
+<td>
+<p>The email ID of the user to which the task must be assigned. When the orchestration runs, a people task instance is created and assigned to this user.</p>
+</td>
+</tr>
+<tr>
+<td>Due Date</td>
+<td>
+<p>The date by which the assigned person must perform an action on this task. </p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: More fields may be displayed for a people task based on the number of data fields configured in that task definition.</p>
+<h3 id="h_01FJEAZK2MJXFB4ZKDR1H07N33">Variables</h3>
+<p>Variables are used to store and pass values in the workflow. The actions that can be performed using variables are categorized by the types of values that the variables can hold. The values can be string, string array, or object.</p>
+<table border="1">
+<tbody>
+<tr>
+<td><span><strong>Action</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td colspan="2"><strong>Variable type - String</strong></td>
+</tr>
+<tr>
+<td>Initialize</td>
+<td>
+<p>To declare a variable and to assign an initial value to the variable. </p>
+<p><img alt="WF_Init_String.png" src="./assets/97826ca7bc0b1931.bin"/></p>
+<p>Enter the name of the variable and the initial value to be assigned to it.</p>
+</td>
+</tr>
+<tr>
+<td>Set</td>
+<td>
+<p>To set a value for an existing variable.</p>
+<p><img alt="WF_Set_String.png" src="./assets/aee433bb8baa6cef.bin"/></p>
+<p>Enter the name of the variable and the value to be set for the variable.</p>
+</td>
+</tr>
+<tr>
+<td>Append</td>
+<td>
+<p>To append a string to the value of a variable.</p>
+<p><img alt="WF_Append_Strig.png" src="./assets/076200b323aed7a4.bin"/></p>
+<p>Enter the name of the variable and the string that must be appended to the value of the variable.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Variable type - Array</strong></td>
+</tr>
+<tr>
+<td>Initialize</td>
+<td>
+<p>To declare an array variable and assign the list of initial values to the array.</p>
+<p><img alt="WF_Init_array.png" src="./assets/37b9d0559ade1290.bin"/></p>
+<p>Enter the name of the array variable and the list of initial values to be assigned to the array.</p>
+</td>
+</tr>
+<tr>
+<td>Set</td>
+<td>
+<p>To set values for an existing array.</p>
+<p><img alt="WF_Set_array.png" src="./assets/4cba24707f2c87f3.bin"/></p>
+<p>Enter the name of the array variable and the values to be set for the array.</p>
+</td>
+</tr>
+<tr>
+<td>Append</td>
+<td>
+<p>To append values at the end of the array list.</p>
+<p><img alt="WF_Append_Array.png" src="./assets/530b8dfcc21f469a.bin"/></p>
+<p>Enter the name of the array variable and the values to be appended to the array list.</p>
+</td>
+</tr>
+<tr>
+<td>Prepend</td>
+<td>
+<p>To insert values at the beginning of the array list.</p>
+<p><img alt="WF_Prepend_Array.png" src="./assets/ba4ebf4dc85f34d3.bin"/></p>
+<p>Enter the name of the array variable and the values to be inserted to the array list.</p>
+</td>
+</tr>
+<tr>
+<td>Remove Last</td>
+<td>
+<p>To remove the last value from the array list.</p>
+<p><img alt="WF_Remove_last.png" src="./assets/2ecfc90015cefdc2.bin"/></p>
+<p>Enter the name of the array variable from which the last item has to be removed.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Variable type - Object</strong></td>
+</tr>
+<tr>
+<td>Initialize</td>
+<td>
+<p>To declare a JSON object variable and set the attributes and values for the variable.</p>
+<p> </p>
+<p>Enter the name of the variable and the object in JSON format.</p>
+</td>
+</tr>
+<tr>
+<td>Set</td>
+<td>
+<p>To set the JSON object value for a variable.</p>
+<p> </p>
+<p>Enter the name of the object variable and the value in JSON format.</p>
+</td>
+</tr>
+<tr>
+<td>Add attribute</td>
+<td>
+<p>To add an attribute and its value to an object.</p>
+<p> </p>
+<p>Enter the name of the object variable and the attribute name and value.</p>
+</td>
+</tr>
+<tr>
+<td>Delete attribute</td>
+<td>
+<p>To add an attribute from an object.</p>
+<p> </p>
+<p>Enter the name of the object variable and the attribute name to be deleted.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p> </p>
+<h2 id="h_01F1FBHKVHZ6DEK9KZVSW16T2V">Dragging and Dropping Components to the Workflow</h2>
+<p>To create the workflow, you must drag the required components from the left panel and drop them to the workflow editor area. The tasks will be executed in the order they are placed in the workflow.</p>
+<p>The first component in the workflow is always the trigger that you set for the orchestration - an event or the schedule.  </p>
+<p><img alt="WF_Trigger_comp.png" src="./assets/9472d8aaf7c89cb3.bin"/></p>
+<p>For details on the trigger setup, refer to the <a href="#h_01FGP0B9G7XCE0VPEYP2K686EH" target="_self">Setting a Trigger for the Orchestration</a> section.</p>
+<p> </p>
+<p>When you drag a item from the panel to the workflow editor area, a grey area with dotted border line is displayed in the Workflow editor area as follows to indicate the placeholder of the item to be dropped:</p>
+<p> </p>
+<p><img alt="Dot_area.png" src="./assets/326fd9ac60baaecb.bin"/></p>
+<p>When you drop the item, it will be added to the workflow. The arrow indicates the flow of tasks in the workflow.</p>
+<p><img alt="WF_Dropped_item.png" height="341" src="./assets/4dfc839d0a84241f.bin" width="532"/></p>
+<p>A connecting line is displayed after the newly added item. When the next item is added after this item, the connecting line is changed to the arrow, which indicates the flow of tasks.</p>
+<p> </p>
+<p>When you want to place an item that must be executed within a flow (IF, For Each), it must be placed one level inside the flow. To do this, the item must be dragged and dropped over that flow item when a placeholder is displayed below the flow, as follows:</p>
+<p><img alt="WF_Placeholder.png" height="384" src="./assets/7aea114e9cff44c6.bin" width="545"/></p>
+<p>The item is added to the workflow as follows:</p>
+<p><img alt="WF_Placed.png" height="263" src="./assets/3ce45f633ae2b559.bin" width="596"/></p>
+<p>In the above scenario, the <strong>IF</strong> statement is executed with in the<strong> For Each</strong> flow. You can add any number of such nested flows (levels) to the workflow, as required. The placeholders are highlighted accordingly when you drag the items to the flow.</p>
+<p>The following actions can be performed on the items in the workflow editor area:</p>
+<ul>
+<li>Expand (<img alt="Exp.png" height="23" src="./assets/4b38845933376f94.bin" width="25"/>) or collapse (<img alt="Coll.png" height="22" src="./assets/ed4bb58c1947df0f.bin" width="24"/>) an item in the workflow.</li>
+<li>Delete an item from the workflow. Click <img alt="WF_Dots.png" height="32" src="./assets/6cc65116bbdd139b.bin" width="24"/> to view the <strong>Delete</strong> option.<br/><br/><img alt="WF_Del_wf.png" height="110" src="./assets/2913b3b8d2f8a747.bin" width="131"/>
+</li>
+<li>Switch between <em>Basic</em> and <em>Expression</em> mode for the <em>IF</em> flow.  Click <img alt="WF_Dots.png" height="32" src="./assets/6cc65116bbdd139b.bin" width="24"/> to view the options to change the mode.<br/><br/>Basic:<br/><img alt="WF_Basic.png" src="./assets/933b35a071ca2944.bin"/><br/>Expression:<br/><img alt="WF_Exp.png" src="./assets/0cb9447adea06e31.bin"/>
+</li>
+</ul>
+<h1 id="h_01EZA57HHFYXW0XVGJC7FA15DH">Adding Tables</h1>
+<p><span>Tables are used when an attribute is empty or a particular data is not sent from an application, and the user wants to update a value for the attribute during the orchestration.</span></p>
+<p><span>For example, if you want the hire date of one set of employees to be updated with one value and that of another set of employees with a different value during the user update/create operation, you can add a table containing the hire date of the first set of employees.</span></p>
+<ol>
+<li value="1">Click the <strong>Tables</strong> tab.</li>
+<li value="2">Click <strong>Add Table</strong>. The <strong>Add Table</strong> window is displayed.
+<p> </p>
+</li>
+<li value="3">Enter the table name and description.
+<p>The table inputs can be entered either manually as rows or by uploading a CSV file.</p>
+<ul>
+<li><span>To enter manually, the user can click <strong>Add Row. </strong></span></li>
+<li><span>To upload the table values using a CSV file, click <strong>Upload CSV File</strong>. The orchestration supports only .csv file format and the file should have only two columns. <br/>A sample <a href="https://support.aquera.com/hc/article_attachments/4409986124823" rel="noopener" target="_blank">CSV file</a> is attached for your reference. You may edit this file to add the required details and upload it.</span></li>
+</ul>
+<p><span>In this scenario, we add a table entry by clicking <strong>Add Row</strong>. The <strong>hireDate</strong> table is created with the employee hire date value as <em>2020-09-09</em>.</span></p>
+<p><img alt="WF_emphireDate.png" height="315" src="./assets/5e57e24a3007b69e.bin" width="446"/></p>
+</li>
+<li value="4">Click <strong>Add</strong>. The new table is listed on the page.
+<p> </p>
+</li>
+<li value="5"><span>Click <strong>Save Changes</strong>.</span></li>
+</ol>
+<p><span>Now in the <strong>Design</strong> tab, navigate to <strong>Functions</strong> and use the <strong>Update Table Value</strong> function to update the hire date of a set of employees with a different value than the hiredate in the table. In this case, the hire date can be updated as follows:</span><span></span></p>
+<p><img alt="WF_Update_hiredate.png" height="243" src="./assets/44f8c9d5117f654b.bin" width="511"/></p>
+<p> </p>
+<h2 id="h_01F1FG2RY7XF86JJ76WMR84X2E">Scheduling the Orchestration Run</h2>
+<p>You can set the frequency by which the orchestration must run.</p>
+<ol>
+<li value="1">In the <strong>Add Trigger</strong> section, select <strong>Schedule</strong> and expand the section.
+<p><img alt="WF_Sched.png" src="./assets/e59ad651bfa47e77.bin"/></p>
+<p>You can either select a basic schedule or set an advanced schedule.</p>
+<h4 id="basic-schedule"><strong>Basic Schedule</strong></h4>
+<h4 id="you-can-select-a-frequency-by-which-the-orchestration-must-run-from-a-pre-defined-list-of-frequencies-ranging-from-15-minutes-to-24-hours">You can select a frequency by which the orchestration must run, from a pre-defined list of frequencies ranging from 15 minutes to 24 hours.</h4>
+</li>
+<li value="1">Select <strong>Basic</strong> and then select the frequency of execution from the drop-down.</li>
+</ol>
+<h4> </h4>
+<p><img alt="Basic_Schedule.png" height="604" src="./assets/b0264b525354ea92.bin" width="424"/></p>
+<p><strong>Note</strong>: If you select <strong>Never</strong>, the orchestration never runs automatically. You can manually run the orchestration when required.</p>
+<h4 id="advanced-schedule"><strong>Advanced Schedule</strong></h4>
+<p>You can use the <strong>Advanced</strong> schedule option to schedule the orchestration as per your requirements.</p>
+<p><img alt="WF_ADv_Never.png" height="306" src="./assets/44dd93b372be2317.bin" width="590"/></p>
+<ul>
+<li>Select <strong>Never</strong> if you do not want the orchestration to run automatically.</li>
+<li>Select <strong>Minutes</strong> to schedule the orchestration to run every X minutes, where you need to select the value of X from the <strong>Repeat Every</strong> drop-down list.</li>
+</ul>
+<p><img alt="WF_Adv_Minutes.png" height="349" src="./assets/dfe22424ddd46651.bin" width="442"/> </p>
+<ul>
+<li>Select <strong>Hourly</strong> to schedule the orchestration to run every X hours, where you need to select the value of X from the <strong>Repeat Every</strong> drop-down list.</li>
+</ul>
+<p><img alt="WF_Adv_Hourly.png" height="436" src="./assets/0eae6bf19c01daa8.bin" width="448"/></p>
+<ul>
+<li>Select <strong>Daily</strong> to schedule the orchestration to run every X days at a specific time, where you need to select X and the time from the corresponding drop-down lists. You can add up to a maximum of 5 day schedules, if required.</li>
+</ul>
+<p><img alt="WF_Adv_Daily.png" height="291" src="./assets/1c76adda2bffc5ac.bin" width="528"/></p>
+<ul>
+<li>Select <strong>Weekly</strong> to schedule the orchestration to run on specific days of a week at a specific time. The time that you select here is the UTC time.</li>
+</ul>
+<p><img alt="WF_Adv_Week.png" height="301" src="./assets/2b105b06890611de.bin" width="571"/></p>
+<ol>
+<li value="2">Click <strong>Save Changes</strong> to save the orchestration schedule.</li>
+</ol>
+<p> </p>
+  </div>
+</body>
+</html>

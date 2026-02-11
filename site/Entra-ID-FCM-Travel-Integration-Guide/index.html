@@ -1,0 +1,364 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Entra ID / FCM Travel Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Entra ID / FCM Travel Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>In this integration, any users created, updated, or terminated in Entra ID is automatically updated in FCM Travel based on the defined schedule.</p>
+<p>To identify user records across both systems, the integration uses the <strong>userPrincipalName</strong> attribute from <strong>Entra ID</strong> and matches it to the <strong>EmailAddress</strong> in <strong>FCM Travel</strong> as a correlation attribute.</p>
+<h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1>
+<p>The Entra ID to FCM Travel Integration performs the following functions:</p>
+<ul>
+<li>
+<p><strong>User Lifecycle Management</strong>: Handles user creation, update, and deletion from Entra ID to FCM Travel.</p>
+</li>
+<li>
+<strong>Traveller GUID Writeback</strong>: A unique traveller GUID will be created for each new user integrated from Entra ID into FCM Travel, and this traveller GUID will be written back to the user’s Entra ID profile.</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<span><strong>Entra ID</strong></span>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32091350086423-Entra-ID-Configuration-Guide" rel="noopener noreferrer" target="_blank">Entra ID Configuration Guide </a>for configuration details.</li>
+<li>
+<strong>FCM Travel</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/35026344180887" rel="noopener noreferrer" target="_blank">FCM Travel Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured to push user-related data from Entra ID to FCM Travel.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Entra ID / FCM Travel</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <span><strong>Entra ID</strong></span> and <strong>FCM Travel</strong> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4>
+<p>Enable the following feature based on your requirements:</p>
+<ul data-end="1629" data-start="288">
+<li>
+<strong>Enable User Lifecycle Management</strong>: Select this checkbox to enable user provisioning and perform incremental updates. The <strong>Manage Users</strong> section will be displayed to configure user management settings only when this checkbox is selected.
+<p><strong>Note</strong>: It is mandatory to enable this checkbox to customize the user's lifecycle management.</p>
+</li>
+<li>
+<strong>Enable Traveller GUID Writeback</strong>: Select this checkbox to enable the traveller GUID writeback. When a new user is created in Entra ID and integrated with FCM Travel, a unique traveller GUID is generated for the user. When this checkbox is selected, the same GUID will be integrated back into the user’s Entra ID profile.</li>
+</ul>
+<h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Full Sync</strong>: Select this checkbox to execute the integration in full sync.</li>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li>
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Logging</a> section is displayed for further configuration.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting</a> section is displayed for further configuration.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select this to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select this checkbox to generate logs outlining data changes that would occur, for debugging purposes. When enabled, the <a href="#01K5V7T6T6MJ13XCZYCT1T59VP">Debug Mode</a> section is displayed for further configuration.</li>
+</ul>
+<h3 id="h_01KG23G2MBHBMGF3M01ETG0J1E">Manage Users</h3>
+<p>The Manage User section enables you to customize the integration settings for user management according to your specific use case.</p>
+<h4 id="h_01KG23G2MB56J7KP7MNB1F0ZBK">Entra ID Settings</h4>
+<p>Configure the following Entra ID settings:</p>
+<ul>
+<li>
+<strong>Entra ID Correlation Attribute</strong><span>*</span>: Select the Entra ID attribute to distinctly find the associated FCM Travel user. For example, <em>userPrincipalName</em>.</li>
+<li>
+<strong>User Provisioning Configuration</strong><span>*</span>: Select one or more operations from the dropdown menu to provision users into FCM Travel from Entra ID. The available options are <em>Create</em>, <em>Update</em>, and <em>Delete</em>.</li>
+<li>
+<strong>Map Manager</strong>: Select this checkbox to create the employee's manager during user creation in FCM Travel if the user's manager does not exist in the FCM Travel. If this checkbox is not selected, the user's manager will not be created in the FCM Travel.</li>
+</ul>
+<h4 id="h_01KG26M9SZE0FB3M4A8NN48AJS">Create User Settings</h4>
+<p>The <strong>Create User Settings</strong> section enables you to customize the integration settings for user creation according to your specific use case. It synchronizes user data from Entra ID to FCM Travel.<br/><strong>Note</strong>: This section appears only if you select the <strong>Create</strong> in the<strong> User Provisioning Configuration</strong> parameter under the <strong>Entra ID</strong> <strong>Settings</strong> section.</p>
+<ul>
+<li>
+<strong> Create User Limit</strong>: Specify the maximum number of user records that must be created in the FCM Travel application during a single integration run.</li>
+<li>
+<strong>Create Condition</strong>: Select a condition from the dropdown to specify which Entra ID user records should be created in FCM Travel. It has the following options:
+<ul>
+<li>
+<strong>All Users</strong>: Select this if you want all users to be created in FCM Travel.</li>
+<li>
+<strong>All Active Users</strong>: Select this if you want all active users to be created in FCM Travel.</li>
+<li>
+<strong>UserType (Member)</strong>: Select this if you want all users with the user type as Member to be created in FCM Travel.</li>
+<li>
+<strong>UserType (Guest)</strong>: Select this if you want all users with the user type as Guest to be created in FCM Travel.</li>
+<li>
+<strong>Custom</strong>: Select this if you want to create a user based on a custom condition.
+<ul>
+<li>
+<strong>Custom Create Condition</strong>: Enter an expression that defines the user creation condition in the FCM Travel.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="h_01KG291CRMHH02AGG7XAMTJ9TV">Update User Settings</h4>
+<p>The <strong>Update User Settings</strong> section enables you to customize the integration settings for user updation according to your specific use case. It synchronizes user data from Entra ID to FCM Travel.<br/><strong>Note</strong>: This section appears only if you select the <strong>Update</strong> in the<strong> User Provisioning Configuration</strong> parameter under the <strong>Entra ID</strong> <strong>Settings</strong> section.</p>
+<ul>
+<li>
+<strong>Update User Limit</strong>: Specify the maximum number of user records that must be updated in the FCM Travel application during a single integration run.</li>
+<li>
+<strong>Update Condition</strong>: Select a condition from the dropdown to specify which Entra ID user records should be updated in FCM Travel. It has the following options:
+<ul>
+<li>
+<span><strong>All Active Users</strong></span>: Select this if you want all active users to be updated in FCM Travel.</li>
+<li>
+<strong>UserType (Member)</strong>: Select this if you want all users with the user type as Member to be updated in FCM Travel.</li>
+<li>
+<strong>UserType (Guest)</strong>: Select this if you want all users with the user type as Guest to be updated in FCM Travel.</li>
+<li>
+<strong>Custom</strong>: Select this if you want to update a user based on a custom condition.
+<ul>
+<li>
+<strong>Custom Update Condition</strong>: Enter an expression that defines the user updation condition in the FCM Travel.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="01KG2ARF7Y2NJWVF151T31WSRB">Delete User Settings</h4>
+<p>The <strong>Delete User Settings</strong> section enables you to customize the integration settings for user deletion according to your specific use case. It synchronizes user data from Entra ID to FCM Travel.<br/><strong>Note</strong>: This section appears only if you select the <strong>Delete</strong> in the<strong> User Provisioning Configuration</strong> parameter under the <strong>Entra ID</strong> <strong>Settings</strong> section.</p>
+<ul>
+<li>
+<strong> Delete User Limit</strong>: Specify the maximum number of user records that must be deleted in the target application during a single integration run.</li>
+<li>
+<strong>Delete Condition</strong>: Select a condition from the dropdown to specify which Entra ID user records should be deleted in FCM Travel. It has the following options:<br/>
+<ul>
+<li>
+<strong>All Inactive Users</strong>: Select this if you want all inactive users to be deleted in FCM Travel.</li>
+<li>
+<strong>UserType (Member)</strong>: Select this if you want all users with the user type as Member to be deleted in FCM Travel.</li>
+<li>
+<strong>UserType (Guest)</strong>: Select this if you want all users with the user type as Guest to be deleted in FCM Travel.</li>
+<li>
+<strong>Custom</strong>: Select this if you want to delete a user based on a custom condition.
+<ul>
+<li>
+<strong>Custom Delete Condition</strong>: Enter an expression that defines the user delete condition in the FCM Travel.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="h_01KGHNZF2DC1NXS5RTAVSDCAG3">FCM Travel Settings</h4>
+<p>Configure the following FCM Travel Settings:</p>
+<ul>
+<li>
+<strong>FCM Travel Correlation Attribute</strong><span>*</span>: Select the FCM Travel attribute to distinctly find the associated Entra ID user. For example, <em>EmailAddress</em>.</li>
+<li>
+<strong> FCM Company GUID</strong><span>*</span>: Enter the unique ID of your FCM company.</li>
+</ul>
+<h3 id="h_01K04B51EEX43EAV95YABBP3F5">Logging</h3>
+<p>The <strong>Logging</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01KGHF59DA5EF0WXHK2SMFB9W4">Log Settings</h4>
+<p>Configure the following log settings:</p>
+<ul>
+<li>
+<strong>Log Detail Level</strong><span>*</span>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span>*</span> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Enter the attributes to be included in the log. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+<li>
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the log. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values for each event when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3>
+<p>The <strong>Notifications</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01KGHF6DZYKTRFQSB4B1QVYWAS">Notification <span>Report</span> Settings</h4>
+<p>Configure the following notification report settings:</p>
+<ul>
+<li>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for each integration execution. When enabled, the following fields are displayed for further configuration:
+<ul>
+<li>
+<strong> Report Detail Level</strong><span>*</span>: Select the report detail level from the dropdown menu. The following are the available options:<br/>
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span>*</span> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Enter the attributes to be included in the log. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+<li>
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the log. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values for each event when choosing the Full Details or Custom option.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="01KG21C7RQ46AR79KYJY2EDY29">Execution Success Notification</h4>
+<p>This section enables you to customize the integration success notification. It has the following settings:</p>
+<ul>
+<li>
+<strong>Admin's Email Address</strong><span>*</span>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
+<li>
+<strong>Email Subject</strong><span>*</span>: Enter the content that must be used as the email subject for sending email notifications upon successful integration.</li>
+<li>
+<strong>Email <span>Notification</span> Body</strong><span>*</span>: Enter the content that must be used as the email body for all user email notifications upon successful integration.</li>
+</ul>
+<h4 id="h_01KG406MV62DQW15JC3WWCP55V">Execution Failure Notification</h4>
+<p>This section enables you to customize the integration failure notification. It has the following settings:</p>
+<ul>
+<li>
+<strong>Admin's Email Address</strong><span>*</span>: Enter the email addresses of the admins to whom the email notifications will be sent upon integration failure.</li>
+<li>
+<strong>Email Subject</strong><span>*</span>: Enter the content that must be used as the email subject for sending email notifications upon integration failure.</li>
+<li>
+<strong>Email <span>Notification</span> Body</strong><span>*</span>: Enter the content that must be used as the email body for all user email notifications upon integration failure.</li>
+</ul>
+<h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting</h3>
+<p>The <strong>Reporting</strong> section enables you to customize the integration settings according to your specific use case. This section is used to download the integration report in CSV format from the execution timeline. It has the following settings:</p>
+<h4 id="h_01KGHF9JDXCJXF0HYB7BRZ2P0E">Report Settings</h4>
+<p>Configure the following report settings:</p>
+<ul>
+<li>
+<strong>Report Detail Level<span>*</span></strong>: Select the report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span>*</span> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Enter the attributes to be included in the log. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+<li>
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the log. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3>
+<p>The <strong>Log Insights</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01KGHFA6Y71CG6DK6D0DZ6XTH1"><span>Log Insights Settings</span></h4>
+<p>Configure the following settings to customize the log insights:</p>
+<p id="01K5B9P929CY5YBAY51DATK62B">It has the following settings:</p>
+<ul>
+<li>
+<strong data-end="185" data-start="147">Log Insights Detail Level</strong><span>*</span><strong data-end="185" data-start="147">:</strong> Select the level of detail from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong data-end="337" data-start="320">Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong data-end="440" data-start="423">Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong data-end="493" data-start="482">Custom</strong>: <span></span>Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong><span>*</span> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Enter the attributes that should be included in the log. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+</li>
+</ul>
+<h3 id="01K5V7T6T6MJ13XCZYCT1T59VP">Debug Mode</h3>
+<h4 id="h_01KGHFBM0TANSQ3XBKRMTH5N36">Debug Settings</h4>
+<p>This section enables you to customize the debug mode settings. It has the following settings:</p>
+<p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Debug Mode</strong> setting in the <strong>Parameters</strong> section.</p>
+<ul>
+<li>
+<strong>Entra ID Filter Attribute</strong>: <span>Select the filter to retrieve data of a specific user from Entra and run the integration for debugging purposes. </span><span>The following are the available options:</span><br/>
+<ul>
+<li>
+<strong>User Principal Name</strong>: <span>Select this to filter a worker by the principal name specified in the</span> <strong>azureADUserPrincipalName</strong> <span>field.</span>
+</li>
+<li>
+<strong>Mail</strong>: <span>Select this to filter a worker by the mail address specified in the</span> <span>field.</span>
+</li>
+</ul>
+</li>
+<li>
+<span><strong>User Principal Name</strong></span><span>*</span>: <span>Enter the user principal name to filter a worker. For example, 0014sws65@aqueratest.onmicrosoft.com.<br/><strong>Note</strong>: This parameter is displayed only if you select <strong>User Principal Name</strong> in the <strong>Source Filter Attribute</strong> parameter.</span>
+</li>
+<li>
+<strong>Mail</strong><span>*</span>: <span>Enter the mail address to filter a worker. For example, bjensen@example.com.<br/><strong>Note</strong>: This parameter is displayed only if you select <strong>Mail</strong> in the <strong>Source Filter Attribute</strong> parameter.</span>
+</li>
+<li><span><strong>Import Limit</strong>: Enter the maximum number of user records that should be imported for debugging during each integration run. By default, the value is 10.</span></li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p>
+<p>You can modify only the source attributes as needed, to align with your specific use case.</p>
+<p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p>
+<p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p>
+<p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p>
+<h2 id="h_01KGHMQNFNBCR5J9J93JC1KRMP">Tables</h2>
+<p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the Paycor application, and you want to update a value for that attribute in AD. Based on your requirement, you can add any number of tables in the integration.</p>
+<p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a> section in the <strong>Using Tables in Integration</strong> guide for details.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span><span></span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+<h3 id="h_01K3JDHSDXSJJHPRZMHT47QV8A"> </h3>
+  </div>
+</body>
+</html>

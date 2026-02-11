@@ -1,0 +1,357 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Paylocity to Brivo Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Paylocity to Brivo Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide describes the Paylocity to Brivo integration, which synchronizes user data from Paylocity to Brivo to support user lifecycle and group management.</p>
+<p>To identify user records across both systems, the integration uses the <strong>Employee ID</strong> attribute from <strong>Paylocity</strong> and matches it to the <strong>External ID</strong> in <strong>Brivo</strong> as a correlation attribute.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The <strong>Paylocity</strong> to <strong>Brivo</strong> integrations provide the following functions:</p>
+<ul>
+<li>
+<p><strong>User Lifecycle Management</strong>: Handles user creation, updates, and deactivation (suspend/delete) from Paylocity to Brivo.</p>
+</li>
+<li>
+<p><strong>Group Rules and Assignment</strong>: Assigns users to specific groups in Brivo based on work location attributes like location, country, state, and city. Group assignments are ignored if the conditions are not met or if work location details are missing.</p>
+</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<strong>Paylocity</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360014901433-Paylocity-Configuration-Guide" rel="noopener noreferrer" target="_blank">Paylocity Configuration Guide</a> for details.</li>
+<li>
+<strong>Brivo</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/29523924880279-Brivo-Configuration-Guide" rel="noopener noreferrer" target="_blank">Brivo Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p><span>This section outlines how the integration must be configured to push user data from Paylocity to Brivo.</span></p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Paylocity to Brivo Integration</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <strong>Paylocity</strong> and <strong>Brivo</strong> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4>
+<p>Configure the following integration scenarios:</p>
+<ul>
+<li>
+<strong>Enable User Lifecycle Management</strong>: Select to enable user provisioning and perform incremental updates.</li>
+<li>
+<strong>Enable Group Management</strong>: Select to assign users to groups based on their work location.</li>
+</ul>
+<h4 id="01KF2RH05MP5RR93W69VEMT2AR">Global Settings</h4>
+<p>Configure the following global settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode: </strong>Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select to generate logs outlining data changes that would occur for debugging.</li>
+<li>
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+</ul>
+<h3 id="01K593846FCRSW60E8KGDZ0K4A">Manage Users</h3>
+<p>The <strong>Manage Users</strong> section enables you to customize the user integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="01KF2SRRKM1CQHC1CDXWTG3K9N">Paylocity Filter Settings</h4>
+<p>Configure the following source filter settings:</p>
+<ul>
+<li>
+<strong>Filter by Company ID</strong>: Select one or more company IDs to limit which users are synced. Only users associated with the selected company IDs will be included in the integration run. For example, selecting <strong>AQUERADM1</strong> and <strong>AQUERADM2</strong> ensures only users from those companies are synced. </li>
+<li><span><strong>Statuses to be Considered as Active</strong>: Select the user statuses that should be considered as active during the sync. Users whose current status matches any of the selected values will be handled as active records in the integration. For example, selecting Active and Leave of Absence treats users in those statuses as active during the sync.</span></li>
+<li><span><strong>Statuses to be Considered as Deactivated</strong>: Select the user statuses that should be considered deactivated during the sync. Users whose current status matches any of the selected values will be handled as deactivated records in the integration. For example, selecting Terminated, Retired, or Deceased ensures users in those statuses are processed as deactivated records.</span></li>
+<li><span><strong>Rehire Employee</strong>: Select to automatically reactivate a user’s Brivo account when they become active again in Paylocity.</span></li>
+</ul>
+<p><span><strong>Note</strong>: Statuses to be Considered as Active and Statuses to be Considered as Deactivated selections must be mutually exclusive. Overlapping values will cause the integration to fail validation.</span></p>
+<h4 id="01KF2ST6Y7GH70E2MJCYT5X2DZ">User Credential Settings</h4>
+<p>Configure the following user credential settings:</p>
+<ul>
+<li>
+<strong>Enable Mobile Pass</strong>: Select to enable users to use the mobile pass.</li>
+<li>
+<strong>Mobile Pass Email Source</strong>: Select the mobile pass email source from the dropdown menu.</li>
+<li>
+<strong>Credentials Assignment Condition</strong>: Select the condition that decides when credentials are assigned for a user from the dropdown menu.</li>
+</ul>
+<h4 id="01KGRXANMS484FDSW5HA1CYGS5">User Provisioning Settings</h4>
+<p>Configure the following provisioning settings:</p>
+<ul>
+<li>
+<strong>Create Condition</strong>: Select a condition from the dropdown menu to determine when users are created.<br/>
+<ul>
+<li>
+<strong>Custom Create Condition</strong>: Enter the JavaScript expression to create a new user in the target application. </li>
+</ul>
+</li>
+<li>
+<strong>Update Condition</strong>: Select a condition from the dropdown menu to determine when users are updated.
+<ul>
+<li>
+<strong>Custom Update Condition</strong>: Enter the JavaScript expression to update a user in the target application. </li>
+</ul>
+</li>
+<li>
+<strong>Delete Condition</strong>: Select a condition from the dropdown menu to determine when users are deleted.
+<ul>
+<li>
+<strong>Custom Delete Condition</strong>: Enter the JavaScript expression to terminate a user in the target application. </li>
+</ul>
+</li>
+<li>
+<strong>Termination Action</strong>: Select an action from the dropdown that determines how user accounts are handled when the delete condition is met. The available options are <strong>Suspend</strong> and <strong>Delete</strong>.</li>
+<li>
+<strong>Delete Credentials from User</strong>: Select to remove all access from Brivo users when they are suspended.</li>
+</ul>
+<h4 id="01KF2ST8S7DK0923YZFYY8XVG5">Correlation Settings</h4>
+<p>Configure the following correlation settings:</p>
+<ul>
+<li>
+<strong>Source Correlation Attribute</strong>: Select the source attribute for correlation from the dropdown menu.</li>
+<li>
+<strong>Target Correlation Attribute</strong>: Select the target attribute for correlation from the dropdown menu.</li>
+</ul>
+<h4 id="01KF2STBQHQZSSRVHSD95EW224">User Provisioning Threshold Settings</h4>
+<p>Configure the following provisioning threshold settings:</p>
+<ul>
+<li>
+<strong>Enable Create Limit</strong>: Select to restrict the number of new users created during sync.</li>
+<li>
+<strong>Create Limit</strong>: Specify the maximum number of user records that can be created in the target application during a single integration run.</li>
+<li>
+<strong>Enable Update Limit</strong>: Select to restrict the number of new users updated during sync.</li>
+<li>
+<strong>Update Limit</strong>: Specify the maximum number of user records that can be updated in the target application during a single integration run.</li>
+<li>
+<strong>Enable Delete Limit</strong>: Select to restrict the number of new users deleted during sync.</li>
+<li>
+<strong>Terminate Limit</strong>: Specify the maximum number of user records that can be terminated from the target application during a single integration run.</li>
+</ul>
+<h3 id="01KF312TPQQR7M1EQ9PP7Z2WE7">Manage Group</h3>
+<p>The <strong>Manage Group</strong> section enables you to customize the user integration settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Assign Group To</strong>: Select a group from the dropdown to assign the user. The available options are Active Users and Inactive Users.</li>
+</ul>
+<h3 id="01K5TXWEG9QVYTG8WCYTN8SJ58">Debug Settings</h3>
+<p>The <strong>Debug Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li><span><strong>Source Filter</strong>: Select the Paylocity attribute to filter the users while retrieving from Paylocity. The available option is Employee ID.</span></li>
+<li><span><strong>Source Filter Value</strong>: Provide the value for the selected source filter.</span></li>
+<li>
+<strong>Fetch Limit</strong>: Specify the maximum number of user records that can be fetched in the target application during a single integration run.</li>
+<li>
+<strong>Generate Debug Logs</strong>: Select to generate debug logs.</li>
+<li>
+<strong>Debug Log Detail Level</strong>: Select the desired debug log detail level from the dropdown menu. The available options are <strong>Full</strong>, <strong>Minimal</strong>, <strong>Summary</strong>, and <strong>Deep</strong>.</li>
+</ul>
+<h3 id="01KFD0RVZ9EM5G97GM5P4XPJHZ">Log Settings</h3>
+<p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes to be included in the log.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+<h3 id="01K5TY2F66RQRGHM0D3B23C2S3">Notifications</h3>
+<p>The <strong>Notifications</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K9750G1WVCA080W3BF2A4RY4">Notification Template Settings</h4>
+<p>Configure the following settings for the notification template:</p>
+<ul>
+<li>
+<strong>Send Email Notification for Success</strong>: Select to enable notification for successful integration.</li>
+<li>
+<strong>Send Email Notification for Failure</strong>: Select to enable notification for failed integration.</li>
+<li>
+<strong>Attach Report to Email</strong>: Select to attach the sync report to notification emails.</li>
+</ul>
+<h4 id="01KFD1AMVYPNY4PY2ZB7A64VGC">Successful Integration Notification Settings</h4>
+<p>Configure the following settings for the successful integration notification:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Recipients' Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent</li>
+<li>
+<strong>Email Subject on Successful Integration Execution</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution</li>
+<li>
+<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution</li>
+</ul>
+<h4 id="h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failed Integration Notification Settings</h4>
+<p>Configure the following settings for the successful integration notification:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Recipients' Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent</li>
+<li>
+<strong>Email Subject on Failed Integration Execution</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution</li>
+<li>
+<strong>Email Body on Failed Integration Execution</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution</li>
+</ul>
+<h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4>
+<p>Configure the following settings for the notification reports:</p>
+<ul>
+<li>
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a CSV report for all integration runs. When this checkbox is selected, the Notification Report Settings section is displayed, allowing you to customize the notification report. If the checkbox is not selected, the email is sent without a CSV report attachment.</li>
+<li>
+<strong>Notification Report Detail Level</strong>: Select the desired notification report detail level. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes to be included in the notification report.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the notification report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+<li>
+<strong>Save Attribute Values</strong>: Select to save all the user attribute values from Paylocity during sync.</li>
+</ul>
+<h3 id="01K5TY1G8QTYYA129P3KWESN2C">Report Settings</h3>
+<p>The <strong>Report Settings</strong> section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Report Detail Level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+<h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insight Settings</h3>
+<p>The <strong>Log Insight Settings</strong> section enables you to customize the integration log insight settings according to your specific use case. It has the following settings:</p>
+<ul>
+<li>
+<strong>Dashboard Name: </strong>Enter the dashboard name for log insights.</li>
+<li>
+<strong>Log Detail Level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes to be included in the log insights.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log insights.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Group Rules</h2>
+<p>The <strong>Group Rules</strong> tab defines how Paylocity users are assigned to Brivo security groups during user creation, updates, and termination. Each rule evaluates user attributes such as City, Country, Division, Location, and State.</p>
+<p>When a user meets a rule’s conditions, they are automatically added to or removed from the specified Brivo groups. This ensures Paylocity user records are accurately mapped to the appropriate security groups in Brivo.</p>
+<p>Perform the following steps to create a new grouprule:</p>
+<ol>
+<li>Click <strong>Add New Rule</strong> to create a new group rule. <br/>The following fields are displayed:<br/><img alt="Paylocity_to_Brivo_1.png" src="./assets/fcd65d9ca95cd97d.bin"/>
+</li>
+<li>Click <strong>Choose Attribute</strong> to view the list of available <strong>Paylocity location attributes</strong>.</li>
+<li>Use the search bar to locate the attribute you want to use as a condition for the rule.<br/><img alt="Paylocity_to_Brivo_2.png" height="256" src="./assets/27022a88707bb842.bin" width="418"/>
+</li>
+<li>Select the required attribute and configure its value to define the rule condition.</li>
+<li>Only users who meet this condition are included in the group rule.</li>
+<li>Click to delete a rule by using the delete icon.<br/><img alt="Paylocity_to_Brivo_3.png" src="./assets/02996735c24e4af1.bin"/>
+</li>
+<li>Click Switch to Expression to write a JavaScript expression and set the condition. <br/><img alt="Paylocity_to_Brivo_4.png" src="./assets/a3d78295451ef316.bin"/>
+</li>
+</ol>
+<h2 id="h_01KC15BBW7VM3TXVTH7W8GHAP3">Attribute Map</h2>
+<p>The Attribute Map tab in <strong>Paylocity </strong>to<strong> Brivo </strong>Synchronization defines the default <strong>Paylocity</strong> attributes that are mapped to the <strong>Brivo</strong> attributes.</p>
+<h2 id="01JVC7QW1983644JGH2WGK8FWX">Tables</h2>
+<p>In the Tables tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p>
+<h2 id="01KF2S3B9ZMTA5NXEEMGJ3MX5B">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span><span></span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+<p> </p>
+<p> </p>
+  </div>
+</body>
+</html>

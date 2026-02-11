@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Okta Inline Hooks Script Orchestration Setup Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Okta Inline Hooks Script Orchestration Setup Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview</h1>
+<p><span>Okta Inline hooks are calls made from Okta, triggered at specific points in Okta process flows, to a custom code. These inline hooks allow you to integrate custom functionality into those flows.</span></p>
+<p><span>Unlike E<span>vent hooks</span>, Inline hooks are synchronous, that is, after sending the call, the <span>Okta</span> process flow waits for a response from the called service.</span><span>Okta provides different types of Inline hooks. Currently, Aquera orchestration supports only <em>Password Import</em> Inline Hook from Okta.</span></p>
+<p><span>The<em> Password Import</em> Inline Hook allows Okta to verify the user’s password against the user profile system before determining whether to grant access and migrate the user password.</span></p>
+<p><span>This guide explains the setup for integrating the password import inline hook in Okta with Aquera's Okta Inline hooks script orchestration. The setup </span><span>involves the following procedures:</span></p>
+<ol>
+<li><a href="#h_01FADET901SH12N49FXRG4P3W2" target="_self">Setting Up Okta Inline Hooks Script Orchestration in Aquera</a></li>
+<li><a href="#h_01F70KH5K5C7W5VYQX9GM88QPB" target="_self">Setting up Inline Hooks in Okta</a></li>
+</ol>
+<h1 id="h_01FADET901SH12N49FXRG4P3W2"><span>Setting Up Okta Inline Hooks Script Orchestration in Aquera</span></h1>
+<p>The Okta Inline Hooks script orchestration must be first set up in Aquera Admin console. When you set up this orchestration, you must enter the script to validate the user's password in the user profile system. After the verification of the user password, a response is sent back to Okta indicating whether the password is successfully verified or not.</p>
+<ol>
+<li value="1">Log in to Aquera Admin console.</li>
+<li value="2">Navigate to the <strong>Orchestrations</strong> page and click <strong>Create Orchestration</strong>. The <strong>Add Orchestration</strong> pop-up window is displayed.
+<p><img alt="Add_Orch.png" height="598" src="./assets/d1e67c17cf186e7f.png" width="340"/></p>
+</li>
+<li value="3">Provide a <strong>Name</strong> for the orchestration.</li>
+<li value="4">Select <strong>Okta Inline Hooks Webhook Script </strong>from the <strong>Event</strong> tab on the pop-up window. </li>
+<li value="5">Click <strong>Done</strong>. The<strong> Configuration</strong> page is displayed
+<p><img alt="Config.png" src="./assets/2433a7eeb2dc4809.png"/></p>
+</li>
+<li value="6">Select the application against which the user's password needs to validated from the <strong>Application</strong> drop-down. </li>
+<li value="7">In the script editor area, enter the script to be executed for processing the inbound event from Okta. It must include the script for validating the user password against the user profile system.
+<ul>
+<li>The request from Okta has to be referenced in the script using the variable <em><strong>event</strong></em>.</li>
+</ul>
+Here is a sample script to process the inbound <em><strong>event</strong></em> from Okta:
+<pre data-stringify-type="pre">const cred = JSON.stringify(<strong>event</strong> &amp;&amp; <strong>event</strong>.data &amp;&amp; <strong>event</strong>.data.context &amp;&amp; <strong>event</strong>.data.context.credential);<br/>log.info(cred);<br/>cred.username //gives the username in the Okta request<br/>cred.password //gives the password in the Okta request</pre>
+<ul>
+<li>The <strong>bcrypt</strong> password-hashing function can be used in the script. For details on this function, click <a href="https://www.npmjs.com/package/bcryptjs" rel="noopener" target="_blank">here</a>.</li>
+</ul>
+<p>Your script must also include the following code to specify whether the password verification is successful or not. An appropriate response is sent to Okta based on the verification result.</p>
+<pre data-stringify-type="pre">customScriptResult = true; //password verified<br/>customScriptResult = false; //wrong password provided</pre>
+</li>
+<li value="8">Click <strong>Create</strong> at the top right-corner of the page to create the orchestration.</li>
+<li value="9">Click the <strong>Event Detail</strong> tab. A URL is displayed on the page.
+<p><img alt="Event_Dtl.png" src="./assets/713dd9d50d362af9.png"/></p>
+<p>This URL will have to be copied and configured as the inline hook endpoint when you create the Inline Hook in Okta. For details, refer to the <a href="#h_01F70KH5K5C7W5VYQX9GM88QPB" target="_self">Setting up Inline Hooks in Okta</a> section.</p>
+</li>
+<li value="10">Click <strong>Create Token</strong>. A token is generated and is displayed on the <strong>Generate Token</strong> pop-up window.
+<p><img alt="Token.png" src="./assets/5fa14e665afbf7fb.png"/></p>
+</li>
+<li value="11">Copy the token and save it. This token will have to be configured when you create the Inline Hook in Okta. For details, refer to the <a href="#h_01F70KH5K5C7W5VYQX9GM88QPB" target="_self">Setting up Inline Hooks in Okta</a> section.</li>
+<li value="12">Close the pop-up window.
+<p><img alt="Refresh.png" src="./assets/eea920587625ac1c.png"/></p>
+<p>In case you have lost the generated token, you can click <strong>Refresh Token</strong> to generate a new token. Then, this new token will have to be configured in Okta.</p>
+</li>
+<li value="13">Click <strong>Save Changes.</strong>
+</li>
+</ol>
+<h1 id="h_01F70KH5K5C7W5VYQX9GM88QPB"><span>Setting up Inline Hooks in Okta</span></h1>
+<p><span>This procedure explains how you can set up a password import inline hook in Okta. This inline hook verifies a user-supplied password. The username and password will be sent as part of the request to Aquera's Okta inline hook orchestration.</span></p>
+<ol>
+<li value="1">Log in to Okta.</li>
+<li value="2">Navigate to <strong>Admin &gt; Workflow &gt; Inline Hooks</strong>. The <strong>Inline Hooks</strong> page is displayed.
+<p><img alt="Okta1.png" src="./assets/634f96143c522591.png"/></p>
+</li>
+<li value="3">Click <strong>Add Inline Hook &gt; Password Import</strong>. The <strong>Create Inline Hook</strong> window is displayed.
+<p><img alt="Okta2.png" src="./assets/d91abc4e89b17eab.png"/></p>
+</li>
+<li value="4">Enter values in the following fields:
+<table border="1" width="840">
+<tbody>
+<tr>
+<td><span><strong>Field</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td>Name</td>
+<td>Enter a name for the inline hook.</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>Copy the URL from the <strong>Event Detail</strong> tab of the Okta Inline Hook Script orchestration in Aquera Admin console and paste it here. Refer to the <a href="#h_01FADET901SH12N49FXRG4P3W2" target="_self">Setting Up Okta Inline Hooks Script Orchestration in Aquera</a> section for details.</td>
+</tr>
+<tr>
+<td>Authentication field</td>
+<td>
+<p>Enter <em>Authorization, </em>which is the name of the authorization header.</p>
+<p><strong>Note</strong>: <em>Okta Inline Hooks use header-based authentication</em>.</p>
+</td>
+</tr>
+<tr>
+<td>Authentication secret</td>
+<td>
+<p>Enter the keyword, <strong>bearer</strong>, followed by a space and the token generated in Aquera Admin console. The format of the value to be entered in this field is, <em><strong>bearer</strong> &lt;copiedtoken&gt;</em>.</p>
+<p>You must copy the token that was generated for the Okta Inline Hook Script orchestration in Aquera Admin console and paste it here. Refer to the <a href="#h_01FADET901SH12N49FXRG4P3W2" target="_self">Setting Up Okta Inline Hook Orchestration in Aquera</a> section for details.</p>
+</td>
+</tr>
+<tr>
+<td>Custom header fields</td>
+<td>
+<p><span>Optional field name / value pairs to be sent with the request to Aquera's Okta inline hook orchestration.</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Inline2.png" src="./assets/727a3c5f7ce68366.png"/></p>
+</li>
+<li value="5">Click <strong>Save &amp; Continue</strong>. The password inline hook is now active in Okta.</li>
+</ol>
+<h1 id="response-to-okta"><span>Response to Okta</span></h1>
+<p><span>When the user password is successfully validated with the user profile system, a response is sent back to Okta as <em>Verified</em>. Else, the response is sent to Okta as <em>Unverified</em>.</span></p>
+<table border="0">
+<tbody>
+<tr>
+<td>
+<p><strong>NOTE:</strong></p>
+</td>
+<td>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p>By default, Okta expects a response for the inline hook request within 3 seconds after which a time-out occurs. If you want to increase the response time to handle varying processing times, you must send a request to the Okta support team to increase the inline hook request time-out to 10 seconds. </p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+  </div>
+</body>
+</html>

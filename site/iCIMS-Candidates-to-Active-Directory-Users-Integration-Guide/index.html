@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>iCIMS Candidates to Active Directory Users Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>iCIMS Candidates to Active Directory Users Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JPPJY3FDFB1DD9A9NW2CC2AE">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide covers the end-to-end tasks in setting up the iCIMS to Active Directory integration to sync the user's data.</p>
+<p>To identify user records across both systems, the integration uses the <strong>email address</strong> attribute of candidates in iCIMS and matches it to the <strong>extensionAttribute6</strong> attribute of users in Active Directory as the correlation attribute.</p>
+<p><strong>Note</strong>: When creating a user in the Active Directory (AD) application, a unique Distinguished Name (DN) is assigned to the user. The DN will be checked against all existing users to ensure it is not already in use. If the DN is unique, the user will be created.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<strong>iCIMS</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360056231174" rel="noopener noreferrer" target="_blank">iCIMS Configuration Guide</a> for details.</li>
+<li>
+<strong>Active</strong> <strong>Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details how the integration must be configured to push user's data from iCIMS to Active Directory (AD).</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>iCIMS Candidates to Active Directory Users</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your <strong>iCIMS</strong> and <strong>Active Directory</strong> connector instances.</li>
+<li>Click <strong>Continue</strong>. The <a href="#h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</a> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>On the <strong>Configuration</strong> page, the following sections are displayed:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to edit, remove, and refresh these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Logging</strong>: Select this to generate logs outlining data changes. If selected, the <strong>Log Settings</strong> section is displayed.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this to enable and manage the integration-related notifications. If selected, the <strong>Notification Settings</strong> section is displayed.</li>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this to generate a report detailing the data changes that would happen, but without applying them.</li>
+</ul>
+<h3 id="h_01JZA59QC2M9E0JR9QKAD7BH53">Log Settings</h3>
+<p>Configure the following log settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: The <strong>Full Details</strong> option is selected by default to populate all the attribute details.</li>
+</ul>
+<h3 id="h_01K3K8R7VAA5KJMGKNJB2V2RVG">Notification Settings</h3>
+<p>Configure the following notification settings:</p>
+<h4 id="h_01K35WZKRXA2NSEVVFR3TECBRE">Email Settings</h4>
+<p>Configure the following email settings:</p>
+<ul>
+<li>
+<strong>Send User Creation Email to</strong>: Indicate who should be notified when a user account is successfully created. The available option is <em>Custom</em>.</li>
+<li>
+<strong>Recipient's Email Addresses:</strong> Enter the email addresses of users to whom the email notifications will be sent.</li>
+<li>
+<strong>Email Subject on Successful User Creation</strong>: Enter the content that must be used as the email subject for sending notifications to recipient's email addresses upon user creation.</li>
+<li>
+<strong>Email Body on Successful User Creation</strong>: Enter the content that must be used as the email body for sending notifications to recipient's email addresses upon user creation.</li>
+<li>
+<strong>Email Subject on Successful User Creation in Report Only Mode</strong>: Enter the email subject to be used for sending notifications to recipients in report-only mode, without creating actual user accounts.<br/><strong>Note</strong>: This email subject is used only if the <strong>Enable Report-Only Mode </strong>parameter is enabled in the<strong> General Settings </strong>section<strong>.</strong>
+</li>
+<li>
+<strong>Email Body on Successful User Creation in Report Only Mode</strong>: Enter the email body to be used for sending notifications to recipients in report-only mode, without creating actual user accounts.<br/><strong>Note</strong>: This email body is used only if the <strong>Enable Report-Only Mode </strong>parameter is enabled in the<strong> General Settings </strong>section<strong>.</strong>
+</li>
+<li>
+<strong>Email Subject for User Creation Failure</strong>: Enter the content that must be used as the email subject for sending notifications to recipient's email addresses upon user creation failure.</li>
+<li>
+<strong>Email Body for User Creation Failure</strong>: Enter the content that must be used as the email body for sending notifications to recipient's email addresses upon user creation failure.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The Attribute Map tab defines the iCIMS attributes that are mapped to the Active Directory attributes for syncing user creation in Active Directory. Only the source attributes can be modified, as needed, to align with your specific use case.</p>
+<h2 id="01JVC7QW1983644JGH2WGK8FWX">Tables</h2>
+<p>In the <strong>Tables</strong> tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p>
+<h2 id="h_01JVP6WJ681AK5EKZYA0EHHYMZ">Event</h2>
+<p>The <strong>Event</strong> tab is used to configure the webhook details.</p>
+<p>Provide the following details and save the changes:</p>
+<ul>
+<li>
+<strong>Event Source</strong>: Select your iCIMS application from which all joiner events are triggered.</li>
+<li>
+<strong>URL</strong>: Copy this URL and paste it in the iCIMS Webhooks setup page. For details, refer to the <a href="#h_01ESN6XGCPQRMFGWGTMB3YVH03">Set up the Message Listener Webhook in iCIMS</a> section.</li>
+<li>
+<strong>Create Token</strong>: Click this button to generate the token that must be passed on the iCIMS Webhooks setup page. For details, refer to the <a href="#h_01ESN6XGCPQRMFGWGTMB3YVH03">Set up the Message Listener Webhook in iCIMS</a> section.</li>
+</ul>
+<h1 id="h_01ESN6XGCPQRMFGWGTMB3YVH03">Set up the Message Listener Webhook in iCIMS</h1>
+<p>You need to perform the following procedures to set up the event notification rules in iCIMS that trigger the iCIMS events.</p>
+<h2 id="h_01JEDS0JE3M1JHJ5E256DF71XQ">Configure Recruiting Workflow Statuses</h2>
+<p>Perform the following steps to configure the recruiting workflow statuses:</p>
+<ol>
+<li>Select <strong>Search</strong> from the menu bar, then select <strong>Recruiting Workflow</strong> to access the Recruiting Workflow search.</li>
+<li>Within the <strong>Recruiting Workflow Search: Filters</strong> section, click <strong>Show more</strong> to expand the section, if necessary, then click <strong>Add Filter</strong>.</li>
+<li>Type <em>status</em> in the search box on the filter popup and select <strong>Status</strong> under <strong>Filters</strong> &gt; <strong>General</strong>. Then, click <strong>Add</strong><strong>Selected</strong>. This is to filter based on specific statuses. <br/><img alt="Step1-1.png" src="./assets/e6c8f5a80ceadcc6.bin"/>
+</li>
+<li>Select a status from the list to the right of the added filter. For example, to filter hired candidates, select the status <strong>Hired: Hired</strong>.<br/><img alt="step1-2.png" src="./assets/d27e9b641e1806db.bin"/>
+</li>
+<li>You can select multiple statuses from the list by pressing the Ctrl (or Cmd) key on your keyboard and clicking all the relevant statuses in the list.<br/><img alt="step2.png" src="./assets/0e625c69add865f1.bin"/>
+</li>
+<li>Click the <em>save</em> icon next to the <strong>Search Template</strong> field to save the template.</li>
+<li>In the <strong>Save Search Template</strong> popup, provide a title and description for the template. Select the checkbox <strong>Use this template</strong>, then select <strong>User Groups</strong>, and click <strong>Save</strong>. <br/><img alt="step4.png" src="./assets/b63f08e33ab2e719.bin"/>
+</li>
+</ol>
+<h2 id="h_01JEDVPPK1EE34J31XFAGHDJJG">Create Event Notification Rule</h2>
+<p>Perform the following steps to create a rule for event notifications:</p>
+<ol>
+<li>Select <strong>Admin</strong> from the menu bar and navigate to<strong> Global (Platform &amp; Portals)</strong> &gt; <strong>Event Notifications</strong>.<br/><img alt="step5.png" height="227" src="./assets/b5f96904421d1118.bin" width="328"/>
+</li>
+<li>Click<strong> Create Rule</strong>.</li>
+<li>In the <strong>Create Rule </strong>page, provide the following details:<br/><img alt="step7.png" src="./assets/40d73812907d21d4.bin"/><br/>
+<ul>
+<li>
+<strong>Rule Name</strong>: Enter a rule name.</li>
+<li>
+<strong>Enabled</strong>: This checkbox will be disabled when creating a new rule.</li>
+<li>
+<strong>Platform Event</strong>: Select the event name <strong>Workflow Status Change</strong>.</li>
+<li>
+<strong>Associated Object</strong>: Select <strong>Recruiting Workflow</strong>. </li>
+<li>
+<strong>Search Templates</strong>: Select the template name created earlier. </li>
+<li>
+<strong>Integration URL</strong>: Enter the Aquera event URL from the <em>Event</em> tab of the iCIMS Candidates to Active Directory Users Integration in the Aquera Admin portal.<br/><img alt="step-8.png" src="./assets/560a84f02ad799aa.bin"/>
+</li>
+<li>
+<strong>Authentication</strong>: Select <strong>Basic</strong> <strong>Authentication</strong>.</li>
+<li>
+<strong>Integration</strong> <strong>Username</strong>: Enter the value <em>AqueraListener.</em>
+</li>
+<li>
+<strong>Integration</strong> <strong>Password</strong>: Enter the token generated from the <em>Event</em> tab of the iCIMS Candidates to Active Directory Users Integration in the Aquera Admin portal.</li>
+</ul>
+</li>
+<li>Click <strong>Save </strong>to save the event notification rule.</li>
+</ol>
+<h2 id="h_01JEDYFRGEG2RRG7817PA25538">Enable Event Notification Rule</h2>
+<p>New rules cannot be enabled until the search engine is rebuilt. The <strong>Enabled</strong> checkbox in event notification rules can only be selected after the rebuild.</p>
+<p>Perform the following steps to rebuild the search engine:</p>
+<ol>
+<li>Select <strong>Admin</strong> from the menu bar and navigate to <strong>Tools</strong> &gt; <strong>Soft Reset</strong>.<br/><img alt="step10.png" height="411" src="./assets/6c879b032c00254d.bin" width="465"/>
+</li>
+<li>Click the <strong>Reset</strong> button under the section<strong> Reset Search Engine</strong>.<br/><img alt="Step11.png" src="./assets/55f83b8343712553.bin"/>
+</li>
+<li>
+<p>You will need to wait sometime for the search engine to reset.</p>
+</li>
+</ol>
+<p>Perform the following steps to enable the event notification rule:</p>
+<ol>
+<li>Select <strong>Admin</strong> from the menu bar and navigate to <strong>System Configuration </strong>&gt;<strong> Talent Management</strong>.<br/><img alt="step-12.png" src="./assets/313786a0ee11d717.bin"/>
+</li>
+<li>In the <strong>Setup</strong> tab, click the <em>expand</em> icon to expand your integration.</li>
+<li>Under the <strong>Event Notifications</strong> section, click <strong>Associate Existing Event.<br/><img alt="step-13.png" src="./assets/66955f14fc2d90dd.bin"/><br/></strong>
+</li>
+<li>Select the checkbox for your event notification rule name and click <strong>Save</strong>.<br/><img alt="step-14.png" src="./assets/622a99cd068997bd.bin"/>
+</li>
+<li>Select your rule under <strong>Event Notifications</strong>.<br/><img alt="step-15.png" src="./assets/506053e0c2c32d45.bin"/>
+</li>
+<li>In the <strong>Edit Rule</strong> page, select the checkbox <strong>Enabled </strong>and click<strong> Save</strong>.<br/><img alt="step-16.png" src="./assets/f5a4a3c324ad854b.bin"/>
+</li>
+</ol>
+<div>
+<div>
+<div>
+<div data-message-author-role="assistant" data-message-id="3cefbcae-7658-4a6b-9207-0798dc10c3f7" data-message-model-slug="gpt-4o-mini" dir="auto">
+<div>
+<div>
+<p>Once the setup is complete, any change in a candidate's workflow status will trigger an event notification from the iCIMS talent platform to Aquera’s iCIMS Message Listener. The listener processes the event and updates the candidate data in the relevant target application.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<h1 id="01JPPN69EDYEQ0JSSDAS9ZQC6M">Run Integration</h1>
+<p>You can set up events or schedule triggers to run the integration. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p>
+  </div>
+</body>
+</html>

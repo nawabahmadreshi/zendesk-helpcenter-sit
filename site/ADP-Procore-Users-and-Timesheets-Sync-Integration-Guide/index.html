@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP <-> Procore - Users and Timesheets Sync Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP <-> Procore - Users and Timesheets Sync Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide describes the process for setting up an integration to fetch employee timesheet data from Procore and synchronize it with ADP Workforce Now, as well as user data from ADP Workforce Now to Procore.</p>
+<p>To identify user records across both systems, the integration uses the <strong>employeeID</strong> attribute from Procore and matches it to either <strong>badgeID</strong>, <strong>positionID</strong>, or <strong>workerID</strong> in ADP Workforce Now as a correlation attribute for the timesheet synchronization. On the other hand, for the user lifecycle management synchronization, the integration uses either <strong>badgeID</strong>, <strong>positionID</strong>, or <strong>workerID</strong> from ADP Workforce Now and matches it to the <strong>employeeID</strong> attribute in Procore as the correlation attribute.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The following are the key functions of the integration:</p>
+<ul>
+<li>
+<strong>Procore to ADP Workforce Now Timesheet Synchronization Integration</strong>:
+<ul>
+<li>Retrieves user's timesheet data from Procore within a specified timeframe.</li>
+<li>Syncs newly added or updated timesheet records from Procore to ADP Workforce Now.</li>
+<li>Supports both full and incremental sync modes to ensure only the relevant timesheet data is transferred.</li>
+<li>Generates a CSV report of the synced timesheets based on the integration configuration, enabling visibility into data changes pushed to ADP.</li>
+<li>Supports filtering by project name(s), cost code(s), or task code(s), as well as labor charge fields, to target specific timesheet data during synchronization.</li>
+<li>Filters timesheet data retrieved from Procore based on a defined source filter and its corresponding value to limit the synchronization scope.</li>
+</ul>
+</li>
+<li>
+<strong>ADP Workforce Now to Procore User Synchronization Integration:</strong>
+<ul>
+<li>Retrieves worker data from ADP Workforce Now within a specified timeframe.</li>
+<li>Syncs newly added or updated worker records from ADP Workforce Now to people in Procore resource planning.</li>
+<li>Supports both full and incremental sync modes to ensure only the relevant worker data is transferred.</li>
+<li>Generates a CSV report of the synced workers based on the integration configuration, enabling visibility into data changes pushed to Procore.</li>
+<li>Allows configuration of ADP Workforce Now statuses to be treated as inactive in Procore, ensuring appropriate user deactivation or termination.</li>
+<li>Filters worker records retrieved from ADP based on a defined source filter and its corresponding value to limit the synchronization scope.</li>
+<li>Allows selective inclusion of specific PII attributes from ADP in integration reports.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Procore</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/26942489398679" rel="noopener noreferrer" target="_blank">Procore Configuration Guide</a> for details.</li>
+<li>
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines the configuration required to integrate Procore and ADP Workforce Now, enabling the seamless transfer of timesheet data from Procore to ADP Workforce Now and user data from ADP Workforce Now to Procore.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Procore to ADP Timesheets sync</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your Procore and ADP Workforce Now connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors used in the integration. It allows you to search for and update these application connectors.</p>
+<p>The applications shown in this section depend on the type of synchronization the integration supports:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Use Case</strong></td>
+<td><strong>Source Application</strong></td>
+<td><strong>Target Application</strong></td>
+</tr>
+<tr>
+<td>Timesheet Sync</td>
+<td>Procore</td>
+<td>ADP Workforce Now</td>
+</tr>
+<tr>
+<td>User Lifecycle Management Sync</td>
+<td>ADP Workforce Now</td>
+<td>Procore</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K58FR9E9R9R6P5J9YG58BPHN">Integration Scenario(s)</h4>
+<p>Configure the following integration scenario(s):</p>
+<ul>
+<li>
+<strong>Select the Integration Module(s)</strong>: Select one or more integration modules from the dropdown list as per your use case. The following are the available options:
+<ul>
+<li>
+<p id="h_01K0EPNJ3M1QM6TYYTY0ZSH2RY"><strong>User Lifecycle Management</strong>: Select this checkbox to sync ADP Workforce Now workers with people in Procore Resource Planning.<br/><strong>Note</strong>: The <strong>Manage Users</strong> section will be displayed only when this checkbox is selected.</p>
+</li>
+<li>
+<p id="h_01K0EPNNKQW735ASNZGF5VESYQ"><strong>Timesheet Synchronization</strong>: Select this checkbox to enable timesheet sync from Procore to ADP.<br/><strong>Note</strong>: The <strong>Manage</strong> <strong>Timesheets</strong> section will be displayed only when this checkbox is selected.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h3>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Incremental Mode</strong>: Select this checkbox to run the integration in incremental mode.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.</li>
+<li>
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable the integration-related notifications.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report.</li>
+</ul>
+<h3 id="h_01K0PGWJSDQBPT1BZ25EAQGNYR">Log Settings</h3>
+<p>Configure the following logging settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+<li>
+<strong>Enable Debug Mode</strong>: Select this checkbox to generate logs outlining data changes that would occur for debugging.</li>
+<li>
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> option.</li>
+</ul>
+<h3 id="h_01K0PGWJSDWRPH0DRX23RJ5DDJ">Report Settings</h3>
+<p>Configure the following report generation settings:</p>
+<ul>
+<li>
+<strong>Select Report Detail Level</strong>: Select the desired level of report detail from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+<li>
+<strong>Enable Integration Report Download</strong>: Select this checkbox to allow downloading the integration report in CSV format.</li>
+</ul>
+<h3 id="h_01K0EPNYJEHDW4TQRTN6PXT579">Notification Settings</h3>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li>
+<strong>Recipients' Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li>
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject.</li>
+<li>
+<strong>Email Body</strong>: Enter the content that must be used as the email body for the email notifications.</li>
+<li>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a CSV report for all integration runs.</li>
+</ul>
+<h3 id="01K58GNXGG1YQW0AX744QCT7JV">Analytics Settings</h3>
+<p>Configure the following analytics settings:</p>
+<ul>
+<li>
+<strong>Select the Analytics Detail Level</strong>: Select the desired level of detail from the dropdown menu on the log insights dashboard. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01K58GCMMA2676B34V7WEAWTDN">Manage Users</h3>
+<p>Configure the following <strong>User Lifecycle Management Settings</strong>:</p>
+<ul>
+<li>
+<strong>Enable ADP Workers to People in Procore Resource Planning Sync</strong>: Select this checkbox to sync ADP Workforce Now workers with people in Procore Resource Planning.</li>
+<li>
+<strong>Select Source Field for Correlation</strong>: Select the source field for correlation in User Lifecycle Management from the dropdown menu. The available options are <strong>Position ID in ADP</strong>, <strong>Associate ID in ADP</strong>, and <strong>Badge in ADP under Time and Attendance in Employment Profile</strong>.</li>
+<li>
+<strong>Select Target Field for Correlation</strong>: Select the target field for correlation in User Lifecycle Management from the dropdown menu. The available option is <strong>Employee ID in Procore</strong>.</li>
+<li>
+<strong>Select ADP Statuses to Be Considered as Active False</strong>: Select the list of statuses from ADP Workforce Now that are to be considered false for deactivating or terminating the user in Procore. For example, if you select  <strong>Terminated</strong>, <strong>Retired</strong> from the dropdown, the users with <strong>Terminated</strong> and <strong>Retired</strong> statuses will be regarded as inactive in Procore.</li>
+<li>
+<strong>Select the Source Filter</strong>: Select the ADP worker filter to filter the workers while retrieving from ADP Workforce Now. The available options are <strong>Filter by Position ID in ADP</strong> and <strong>Filter by Associate ID in ADP</strong>.</li>
+<li>
+<strong>Enter the Source Filter Value</strong>: Provide the value for the selected source filter. For example, <em>UZY000133.</em>
+</li>
+<li>
+<strong>Select the Create Condition</strong>: Select the create condition to determine whether a user should be created in the target application. The available options are <strong>Create Only Active Users from ADP</strong> and <strong>Create All Users from ADP</strong>.</li>
+<li>
+<strong>Select the Update Condition</strong>: Select the update condition to determine whether a user must be updated in the target application. The available options are <strong>Update Only Active Records from ADP</strong>, <strong>Update Only Terminated Records from ADP</strong>, <strong>Update All Records from ADP</strong>, and <strong>Custom Update Condition</strong>.</li>
+<li>
+<strong>Import Limit</strong>: Specify the maximum number of user records that can be imported into the target application during a single run of the integration.</li>
+<li>
+<strong>Create Limit</strong>: Specify the maximum number of user records that can be created in the target application during a single integration run.</li>
+<li>
+<strong>Update Limit</strong>: Specify the maximum number of user records that can be updated in the target application during a single run of the integration.</li>
+<li>
+<strong>Select the PII Attributes from ADP</strong>: Select the Personally Identifiable Information (PII) attributes from ADP Workforce Now to include in the report.</li>
+</ul>
+<h3 id="h_01K58GF22SG05NNTGPM6BKQB4F">Manage Timesheets</h3>
+<p>Configure the following <strong>Timesheet Synchronization Settings</strong>:</p>
+<ul>
+<li>
+<strong>Enable Timesheet Sync from Procore to ADP</strong>: Select this checkbox to enable timesheet sync from Procore to ADP.</li>
+<li>
+<strong>Select the Source Field for Correlation</strong>: Select the source field for correlating in timesheet synchronization. The available option is <strong>Employee ID in Procore</strong>.</li>
+<li>
+<strong>Select the Target Field for Correlation</strong>: Select the target field for correlation in timesheet sync. The available options are <strong>Position ID in ADP</strong>, <strong>Associate ID in ADP</strong>, and <strong>Badge in ADP under Time and Attendance in Employment Profile</strong>.</li>
+<li>
+<strong>List Labor Charge Fields</strong>: Provide the list of labor charge fields in ADP Workforce Now to sync with the ADP Timecards. For Example, <em>Work Class, Job</em>.</li>
+<li>
+<strong>List Procore Project Name(s)</strong>: Enter the full name of the Procore projects for the timecard sync. For example, <em>TEST - Productive Project, TEST - Sandbox Project.</em>
+</li>
+<li>
+<strong>List Procore Cost Code(s) or Task Code(s)</strong>: Enter the Procore cost codes or task codes for the timesheet sync. For example, <em>05-4000-Framing Interior</em>, <em>09-2500-drywall hanger</em>.</li>
+<li>
+<strong>Select the Source Filter</strong>: Select the source filter to filter the users’ timesheet while retrieving from Procore. The available options are <strong>Filter by Employee ID in Procore</strong> and <strong>Filter by TimeCard Status in Procore</strong>.</li>
+<li>
+<strong>Enter the Source Filter Value</strong>: Provide the value for the selected source filter. For example, <em>000000133</em>.</li>
+<li>
+<strong>Select the Target Filter</strong>: Select the target filter to filter the ADP Workforce Now workers. The available options are <strong>Filter by Position ID in ADP</strong> and <strong>Filter by Associate ID in ADP</strong>.</li>
+<li>
+<strong>Enter the Target Filter Value</strong>: Provide the value for the selected target filter. For example, <em>UZY000133</em>. </li>
+<li>
+<strong>Select the Date to Filter Timesheets from Procore</strong>: Select a filter when you are using the source.EmployeeFilter for a single user, or when running the full sync for the first time. The available options are <strong>Start Date</strong> and <strong>Updated Date</strong>.</li>
+<li>
+<strong>Enter Date/DateTime Value for the Selected Date Filter</strong>: Enter the start date in YYYY-MM-DD format when <em>StartDate</em> is the selected filter, and use the YYYY-MM-DD UTC format when <em>UpdatedDate</em> is the selected filter.</li>
+<li>
+<strong>Select the Create Condition(s)</strong>: Select the create condition(s) to determine whether a timesheet should be created in the target application. The available options are <strong>Create Approved Timecard from Procore</strong>, <strong>Create Pending Timecard from Procore</strong>, <strong>Create Completed Timecard from Procore</strong>, and <strong>Create Reviewed Timecard from Procore</strong>.</li>
+<li>
+<strong>Select the Update Condition(s)</strong>: Select the update condition(s) to determine whether a timesheet must be updated in the target application. The available options are <strong>Update Approved Timecard from Procore</strong>, <strong>Update Pending Timecard from Procore</strong>, <strong>Update Completed Timecard from Procore</strong>, and <strong>Update Reviewed Timecard from Procore</strong>.</li>
+<li>
+<strong>Import Limit</strong>: Specify the maximum number of timesheets that can be imported into the target application during a single integration run.</li>
+<li>
+<strong>Create Limit</strong>: Specify the maximum number of timesheets that can be created in the target application during a single integration run.</li>
+<li>
+<strong>Update Limit</strong>: Specify the maximum number of timesheets that can be updated in the target application during a single integration run.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The Procore to ADP Timesheets sync integration maps the Procore and ADP Workforce Now attributes.</p>
+<p>The attributes displayed in this section depend on the type of synchronization the integration supports:</p>
+<ul>
+<li>
+<strong>TimeCard Mapper</strong>: For timesheet synchronization, the integration uses Procore attributes as the source and maps them to the corresponding ADP Workforce Now attributes as the target.</li>
+<li>
+<strong>People Mapper</strong>: For user synchronization, the integration uses ADP Workforce Now attributes as the source and maps them to the appropriate Procore attributes as the target.</li>
+</ul>
+<p>Only the source attributes can be modified, as needed, to align with your specific use case.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

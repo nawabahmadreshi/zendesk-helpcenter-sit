@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Paylocity Webhook Sync Orchestration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Paylocity Webhook Sync Orchestration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview</h1>
+<p>This guide explains how you can set up <em>Paylocity Webhook Sync</em> orchestration in Aquera Admin to receive and process all the user events received from the Paylocity application. Aquera sends this data to the target system, for example, an identity management system such as Okta.</p>
+<p>The user events can be creation of a user, update the information of an existing user, or termination of a user. A webhook setup must be configured in the Paylocity system to send these user events to an endpoint URL provided by Aquera.</p>
+<p>The following procedures are involved in the Paylocity webhook setup:</p>
+<ul>
+<li><a href="#h_01F0JP5ZX7VYBY695KKK7J0999" target="_self">Setting Up Paylocity Webhook Sync</a></li>
+<li><a href="#h_01F0JP667G8BB903WPR2XHESRA" target="_self">Setting Up Webhooks in Paylocity</a></li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Make sure that the source application (Paylocity) and the target application are configured in Aquera Admin before starting the Paylocity Webhook Sync setup.  </p>
+<p>For details, refer to the corresponding application configuration guides provided by Aquera. For details on Paylocity application configuration, refer to the <a href="https://support.aquera.com/hc/en-us/articles/360014901433" rel="noopener" target="_blank">Paylocity Configuration Guide</a>.</p>
+<h2 id="h_01F0JP5ZX7VYBY695KKK7J0999">Setting Up Paylocity Webhook Sync</h2>
+<ol>
+<li>Log in to the Aquera Admin console, <a href="https://admin.aquera.io/">https://admin.aquera.io/</a>
+</li>
+<li value="2">Click <strong>Orchestrations</strong> on the left navigation pane and click <strong>Create Orchestration</strong>. The <strong>Add Orchestration</strong> page is displayed.
+<p><img alt="Add_Orch.png" src="./assets/0f6ab36417de691f.png"/></p>
+</li>
+<li value="3">Enter a <strong>Name</strong> for the orchestration.</li>
+<li value="4">Click on the <strong>Select Orchestration Type</strong> drop-down and select the orchestration type, <strong><em>Paylocity Webhook Sync</em></strong>, from the <strong>Event</strong> tab in the pop-up window.
+<p><img alt="Orceh_Sel.png" height="450" src="./assets/cd33e34837522c36.png" width="301"/></p>
+</li>
+<li value="5">Click <strong>Done</strong>. The <strong>Add Orchestration</strong> page displays additional fields and tabs.
+<p><img alt="Fields_tabs.png" src="./assets/3ef9abadbb83667e.png"/></p>
+The settings to be done in each tab are explained in the following sections:
+<ul>
+<li> </li>
+<li> </li>
+<li> </li>
+</ul>
+</li>
+</ol>
+<h3 id="h_01EZA56Y42W6PYT30MAC9TBWV6">Configuration</h3>
+<p>This section details the settings in the <strong>Configuration</strong> tab:</p>
+<ol>
+<li value="1">Enter the following details on the <strong>Configuration</strong> tab, as required:
+<table border="1" width="866">
+<tbody>
+<tr>
+<td><span><strong>Field</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td colspan="2"><strong>Basic Details</strong></td>
+</tr>
+<tr>
+<td>Source Application</td>
+<td>
+<p>Select the <strong>Paylocity</strong> application that you have added through the <strong>Applications</strong> page. The user events are received from the Paylocity application as part of the orchestration.</p>
+<p><img alt="Source.png" src="./assets/c51451dc28fba245.png"/></p>
+</td>
+</tr>
+<tr>
+<td>
+<div>Target Application</div>
+</td>
+<td>
+<p>Select the target application to which the user data must be updated as part of the orchestration. </p>
+<p><img alt="target.png" src="./assets/14bddc684acab10a.png"/></p>
+</td>
+</tr>
+<tr>
+<td>Report Only</td>
+<td>
+<p>Select this checkbox to generate a report that shows the data that would be changed in the target application, without actually making those changes. This can be selected for the first instance of orchestration to identify any issues. The report will be sent to the email IDs configured in the<strong> Admin Email List</strong>. You can clear this selection after verifying the report and confirming that the result is as expected.</p>
+<p>This checkbox is selected by default.</p>
+</td>
+</tr>
+<tr>
+<td>Admin Email List</td>
+<td>
+<p>The administrative email addresses to which notifications and reports on this orchestration must be sent. Multiple email addresses must be separated by comma.</p>
+<p><img alt="Admin_Email.png" src="./assets/aef32fa1192b6c4a.png"/></p>
+</td>
+</tr>
+<tr>
+<td>Match Expression</td>
+<td>
+<p>The expression, which has to be used to identify the target record that matches a source record. This expression can be given only if the target connector supports GET operation.</p>
+<p><img alt="Expression.png" src="./assets/9b1ae4e68d5b5c53.png"/></p>
+</td>
+</tr>
+<tr>
+<td>Map Manager</td>
+<td>
+<p>Select this checkbox to map users' managers from source to target. The manager attributes in the user objects are used for mapping.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Creation Email Details</strong></td>
+</tr>
+<tr>
+<td>Send New User's Manager Email</td>
+<td>Select this checkbox to send an e-mail notification to the manager when a new user is created in the target application as part of the orchestration.</td>
+</tr>
+<tr>
+<td>Creation Distribution List</td>
+<td>The email addresses to which an e-mail notification has to be sent when a new user is created in the target application as part of the orchestration. Multiple e-mail addresses must be separated by comma.</td>
+</tr>
+<tr>
+<td>Creation Email Subject</td>
+<td>The subject line to be used in the e-mail notification that will be sent when a user is created in the target application. For example, <em>New Employee</em>.</td>
+</tr>
+<tr>
+<td>Creation Email Body</td>
+<td>
+<p>The template that has to be used for the body of the notification e-mail, which will be sent when a new user is created in the target application. The target attributes can be included in the template to add any details of the created user in the e-mail body.</p>
+<p>For example:<br/><em>name : {{name.givenName}} {{name.familyName}}</em></p>
+<p><em>email : {{emails[work].value}}</em></p>
+<p><em>username : {{userName}}</em></p>
+<p><em>password : {{password}}</em></p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Deactivation Email Details</strong></td>
+</tr>
+<tr>
+<td><span>Send Deactivated User's Manager Email</span></td>
+<td>Select this checkbox to send an e-mail notification to the manager when a user is deactivated in the target application as part of the orchestration.</td>
+</tr>
+<tr>
+<td>Deactivation Distribution List</td>
+<td>The email addresses to which an e-mail notification has to be sent when a user is deactivated in the target application as part of the orchestration. Multiple e-mail addresses must be separated by comma.</td>
+</tr>
+<tr>
+<td>Deactivation Email Subject</td>
+<td>The subject line to be used in the e-mail notification that will be sent when a user is deactivated in the target application. For example, <em>Deactivated Employee</em>.</td>
+</tr>
+<tr>
+<td>Deactivation Email Body</td>
+<td>
+<p>The template that has to be used for the body of the notification e-mail, which will be sent when a user is deactivated in the target application. The target attributes can be included in the template to add any details of the deactivated user in the e-mail body.</p>
+<p>For example:<br/><em>name : {{name.givenName}} {{name.familyName}}</em></p>
+<p><em>email : {{emails[work].value}}</em></p>
+<p><em>username : {{userName}}</em></p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Advanced Details</strong></td>
+</tr>
+<tr>
+<td>Enable Group Management</td>
+<td>
+<p>Select this checkbox if the orchestration must support management of user groups in the target application. Refer to the Group Rules section to set the rules for managing group-related data.</p>
+</td>
+</tr>
+<tr>
+<td>Group Management Restriction List</td>
+<td>
+<p>Enter the list of group names to which the group management rules must be effective. Multiple group names must be separated by a comma. If no groups are configured here, the group management rules are effective for all groups. </p>
+<p>If there are 8 groups in the target application and only 6 of those groups are configured here, the users existing in the 2 non-configured groups will be removed when the orchestration runs.</p>
+</td>
+</tr>
+<tr>
+<td>Phone Number Formatting</td>
+<td>
+<p>The standard format to which the phone numbers of users must be converted during the orchestration process. The valid values are:</p>
+<ul>
+<li>
+<strong>disabled</strong>: By default, the conversion of phone numbers to a specific format is disabled.</li>
+<li>
+<strong>automatic</strong>: </li>
+<li>
+<strong>E164</strong>: The E.164 international telephone numbering format is <span><em>+ &lt;country code&gt; &lt;subscriber number including area code&gt;</em>.</span>
+</li>
+<li>
+<strong>INTERNATIONAL</strong>: International format</li>
+<li><span><strong>NATIONAL[,country=US]</strong>: The format that is being followed in a nation. You must replace <span>US</span> with the appropriate country code.</span></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>Password Length</td>
+<td>Enter the length of the password that has to be generated for new users. By default, the value is 12.</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li value="2">Click <strong>Create</strong> to create the orchestration.</li>
+</ol>
+<h3 id="h_01EZA579V8NBAKB6Z4MSD9BNEX">Mapping of Attributes</h3>
+<ol>
+<li value="1">Click the <strong>Attribute Map</strong> tab.
+<p>The default mapping of SCIM attributes from Paylocity to target application is displayed on the page. The source attributes are listed on the left side and the target attributes on the right side of the page.</p>
+<p><img alt="Attribute_Mapping.png" src="./assets/44378dba6b3be34d.png"/></p>
+<p><span>The mapping simplifies the process of executing Create, Update, and Delete operations, as the changes made to a source attribute will automatically be reflected in the mapped target attribute when the orchestration runs. The source attribute has to be edited in accordance with the target attribute. </span></p>
+<p>The following actions can be performed in this tab, as per the requirements:</p>
+<ul>
+<li>Search for a user from the source application by entering the userId or userName attribute value to get a preview of the values that are mapped to the target attributes.
+<p><img alt="User_Search.png" src="./assets/ed2adc12be3f6da2.png"/></p>
+<p>The user data is loaded corresponding to each source attribute. This can be done to ensure that the mapping is created in such a way that the values from the source are mapped to the right target SCIM attributes. </p>
+</li>
+<li>Search and filter Core, Enterprise, and custom (IAN) attributes from the target attributes list by the attribute name. 
+<p><img alt="Filter.png" src="./assets/f776431f480af15b.png"/></p>
+</li>
+<li>Set the right mapping option for a source attribute.
+<p>You can specify if the mapping of an attribute is to be done for create and update operations, for create operation only, or for update operation only. You can also choose not to map a source SCIM attribute at all.</p>
+<p><img alt="Map_options.png" src="./assets/79012de207a4257d.png"/></p>
+</li>
+<li>Click <strong>Add Row to Map</strong> at the end of the attribute mapping list to add a new row to set an attribute mapping.</li>
+</ul>
+</li>
+<li value="2">Click <strong>Save Changes</strong> after the source to target attribute mapping is completed.</li>
+</ol>
+<h3 id="h_01EZA57HHFYXW0XVGJC7FA15DH">Including Source Attribute Values Using Tables</h3>
+<p><span>Tables can be used to create custom source attributes, and POST (sync) them to the target application. Tables are used when a source attribute is empty or a particular data is not sent from the source, and the user wants to update a value to the corresponding target attribute.</span></p>
+<p><span>For example, if hire date of employees is not available in the source attributes and the user wants the hire date to be posted in the target application, you can add a table in the orchestration setup containing the list of the unique usernames and the corresponding hire dates.</span></p>
+<ol>
+<li value="1">Click the <strong>Tables</strong> tab. The following page is displayed.
+<p><span><img alt="Tables.png" height="265" src="./assets/52359d8cbfd69616.png" width="629"/></span></p>
+</li>
+<li value="2">Click <strong>Add Table</strong>. The <strong>Add Table</strong> window is displayed.
+<p><img alt="Add_Table.png" height="605" src="./assets/a3b1a1ef0339d058.png" width="463"/></p>
+</li>
+<li value="3">Enter the table name and description as shown in the above screenshot.
+<p>The table inputs can be entered either manually as rows or by uploading a CSV file.</p>
+<ul>
+<li><span>To enter manually, the user can click <strong>Add Row. </strong></span></li>
+<li><span>To upload the table values using a CSV file, click <strong>Upload CSV File</strong>. The orchestration supports only .csv file format and the file should have only two columns. <br/>A sample <a href="https://support.aquera.com/hc/article_attachments/1500003105462/Sample.csv" rel="noopener" target="_blank">CSV file</a> is attached for your reference. You may edit this file to add the required details and upload it.</span></li>
+</ul>
+<p><span>In this scenario, we add a table entry by clicking <strong>Add Row</strong>. The <strong>hireDate</strong> table is created with the username entry as <em>12345</em> and the hire date value as <em>2020-09-09</em>.</span></p>
+<p><img alt="Add_Row.png" height="611" src="./assets/d86f1aa65c91211a.png" width="467"/></p>
+</li>
+<li value="4">Click <strong>Add</strong>. The new table is listed on the page.
+<p><span><img alt="New_table.png" src="./assets/cca43c2e74ba090c.png"/></span></p>
+</li>
+<li value="5"><span>Click <strong>Save Changes</strong>.</span></li>
+</ol>
+<p><span>Now in the <strong>Attribute Map</strong> tab, the user wants to post the hire date value of the employee having username <em>12345</em> from the table to the target attribute <em>[IAN].hireDate</em>. In this case, the corresponding source attribute must be entered as <strong>TABLE.hireDate[SOURCE.userName]</strong>.</span></p>
+<p><img alt="Table_map.png" src="./assets/ca9d0bc63a8334ce.png"/></p>
+<p><span>After you run the orchestration, the hire date will be assigned to the target application for the user <em>12345</em>. </span></p>
+<h3 id="setting-group-rules"><span>Setting Group Rules</span></h3>
+<p>The<strong> Group Rules</strong> tab enables you to set the rules for maintaining the user groups in the webhook sync orchestration. To enable the group management feature, ensure that the<strong> Enable Group Management</strong> checkbox is enabled and the target application groups for which the rules must be effective are configured in the <strong>Configuration</strong> tab. Refer to the <a href="#h_01EZA56Y42W6PYT30MAC9TBWV6" target="_self">Configuration</a> section for details.</p>
+<ol>
+<li value="1">Click the <strong>Group Rules</strong> tab.
+<p><img alt="Group_Rules.png" src="./assets/dca39aabfb5ef7e6.png"/></p>
+</li>
+<li value="2">Click <strong>Add Rule</strong>. The <strong>Add Rule</strong> pop-up window is displayed.
+<p><img alt="Add_Rule1.png" height="704" src="./assets/2edbd57828c88dd2.png" width="507"/></p>
+</li>
+<li value="3">Enter a name for the rule, and set the rule using the <strong>IF-THEN</strong> conditional statement. <strong>IF</strong> represents the condition to be matched for the source attributes and <strong>THEN</strong> represents the action to be taken on a group. You can set the IF-THEN rule in one of the following ways.
+<ul>
+<li>
+<strong>Use Basic Condition:</strong>
+<p>You can set the rule for group management using the basic conditions.</p>
+<ul>
+<li>In the <strong>IF</strong> section,<strong><br/></strong>Select a source user attribute from the drop-down.<br/>Select the appropriate conditional operator from the following list:<br/><img alt="Conds.png" height="269" src="./assets/366ca35fc5ae0049.png" width="150"/><br/>Select the value to be matched for the condition to be true or false.</li>
+<li>In the <strong>THEN</strong> section, Enter the name of the group in the target system to which the user matching the condition needs to be added.
+<p><img alt="Basic_cond.png" height="385" src="./assets/c4b1fada54036bdd.png" width="592"/></p>
+</li>
+</ul>
+</li>
+<li>
+<strong>Use Expression</strong>:
+<p>You need to write expressions using Javascript syntax and Aquera's script extension to set the rule.</p>
+</li>
+</ul>
+<p> </p>
+<p> </p>
+<h3 id="viewing-event-url-and-creating-tokens"><span>Viewing Event URL and Creating Tokens</span></h3>
+<p><span>The <strong>Event Detail</strong> tab displays the URL that will receive all events from Paylocity. </span></p>
+<p><span><img alt="Event_detail.png" src="./assets/c83647826048e674.png"/></span></p>
+<p><span>This URL must be copied and configured in the <span>Webhooks section</span> in Paylocity application. Refer to the <a href="#h_01F0JP667G8BB903WPR2XHESRA" target="_self">Setting Up Webhooks in Paylocity</a> section for details.</span></p>
+<p><span>You can generate the token for authentication by clicking <strong>Create Token</strong>. A token is generated.</span></p>
+<p><img alt="Token.png" height="208" src="./assets/a47da4fedda401b4.png" width="470"/></p>
+<p>T<span>his token</span> has to be <span>appended as the key to the URL when</span> you set up webhook in Paylocity. <span>Refer</span> to the <a href="#h_01F0JP667G8BB903WPR2XHESRA" target="_self">Setting Up Webhooks in Paylocity</a> section for details.</p>
+<p>The Paylocity Webhook Sync orchestration setup is completed in Aquera Admin.</p>
+<h2 id="h_01F0JP667G8BB903WPR2XHESRA">Setting Up Webhooks in Paylocity</h2>
+<p> </p>
+<p> </p>
+</li>
+</ol>
+  </div>
+</body>
+</html>

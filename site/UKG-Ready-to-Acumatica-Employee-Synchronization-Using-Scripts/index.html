@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UKG Ready to Acumatica Employee Synchronization Using Scripts</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>UKG Ready to Acumatica Employee Synchronization Using Scripts</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<p>This guide covers the end-to-end tasks in setting up a script synchronization to sync employees from UKG Ready to Acumatica.</p>
+<p>The following tasks are involved in setting up the synchronization from UKG Ready to Acumatica:</p>
+<ul>
+<li><a href="#h_01F6EH0A638QSV3GWRKPF09R35">Initial Preparation</a></li>
+<li><a href="#h_01F6EH0MBC837JQFE5ZJRW7P94">Configure Applications in Aquera Admin Portal</a></li>
+<li><a href="#h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</a></li>
+<li><a href="#h_01J0JKAG4FPRMRA57JRS7D2KQ1">Run Script Synchronization</a></li>
+</ul>
+<h1 id="h_01F6EH0A638QSV3GWRKPF09R35">Initial Preparation</h1>
+<h2 id="h_01HTPFFWW97N4H416GAK9XQBFG">Aquera Admin Portal</h2>
+<ol>
+<li>Your IT admin must <a href="https://admin.aquera.io/home/register" rel="noopener noreferrer" target="_blank">register as an Aquera Admin</a>.</li>
+<li>Once registered successfully, Aquera creates a tenant for the IT Admin and provides access to it.</li>
+</ol>
+<h1 id="h_01F6EH0MBC837JQFE5ZJRW7P94">Configure Applications in Aquera Admin Portal</h1>
+<p>You must add and configure the following applications in the Aquera Admin portal:</p>
+<ul>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for details.</li>
+<li>
+<strong>Acumatica</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/22469599108887" rel="noopener noreferrer" target="_blank">Acumatica Configuration Guide</a> for details.</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</h1>
+<p>This section details how the synchronization must be configured to allow data push from UKG Ready to Acumatica.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Script Synchronization</h2>
+<p>Perform the following steps to create a new script synchronization:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> on the left panel which displays the list of synchronizations created by the user. <br/><strong>Note</strong>: The number of synchronization records displayed on this page is based on the display size of the user's screen.</li>
+<li>Click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>Script</strong>.</li>
+<li>Enter a name and a description for the synchronization.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the synchronization.</li>
+<li>Click <strong>Create</strong> to create the script synchronization.</li>
+</ol>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Configure Script Synchronization</h2>
+<p>This document describes how to set up the synchronization using the<em> Script </em><em>Synchronization</em> method.</p>
+<h3 id="h_01J0JGGWC9JXT1W6YJ953C13S6">Connections</h3>
+<ul>
+<li>Set UKG Ready as an application from the <strong>Connections</strong> tab with the variable <em>ukg</em>.</li>
+<li>Set Acumatica as an application from the <strong>Connections</strong> tab with the variable <em>acumatica</em>.</li>
+</ul>
+<p>Refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Synchronization Setup Using Scripts</a> and <a href="../Working-With-Integration-Scripts/" rel="noopener noreferrer" target="_blank">Working With Synchronization Scripts</a> guides for details on the configurations.</p>
+<h3 id="h_01J0JGJKQVW6MTKAR0M7VMT2T6">Script</h3>
+<p>This section allows you to write a script to set up the synchronization. The script is based on JavaScript, so all the functions and language constructs are available in the script.</p>
+<p><strong>Note</strong>: The following script covers the synchronization of an employee from UKG Ready to Acumatica. During the synchronization, the script checks the existence of the UKG Ready employee in Acumatica based on the employee ID and creates a new employee in Acumatica if a matching user does not exist. You must modify the script based on your use case.</p>
+<p>Configure the following script in the <strong>Script</strong> tab to synchronize an employee from UKG Ready to Acumatica:</p>
+<div>
+<pre><code>let ukgEmployees = [];
+let ukgEmployeesObj = ukg.getEmployee("17307179861");
+ukgEmployees.push(ukgEmployeesObj);
+let reportOnly = false;
+for (var ukgEmployee of ukgEmployees) {
+    if (acumatica.getEmployeeID({
+            "EmployeeID": ukgEmployee.employeeId
+        })?.statusCode !== 200) {
+        let createObj = {
+            "ContactInfo": {
+                "FirstName": {
+                    "value": ukgEmployee.firstName
+                },
+                "LastName": {
+                    "value": ukgEmployee.lastName
+                },
+                "Email": {
+                    "value": ukgEmployee.primaryEmail
+                },
+                "Phone1Type": {
+                    "value": "Business 1"
+                },
+                "Phone1": {
+                    "value": ukgEmployee?.phones?.workPhone
+                }
+            },
+            "EmployeeSettings": {
+                "CurrencyID": {
+                    "value": "USD"
+                },
+                "DepartmentID": {
+                    "value": "EXECUTIVE"
+                },
+                "EmployeeClass": {
+                    "value": "SALARIED"
+                },
+                "ReportsTo": {
+                    "value": (ukg.getEmployee((ukgEmployee?.managers.length  1 ? (ukgEmployee?.managers[1]?.emplRef?.accountId) : (ukgEmployee?.managers[0]?.emplRef?.accountId))))?.employeeId
+                }
+            },
+            "Status": {
+                "value": "Active"
+            },
+            "EmployeeID": {
+                "value": ukgEmployee.employeeId
+            },
+            "EmployeeName": {
+                "value": ukgEmployee.firstName + " " + ukgEmployee.lastName
+            }
+        };
+        if (!reportOnly) {
+            log.info("The user " + ukgEmployee.firstName + " " + ukgEmployee.lastName + " does not exist in Acumatica hence creating the user");
+            log.info("User JSON before create " + JSON.stringify(createObj));
+            let createdUser = acumatica.postEmployee(createObj);
+            log.info("Response from Acumatica after creating the user " + JSON.stringify(createdUser));
+            log.info("================================================================================================");
+        } else {
+            log.info("ReportOnly Not Created \nThe user " + ukgEmployee.firstName + " " + ukgEmployee.lastName + " does not exist in Acumatica hence user will be created");
+            log.info("User JSON before create " + JSON.stringify(createObj));
+            log.info("================================================================================================");
+        }
+    } else {
+        log.info("The user " + ukgEmployee.firstName + " " + ukgEmployee.lastName + " Already exists in Acumatica hence not created");
+        log.info("================================================================================================");
+    }
+}</code></pre>
+<div> </div>
+</div>
+<h1 id="h_01J0JKAG4FPRMRA57JRS7D2KQ1">Run Script Synchronization</h1>
+<p>You can set event or schedule triggers to run the script synchronization. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01HTM4C4A80M67Y1EP5SJWTAV1" rel="noopener noreferrer" target="_blank">Executing a Synchronization</a> section.</p>
+  </div>
+</body>
+</html>

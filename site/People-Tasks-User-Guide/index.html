@@ -1,0 +1,278 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>People Tasks User Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>People Tasks User Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="overview">Overview</h1>
+<p>People tasks can be created in Aquera Admin console for any critical tasks that require people involvement. The Admin console enables you to create task definitions and use an inbuilt method to create tasks for specific events (for example, user deletion in an orchestration process) based on the task definition. The method enables you to assign tasks to a user for their action.</p>
+<p>For example, if an approval is required for creating a specific type of users in the target application during a scheduled script orchestration, a people task can be defined in the Admin console and an orchestration script can be written to create a task based on the task definition. A task instance is created when the orchestration runs and the user to which the task is assigned can take appropriate actions on this task. The users will be created based on the action performed on the task instance.</p>
+<p>This document describes the following procedures:</p>
+<ul>
+<li><a href="#h_01F4ETPTKP06EMZRKC6CHV6W7E" target="_self">Creating a Task Definition</a></li>
+<li><a href="#h_01F4ETQHH32891P6R8BYQ7RSJT" target="_self">Creating People Tasks Using Script Orchestration </a></li>
+<li><a href="#h_01F4ETQTAMSR4HRBPCBMQRFG74" target="_self">Task Instance Creation</a></li>
+<li><a href="#h_01F4ETR5M37TC0K3FMENTDB8WE" target="_self">People Action on the Tasks</a></li>
+</ul>
+<h1 id="h_01F4ETPTKP06EMZRKC6CHV6W7E">Creating a Task Definition</h1>
+<table border="0">
+<tbody>
+<tr>
+<td>
+<p><strong>NOTE:</strong></p>
+</td>
+<td>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p>The people task <em>Manager</em> permission must be enabled for you to create a task definition.</p>
+<p><img alt="Mgr_Perm.png" height="340" src="./assets/f42e11dde298fc95.png" width="345"/></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Creation of a task definition mainly involves setting up the following details:</p>
+<ul>
+<li>Adding Data Fields</li>
+<li>Adding list of applications</li>
+<li>Writing the script for handling the actions performed in the task</li>
+</ul>
+<ol>
+<li value="1">Log in to Aquera Admin.</li>
+<li value="2">Click <strong>People Task</strong> on the left navigation pane. The <strong>People Task</strong> page is displayed. 
+<p><img alt="People_Task.png" src="./assets/be7f0c1f8cac9c2d.png"/></p>
+<p>The <strong>Define Task</strong> tab is displayed by default. It lists all the people task definitions that you have created.</p>
+</li>
+<li value="3">Click <strong>Create New Task</strong>.The<strong> Add Task</strong> page is displayed.
+<p><img alt="Add_Task.png" src="./assets/8463924c9bb72931.png"/></p>
+<p>This page consists of the following sections:</p>
+<ul>
+<li>
+<strong>Name &amp; Description</strong> - Enter a name for the people task definition and a short description of it.
+<p><img alt="Name_Desc.png" src="./assets/dc4824f1847a78ae.png"/></p>
+</li>
+<li>
+<strong>Data Fields</strong> - Add the data fields that must be displayed for the people task. 
+<p><img alt="Data_Fields.png" src="./assets/0f69cb9882a91701.png"/></p>
+<p>Refer to the <a href="#h_01F4BZ8GEE2TPN3C1Q4T6ABG30" target="_self">Adding Data Fields</a> section for details.</p>
+</li>
+<li>
+<strong>Form Description - </strong>This section is used to set the title of the task instance that will be created and its description.<br/><img alt="Form_Desc.png" src="./assets/15022b29a76aaf13.png"/><br/>
+<ul>
+<li>
+<strong>Title</strong> - Enter the title that will be displayed for each task instance. You can also include the values of the data fields in the title. In order to include the data field value in the title string, the name of the data field must be entered as ${attribute name}. If the attribute name is an object, then sub-attributes of that object can be referenced by the following notation ${attributeName.subAttributeName}.  For example, <em>Add Account for ${User.userName}</em>.
+<p><img alt="Title.png" src="./assets/cfb9574f1e84b545.png"/></p>
+</li>
+<li>
+<strong>Detail</strong> - Enter the details that must be displayed for the task instance. You can also include the object attributes in the details. The format to add an attribute is <em>${&lt;user attribute name&gt;}</em>. For example, <em>Add Account for ${User.userName}</em>.
+<p><img alt="Title_Dtl.png" src="./assets/458200d6676c6d76.png"/></p>
+</li>
+</ul>
+</li>
+<li>
+<strong>Applications</strong> - Add the list of applications that need to be referenced within the script in the <strong>Action Handler</strong> section of the page.
+<p><img alt="Add_App.png" src="./assets/8decabeb50b6b66a.png"/></p>
+<p>Click <strong>Add Application</strong> and select the required application from the <strong>Application Name</strong> drop-down. Make sure that you have already created the required application in the Aquera Admin console.</p>
+<p>Enter the <strong>Variable</strong> name, which will be used in the <strong>Action Handler</strong> script to refer to the application.</p>
+<p>Add as many applications as required.</p>
+</li>
+<li>
+<strong>Action Handler</strong> - Enter the script to be executed when the assigned person performs an action on the task instance.
+<p><img alt="Action_handler.png" src="./assets/c0b14463a5a17773.png"/></p>
+<p>Refer to the <a href="#h_01F4BZ8WB5XZ6RSPEBDKXNHKSC" target="_self">Handling Actions</a> section for details.</p>
+</li>
+</ul>
+</li>
+<li value="4">Click <strong>Create Task</strong> to create the task definition.</li>
+</ol>
+<h2 id="h_01F4BZ8GEE2TPN3C1Q4T6ABG30">Adding Data Fields</h2>
+<p>The data fields enable the person<em> </em>to enter data values while performing an action on the task. The values in these data fields may be manually entered during the action on the task or populated dynamically, for example, when the orchestration runs. </p>
+<ol>
+<li value="1">In the <strong>Data Fields</strong> section, click<strong> Add Data Field</strong>. The following pop-up window is displayed.
+<p><img alt="Add_DF.png" height="459" src="./assets/d129735b3c4ff6cc.png" width="522"/></p>
+</li>
+<li value="2">Enter a <strong>Name</strong> and <strong>Display Name</strong> for the data field. The <strong>Name</strong> of the data field is used for reference within the script in the <strong>Action Handler</strong> section. It can also be used in the task instance title and detail. The <strong>Display Name</strong> is displayed for the data field in the task instance when the assigned user opens the task for their action.
+<p><img alt="Add_DF2.png" height="425" src="./assets/b59f2d65d23c3280.png" width="484"/></p>
+</li>
+<li value="3">Select <strong>Required</strong> if the data field has to be a mandatory field. Else, it will be an optional field.</li>
+<li value="4">Select <strong>Hidden</strong> if the data field has to be hidden.</li>
+<li value="5">Select one of the following data types from the <strong>Select Type</strong> drop-down:
+<table border="1" width="923">
+<tbody>
+<tr>
+<td><span><strong>Data Field Type</strong></span></td>
+<td><span><strong>Description</strong></span></td>
+</tr>
+<tr>
+<td>String</td>
+<td>
+<p>Select <strong>String</strong> if the data field has to be a text box where a string data value can be entered.</p>
+<p>The following fields are displayed when you select <strong>String. </strong>These fields are optional. </p>
+<ul>
+<li>
+<strong>Default Value</strong>: The default value to be displayed in this data field.</li>
+<li>
+<strong>Regular Expression</strong>: The expression to be used for validating the data that will be entered in this data field.</li>
+<li>
+<strong>Validation Message</strong>: The message to be displayed when the data validation fails.</li>
+<li>
+<strong>Help text</strong>: The help text to be displayed for the data field in the task instance or in the workflow orchestration.</li>
+</ul>
+<p><img alt="String_field.png" height="472" src="./assets/bb186f6d1d3921dd.png" width="298"/></p>
+</td>
+</tr>
+<tr>
+<td>List</td>
+<td>
+<p>Select <strong>List</strong> if the data field has to be a drop-down list from which a value can be selected.</p>
+<p>You can add the values one by one in the <strong>Enter</strong> <strong>List Values</strong> field and press <strong>Enter/Return</strong> key to append the value to the list. These values will be displayed in the drop-down list.</p>
+<p><img alt="List_field.png" height="404" src="./assets/7c7873ad9e02d7af.png" width="346"/></p>
+<p>You can delete an entered item by clicking the delete icon next to the item.</p>
+</td>
+</tr>
+<tr>
+<td>Object</td>
+<td>
+<p>Select <strong>Object</strong> to add an object data field.</p>
+<p><img alt="Object_field.png" height="313" src="./assets/1859219a360a8a3d.png" width="357"/></p>
+</td>
+</tr>
+<tr>
+<td>Action</td>
+<td>
+<p>Select <strong>Action</strong> to include a button for the person to perform an action on the task instance.</p>
+<p><img alt="Action_field.png" height="348" src="./assets/a2b7b4dd7e008163.png" width="396"/></p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li value="6">Click <strong>Save</strong>. The data fields are added.</li>
+</ol>
+<table border="0">
+<tbody>
+<tr>
+<td>
+<p><strong>Note: </strong></p>
+</td>
+<td>
+<p><em>You can modify and delete the data fields that you have added using the <strong>Edit</strong> and <strong>Delete</strong> icons.</em></p>
+<p><img alt="Ed_Del_Fields.png" height="185" src="./assets/0c9f2e9651d5d906.png" width="552"/></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h_01F4BZ8WB5XZ6RSPEBDKXNHKSC">Handling Actions</h2>
+<p>The <strong>Action Handler</strong> section enables you to write the script that has to be executed when the person completes the task. A coding area is provided here to write the scripts. The script follows standard Javascript language.</p>
+<p><img alt="Act_Handler_Scriot.png" src="./assets/3ee7086a5ea45f24.png"/></p>
+<p><strong>Note</strong>: You can click the <em>Expand</em> icon to expand the coding area.</p>
+<h3 id="keywords-and-methods">Keywords and Methods </h3>
+<p>This section details the keywords and the methods that can be used in the script.</p>
+<h4 id="keywords"><strong>Keywords</strong></h4>
+<ul>
+<li>
+<strong>datafields</strong> -  The keyword prefix for data fields. For example, to refer to a data field with the name, <em>approve</em>, use <strong><em>datafields.approve </em></strong>in the script.</li>
+<li>
+<strong>applications</strong> - The keyword prefix for applications. For example, to refer to an application with the variable name, <em>okta</em>, use <strong><em>applications.okta </em></strong>in the script.</li>
+<li>
+<strong>utils</strong> - The keyboard prefix for utility functions. For example,<em><strong> utils.sendEmail()</strong></em>.</li>
+</ul>
+<h4 id="methods"><strong>Methods</strong></h4>
+<p>Refer to the guide, <a href="https://support.aquera.com/hc/en-us/articles/360052280033" rel="noopener" target="_blank">Scheduled Script Orchestration - Application Functions</a>, for details on the functions that are supported in the script.</p>
+<h1 id="h_01F4ETQHH32891P6R8BYQ7RSJT">Creating People Tasks Using Script Orchestration </h1>
+<p>You can create people tasks using script orchestration, based on the task definition that you have created.</p>
+<p>The <strong>createTask</strong> method must be used within the script of a scheduled script orchestration to create a people task. The <strong>createTask</strong> method must have the following parameters:</p>
+<p>createTask('&lt;task-def&gt;', '&lt;assigned-user&gt;, '&lt;due-date&gt;', '&lt;object&gt;')</p>
+<p>where</p>
+<ul>
+<li>&lt;task-def&gt; is the name of the people task definition that must be used to create the task,</li>
+<li>&lt;assigned-user&gt; is the email ID of the user to which the task has to be assigned,</li>
+<li>&lt;due-date&gt; is the due time before which an action must be taken on the task, and </li>
+<li>&lt;object&gt; is an object with attributes that match the names of the data fields.</li>
+</ul>
+<p>For example, <em><strong>utils.createTask('Add User to Group', 'approver1@aquera.com', new Date(),</strong><strong>{'User':'bjensen@example.com', 'Group':'MyGroup'});</strong></em></p>
+<p><em><strong>Sample script:</strong></em></p>
+<p><em><strong><img alt="Orch_script.png" src="./assets/ba41da88e4ae4d1e.png"/></strong></em></p>
+<table border="0">
+<tbody>
+<tr>
+<td>
+<p><strong>Note: </strong></p>
+</td>
+<td>
+<p>The user to whom the task has been assigned must have the <em>Approver</em> permission for the people tasks.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>For details on creating the people tasks using the workflow orchestration, refer to the Scheduled Workflow Orchestration Guide.</p>
+<h1 id="h_01F4ETQTAMSR4HRBPCBMQRFG74">Task Instance Creation</h1>
+<p>The task instance is created when the orchestration which includes the people task runs successfully.</p>
+<p>In case of a script orchestration, the <strong>createTask</strong> method in the script is executed and a task instance is created based on the task definition that is referenced in the method.</p>
+<p>In case of a workflow orchestration, the workflow containing the people task is executed and the task instance is created.</p>
+<p>The new task instance is listed in the<strong> Task Instance</strong> tab on the <strong>People Task</strong> page.</p>
+<p><img alt="Task_Instance.png" src="./assets/579837b5f9742eb9.png"/></p>
+<p>The approver can see the assigned tasks that are in <em>Pending</em> status and can take appropriate actions.</p>
+<h1 id="h_01F4ETR5M37TC0K3FMENTDB8WE">People Action on the Tasks</h1>
+<p>The users can see all the tasks assigned to them on the <strong>Task Instance</strong> tab. The tasks that are not completed by the user will be in <em>pending</em> status. If the due date has passed for a task instance, it displays the number of days by which the task has been overdue.</p>
+<table border="0">
+<tbody>
+<tr>
+<td>
+<p><strong>NOTE:</strong></p>
+</td>
+<td>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p>The people task <em>Approver</em> permission must be set for you to perform an action on a task.</p>
+<p><img alt="Task_approver.png" height="300" src="./assets/46d83f21c947cc54.png" width="297"/></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<ol>
+<li value="1">Navigate to the<strong> Task Instance</strong> tab on the <strong>People Task</strong> page.
+<p><img alt="Task_Instance.png" src="./assets/162eb1c136d06d2e.png"/></p>
+<p>All the tasks assigned to this user are listed on this page.</p>
+</li>
+<li value="2">Click on a P<em>ending</em> task instance. A pop-up window containing the data fields configured on the task definition page is displayed.
+<p><img alt="Open_Instance.png" height="311" src="./assets/11cce7daf3a78fe5.png" width="484"/></p>
+</li>
+<li value="3">Enter values in the required data fields, if required, and perform an appropriate action on the task. Some fields may be dynamically filled based on the data field setup in the task definition.
+<p>The script provided in the <strong>Action Handler</strong> section on the task definition page is executed based on your action.</p>
+<p>When the action is done, the status of the task instance is changed from P<em>ending</em> to C<em>ompleted</em>.</p>
+</li>
+</ol>
+<p> </p>
+<p> </p>
+<p> </p>
+  </div>
+</body>
+</html>

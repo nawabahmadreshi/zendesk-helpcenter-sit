@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now to Axonify Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now to Axonify Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KEXX15T30EC7JT4CJ6DQGYVY">Overview </h1><p>The Aquera platform enables scalable, automated data management across enterprise applications. Through seamless integrations, it helps organizations eliminate manual processes, ensure consistency, and optimize workflows across complex IT infrastructures.</p><p>The ADP Workforce Now to Axonify integration extracts worker data from ADP Workforce Now via a CSV file hosted on an FTP server. The integration then processes and transforms this data, and publishes the updated file to another FTP location. The Axonify application retrieves this file on a scheduled basis and updates worker information within the system.</p><h2 id="h_01KEY2HRJ0M1SNH10YSRF63QF4">Key Functions</h2><p>The ADP Workforce Now to Axonify integration performs the following key functions:</p><ul>
+<li data-list-item-id="efbdbc0fbaa3b8a6e1038b5b12b3516b8">Reads ADP worker data from a CSV file stored in an FTP location.</li>
+<li data-list-item-id="eb0ecfaa3e752242cd284a4032cbeb9d6">Transforms the data into the format required by the Axonify application.</li>
+<li data-list-item-id="e4e04dba5589b17ab93c8a76bd4795bec">Writes the CSV file with the transformed data into another FTP location. This file will be later accessed by Axonify on a scheduled basis to update the worker details.</li>
+<li data-list-item-id="eedc6469e7650c44f5629c5db51a270eb">Send an email notification for each integration run.</li>
+</ul><h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ef3d893dfb10e03382de3bce856ab2e46">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU or AU region, use the following URL to register:<ul>
+<li data-list-item-id="e184f496b74bee2d36ae2447dbfa7ca21">
+<a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a> for EU region</li>
+<li data-list-item-id="e6a1b1a4715ccd6ea9167e7a645786efc">
+<a href="https://admin.au.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.au.aquera.io</a> for AU region</li>
+</ul>
+</li>
+<li data-list-item-id="e06f0dadad6e5ac18429736a16a3916ab">
+<strong>Create Worker reports in ADP Workforce Now</strong>: Create a custom report in ADP Workforce Now containing the worker fields required for this integration use case. Refer to the <a href="#h_01KF0QS27N8EPCH21YPRT3H5TW">Appendix</a> section of the guide for details on creating the report and exporting it as a CSV file.<ul>
+<li data-list-item-id="ea55cf37e8cc8fdd9a9992931d74648d1">Make sure that the file is in CSV format. </li>
+<li data-list-item-id="e5be3cf095574294dbe93721891c50724">If the data in the file contains any special characters, it is recommended to convert the CSV file to a UTF-8 encoded format.</li>
+</ul>
+</li>
+<li data-list-item-id="e140ab428b358296ded82466a27c0fa4f">
+<strong>Schedule the report</strong>: Setup a schedule in ADP to push the report data to an FTP location. <ul><li data-list-item-id="e04475aef6682ab43670bed0d4ac8a5a5">You can either use your own FTP server or use Aquera's FTP server to store the ADP worker data.<br/><strong>Note</strong>: Contact your ADP representative to set up publishing the report to an FTP server on a scheduled basis.</li></ul>
+</li>
+<li data-list-item-id="e1bb501c4b6fa967cc71697bff862e103">
+<strong>Configure FTP Connectors in the Aquera Admin Portal:</strong> You need to configure two FTP generic connectors in the Aquera Admin Portal - one for retrieving the ADP worker data from an FTP server and another one for writing the transformed data to an FTP location for the Axonify application. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360058816934" rel="noopener noreferrer" target="_blank">FTP Generic Configuration Guide</a> for details. <ul>
+<li data-list-item-id="e13546edae8422d9621485ac132c93390">
+<strong>If you want to use your own FTP server:</strong><ul>
+<li data-list-item-id="eb71351a802ec3deefa163720a1f377a0">Configure the hostname of your FTP server as the <strong>Tenant</strong>.</li>
+<li data-list-item-id="edb658c9eddcd71db4152fe7b9a1bfdba">For authentication, provide the admin username of your FTP server and enter either the password of your FTP server admin or the private key of the SSH key pair. To generate the SSH key pair, refer to the <a href="https://support.aquera.com/hc/en-us/articles/35697832590487" rel="noopener noreferrer" target="_blank">Generating SSH Key Pair</a> guide.</li>
+<li data-list-item-id="eae17edbb87993de4b3cb6c69447aeb96">If you are using the SSH key-pair authentication, share the public key with the administrator of your FTP server to configure it in the FTP server</li>
+</ul>
+</li>
+<li data-list-item-id="e7c7eec3808c1ab06dc6d5793c12d868a">
+<strong>If you want to use Aquera's FTP server:</strong><ul>
+<li data-list-item-id="e029a88ac3fe3ce9a1657d80956b6830f">Configure <em>sftp.aquera.io</em> as the <strong>Tenant</strong>.</li>
+<li data-list-item-id="e2509f7e3820ea986a8e1b4f8fd4b5e03">For authentication, provide the admin username of the Aquera SFTP server and enter the private key of the SSH key pair, which you have to generate. <ul>
+<li data-list-item-id="e5a37e689e4f5e7a93d3ffbc9fbcb18dc">Contact the Aquera Support personnel to obtain the username. </li>
+<li data-list-item-id="ea479d1ea50f03979a975f795ce1ee572">To generate the SSH key pair, refer to the <a href="https://support.aquera.com/hc/en-us/articles/35697832590487" rel="noopener noreferrer" target="_blank">Generating SSH Key Pair</a> guide.</li>
+</ul>
+</li>
+<li data-list-item-id="eb005edd56704537b2e6592a64064e352">Share the public key (of the SSH key pair) with the Aquera Support personnel.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01KEXYT4S6PBGE446BGJJST3YJ">Integration Setup</h2><p data-end="188" data-start="23">This section describes the configuration steps required to set up <strong>Workday &lt;&gt; Microsoft Entra ID User Photo Sync</strong> integration in Aquera.</p><h3 data-end="217" data-start="195" id="h_01KEXYT4S7MBFETFZYMR9QKS0M">Create Integration</h3><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e781cfd47575eb92204a36e0f3d01a9f6">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="e511038ed5cad7d84a2c68674d3a37a2e">Navigate to <strong>Integrations</strong> from the left navigation panel.</li>
+<li data-list-item-id="e093d5f8cdf70d2a449df76fe9245df40">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="e2ca638a9092f39bf0229050ad4831c97">Select <strong>ADP Workforce Now to Axonify Workers Sync.</strong>
+</li>
+<li data-list-item-id="e202923931b20abdc477add0028c5b49c">Enter a <strong>name</strong> and <strong>description</strong> for the integration.</li>
+<li data-list-item-id="e4e879bcaf68dac7b9c3c49aa01d0ce60">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed.</li>
+</ol><h3 data-end="635" data-start="618" id="h_01KEXYT4SB88DN4JBNV7SJKRSV">Configuration</h3><p data-end="706" data-start="637">The following sections are available under the <strong data-end="701" data-start="684">Configuration</strong> tab:</p><h4 data-end="725" data-start="708" id="h_01KEXYT4SCB0P407JTJS4H9AYE">Applications</h4><p>The <strong>Applications</strong> section displays the application connectors required for the integration. This section allows you to select the FTP connectors that you have configured in your tenant.</p><h4 id="h_01KEXZA87A280KAVD4N7YTWTXY">Parameters</h4><p>The Parameters section allows you to customize the integration preferences. These settings control the behavior of the integration and help tailor it to your organization’s requirements.</p><h4 id="h_01KEXZRH1Q7SDB2TMJ59K10QMY">Integration Features </h4><p>Configure the following integration features:</p><ul><li data-list-item-id="e1512bd0b213cb0c54de435ccabfde5e5"> </li></ul><h4 id="h_01KEXZVYQPPTTTJJTT6X3K7JMH">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e2d59ce1972335fb95944e7117e033fa9">
+<strong>Enable Notifications:</strong> Select to send integration-related notifications, including success, warning, and error summaries, after each run.</li>
+<li data-list-item-id="eb3fbe4654844e28271c1cbd186f329c6">
+<strong>Enable Report-Only Mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="eb287f3779ef21b0b4eb796161b3bad7f">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
+<li data-list-item-id="e185f1272cccb23b49998e2d063a4957c">
+<strong>Enable Debug Mode</strong>: Select to generate logs outlining data changes that would occur for debugging.</li>
+</ul><h3 data-end="209" data-start="192" id="h_01KEY0VRP1KKTGMPFD1W1SNRDV">Attribute Map</h3><p data-end="594" data-start="211">&lt;&gt;</p><h3 data-end="613" data-start="601" id="h_01KEY0VRP28DFNKTTNRZ36WYVZ">Schedule</h3><p data-end="872" data-start="615">Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h3 data-end="902" data-start="879" id="h_01KEY0VRP38CCXNPB165EJ6C27">Execute Integration</h3><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01KF0QS27N8EPCH21YPRT3H5TW">Appendix</h1><h2 id="h_01KFABQ8N7B64SZ8TGQY204E8A">Creating a Custom Report in ADP Workforce Now</h2><p>You must create a report in ADP that contains the worker fields you want to sync with Axonify. This section details the procedure to create the custom report.</p><ol>
+<li data-list-item-id="e70be80f38a76d374bcabcf8017ccde95">Log in to your ADP Workforce Now instance.</li>
+<li data-list-item-id="e6a9005dfd7c76583f3df6691395012fe">Click the <strong>Reports &amp; Analytics</strong> tab.</li>
+<li data-list-item-id="e6ccb2dbc08c869f199ca79fce6510c54">Click <strong>Set Up New</strong> under the<strong> Custom Reports</strong> section.<br/><img alt="setup new.png" height="654" src="./assets/a7b2e2f8a5ff3633.bin" width="1850"/><br/>The <strong>Set Up New Report</strong> page is displayed.</li>
+<li data-list-item-id="ec0b7fe5395f19888b93a0212135a1222">Provide a title for the report, select the folder to save the report, and a short description of the report, if required.<br/><img alt="new rpt.png" height="1062" src="./assets/d8be4631453469e9.bin" width="2618"/>
+</li>
+<li data-list-item-id="e41928ccd0dd3671b905ce6250dac72d2">Click <strong>Select Fields</strong> to start adding the required worker data fields to the report.</li>
+<li data-list-item-id="e351df077e6dce2abe3ce357b04787e27">Search for a worker data field to be added to the report, and then click the <em>Add</em> icon.<br/><img alt="add fields.png" height="1028" src="./assets/62965f91cea7f7d7.bin" width="2526"/><br/>The added field is displayed in the <strong>Selected Fields</strong> section of the page.</li>
+<li data-list-item-id="ec127b7c937d2dc5540ea5d823a486d7b">Continue adding all the required fields.</li>
+<li data-list-item-id="efc0f75b0ae2b43fa87dcaef8f7b1adba">After you have added all the required fields, click <strong>Save + Run</strong>. The <strong>Runtime Settings</strong> pop-up screen is displayed.</li>
+<li data-list-item-id="e23c87c9312658057a82c9f78eb831bd1">Click <strong>Run</strong>.</li>
+<li data-list-item-id="e71337dd9dd997bf8451de6ed4f0173e9">Once the report is created successfully, click <strong>Export</strong> and select <strong>CSV</strong> to export the report as a CSV file.</li>
+<li data-list-item-id="e52ea23e7945a906f17270316682c7ed3">To schedule the automatic generation of reports, navigate to the <strong>Reports &amp; Analytics</strong> tab &gt; <strong>All Custom Reports</strong> and then perform the following:<ol>
+<li data-list-item-id="ef773c46252028db4fe0172293d762f87">Click the ellipsis icon next to the report that you have generated.</li>
+<li data-list-item-id="e9bf350998897986028837831b55fd21b">Select <strong>Schedule to Run</strong>.</li>
+<li data-list-item-id="e821205f8c0ca838cb6f9867150a71917">Set the schedule for report generation and click <strong>Apply</strong>.</li>
+</ol>
+</li>
+<li data-list-item-id="e3e207df0608f3aff40479b020ac17066">To automatically publish the report to an FTP server on a scheduled basis, contact your ADP representative.</li>
+</ol><p> </p><p> </p>
+  </div>
+</body>
+</html>

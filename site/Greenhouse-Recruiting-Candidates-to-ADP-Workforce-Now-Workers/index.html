@@ -1,0 +1,339 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Greenhouse Recruiting Candidates to ADP Workforce Now Workers</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Greenhouse Recruiting Candidates to ADP Workforce Now Workers</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating the integration of data across resource types. </p>
+<p>The <em>Greenhouse Recruiting Candidates to ADP Workforce Now Workers</em> integration automates the process of onboarding candidates from the Greenhouse Recruiting application to the ADP Workforce Now application. This integration is triggered when a candidate in your Greenhouse Recruiting application is moved to the hired status.</p>
+<p>This integration performs the following tasks:</p>
+<ul>
+<li>Retrieves the details of the candidates whose status has been changed to hired in the Greenhouse Recruiting application. Aquera integration receives an event when a candidate is hired.</li>
+<li>Creates a worker record in the ADP Workforce Now application for a newly hired candidate in Greenhouse Recruiting</li>
+<li>Synchronizes the details such as candidate information, job details, and offer details from Greenhouse Recruiting to the new worker records in the ADP Workforce Now application. The mapping of attributes and the worker data synchronization will be performed based on the template that you have configured in this integration.</li>
+<li>Sets the onboarding status of the newly hired worker in the ADP Workforce Now application to <em>In progress</em> or <em>Complete</em> based on the configuration that you have set in this integration</li>
+<li>Sends an email notification with the applicant ID and Associate OID details of a worker to the configured list of email addresses, on successful onboarding of the worker</li>
+<li>Sends an email notification to the configured list of email addresses, if an error is encountered, for example, when you have configured an incorrect onboarding template name in the integration.</li>
+</ul>
+<p><strong>Note</strong>: You must set up webhooks in the Greenhouse Recruiting application to send the candidate hire events to this Aquera integration. Refer to the <a href="#h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</a> for details.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Greenhouse Recruiting</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/10462467749911" rel="noopener noreferrer" target="_blank">Greenhouse Recruiting Configuration Guide</a> for instructions on creating the Greenhouse Recruiting application connector and setting up the authentication.</li>
+<li>
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for instructions on creating the ADP Workforce Now application connector and setting up the authentication.</li>
+</ul>
+</li>
+<li>
+<strong>Permissions to configure webhooks</strong>: Make sure that the Greenhouse Recruiting user has enough permissions to configure webhooks.</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This integration reads the data of a newly hired candidate from the Greenhouse Recrutiing application and creates a corresponding worker record in the ADP Workforce Now application.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Greenhouse Recruiting Candidates to ADP Workforce Now Workers</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your Greenhouse Recruiting and ADP Workforce Now connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Set Up Preferences</h3>
+<p>The <strong>Preferences</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p>
+<ul>
+<li>
+<strong>Applicant onboarding template name</strong>: Enter the name of the ADP onboarding template that must be applied for the new hires. This is a mandatory setting. If you provide an incorrect template name, the integration fails and an error notification is sent to the email addresses configured in the <strong>Send email notifications to</strong> field. </li>
+<li>
+<strong>Applicant onboarding status</strong>: Select the onboarding status that must be assigned to the new hires in ADP Workforce Now. The valid values are <em>In progress</em> and <em>Complete</em>. Depending on the onboarding status, the set of attributes that will be updated for the employee will vary.</li>
+<li>
+<strong>Send email notifications to</strong>: Enter the comma-separated list of the email addresses of the admins to whom email notifications must be sent on successful employee onboarding or any integration errors.</li>
+</ul>
+<h3 id="h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</h3>
+<p>You need to set up the event triggers for receiving candidate hire events from the Greenhouse Recruiting application and running the integration.</p>
+<ol>
+<li>In the <strong>Trigger</strong> section, click <strong>Event</strong>.</li>
+<li>In the <strong>Event Source</strong> drop-down, select the Greenhouse Recruiting connector that you have configured in your Aquera Admin tenant.<br/>The <strong>URL</strong> field displays the endpoint URL to which Greenhouse Recruiting will have to send the candidate hire events. This URL needs to be configured in the Greenhouse Recruiting application when you configure the webhooks. Refer to the <a href="#h_01ESN6XGCPQRMFGWGTMB3YVH03">Setting Up Webhooks in Greenhouse Recruiting</a> section in <a href="#h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</a> for details.</li>
+<li>Click <strong>Create Token</strong> to generate a token. Save this token securely.</li>
+</ol>
+<h1 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h1>
+<p>The <em>Greenhouse Recruiting Candidates to ADP Workforce Now Workers</em> integration provides a mapping between the commonly used Greenhouse Recruiting and ADP Workforce Now API attributes.<br/>The following are the API attributes that are mapped by default:</p>
+<table border="1">
+<tbody>
+<tr>
+<td>
+<p><strong>Greenhouse Recruiting Candidate API Attributes/Script Expression</strong></p>
+</td>
+<td><strong>ADP Workforce Now Worker API Attributes</strong></td>
+</tr>
+<tr>
+<td>candidate.first_name</td>
+<td>applicantOnboarding.applicantPersonalProfile.birthName.givenName</td>
+</tr>
+<tr>
+<td>candidate.last_name</td>
+<td>applicantOnboarding.applicantPersonalProfile.birthName.familyName</td>
+</tr>
+<tr>
+<td>candidate.preferred_name</td>
+<td>applicantOnboarding.applicantPersonalProfile.preferredName.nickName</td>
+</tr>
+<tr>
+<td>candidate.email_addresses[type==='work'].value <br/>or<br/>candidate.email_addresses[0].value </td>
+<td>applicantOnboarding.applicantPersonalProfile.contact.email</td>
+</tr>
+<tr>
+<td>candidate.phone_numbers[type==='mobile'].value<br/>or<br/>candidate.phone_numbers[0].value</td>
+<td>applicantOnboarding.applicantPersonalProfile.contact.phone</td>
+</tr>
+<tr>
+<td>candidate.addresses[type==='home'].value</td>
+<td>applicantOnboarding.applicantPersonalProfile.contact.address.line1</td>
+</tr>
+<tr>
+<td>candidate.custom_fields.hire_date<br/>or<br/>offer.starts_at</td>
+<td>applicantOnboarding.applicantWorkerProfile.hireDate</td>
+</tr>
+<tr>
+<td>candidate.custom_fields.gender</td>
+<td>applicantOnboarding.applicantPersonalProfile.genderCode</td>
+</tr>
+<tr>
+<td>candidate.custom_fields.date_of_birth</td>
+<td>applicantOnboarding.applicantPersonalProfile.birthDate</td>
+</tr>
+<tr>
+<td>offer.custom_fields.employment_type or job.custom_fields.employment_type</td>
+<td>applicantOnboarding.applicantWorkerProfile.employmentType</td>
+</tr>
+<tr>
+<td>job.offices[0].location</td>
+<td>applicantOnboarding.applicantWorkerProfile.location</td>
+</tr>
+<tr>
+<td>job.departments[0].name</td>
+<td>applicantOnboarding.applicantWorkerProfile.department</td>
+</tr>
+<tr>
+<td>job.requisition_id</td>
+<td>applicantOnboarding.applicantWorkerProfile.requisitionId</td>
+</tr>
+<tr>
+<td>job.name</td>
+<td>applicantOnboarding.applicantWorkerProfile.positionTitle</td>
+</tr>
+<tr>
+<td>candidate.custom_fields.city</td>
+<td>applicantOnboarding.applicantPersonalProfile.contact.address.city</td>
+</tr>
+<tr>
+<td>candidate.custom_fields.state</td>
+<td>applicantOnboarding.applicantPersonalProfile.contact.address.stateProvince</td>
+</tr>
+<tr>
+<td>candidate.custom_fields.postal_code</td>
+<td>applicantOnboarding.applicantPersonalProfile.contact.address.postalCode</td>
+</tr>
+<tr>
+<td>candidate.custom_fields.country</td>
+<td>applicantOnboarding.applicantPersonalProfile.contact.address.country</td>
+</tr>
+<tr>
+<td>candidate.title</td>
+<td>applicantOnboarding.applicantWorkerProfile.positionTitle</td>
+</tr>
+<tr>
+<td>userOnboardingTemplateCode.code (that has been set in <strong>Preferences</strong>)</td>
+<td>applicantOnboarding.onboardingTemplateCode.code</td>
+</tr>
+<tr>
+<td>onboardingStatus (that has been set in <strong>Preferences</strong>)</td>
+<td>applicantOnboarding.onboardingStatus.statusCode.code</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h_01J6RRJMNFD5C1HMACKNNA2WQY">Greenhouse Recruiting Candidate Attributes</h3>
+<p>The following table lists the Greenhouse Recruiting application UI field name, UI path, the corresponding Greenhouse Recruiting API attribute, and the description:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Greenhouse Recruiting UI Field Name</strong></td>
+<td><strong>Application UI Path</strong></td>
+<td>
+<strong>API Attribute</strong><strong><br/></strong>
+</td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>Name</td>
+<td>Candidates &gt; Candidate Details</td>
+<td>candidate.first_name</td>
+<td>The candidate's first name</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>Candidates &gt; Candidate Details</td>
+<td>candidate.last_name</td>
+<td>The candidate's last name</td>
+</tr>
+<tr>
+<td>Preferred Name</td>
+<td>Candidates &gt; Candidate Details &gt;  Additional details</td>
+<td>candidate.preferred_name</td>
+<td>The candidate's preferred name</td>
+</tr>
+<tr>
+<td>Email address</td>
+<td>Candidates &gt; Candidate Details</td>
+<td>candidate.email_addresses[type==='work'].value <br/>or<br/>candidate.email_addresses[0].value </td>
+<td>The work email address or the first email address available for the candidate in the system.</td>
+</tr>
+<tr>
+<td>Phone number</td>
+<td>Candidates &gt; Candidate Details</td>
+<td>candidate.phone_numbers[type==='mobile'].value<br/>or<br/>candidate.phone_numbers[0].value</td>
+<td>The mobile phone number or the first phone number available for the candidate in the system.</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>Candidates &gt; Candidate Details</td>
+<td>candidate.addresses[type==='home'].value</td>
+<td>The candidate's home address</td>
+</tr>
+<tr>
+<td>HireDate</td>
+<td>Candidates &gt; Candidate Details &gt;  Additional details</td>
+<td>candidate.custom_fields.hire_date<br/>or<br/>offer.starts_at</td>
+<td>The hire date of the candidate.</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>Candidates &gt; Candidate Details &gt; Additional details</td>
+<td>candidate.custom_fields.gender</td>
+<td>The candidate's gender</td>
+</tr>
+<tr>
+<td>Date Of Birth</td>
+<td>Candidates &gt; Candidate Details &gt; Additional details</td>
+<td>candidate.custom_fields.date_of_birth</td>
+<td>The date of birth of the candidate</td>
+</tr>
+<tr>
+<td>Employment Type</td>
+<td>Candidates &gt; Offer details</td>
+<td>offer.custom_fields.employment_type or job.custom_fields.employment_type</td>
+<td>The employment type of the candidate. For example, <em>Full-time</em>
+</td>
+</tr>
+<tr>
+<td>Company Location</td>
+<td>Candidates &gt; Candidate Details &gt; Additional details</td>
+<td>job.offices[0].location</td>
+<td>The company location.</td>
+</tr>
+<tr>
+<td>Department</td>
+<td>Candidates &gt; Candidate Details &gt; Additional details</td>
+<td>job.departments[0].name</td>
+<td>The candidate's department</td>
+</tr>
+<tr>
+<td>Req ID</td>
+<td>Candidates</td>
+<td>job.requisition_id</td>
+<td>The job requisition ID</td>
+</tr>
+<tr>
+<td>City</td>
+<td>Candidates &gt; Candidate Details &gt; Additional details</td>
+<td>candidate.custom_fields.city</td>
+<td>The job location city.</td>
+</tr>
+<tr>
+<td>State</td>
+<td>Candidates &gt; Candidate Details &gt; Additional details</td>
+<td>candidate.custom_fields.state</td>
+<td>The job location state.</td>
+</tr>
+<tr>
+<td>Postal Code</td>
+<td>Candidates &gt; Candidate Details &gt; Additional details</td>
+<td>candidate.custom_fields.postal_code</td>
+<td>The postal code.</td>
+</tr>
+<tr>
+<td>Country</td>
+<td>Candidates &gt; Candidate Details &gt; Additional details</td>
+<td>candidate.custom_fields.country</td>
+<td>The job location country.</td>
+</tr>
+<tr>
+<td>Job Title</td>
+<td>Candidates &gt; Candidate Details &gt; Additional details</td>
+<td>candidate.title</td>
+<td>The job title of the candidate.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="01JQQX8ZJ9C62RPE14W4DTF9PE">Run the Integration</h1>
+<p>The integration runs when a candidate in the Greenhouse Recruiting application is hired. The integration will process the event received from Greenhouse Recruiting and create an employee record in the ADP Workforce Now application.</p>
+<p>On successful onboarding of an employee to the ADP Workforce Now application, the integration triggers an email notification to the email addresses configured in your integration. It will also send notifications and reports to the email addresses in case of any integration errors.</p>
+<h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1>
+<p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History</strong> column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+<h1 id="h_01JQR3M98SM5Z4GRW8GKDFKSJS">Appendix</h1>
+<h2 id="h_01ESN6XGCPQRMFGWGTMB3YVH03">Setting Up Webhooks in Greenhouse Recruiting</h2>
+<p id="h_01HHC42H2XCK08HVK2G9A6Y6DE">This section details how to set up webhooks in the Greenhouse Recruiting application to send the candidate hire events to the Aquera integration for processing.</p>
+<ol>
+<li>Log in to the Greenhouse Recruiting application.</li>
+<li>Click the <em>Configure</em> icon on the navigation bar.</li>
+<li>Click <strong>Dev Center</strong> on the left navigation pane and click <strong>Webhooks</strong>.</li>
+<li>Enter the following fields to configure your new webhook:
+<ul>
+<li>
+<strong>Name this webhook</strong>: Enter the name that specifies what the webhook is being used for. For example, <em>Aquera Integration</em>
+</li>
+<li>
+<strong>When</strong>: Select the event, <em>Candidate has been hired</em>, from this drop-down list. </li>
+<li>
+<strong>Endpoint URL</strong>: Copy the URL from the<strong> Trigger </strong>section on the <em>Greenhouse Recruiting Candidates to ADP Workforce Now Workers</em> integration setup page of the Aquera Admin portal and paste it in this field. Refer to the <a href="#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details.</li>
+<li>
+<strong>Secret key</strong>: Enter the token generated in the <strong>Trigger </strong>section on the <em>Greenhouse Recruiting Candidates to ADP Workforce Now Workers</em> integration setup page of the Aquera Admin portal. Refer to the <a href="#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details.</li>
+<li>
+<strong>Deactivated?</strong>: Make sure that the <em>No</em> option is selected.<br/><img alt="GHRNew1.png" src="./assets/0b7ca826efabcc8a.bin"/>
+</li>
+</ul>
+</li>
+<li>Click <strong>Advanced Settings</strong> and then provide the <strong>Basic Authorization Credentials</strong> where in the token generated in the Aquera Admin portal must be provided as the password for authentication. The username can be any random string. Refer to the <a href="#h_01JNGB3B2RMJQ844VPCVP4AKSS">Set Up Event Triggers</a> section for details on obtaining the token.<br/><img alt="GHRNew2.png" src="./assets/ec9fb230dad8744d.bin"/>
+</li>
+<li>Click <strong>Create webhook</strong> to complete the webhook setup.</li>
+</ol>
+<p>When you create a new webhook, Greenhouse Recruiting will send a ping to the Aquera endpoint to verify the connection is working. If the ping is accepted successfully, the webhook will be created. If the ping is unsuccessful, Greenhouse Recruiting will save the configuration but deactivate the webhook.</p>
+<p><strong>Note</strong>: If the webhook is deactivated automatically because the endpoint ping failed, scroll down to the <strong>Edit Web Hook</strong> section and edit the webhook configuration to fix the error. Make sure that you set the <strong>Deactivated?</strong> option to <em>No</em> after you have fixed the configuration issue.</p>
+<p> </p>
+  </div>
+</body>
+</html>

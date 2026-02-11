@@ -1,0 +1,363 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ServiceNow to Active Directory Contractor Management Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ServiceNow to Active Directory Contractor Management Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the process of synchronizing the contractor lifecycle from ServiceNow to Active Directory. This integration automates contractor account management by syncing ServiceNow tickets with Active Directory, creating or updating accounts as needed, detecting upcoming expirations, generating extension requests, and extending access only when approved, ensuring seamless and accurate contractor access.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <strong>ServiceNow to Active Directory Contractor Management</strong> integration provides the following functions:</p><ul>
+<li data-list-item-id="e071afcd3cf586cfd2825b6aab3cc1267">Correlates ServiceNow tickets with Active Directory contractor identities using configured correlation attributes to ensure a new account is created when the user does not exist in Active Directory. If the contractor account already exists, the record is updated. If there are no differences between the two systems, no changes are made.</li>
+<li data-list-item-id="e07c48f42cc069dadf642940ed18223e1">Automatically detects contractor accounts in Active Directory that are approaching their configured end date based on the defined expiration threshold and creates ServiceNow contractor access extension request tickets accordingly.</li>
+<li data-list-item-id="ef512592f35afded8ac9aac8686ce14be">Continuously monitors ServiceNow tickets and evaluates their status to determine contractor access extension approval, extending the contractor’s end date in Active Directory only when the corresponding ticket reaches an approved or resolved status.</li>
+<li data-list-item-id="e4b179db8c437c536da361611d4d9f1d9">Automatically closes the ServiceNow ticket after the contractor’s end date is successfully extended, when auto-close is enabled.</li>
+<li data-list-item-id="e3e5792a515d0727bdebd7c03ea9815c9">Generates detailed logs, notifications, and execution reports for contractor expiration detection, ticket creation, access extensions, and integration runs.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e917f018a0c02883eb4ed35f90799ddce">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="ea70caae630b5955ee4ec253aaa1b9e5c">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ef461633741d0b689ef1934e45b2ee85c">
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854-ServiceNow-Configuration-Guide" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details.</li>
+<li data-list-item-id="e68f00f5fb61b817a5fd5d9a8a3a616ae">
+<strong>Active Directory (AD)</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934-Active-Directory-AD-Configuration-Guide" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push the contractor management ticket data from ServiceNow to Active Directory. </p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="eee80980909fa25cd51a8ae0af872204a">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e42e19ad87b2fa2a5efe09186302b7f49">Navigate to <strong>Integrations</strong> from the left-side panel.</li>
+<li data-list-item-id="ec6c0fddc1c19115608665167213956f2">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e41aeb8194d2926a03ac11f2990884a94">Select <strong>ServiceNow to Active Directory Contractor</strong>.</li>
+<li data-list-item-id="ec5c0feeca1a4dfeb3145a4c5cac41e9f">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e3441f2484eec64082af42d9bc3888046">Select your ServiceNow and Active Directory connector instances.</li>
+<li data-list-item-id="eb515f7b8dd445fa0b5f64f8695796cc7">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4><p>Configure the following integration scenario(s):</p><p><strong>Contractor Lifecycle Management Operations</strong>: Select one of the following operations (use case) from the dropdown menu:</p><ul>
+<li data-list-item-id="e8b6df1c1b9eaa08b9e0f8a830c05ffa2">
+<strong>Contractor Creation</strong>: Choosing this option enables the <strong>Contractor Creation</strong> section under the <strong>Configuration</strong> tab.</li>
+<li data-list-item-id="e263c1fbaa1640bcce40ffdad78c9d62e">
+<strong>Contractor Extension</strong>: Choosing this option enables the <strong>Contractor Extension</strong> section under the <strong>Configuration</strong> tab.</li>
+</ul><h4 id="h_01K591CVY4H0XNHQ9SF2Y7PHHW">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e6dad08821f6cd48d3bdb3fee55a841f0">
+<strong>Enable Notifications</strong>: Select this option to enable the integration-related notifications.</li>
+<li data-list-item-id="e72b3e675d8efc274c4223bf08f74be4b">
+<strong>Enable Logging</strong>: Select this option to generate logs outlining data changes.</li>
+<li data-list-item-id="e822788fab5673b19ee552721cd25dd6b">
+<strong>Enable Reporting</strong>: Select this option to generate the integration report.</li>
+<li data-list-item-id="e7c6c491526ff6f207d91cd86508ba3e9">
+<strong>Enable Log Insights</strong>: Select this option to visualize integration-related metrics.</li>
+<li data-list-item-id="eff01488b39dda21300a45ac5d1c10524">
+<strong>Debug Mode</strong>: Select this option to enable verbose diagnostic logging for troubleshooting identity lifecycle management operations. When enabled, it provides detailed execution traces, API request/response logging, and error diagnostics.</li>
+</ul><h4 id="h_01K56EHTHTWR2ZA7WXBTBDY9PH">Contractor Creation</h4><p>Configure the following contractor creation settings:</p><h5 id="h_01KFZEGGV68F71BB72KC3GH9F4">Match Expression</h5><ul>
+<li data-list-item-id="e4f650b43c0a9eb3840e838e02b535212">
+<strong>Source Correlation Attribute</strong>: Select the unique identifier attribute from ServiceNow used for identity correlation and record matching with Active Directory. This attribute enables deterministic identity linking between ServiceNow contractor records and Active Directory user objects during provisioning, updates, and reconciliation operations.</li>
+<li data-list-item-id="e92d701cfc67caf524c4e02737d28ed20">
+<strong>Target Correlation Attribute</strong>: Select the unique identifier attribute from Active Directory used for identity correlation and record matching with ServiceNow. This attribute enables deterministic identity linking between ServiceNow contractor records and Active Directory user objects during provisioning, updates, and reconciliation operations.</li>
+</ul><h5 id="h_01KFZEHYZWX84H2VQ9DAJ8XQ7W">Contractor Creation Settings</h5><ul>
+<li data-list-item-id="e706f661ee79a56b75b26d57a9842da4c">
+<strong>ITSM Workflow Trigger</strong>: Select the ITSM workflow trigger mechanism for contractor identity provisioning requests from the drop-down list. The available options are <strong>Ticket</strong>, <strong>Flow Designer Trigger</strong>, and <strong>Service Catalog</strong>. Based on your selection, the settings will change. For example,<ul>
+<li data-list-item-id="e9e9b17e2eb47974f037706f71d1ebe36">If you select <strong>Service Catalog</strong>, the following settings will appear:<ul>
+<li data-list-item-id="eaf2f2195bdff3421c314f876d2d3c75b">
+<strong>Service Catalog Category</strong>: Select the ITSM service catalog category classification for contractor onboarding requests from the drop-down list. This categorization enables proper service request routing, workflow assignment, and catalog item selection for identity provisioning operations.</li>
+<li data-list-item-id="e802ffeea51c84294e267ccae6b1953c3">
+<strong>ITSM Ticket Category</strong>: Select the appropriate ITSM ticket category for contractor onboarding requests. This categorization ensures proper routing, workflow assignment, SLA management, and accurate reporting for identity provisioning operations. Categories help organize tickets by business function and ensure assignment to the appropriate support teams.</li>
+</ul>
+</li>
+<li data-list-item-id="e3ced1a6ce53c3ffb2ad0e0a936548c81">If you select <strong>Ticket</strong>, the following settings will appear:<ul><li data-list-item-id="ee36f8a87a85d987fca99f297bb4861b1">
+<strong>ITSM Ticket Type</strong>: Select the appropriate ITSM ticket type for contractor identity provisioning requests when using ticket-based triggers. This selection determines the ticket schema, workflow rules, SLA policies, and access governance controls applied to onboarding operations. Common ticket types include Incident, Change Request, HR Case, Service Catalog Request, or custom ticket types configured in the ITSM system.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e18dab9099a3bdbadcda683cea8707cb6"> <strong>Trigger Ticket Statuses</strong>: Select the ITSM ticket status values that will trigger contractor identity provisioning workflows. Only tickets with these statuses will be processed for account creation and access provisioning in Active Directory. This ensures that provisioning occurs only when tickets reach the appropriate workflow stage, maintaining proper approval and validation controls.</li>
+<li data-list-item-id="edabf818d7a6047366e1f4efe1afaf5ad">
+<strong>Auto-Close Ticket After Provisioning</strong>: Automatically resolve and close the ITSM ticket upon successful completion of contractor identity provisioning in Active Directory. When enabled, tickets are transitioned to a closed state after account creation, ensuring ticket lifecycle management aligns with the identity lifecycle. This reduces manual ticket management overhead and maintains accurate ticket status tracking.<ul>
+<li data-list-item-id="ed2ae331442e357c1045d1d097723bed0">
+<strong>Post-Provisioning Ticket Status</strong>: Select the ITSM ticket status to apply after successful contractor identity provisioning in Active Directory. This status indicates that the provisioning workflow has been completed and that the ticket can be closed or resolved. The selected status should align with your organization's ticket lifecycle management practices.</li>
+<li data-list-item-id="e0c334d615297d6e784c69c03e5fecfa8">
+<strong>Ticket Resolution Code</strong>: Select the ITSM resolution code to apply when closing tickets after successful contractor provisioning. Resolution codes provide categorization for closed tickets, enabling better reporting and analysis of completed identity lifecycle operations. This helps track provisioning success rates and identify common resolution patterns.</li>
+</ul>
+</li>
+</ul><h4 id="h_01KC6HYWY0APQ3BRAS1FXAEQK6">Manage End Date</h4><p>Configure the following settings under the <strong>Expiry Notification Settings</strong> section:</p><ul>
+<li data-list-item-id="ece3a980831abfdc20778a5edd40f1cd6">
+<strong>Enable Expiry Notifications</strong>: Select this option to enable automated identity lifecycle expiration notifications for contractor access governance. When enabled, the system generates proactive alerts and notifications based on configured thresholds to ensure timely access reviews and extension workflows.<ul><li data-list-item-id="e6a03ce28b5c35647545cd06207427430">
+<strong>Notification Days Before Expiry</strong>: Configure multiple notification thresholds (in days) before contractor access expiration. Notifications will be sent at each configured interval to support proactive access governance, compliance monitoring, and timely access extension. Common thresholds include 90, 60, 30, 14, 7, 3, 1, and 0 days.</li></ul>
+</li>
+<li data-list-item-id="eef0c6eabd5f7bc43e5f683efe10c0014">
+<strong>Create Contractor Extension Tickets Automatically</strong>: Select this option to automatically generate contractor extension tickets for contractor access governance.<ul><li data-list-item-id="e0f9638e6bd93531ac7b217f1c0430ae2">
+<strong>Create Tickets X Days Before Contractor Expiry</strong>: Enter the number of days before contractor access expiration to create the extension tickets for contractor access governance.</li></ul>
+</li>
+<li data-list-item-id="e57b74f24752e5965b0c90ce6b72ac11d">
+<strong>Update Contractor End Date</strong>: Select this option to update the contractor end date in Active Directory after receiving the appropriate approval in ServiceNow for contractor access governance. When enabled, the <strong>Auto-Close Ticket After Provisioning </strong>option will appear under the <strong>Contractor Extension Settings</strong> section.</li>
+</ul><p>Configure the following settings under the <strong>Contractor Extension Settings</strong> section:</p><ul>
+<li data-list-item-id="e6f780392f10e811c94a7159cb1b937ab">
+<strong>ITSM Workflow Trigger</strong>: Select the ITSM workflow trigger mechanism for contractor identity provisioning requests from the drop-down list. The available options are <strong>Ticket</strong>, <strong>Flow Designer Trigger</strong>, and <strong>Service Catalog</strong>. Based on your selection, the settings will change. For example,<ul>
+<li data-list-item-id="ed74e334fd1c3527a767412364baf0b0e">If you select <strong>Service Catalog</strong>, the following settings will appear:<ul>
+<li data-list-item-id="e850883d8b8dbf7dfc315dfc1833bb2af">
+<strong>Service Catalog Category</strong>: Select the ITSM service catalog category classification for contractor onboarding requests from the drop-down list. This categorization enables proper service request routing, workflow assignment, and catalog item selection for identity provisioning operations.</li>
+<li data-list-item-id="ec7c6e41ac4975d4327243d7381c647ed">
+<strong>ITSM Ticket Category</strong>: Select the appropriate ITSM ticket category for contractor onboarding requests. This categorization ensures proper routing, workflow assignment, SLA management, and accurate reporting for identity provisioning operations. Categories help organize tickets by business function and ensure assignment to the appropriate support teams.</li>
+</ul>
+</li>
+<li data-list-item-id="e7c5f248f3bb99d89560c4b6fbd714679">If you select <strong>Ticket</strong>, the following settings will appear:<ul><li data-list-item-id="ead6a33379fa8a48d481efb05b22e6793">
+<strong>ITSM Ticket Type</strong>: Select the appropriate ITSM ticket type for contractor identity provisioning requests when using ticket-based triggers. This selection determines the ticket schema, workflow rules, SLA policies, and access governance controls applied to onboarding operations. Common ticket types include Incident, Change Request, HR Case, Service Catalog Request, or custom ticket types configured in the ITSM system.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e9a162c7ecef8e5227f6d34d689a46797"> <strong>Trigger Ticket Statuses</strong>: Select the ITSM ticket status values that will trigger contractor identity provisioning workflows. Only tickets with these statuses will be processed for account creation and access provisioning in Active Directory. This ensures that provisioning occurs only when tickets reach the appropriate workflow stage, maintaining proper approval and validation controls.</li>
+<li data-list-item-id="ebbb709977ccfb03c7911c75a4d79cf3a">
+<strong>Auto-Close Ticket After Provisioning</strong>: Automatically resolve and close the ITSM ticket upon successful completion of contractor identity provisioning in Active Directory. When enabled, tickets are transitioned to a closed state after account creation, ensuring ticket lifecycle management aligns with the identity lifecycle. This reduces manual ticket management overhead and maintains accurate ticket status tracking.<ul>
+<li data-list-item-id="edf0b888da5beabe1aeec4dd821427aff">
+<strong>Post-Provisioning Ticket Status</strong>: Select the ITSM ticket status to apply after successful contractor identity provisioning in Active Directory. This status indicates that the provisioning workflow has been completed and that the ticket can be closed or resolved. The selected status should align with your organization's ticket lifecycle management practices.</li>
+<li data-list-item-id="e9e1c292b69a4603484f6ad2dc486c54a">
+<strong>Ticket Resolution Code</strong>: Select the ITSM resolution code to apply when closing tickets after successful contractor provisioning. Resolution codes provide categorization for closed tickets, enabling better reporting and analysis of completed identity lifecycle operations. This helps track provisioning success rates and identify common resolution patterns.</li>
+</ul>
+</li>
+</ul><h4 id="h_01K0PGWJSDWRPH0DRX23RJ5DDJ">Notification Center</h4><p>Configure the following settings under the <strong>General Notification Settings</strong>:</p><ul>
+<li data-list-item-id="e4d6a04104f61c86ca32f69f96461485b">
+<strong>Send Email Notification On</strong>: Select the contractor events that should trigger email notifications. Based on your selection, the corresponding settings section will be displayed.<ul>
+<li data-list-item-id="e73053574377cb60e495e5f28dbf73803">If you select <strong>Contractor Creation</strong>, the <strong>Contractor Creation Notifications</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="e864acc8637642bc42ff5754a633b57df">
+<strong>Creation - Send To</strong>: Select the primary recipients for contractor creation notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="e314b5cbb7819eb2c87e4e325c5490499">
+<strong>Creation - Custom Recipients</strong>: Enter custom email addresses to receive contractor creation notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="e8cfc0c498b01c2be48881be4bfb244cf"> <strong>Creation - CC</strong>: Enter CC recipients for contractor creation notifications.</li>
+<li data-list-item-id="e6693a05cfca0c6146d18ff003a8186e6"> <strong>Creation - Email Subject</strong>: Enter the subject line to be used for contractor creation email notifications.</li>
+<li data-list-item-id="ec293ae9bd1666f3255cc3a4b2f594117">
+<strong>User Creation Email Template</strong>: Enter the content to be used as the email body for all contractor creation notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e9ea20152fc54fdf076759fcaa7ec9093">If you select <strong>Contractor Update</strong>, the <strong>Contractor Update Notifications</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="ed9b17414286208a7637bb27d2d6c8867">
+<strong>Update - Send To</strong>: Select the primary recipients for contractor update notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="e13cb5e899ef90b76f52589345efb51ec">
+<strong>Update - Custom Recipients</strong>: Enter custom email addresses to receive contractor update notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="e18f73e793ef798317b034c75bd027e7c">
+<strong>Update - CC</strong>: Enter CC recipients for contractor update notifications.</li>
+<li data-list-item-id="eda96352b595f778250f07c3de65798b1">
+<strong>Update - Email Subject</strong>: Enter the subject line to be used for contractor update email notifications.</li>
+<li data-list-item-id="eed061f32074993d45ec4098db9e73b62">
+<strong>User Update Email Template</strong>: Enter the content to be used as the email body for all contractor update notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e254a42857567046ccf6362f16b375574">If you select <strong>Contractor Termination</strong>, the <strong>Contractor Termination Notifications</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="ed5bbb0abf3fd763b392cf4438d14c1f0">
+<strong>Termination - Send To</strong>: Select the primary recipients for contractor termination notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="e245073a77d51281e58debeaf6ae4bc73">
+<strong>Termination - Custom Recipients</strong>: Enter custom email addresses to receive contractor termination notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="e746b07870b2cde515d9342689c008dad">
+<strong>Termination - CC</strong>: Enter CC recipients for contractor termination notifications.</li>
+<li data-list-item-id="eedb1f326fa5f0e43235309a3bc9fffa1">
+<strong>Termination - Email Subject</strong>: Enter the subject line to be used for contractor termination email notifications.</li>
+<li data-list-item-id="e0c5244813ded101ed033d1cb34c2ff05">
+<strong>User Termination Email Template</strong>: Enter the content to be used as the email body for all contractor termination notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e28803b1036a823b3e7d1af1d313c9c29">If you select <strong>Success Event</strong>, the <strong>Success Notification</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="ea1039d1182610241deffa8612ada8ac2">
+<strong>Success - Send To</strong>: Select the primary recipients for successful integration execution notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="e4994ece67edd64693aa2fec0d36731b8">
+<strong>Success - Custom Recipients</strong>: Enter custom email addresses to receive successful integration execution notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="ed6cd0cd25c7e3e57704b837527568332">
+<strong>Success - CC</strong>: Enter CC recipients for successful integration execution notifications.</li>
+<li data-list-item-id="ef35247bc7c35effbfecb7e9f720d45d2">
+<strong>Success - Email Subject</strong>: Enter the subject line to be used for successful integration execution notifications.</li>
+<li data-list-item-id="e2037a03e2730d4311fabba8e112a4174">
+<strong>Success Event Email Template</strong>: Enter the content to be used as the email body for all successful integration execution notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e66a5136047573e20aa73f5c43889b902">If you select <strong>Failure Event</strong>, the <strong>Failure Notification</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="e917db5bed20397ff3731c4c745b196d8">
+<strong>Failure - Send To</strong>: Select the primary recipients for failed integration execution notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="ed85cf2aa0fc5f465e41fba1fa9d799ed">
+<strong>Failure - Custom Recipients</strong>: Enter custom email addresses to receive failed integration execution notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="efb2fef94ea259645104d79858ecaf990">
+<strong>Failure - CC</strong>: Enter CC recipients for failed integration execution notifications.</li>
+<li data-list-item-id="efda2a7ed8170881e74bc88ae6e576786">
+<strong>Failure - Email Subject</strong>: Enter the subject line to be used for failed integration execution notifications.</li>
+<li data-list-item-id="e16a16384f1ee2c10f0daeb513100d991">
+<strong>Failure Event Email Template</strong>: Enter the content to be used as the email body for all failed integration execution notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="ee55861f9eab6f55682786f08662ffc9d">If you select <strong>Contractor Expiry Ticket Creation</strong>, the <strong>Expiry Email Templates</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="e55bfed551b8fad9e503adb04e6766a06">
+<strong>Expiry - Send To</strong>: Select the primary recipients for contractor expiry notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="e1adba53c301e9297385ba705546efbac">
+<strong>Expiry - Email Subject</strong>: Enter the subject line to be used for contractor expiry notifications.</li>
+<li data-list-item-id="e136096cd3b442df7efaae7b37c3a1546">
+<strong>Contractor Expiry Email Template</strong>: Enter the content to be used as the email body for all contractor expiry notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e30f27eeb8a1163214e0152eeb48175f4">If you select <strong>Contractor Expiry Notification</strong>, the  section will appear. Configure the following settings under this section:</li>
+</ul>
+</li>
+<li data-list-item-id="e4f05bca4261ad561094d3f7a2296d994">
+<strong>Include Contractor Report as Attachment</strong>: Select this option to attach contractor change reports to notification emails. When enabled, the following settings will appear:<ul>
+<li data-list-item-id="e05052a6f9076acc3a79d4286f6d3a09d">
+<strong>Report File Format</strong>: Select the file format for contractor notification reports from the drop-down list. Available options include <strong>CSV Report</strong> and <strong>Excel Report</strong>.</li>
+<li data-list-item-id="ee473976731a6fd86e15b702dcf6d0d10">
+<strong>Contractor Report Dataset:</strong> Select the level of contractor data to include in attached reports from the drop-down list. The following are the available options:<ul>
+<li data-list-item-id="e930a5303ac2323b6f336692aca819ab9">
+<strong>Minimum Changes</strong>: Includes only the operation performed, with no identifiers, field names, or data values.</li>
+<li data-list-item-id="eff64c87a5aa18668c8361c0e43762c87">
+<strong>Metadata Changes</strong>: Includes the operation and field names involved, without identifiers or data values.</li>
+<li data-list-item-id="ee559b9f551b3df5f6b317849be482274">
+<strong>Non-PII Data Changes</strong>: Includes the operation, field names, and selected non-PII values, without any identifiers.</li>
+<li data-list-item-id="ee13f50a986ec3aeb2187058ac6cd5922">
+<strong>GUID with Non-PII Data</strong>: Includes a GUID along with the operation, field names, and selected non-PII values.</li>
+<li data-list-item-id="e746afcc2dbe3ebdbcf816f4ab8b8e903">
+<strong>Contractor ID with Non-PII Data</strong>: Includes the contractor ID with the operation, field names, and selected non-PII values.</li>
+<li data-list-item-id="e4733ca1a04382abfcdfa5b3fba804317">
+<strong>Contractor ID with All Data Changes</strong>: Includes the contractor ID with the operation, field names, and all data values, including PII.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="h_01KC6J2N08947K00S859KHW0PV">Execution</h4><p>Configure the following execution parameter settings:</p><ul>
+<li data-list-item-id="e8fd2fb890c96f10b587e286c768d370c">
+<strong>Run in Incremental Mode</strong>: Select this option to process only the changes since the last execution, improving performance by avoiding full synchronization of contractors from ServiceNow.</li>
+<li data-list-item-id="e6c2d0fd13c1504606d7bc2161d133ae8">
+<strong>Report-Only Mode</strong>: Select this option to enable read-only simulation mode for testing and validation. When enabled, the integration performs all operations in dry-run mode without executing provisioning or deprovisioning actions against Active Directory. This allows for safe testing of identity lifecycle workflows and validation of business rules without impacting production directory services.</li>
+<li data-list-item-id="e49d50792879e49a98379658e425c67f5">
+<strong>Import Limit</strong>: Specify the maximum number of contractor records to import from ServiceNow to Active Directory in a single execution. Leave blank for no limit.</li>
+<li data-list-item-id="e0d595219d99cdf4d3e854007136731e5">
+<strong>Update Limit</strong>: Specify the maximum number of contractor records that can be updated in Active Directory in a single execution. Leave blank for no limit.</li>
+<li data-list-item-id="ef4015aa67fcebd98ba0263c0c5d26fba">
+<strong>Set the Termination Limit for Contractors</strong>: Enter a numeric value to limit the number of contractor records terminated in Active Directory per execution.</li>
+</ul><h2 id="h_01K04HD998SCMWKJ7BWM43V581">Policy</h2><p>The following sections are displayed under the <strong>Policy</strong> tab:</p><h3 id="h_01KC61HN1T7APW85CMB7R1HRRM">Contractor Naming Policy</h3><h4 id="h_01KC61MFYNGXQ0TKK3EJ443G16">Naming Policy Settings</h4><p>Configure the following naming policy settings:</p><p><strong>Generate Common Name</strong>: Select this option to define a custom policy for generating a unique Common Name. Selecting this option enables the following settings:</p><ul>
+<li data-list-item-id="e8302beeb9e114f4052ee8b650c79d1f3">
+<strong>Generate Common Name (CN) using</strong>: Select the drop-down option for generating a common name for the user. The available option is <strong>Use Custom Policy to Generate CN</strong>.</li>
+<li data-list-item-id="e7e9ac46b03d73137d9f1a636badc52a6">Configure the following settings under the <strong>Generate Common Name (CN)</strong> section:<ul><li data-list-item-id="ee4b76fcebf8dbcd31bc4be4e0ca0ffb8">
+<strong>Unique CN Generation Pattern</strong>: Select any of the predefined patterns for generating a CN, or use the <strong>Custom</strong> option to define your own CN generation pattern from the dropdown. When the <strong>Custom</strong> option is selected, the following settings appear:<ul>
+<li data-list-item-id="ec7026d665da00b6e67542f0f868f6524">
+<p><strong>Enter Your Prompt</strong>: Enter your policy for generating the common name. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote><p>Generate a first name where the first character of the first name is capitalized, followed by a space and a last name where the first character is capitalized, followed by numbers up to 2 — but the first one should be without a number.</p></blockquote>
+</li>
+<li data-list-item-id="e91da5347748f6636d074c436b9a998c4">
+<strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: john, <strong>Last Name</strong>: smith), the generated common name values are John Smith, John Smith1, and John Smith2, as displayed under the <strong>Preview</strong> section. To view the first, middle, and last name values from which the preview results are generated, turn on the <strong>Advanced Preview Options</strong> toggle.</li>
+<li data-list-item-id="e8fd51333a4c8817d9a90267f61c7de1c">
+<strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name, middle name, and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated common name values will appear in the <strong>Preview</strong> section.</li>
+</ul>
+</li></ul>
+</li>
+</ul><p><strong>Generate Contractor Principal Name (UPN)</strong>: Select this option to define a custom policy for generating a unique Contractor Principal Name. Selecting this option enables the following settings:</p><ul>
+<li data-list-item-id="eac142cbc92ec19b5a5d54597f309b7a9">
+<strong>Generate Contractor Principal Name (UPN) using</strong>: Select the drop-down option for generating a unique contractor principal name for the user. The following are the available options:<ul>
+<li data-list-item-id="e61399d9d3c76af635edd1dfeea7c7851">
+<strong>Use CN as UPN</strong>: Select this option to use the common name generated from the <strong>Generate Common Name</strong> section as the Contractor Principal Name (UPN).</li>
+<li data-list-item-id="ea3af0bde76c0dad5cca0a5ad57c3e673">
+<strong>Use Custom Policy to Generate UPN</strong>: Select this option to customize your own UPN generation pattern.</li>
+</ul>
+</li>
+<li data-list-item-id="e19382d8511ea2e38d78c8333495862c8">Configure the following settings under the <strong>Generate Contractor Principal Name (UPN)</strong> section:<ul><li data-list-item-id="e758276ba506d476d925f48dfc77599a4">
+<strong>Unique UPN Generation Pattern</strong>: Select any of the predefined patterns for generating a UPN, or use the <strong>Custom</strong> option to define your own UPN generation pattern from the dropdown. When the <strong>Custom</strong> option is selected, the following settings appear:<ul>
+<li data-list-item-id="ec60f7a32d8d149342ddb0785042d8ac8">
+<p><strong>Enter Your Prompt</strong>: Enter your policy for generating the UPN. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote>
+<p><em>Generate three username outputs using the following rule:</em></p>
+<p><em>Take the first name and create three variants by using its first 1, 2, and 3 letter, respectively.</em></p>
+<p><em>Combine these first-name letters with the truncated last name to form three usernames, inserting the middle initial in between.</em></p>
+<p><em>Make sure that the total length does not exceed 10 characters.</em></p>
+<p><em>All characters must be in lowercase and contain no spaces.</em></p>
+</blockquote>
+</li>
+<li data-list-item-id="ef07c7d85702471475829405dcd52ea9b">
+<strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: Alexander, <strong>Last Name</strong>: Johnson, <strong>Middle Name</strong>: Michael), the generated contractor principal name values are amjohnson, almjohnson, and alemjohnso, as displayed under the <strong>Preview</strong> section. To view the first, middle, and last name values from which the preview results are generated, turn on the <strong>Advanced Preview Options</strong> toggle.</li>
+<li data-list-item-id="e215a27e92680ea75ac624fe18e333859">
+<strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name, middle name, and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated UPN values will appear in the <strong>Preview</strong> section.</li>
+</ul>
+</li></ul>
+</li>
+</ul><p><strong>Generate Email</strong>: Select this option to define a custom policy for generating a unique email. Selecting this option enables the following settings:</p><ul>
+<li data-list-item-id="ec5680ab80bb183866ce307c97e5bad15">
+<strong>Generate Email using</strong>: Select the drop-down option for generating an email for the contractor. The following are the available options:<ul>
+<li data-list-item-id="e776d55a50bdabeee463f5f5ba3c00765">
+<strong>Use UPN as Email Prefix</strong>: Select this option to use the contractor principal name generated from the <strong>Generate Contractor Principal Name (UPN)</strong> section as the email prefix.</li>
+<li data-list-item-id="ed3c219a261ce6505041bb59b037311d0">
+<strong>Use Custom Policy to Generate Email Suffix</strong>: Select this option to customize your own email suffix generation pattern.</li>
+</ul>
+</li>
+<li data-list-item-id="ebf6dd5809ed5391e5914be18d8e62089">Configure the following settings under the <strong>Generate Email</strong> section:<ul><li data-list-item-id="ea561324e88085003c93b77bd3a05a827">
+<strong>Unique Email Generation Pattern</strong>: Select any of the predefined patterns for generating an email suffix, or use the <strong>Custom</strong> option to define your own email suffix generation pattern from the dropdown. When the <strong>Custom</strong> option is selected, the following settings appear:<ul>
+<li data-list-item-id="e6bc1e37143ae3357826d5e0d073be57c">
+<p><strong>Enter Your Prompt</strong>: Enter your policy for generating the UPN. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote>
+<p><em>Generate three username outputs using the following rule:</em></p>
+<p><em>Take the first name and create three variants by using its first 1, 2, and 3 letter, respectively.</em></p>
+<p><em>Combine these first-name letters with the truncated last name to form three usernames, inserting the middle initial in between.</em></p>
+<p><em>Make sure that the total length does not exceed 10 characters.</em></p>
+<p><em>All characters must be in lowercase and contain no spaces.</em></p>
+</blockquote>
+</li>
+<li data-list-item-id="e9d1493bddd492f7f23d1c522e0aa8a6f">
+<strong>Preview</strong>: Based on the prompt and the default input (First Name: John, Last Name: Smith), the generated email suffix values are jsmith, josmith, and johsmith, as displayed under the <strong>Preview</strong> section. To view the first and last name values from which the preview results are generated, turn on the <strong>Advanced Preview Options</strong> toggle.</li>
+<li data-list-item-id="e0a1e44be331ac0a356768c70257a1441">
+<strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated email suffix values will appear in the <strong>Preview</strong> section.</li>
+</ul>
+</li></ul>
+</li>
+</ul><h3 id="h_01KC6BVBDVTRAAN3EFX130CVVW">Contractor Password Policy</h3><p>Configure the following password policy settings:</p><p><strong>Password Generation Method</strong>: Select the method used to generate passwords for contractor identity provisioning in Active Directory from the drop-down list. The available options are:</p><ul>
+<li data-list-item-id="e3dd3383751851037f1a9bc3457ad0593">
+<strong>Auto-Generate Password</strong>: Select this option if you want the system to generate the password securely.</li>
+<li data-list-item-id="ed364525e5509fb91984845b684cd873e">
+<strong>Custom Password Policy</strong>: Select this option to define your own password requirements for contractor accounts based on your organization’s policies. When selected, the following settings will appear under the <strong>Custom Password Policy section</strong>:<ul>
+<li data-list-item-id="e3d1ee060121beb2d77552e4aaabb0d67">
+<strong>Minimum Character Length</strong>: Specify the minimum number of characters a contractor password must have to meet organizational password policy and authentication security standards.</li>
+<li data-list-item-id="e966a03b1ebf75268422cf3fc279db298">
+<strong>Allowed Special Characters</strong>: Select which special symbols (such as !, @, #, $, etc.) can be included in passwords from the drop-down list. Each password must consist of at least one character from this set to meet security requirements.</li>
+<li data-list-item-id="e99bbd15c1192f93d2727ba67d4d6f0fb">
+<strong>Password Complexity Requirements</strong>: Select rules about what types of characters a password must contain from the drop-down list. You can require one or more of the following:<ul>
+<li data-list-item-id="e69b91e2adbd3b9ce0c906401a3fb3ca3"><strong>Require Uppercase Letters</strong></li>
+<li data-list-item-id="ee08e0ee0a9ab0232ccfca7d201825153"><strong>Require Lowercase Letters</strong></li>
+<li data-list-item-id="ec091bce5627bc96ce73c98dc19fa4318"><strong>Require Numbers</strong></li>
+<li data-list-item-id="ea79c5579922fa0565072da9c02c8e6aa"><strong>Require Special Characters</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01KC8N0H76EWR3JBVXRFPB18KZ">Operational Settings</h2><p>Configure the following operational settings:</p><h3 id="01K5RAXMQQAWTTT5GM0YKX2RKZ">Log Settings</h3><p>Configure the following logging settings:</p><p><strong>Select Log Type</strong>: Choose the level of contractor data visibility captured in the ServiceNow to Active Directory logs.</p><h3 id="h_01KC6HD3EB177Y4AE6GFEJQPEW">Log Insights</h3><p>Configure the following log insight settings:</p><p><strong>Select Log Insight Type</strong>: Select the level of contractor insight data captured from the ServiceNow to Active Directory.</p><h3 id="h_01KC6HHSMA0FQQRJ7C15ASJ2EK">Reporting</h3><p>Configure the following report settings:</p><ul>
+<li data-list-item-id="e3e702193ecd5eb411cdfeff2446c7d51">
+<strong>Reporting Type</strong>: Select the level of contractor data set that should appear in generated reports.</li>
+<li data-list-item-id="e5929395830f555c8ebbed55f330b9e74">
+<strong>Select Report Format</strong>: Select the file format for contractor reporting output. You can select either <strong>CSV Report</strong> or <strong>Excel Report</strong> from the drop-down list based on your use case.</li>
+</ul><h2 id="h_01KC8N0H76M1RZ12RH0654ADZQ">Attribute Map</h2><p>The <strong>ServiceNow to Active Directory Contractor Management</strong> integration maps the attributes from ServiceNow and Active Directory. The attributes displayed in this section depend on the type of synchronization the integration supports:</p><ul>
+<li data-list-item-id="eef77443e2a075399981f608c5f7da070">
+<strong>End Date Update</strong>: To extend a contractor's tenure in Active Directory, the integration utilizes ServiceNow attributes as the source and maps them to the corresponding Active Directory attributes as the target.</li>
+<li data-list-item-id="e374758d3753d7014598ff34021ded058">
+<strong>Contractor Creation</strong>: To create a contractor in Active Directory, the integration utilizes ServiceNow attributes as the source and maps them to the corresponding Active Directory attributes as the target.</li>
+<li data-list-item-id="ed470ca47eb001fb430841b78996bd048">
+<strong>Extension Ticket</strong>: For creating a ticket to extend the contractor's tenure, the integration uses Active Directory attributes as the source and maps them to the corresponding ServiceNow attributes as the target.</li>
+</ul><p>Only the source attributes can be modified, as needed, to align with your specific use case.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Tables</h2><p id="h_01J7XEGA5M57172Y4JT9508Q9D">Tables enable you to update specific data of a resource in a target application during integration runs when that data is missing in the source application from which the resource data is retrieved.</p><p>You can add tables in integrations to sync the values in tables to another application. Tables are used to update an attribute value in another application when the application attribute does not provide specific data.</p><p>The following tables are available:</p><ul><li data-list-item-id="eed07569240afbd367c6c5cb7e5e8a396">
+<p><strong>Active Directory OU Mapping Table</strong>: Click the table row to display the <strong>Update Table</strong> pop-up window. Each row in the table corresponds to a key name and key value pair. You can add rows to the table using one of the following options:</p>
+<ul>
+<li data-list-item-id="e281049982b0b44bf70549a87a8584eb0">
+<strong>Add Row</strong>: Click <strong>Add Row</strong> to manually add a row by providing a key name and a key value.</li>
+<li data-list-item-id="e01e07f176c95ed281191c548a3a76fbd">
+<strong>Upload CSV</strong>: Click <strong>Upload CSV </strong>to upload rows to the table using a CSV file. The CSV file should have two columns with headings 'NAME' and 'VALUE.'<br/><strong>Notes</strong>:<ul>
+<li data-list-item-id="e2ea3b230db1d20ae55f3f40eadbe17ad">The key name within a table should be unique. The key name can include a combination of letters and numbers.</li>
+<li data-list-item-id="e0485d3806dd9299c19ef142e339a74c6">The key name supports all the special characters except the following:<ul>
+<li data-list-item-id="e3c694e2847e8d264239dc9b557ff5692">/ (forward slash)</li>
+<li data-list-item-id="e36b489c7b60b8a3abb1a701c921b5dbe">\ (backslash)</li>
+<li data-list-item-id="ecb1536c29252509d6591be55024f3230">" " (double quotes)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Click <strong>Save</strong> to save the changes made.</p>
+</li></ul><h2 id="h_01KC8N0H76E09222N9K6SS7PCP">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

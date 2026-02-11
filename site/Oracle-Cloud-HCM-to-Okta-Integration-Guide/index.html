@@ -1,0 +1,323 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Oracle Cloud HCM to Okta Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Oracle Cloud HCM to Okta Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01K85CX12YHNDK3QBSYZQ50S9K">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating the integration between various applications. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>The integration helps your organizations keep employee information updated between Oracle Cloud HCM and Okta. It reads worker data, adds manager and location details, and creates new company email addresses when needed. Before updating, it checks both systems to make sure the email is unique and not already in use. This process ensures each employee has the right email and profile in both systems.</p><p>This guide explains how the integration reads and updates employee records in Oracle and Okta. It manages when to create or update user emails and provides detailed reports after each run.</p><h2 id="h_01K85CX12YEN6V9PEFCTX2B4KD"><strong>Key Functions</strong></h2><p>The Oracle Cloud HCM to Okta Employee Data Integration performs the following functions:</p><ul>
+<li data-list-item-id="e417d446a947911b2de6bd61f2e145761">Retrieves employee records from Oracle HCM, either full or incremental, based on recent updates or new hires.</li>
+<li data-list-item-id="e2e1350f37295e62a434bc5bed4197e16">Enriches each employee record with related details, such as manager and location information.</li>
+<li data-list-item-id="eed09bb9e1e7aecc558192dc4a7ec593e">Generates and validates unique corporate email addresses for employees by checking availability across both Oracle HCM and Okta.</li>
+<li data-list-item-id="ef7a86ac5a9d232c5e05e194d10abc9f9">Updates or replaces the employee’s primary email in Oracle HCM, ensuring that any previous email records are properly closed.</li>
+<li data-list-item-id="e83bf58d2fe9e2829812eaf09457fa092">Submits updates to Okta through bulk sessions, creating or updating user accounts as required.</li>
+<li data-list-item-id="e410d45c8cd2151c04a5181703423dcfe">Generates detailed reports summarizing the success, failure, or skipped actions for each employee record processed.</li>
+</ul><h1 id="h_01K85CX12Z5B14CP8GJJXDD8F7">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e5a15d00910ccf5e6e0e7ac7adce6ea37">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e3d54eca6c37f459b8c0f6778527d226e">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin portal for the integration:<ul>
+<li data-list-item-id="ee48ab7988607265742ef6286062a217c">
+<strong>Oracle Cloud HCM</strong>: Refer to the <a href="https://www.notion.so/hc/en-us/articles/360014797914">Oracle Cloud HCM Configuration Guide</a> for details.</li>
+<li data-list-item-id="ee4a01623a6b9327f4e5f3f2b3aec90c5">
+<strong>Okta</strong>: Refer to the <a href="https://www.notion.so/hc/en-us/articles/360039119053">Okta Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01K85CX1311YR85KJWXW1C44VS">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize employee data and email updates between Oracle HCM and Okta. The setup ensures that new, updated, or terminated employee records in Oracle HCM are accurately reflected in Okta, maintaining consistency across both systems.</p><h2 id="h_01K85CX1310MF3W96ZSNYA1SXW">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e96481f517e5366a200c056da4af0e463">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="e5eef8d3dc8a34260ed765a644655e3eb">Navigate to <strong>Integrations</strong> from the left-side panel.</li>
+<li data-list-item-id="e96305eac802e9b8e9600880b7784cd24">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="eae46c1410b9e2262f0e7091ad9c1fbdb">Select <strong>Oracle HCM to Okta Employee Data Synchronization</strong>.</li>
+<li data-list-item-id="eccea63a0147bd032afe140263a2ddf1e">Enter a <strong>name</strong> and <strong>description</strong> for the integration.</li>
+<li data-list-item-id="e1bfa8dbbff8138f3da9f0ded6cb8ab3a">Select your <strong>Oracle HCM</strong> and <strong>Okta</strong> connector instances.</li>
+<li data-list-item-id="eb2149baa46872a13bc7c6b09e25c6fe4">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to set up the integration details.</li>
+</ol><h2 id="h_01K85CX133JQTTXW35DGTPH3DH">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01K85CX1339DYV278B2CADVXAW">Applications</h3><p>The <strong>Applications</strong> section displays the Oracle HCM and Okta connectors linked to the integration. You can change or re-select the application instances if needed.</p><h2 id="h_01K85CX1334VTKR6EAS0ATB8BP">Parameters</h2><p>The <strong>Parameters</strong> section allows you to customize how the integration behaves based on your business requirements. It includes options to define sync modes (full or incremental), control email generation rules, set retry limits, manage rate-limit pacing, and configure reporting preferences.</p><h3 id="h_01K85CX134A476ZDMG0VD3GSGM">Integration Features</h3><p>The <strong>Integration Features</strong> section allows you to enable or disable key functions that control how data is synchronized between Oracle HCM and Okta.</p><ul>
+<li data-list-item-id="ec13bef2e5bdaaaad232b8d2a4695f71e">
+<strong>Enable Worker Management:</strong> Select this option to sync worker records from Oracle HCM into the Okta .</li>
+<li data-list-item-id="e5c1827339c69428b1788bb82657be2a3">
+<strong>Enable Auto-Creation of Custom Attributes in Okta:</strong> Allows the integration to automatically create any missing custom attributes in Okta as part of the sync process.</li>
+<li data-list-item-id="e1eef92c2f56a498f651b07343ab821d5">
+<strong>Enable Date Offset:</strong> Enables synchronization based on a specific date range or time zone, allowing you to process only records updated after a certain date.</li>
+<li data-list-item-id="eb5f57199a819f3a372ea473cccfd94b7">
+<strong>Enable Group Management:</strong> Activates the ability to manage and update user group assignments in Okta during synchronization.</li>
+<li data-list-item-id="e5c6cbc3c6629be1e92a88da777f7e4c5">
+<strong>Enable Unique Username/Email Generation:</strong> Generates unique usernames or email addresses automatically to prevent duplication across systems.</li>
+</ul><h3 id="h_01K85CX135V9119XHTG5FGE2Z0">General Settings</h3><p>The General Settings section defines the core configuration options that control how the integration runs. Configure the following settings to manage execution mode, logging, notifications, and reporting:</p><ul>
+<li data-list-item-id="efe3a4e4bf5ae9d69a8fba347e87fb1f8">
+<strong>Enable Report-Only Mode:</strong> Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e309926d05ccd89c79546b1ba4307a864">
+<strong>Enable Incremental Mode</strong>: Select to run the integration in incremental mode.</li>
+<li data-list-item-id="e04a4f7242f0952e8abdea4a98eb8563a">
+<strong>Enable Debug Mode:</strong> Select to generate logs outlining data changes that would occur for debugging.</li>
+<li data-list-item-id="e8dbded8b1f522d0ee3819c1c015c4682">
+<strong>Enable Logging:</strong> Select to generate logs outlining data changes.</li>
+<li data-list-item-id="eb76319787f72a37d8ac8a91b3d67d1fb">
+<strong>Enable Report Generation:</strong>  Select to generate the integration report.</li>
+<li data-list-item-id="e5fef965df5569f198f1a14842b97b0d3">
+<strong>Enable Notifications:</strong> Select to enable the integration-related notifications.</li>
+<li data-list-item-id="e9742084619f8c8feb2268d6a77626c84">
+<strong>Enable Log Insights:</strong> Select to visualize the integration-related metrics.</li>
+</ul><h3 id="h_01K85CX136ZNS4CVZW9X2P7S62">Worker Settings</h3><p>The Worker Settings section defines which employee records from Oracle HCM are created, updated, or deleted in Okta. Configure the following settings to control how worker data is synchronized:</p><ul>
+<li data-list-item-id="ed88d827b3f7c43699dc70d8eb8a9c296">
+<strong>Users to be Created/Updated in Okta:</strong> Select <strong>All Active Workers</strong> to include every active employee from Oracle HCM whose details should be created or updated in Okta.</li>
+<li data-list-item-id="eff2a401917aeffa30100b5e54dacf654">
+<strong>Users to be Deleted in Okta:</strong> Select <strong>All Terminated Workers</strong> to remove users in Okta whose employment has ended in Oracle HCM.</li>
+</ul><h3 id="h_01K85CX137TZ7XHQ5BGCKG6NPV">Manage Policy</h3><p>The Manage Policy section defines the conditions and rules that control when and how user data is synchronized from Oracle HCM to target applications. Configure the following settings to customize synchronization behavior:</p><ul>
+<li data-list-item-id="eddeacb17c8d9cd14a8af4a4f6736a9bd">
+<strong>Update Trigger from Oracle HCM:</strong> Select the condition that determines when user data should sync from Oracle HCM to target applications. For example, you can set the trigger to run whenever an employee’s record is created or updated in Oracle HCM.</li>
+<li data-list-item-id="e6bda816e66af61df27e900122e9ccdb9">
+<strong>Enable Custom Update Logic:</strong> Turn on this option to apply custom JavaScript rules that control when and how user updates are processed. For example, you can define logic that updates users only if their department or location has changed.</li>
+<li data-list-item-id="ea25790b897016a8a9ae229e5baa346f8">
+<strong>Source Application:</strong> Choose the Oracle HCM instance that serves as the main source of employee data for synchronization. For example, select <strong>Oracle HCM Production</strong> if it is your organization’s primary HR system.</li>
+<li data-list-item-id="ee7aa2da817b309ceff5f6717a3c1e9c2">
+<strong>Pre-Hire Provisioning Days:</strong> Set how many days before an employee’s official start date their account should be created in target systems. For example, if you set this to <strong>10</strong>, a new hire starting on May 20 will have their Okta account created on May 10.</li>
+<li data-list-item-id="e1cd75b3654b5f21f9be32732f69665ca">
+<strong>Worker Type Selection:</strong> Choose which worker types (for example, full-time, part-time, or contractors) should be included in the synchronization process. For example, select <strong>All Workers</strong> to include every active employee, or limit it to <strong>Full-Time Employees</strong> only.</li>
+<li data-list-item-id="e6fe518de58d1e91462ffd00278444705">
+<strong>Email Format Rule:</strong> Define the rule for generating unique and consistent employee email addresses across all target systems. For example, the rule can generate emails in the format <a href="mailto:firstname.lastname@company.com"><em>firstname.lastname@company.com</em></a> and, if a duplicate exists, create <a href="mailto:firstname.lastname2@company.com"><em>firstname.lastname2@company.com</em></a>.</li>
+<li data-list-item-id="eab5308a3389fcc6298caf69e536d28ef">
+<strong>Enable Code View:</strong> Select this option to view or edit the email generation rule using JavaScript for advanced customization. For example, you can modify the code to include middle initials or custom domain logic.</li>
+<li data-list-item-id="e86b13d5e08ee96a69195ba703eadb187">
+<p><strong>Email Preview:</strong> Displays example email addresses generated based on the defined rule.</p>
+<p>For example, preview results may show <a href="mailto:john.smith@company.com"><em>john.smith@company.com</em></a> and <a href="mailto:john.smith2@company.com"><em>john.smith2@company.com</em></a>.</p>
+</li>
+<li data-list-item-id="e5d2dce88f8d4e1aaf75a67b43a412c38">
+<strong>Enable Advanced Preview:</strong> Turn on this setting to view more sample variations of generated email addresses for testing different name patterns. For example, it can display additional combinations like <a href="mailto:j.smith@company.com"><em>j.smith@company.com</em></a> or <a href="mailto:smith.j@company.com"><em>smith.j@company.com</em></a>.</li>
+<li data-list-item-id="ef2336d6e3d978e9533585a996a9438c4">
+<strong>Target Applications:</strong> Select the systems (such as Okta and Oracle) where user accounts will be created, updated, or managed. For example, choose <strong>Okta</strong> and <strong>Oracle</strong>, so that both applications stay updated with the latest employee data.</li>
+</ul><h3 id="h_01K85CX13BJ40GSPH20WBVMBRT">Date Offset Setting</h3><p>The Date Offset Setting section defines when onboarding and offboarding actions should occur relative to an employee’s hire or termination date. Configure the following settings to manage timing adjustments:</p><ul>
+<li data-list-item-id="e6e560d1d5bc572ff7b74292345d589b3">
+<p><strong>Onboarding Date Offset:</strong> Select when onboarding should start in relation to the employee’s start date.</p>
+<p>For example, select <strong>Offset Before Onboarding Date</strong> if you want accounts and access to be created a few days before an employee’s official start date so they’re ready on day one.</p>
+</li>
+<li data-list-item-id="e1cc157ec418ff11985494cf8dfbcb213">
+<strong>Days of Offset Before Onboarding:</strong> Enter how many days in advance onboarding should start, based on the offset setting. For example, if you set this to <strong>7</strong>, an employee starting on <strong>May 15</strong> will have their onboarding process triggered on <strong>May 8</strong>.</li>
+<li data-list-item-id="eeb1dc7daf728d80f85e361a47d85a3fe">
+<strong>Offboarding Date Offset:</strong> Select when the offboarding process should begin in relation to the employee’s termination date. For example, choose <strong>No Offset</strong> if you want the offboarding to happen exactly on the termination date, or <strong>Offset Before Offboarding Date</strong> to disable access a few days before the employee leaves.</li>
+</ul><h3 id="h_01K85CX13C1QMYAQPYWB7WWEQ2">Okta Settings</h3><p>The Okta Settings section defines how Oracle HCM attributes are mapped to Okta, including the creation of custom attributes. Configure the following settings to manage attribute mapping and synchronization:</p><ul><li data-list-item-id="e24890efd9260fa57b5753af3604a6a46">
+<strong>Custom Attributes to be Created in Okta:</strong> Select the Oracle HCM attributes that are not available by default in Okta and need to be added as custom attributes. When selected, these attributes are created in Okta during the integration setup. For example, select <strong>ManagerPersonNumber</strong> and <strong>ManagerPersonId</strong> to create matching custom attributes in Okta that store each employee’s manager information from Oracle HCM.</li></ul><h3 id="h_01K85CX13DD4XE908EHM4PZHQV">Workforce Now Workers Debug Setting</h3><p>The Workforce Now Workers Debug Setting section allows you to test and troubleshoot the synchronization process using filtered worker data. Configure the following settings to debug specific employee records:</p><ul>
+<li data-list-item-id="ee7537732429ec1cc7549c2e956ea12b1">
+<strong>Oracle HCM Filter:</strong> Select the filter used to retrieve worker data from Oracle HCM, ensuring that only specific records are included for debugging. For example, select <strong>Person Number</strong> to fetch data for a particular employee or <strong>Email Address</strong> to search for a worker using their email ID.</li>
+<li data-list-item-id="e7978237fb949e83116595e05a72d75f5">
+<p><strong>Person Number:</strong> Enter the unique identifier of the worker in Oracle HCM to test or debug their record during synchronization. For example, entering <strong>100177</strong> retrieves the details of the employee with that person number from Oracle HCM for debugging purposes.</p>
+<p><strong>Note:</strong> Click the <strong>Refresh</strong> button to reload the list of available Oracle HCM attributes. For example, if a new field like <strong>ManagerDepartment</strong> is added in Oracle, clicking <strong>Refresh</strong> will make it appear in the list for selection.</p>
+</li>
+</ul><h3 id="h_01K85CX13E6BBFBC62CRP4GC2M">Log Settings</h3><p>The Log Settings section defines how integration logs are captured and managed. Configure the following settings to control log levels, formats, and retention:</p><ul><li data-list-item-id="e4d9d20eb32994ea0c4d469a2474efacd">
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e6fc74548b66a1b50f2fda84df6ff9f49">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e89a9dd969596f241acdce2b611c9e810">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e03af52598b3d77fb09fc31bef288e5e0">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following option only appears when the dashboard detail level is set to <strong>Custom</strong>.<ul><li data-list-item-id="ef09a4c625db0bf6c3baf688e5d544ff8">
+<strong>Attribute Filter</strong>: Controls which event attributes are included or excluded.<ul>
+<li data-list-item-id="e5a6f6d19368a0196ecf1a263bd729833">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log.</li>
+<li data-list-item-id="e68db71bafde6be67939ca423d5cb9a8a">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01K85CX13FV9KEY35Q5B9X8KKK">Reporting Settings</h3><p>The Reporting Settings section defines how integration results and summaries are generated and shared. Configure the following settings to customize reporting preferences:</p><ul><li data-list-item-id="ea198a9eea6f6488e273e3a31b7157c19">
+<strong>Select Report Detail Level:</strong> Select the desired level of report detail from the dropdown menu.The following are the available options:<ul>
+<li data-list-item-id="e9694d85546289d16881ad2aa8bc6ec6f">
+<strong>Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e8a928ce39509ce0649756d47f2242ad9">
+<strong>Full Details:</strong> All attribute details are displayed.</li>
+<li data-list-item-id="e1c56cc8f42e2e4f52d25d5ec92cb949e">
+<strong>Custom:</strong> Includes or excludes selected attributes. The following options only appear when the report detail level is set to <strong>Custom</strong>.<ul><li data-list-item-id="e3ba70c83be83d3fd469059eb2b81c86f">
+<strong>Attribute Filter:</strong> Controls which attributes are included or excluded in the report.<ul>
+<li data-list-item-id="edc8d3c106eb98ea44dbdfa7bf09d42f3">
+<strong>Included Attributes:</strong> Select the attributes to be included in the CSV report.</li>
+<li data-list-item-id="e8ef137b72c0ddc2926e678130e34ffb4">
+<strong>Excluded Attributes:</strong> Select the attributes to be excluded from the CSV report.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01K85CX13HWK3QYNC551WGN5K7">Notification Settings</h3><p>The Notification Settings section defines how and when email notifications are sent after each integration run. Configure the following settings to select the detail level and attributes included:</p><ul>
+<li data-list-item-id="e9270ff939a75fcc95b9696d87b020f99">
+<p><strong>Notification Level:</strong> Select the level of detail you want to receive in email notifications about the integration’s execution.</p>
+<p>The following options are available:</p>
+<ul>
+<li data-list-item-id="e402445bc6b1fc26ba386fd49da65f7a8">
+<strong>Summary Only:</strong> Sends a brief notification showing the number of users created, updated, or deleted.</li>
+<li data-list-item-id="eb9dd162433850f9b12261e533ccbe893">
+<strong>Full Details:</strong> Sends a detailed notification that lists all user attributes and changes processed.</li>
+<li data-list-item-id="e7d9c8d733a4952d527339f905129877e">
+<strong>Custom:</strong> Lets you include or exclude specific attributes in the notification.</li>
+</ul>
+</li>
+<li data-list-item-id="e0714d41aaab47ab39c551153a99faa8b">
+<strong>Attribute Filter:</strong> Controls which attribute details are included in the notification when <strong>Custom</strong> is selected.<ul>
+<li data-list-item-id="e45ed0ced401680c080824945cc39ee83">
+<strong>Included Attributes:</strong> Sends only the selected attributes in the email notification.</li>
+<li data-list-item-id="ecd1203e33f81b8f3f922b3f9dfb997fa">
+<strong>Excluded Attributes:</strong> Omits the selected attributes from the notification email.</li>
+</ul>
+</li>
+<li data-list-item-id="ebace2da7ce904a3f8d7f928f7a880c54">
+<strong>Attributes to be Included:</strong> Choose the attributes that should appear in the notification when <strong>Included Attributes</strong> is selected. For example, include <strong>First Name</strong>, <strong>Last Name</strong>, and <strong>Email Address</strong> to see only these details in the notification.</li>
+<li data-list-item-id="e0f6b9007d3abebc84eb199757b23c4e4">
+<strong>Attributes to be Excluded:</strong> Choose the attributes that should be hidden in the notification when <strong>Excluded Attributes</strong> is selected. For example, exclude <strong>Employee ID</strong> or <strong>Last Updated Timestamp</strong> if you do not want to include internal system fields.</li>
+</ul><p><strong>Note:</strong> Click the <strong>Refresh</strong> button to update the list of available attributes from Oracle HCM before selecting which ones to include or exclude.</p><ul>
+<li data-list-item-id="efec57db37fcd5000fbeea76cc7ac0eb3">
+<strong>Notify Admin Via Email</strong>: Select to send email notifications to all admins.<ul>
+<li data-list-item-id="ed0756a1a49422b05c2973a2037f56a84">
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications must be sent.</li>
+<li data-list-item-id="e7d6935a67c322508c387268d8df35978">
+<strong>Admin Email Subject:</strong> Enter the content that must be used as the email subject for the email notifications to the admins.</li>
+<li data-list-item-id="ede5764c2aed247d0e0962515bf401ff6">
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for the admin email notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e9572c1dbe4261ef372973a817e330344">
+<strong>Notify Supervisor via Email</strong>: Select to send email notifications to all employees.<ul>
+<li data-list-item-id="e72ef34bc477c57eb36e171970ded313c">
+<strong>Supervisor Email Addresses</strong>: Enter the email addresses of the supervisors to whom the email notifications will be sent.</li>
+<li data-list-item-id="e7a8fc2befd988d88495c67ed7f6cd966">
+<strong>Supervisor Email Subject:</strong> Enter the content that must be used as the email subject for the email notifications to the employees</li>
+<li data-list-item-id="ea3afdb0da537fa3b87d477bcc24564db">
+<strong>Supervisor Email Notification Template:</strong> Enter the content that must be used as the email body for the employee email notifications.</li>
+</ul>
+</li>
+</ul><h3 id="h_01K85CX13M5PASPXE5EGBJ43EA">Log Insights Settings</h3><p>The Log Insights Settings section defines how integration activities and data changes are tracked and analyzed. Configure the following settings to customize insight levels and attribute visibility:</p><ul><li data-list-item-id="edb608ef1024c43f4e0cf519781d005f6">
+<strong>Select the Log Insights Detail Level:</strong> Select the desired level of detail from the dropdown menu on the analytics dashboard.The following are the available options:<ul>
+<li data-list-item-id="e84229726d6d9dd62ff5edcde7b26dee8">
+<strong>Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e186cb4e2d4a38bee23c43523a38f0adf">
+<strong>Full Details:</strong> All attribute details are displayed.</li>
+<li data-list-item-id="ec63900fdd6fe22db0c8dbb578a62ad90">
+<strong>Custom:</strong> Includes or excludes selected attributes. The following option only appears when the log insights level is set to <strong>Custom</strong>.<ul><li data-list-item-id="ef1a3f119847132cefa2fdf19fd1cf4fc">
+<strong>Attribute Filter:</strong> Controls which attribute details are included or excluded in the analysis.<ul>
+<li data-list-item-id="e9fa434c4a98a9067b7a362c896001267">
+<strong>Included Attributes:</strong> Select the attributes to be included in the insights.</li>
+<li data-list-item-id="eff50a2e2b744cab01996a54c0dd2e000">
+<strong>Excluded Attributes:</strong> Select the attributes to be excluded from the insights.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01K85CX13N31T1W3SVHAAJWQHH">Reconciliation Settings</h3><p>The Reconciliation Settings section defines how user deactivations are managed in Okta, ensuring terminated employees in Oracle HCM are properly deactivated. Configure the following settings to control execution and monitoring:</p><ul>
+<li data-list-item-id="e3399a0eabe52e5cbc700389e8fcb5a95">
+<strong>Enable Live Deactivation Mode:</strong> Select to perform actual user deactivations in Okta during the integration run. When disabled, the integration runs in <strong>Report Only</strong> mode and generates a preview report without applying any changes. For example, select this option to automatically deactivate users in Okta when they are terminated in Oracle HCM.</li>
+<li data-list-item-id="eaa7fa42028f3912048477b12415b827b">
+<strong>Enable User Deactivation Process:</strong> Select to activate the reconciliation workflow that deactivates users who have been terminated in Oracle HCM but are still active in Okta. For example, select this option to ensure all inactive employees are properly deactivated across systems.</li>
+<li data-list-item-id="e7281cb5e62301692a46fd610f7c25946">
+<strong>Maximum Deactivations Per Run:</strong> Enter the maximum number of users that can be deactivated in a single integration run to control batch size. For example, enter <strong>5</strong> to limit each run to five user deactivations. The recommended range is <strong>5–50</strong> users per run.</li>
+<li data-list-item-id="e9553671db7c6a957441570eddcd473e0">
+<strong>Test User Filter (Email or Employee ID):</strong> Enter a specific user’s email address or employee ID to test the reconciliation process on one user before running it for all. For example, enter <a href="mailto:maria.smith@company.com">maria.smith@company.com</a> to verify the deactivation process for that user only.</li>
+<li data-list-item-id="e791efc09ba41b63ec7d8b5bcf5ba9dc4">
+<strong>Send Alerts to Aquera Operations Team:</strong> Select to send automatic alerts to the Aquera Operations team for critical events such as integration failures or threshold breaches. For example, select this option to notify the Aquera team if a deactivation process fails or exceeds the configured limit.</li>
+<li data-list-item-id="e40036d68444f3cd0d049007398a5d6c7">
+<strong>Email Notification Recipients:</strong> Enter the email addresses (comma-separated) of users who should receive reconciliation notifications and status updates. For example, enter <a href="mailto:it.admin@company.com"><em>it.admin@company.com</em></a>, <a href="mailto:hr.support@company.com"><em>hr.support@company.com</em></a> to notify both IT and HR about each reconciliation run.</li>
+<li data-list-item-id="e4ebdaa48b527316a4028f7462981e1ef">
+<strong>Okta User Statuses to Process:</strong> Select the Okta user statuses that should be included in the reconciliation process. For example, select <strong>STAGED</strong>, <strong>SUSPENDED</strong>, and <strong>PASSWORD_EXPIRED</strong> to evaluate users in these statuses for deactivation.</li>
+<li data-list-item-id="e6627312952cd4c867d9d377b96072d81">
+<strong>Enable User Exclusion Feature:</strong> Select this option to exclude specific users from the deactivation process. For example, select this feature to protect service accounts that must remain active.</li>
+<li data-list-item-id="ec0d122c29096bf1ad63aa5f774a0d312">
+<strong>Excluded Users (Email or Employee ID):</strong> Enter the email addresses or employee IDs of users who should be excluded from the deactivation process. For example, enter <a href="mailto:admin@company.com"><em>admin@company.com</em></a>, <a href="mailto:test.user@company.com"><em>test.user@company.com</em></a> to skip these accounts even if they meet the deactivation criteria.</li>
+</ul><h3 id="h_01K85CX13Q4P92S2E8WDQ1S0JR">Monitored Provisioning Settings</h3><p>The Monitored Provisioning Settings section defines which provisioning operations are tracked. Configure the following settings to monitor user and group changes based on selected actions and criteria:</p><ul>
+<li data-list-item-id="e2e0f486f6132309fd28d8f067a49dad5">
+<p><strong>Operation Monitoring:</strong></p>
+<p>Select whether to monitor all provisioning activities or track specific ones only. For example, select <strong>All Operations</strong> to monitor every action or <strong>Customized Monitoring</strong> to focus on selected operations.</p>
+</li>
+<li data-list-item-id="e99bea419577dba2ff2ed119ff42bea39">
+<strong>Monitoring Type:</strong> Select how you want to customize the monitoring setup. For example, choose <strong>Monitor Selected Workers</strong> to track specific users or <strong>Monitor Selected Operations</strong> to monitor certain actions.</li>
+<li data-list-item-id="e6a372b1a486d6aeb39b927b90a69459d">
+<strong>Workers to Monitor:</strong> Select which employees or worker groups you want to monitor. For example, monitor only <strong>new hires</strong>, <strong>contractors</strong>, or users from the <strong>Finance</strong> department.</li>
+<li data-list-item-id="ed0d5a33ba62d3f7f2046d0965c30f789">
+<strong>Worker Filter Rule:</strong> Define a condition to decide which workers should be monitored. For example, set <strong>Department = “IT”</strong> to monitor IT employees only.</li>
+<li data-list-item-id="e101e82cde61a0eb4eff4f297bb15ce99">
+<strong>User Delete Monitoring:</strong> Select whether to track all user deletions or just specific ones. For example, select <strong>All Deletes</strong> to monitor every deletion or <strong>Select Deletes</strong> to track removals based on conditions.</li>
+<li data-list-item-id="eb8edef572fa2ec142472d0dc36775d7b">
+<strong>Delete Filter Rule:</strong> Define a rule to track only certain user deletions. For example, set <strong>Employment Type = “Temporary”</strong> to monitor deletions for temporary staff.</li>
+<li data-list-item-id="ef069341d35e5427fe13ce1007346c840">
+<strong>User Create/Update Monitoring:</strong> Select whether to track all user creation and updates or just specific ones. For example, choose <strong>All Upserts</strong> to monitor all adds and updates, or <strong>Select Upserts</strong> for targeted tracking.</li>
+<li data-list-item-id="e743edcad40972cb093b78d7a5ab130f2">
+<strong>Upsert Filter Rule:</strong> Define a condition to monitor certain user creation or update events.For example, track updates only when <strong>Job Title</strong> or <strong>Manager ID</strong> changes.</li>
+<li data-list-item-id="e58bac13d3bde07af702242c6b9fbb53b">
+<strong>Fields to Monitor for Changes:</strong> Select which user fields should be tracked for changes. For example, choose <strong>Email</strong>, <strong>Department</strong>, or <strong>Job Title</strong> to track updates when these fields change.</li>
+<li data-list-item-id="e4bcce537636a70efba1754cd7e56616e">
+<strong>Group Change Monitoring:</strong> Select whether to track all group changes or just specific ones. For example, select <strong>All Group Changes</strong> to track every addition and removal, or <strong>Select Group Changes</strong> for key access groups.</li>
+<li data-list-item-id="e73f725cdc846a6c2acd1104746d79d1e">
+<strong>Group Filter Rule:</strong> Define a condition to track specific group changes. For example, monitor group updates only for <strong>Admin Access</strong> or <strong>Security Groups</strong>.</li>
+<li data-list-item-id="e53f53f47ff116a5355c0ad4237e5514b">
+<strong>Group Additions Monitoring:</strong> Select whether to track all group additions or only specific ones. For example, choose <strong>All Additions</strong> to monitor every user added to a group, or <strong>Selective Additions</strong> for high-privilege groups.</li>
+<li data-list-item-id="e65706034f3a9314a155ca6190d5228c5">
+<strong>Group Removals Monitoring:</strong> Select whether to track all group removals or just selected ones. For example, choose <strong>All Removes</strong> to monitor all removals or <strong>Selective Removes</strong> to focus on key access groups.</li>
+</ul><h3 id="h_01K85CX13T7D9PC5KZDMY0MA65">Group Management Settings</h3><p>The Group Management Settings section defines how users are assigned, updated, or retained in groups. Configure the following settings to automate group management using attribute rules and lifecycle events:</p><p><strong>Group Rules</strong></p><ul>
+<li data-list-item-id="e0ad034af285c3a21d1cd9d37cdcb6fcf">
+<strong>Choose Attribute:</strong> Select the user attribute that determines group membership. For example, choose <strong>Department</strong> if group membership is based on the user’s department.</li>
+<li data-list-item-id="e0a62c1fba424cf41b376292e3f434af1">
+<strong>Select Target:</strong> Select the target group where users matching the chosen attribute will be added. For example, select <strong>Finance Team</strong> as the target for all users whose department is <strong>Finance</strong>.</li>
+<li data-list-item-id="e1aa824759ee406e9d991732aebdc07e8">
+<strong>Switch to Expression:</strong> Switch to expression-based logic for more advanced rule definitions. For example, define a rule like <strong>(Department = “IT”) AND (Location = “New York”)</strong> to add only New York IT users to the group.</li>
+<li data-list-item-id="ee4305f3dfc1f9569b99c119d2cfa02f2">
+<strong>Add New Rule:</strong> Click to add another group mapping rule. For example, create separate rules for <strong>HR</strong>, <strong>IT</strong>, and <strong>Finance</strong> teams.</li>
+</ul><p><strong>Group Retention</strong></p><ul>
+<li data-list-item-id="ef220cbf1c2d36efb562b7210e5e4cdd4">
+<p><strong>On Deactivate / Delete:</strong> Select how user group memberships should be handled when a user is deactivated or deleted. For example, choose <strong>Retain in selected groups</strong> to keep users in specific access groups after deactivation.</p>
+<p>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e949a889038b23ab191566048e35d72e8">
+<strong>Remove from all assigned groups:</strong> Removes the user from every group.</li>
+<li data-list-item-id="e06d2b62c3235e74c6dfd3f3cfd10cdee">
+<strong>Retain in all assigned groups:</strong> Keeps the user in all current groups.</li>
+<li data-list-item-id="e9c3c7276308518fe68f2d55a0f2577e3">
+<strong>Retain in selected groups:</strong> Keeps the user in specific groups only.</li>
+</ul>
+</li>
+<li data-list-item-id="e99bf0d145d8d016fec48b90d6e8eb230">
+<p><strong>On Update:</strong> Select how to manage group memberships when a user’s profile is updated. For example, choose <strong>Retain in selected groups</strong> to keep the user in specific groups even after updates.</p>
+<p>Available options:</p>
+<ul>
+<li data-list-item-id="ea2bcd84906c292063ad20fd63b997f80">
+<strong>Remove from all assigned groups</strong> – Clears all group memberships on update.</li>
+<li data-list-item-id="ee4233a31a31e3775cc4140aa007cb278">
+<strong>Retain in all assigned groups</strong> – Keeps all existing memberships.</li>
+<li data-list-item-id="e42ef59de2ebcf1baba5d495c2bf4a5d2">
+<strong>Retain in selected groups</strong> – Keeps only selected groups.</li>
+</ul>
+</li>
+<li data-list-item-id="e407f74c8147cad92069a6438595f42c7">
+<p><strong>On Create:</strong> Select how group assignments are handled when a new user is created.</p>
+<p>For example, choose <strong>Custom Mapping</strong> to assign groups based on rules or attributes.</p>
+<p>Available options:</p>
+<ul>
+<li data-list-item-id="e1602a5564a581439ef05cf8ce13a516b">
+<strong>Do Not Assign to Any Groups:</strong> Skips automatic assignment.</li>
+<li data-list-item-id="e7d7b997f90aff0ee9132f875642a6fbc">
+<strong>Assign to Default Group(s):</strong> Adds new users to predefined default groups.</li>
+<li data-list-item-id="e1ecbaf447cd5ef5cc84d17f43a2f081c">
+<strong>Assign Based on Attribute Rules:</strong> Uses defined group rules for mapping.</li>
+<li data-list-item-id="e6631051106215797ad175492ac5a2281">
+<strong>Custom Mapping:</strong> Uses your defined logic for assigning groups.</li>
+<li data-list-item-id="e5cc8b1037450cba1bbe77d43023e401a">
+<strong>Exclude Group:</strong> Prevents assignment to specific groups.</li>
+<li data-list-item-id="ee9cd4099a9bb5129ae302b18a1f9ec17">
+<strong>Validate All Groups:</strong> Checks group eligibility before assignment.</li>
+</ul>
+</li>
+<li data-list-item-id="e8b54d5ce2ff289698b63ccb946400c6c">
+<strong>Group Management Restriction List:</strong> Enter a comma-separated list of target groups that must be managed through attribute mapping. Users who no longer meet the defined criteria are automatically removed from those groups, while qualifying users are added. For example, enter <strong>Finance, HR, IT Security</strong> to ensure these groups are strictly managed via mapping rules.</li>
+</ul><h1 id="h_01K85CX13YSNXCFX1KDDXTTKED">Attribute Mapping</h1><p>Attribute mapping defines how data fields from Oracle HCM are linked to corresponding fields in Okta. Each mapped attribute ensures that user information, such as names, email addresses, department details, or manager data, is accurately transferred and synchronised during the integration process. You can customize mappings to match business requirements, apply transformations (such as formatting usernames), and include additional attributes to maintain data consistency across connected applications.</p><p>It ensures that any changes in Oracle HCM, such as a department transfer or manager update, are automatically reflected in Okta. Administrators can review, adjust, or extend mappings to meet organizational policies and integration needs, making it easier to manage user lifecycles without manual updates.</p><h2 id="h_01K85CX13Y4QGS3RZ62RKK8VC9">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01K85CX13YJ895Z1YN9TEZQJ8Z">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/">User Action on Integrations</a> guide.</p><h1 id="h_01K85CX13Y3CKPSW0G88KSG30V">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/">User Actions on Integrations</a> for further details.</p>
+  </div>
+</body>
+</html>

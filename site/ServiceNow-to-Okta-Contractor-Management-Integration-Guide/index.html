@@ -1,0 +1,363 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ServiceNow to Okta Contractor Management Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ServiceNow to Okta Contractor Management Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the process of synchronizing the contractor lifecycle from ServiceNow to Okta. This integration automates contractor account management by syncing ServiceNow tickets with Okta, creating or updating accounts as needed, detecting upcoming expirations, generating extension requests, and extending access only when approved, ensuring seamless and accurate contractor access.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <strong>ServiceNow to Okta Contractor Management</strong> integration provides the following functions:</p><ul>
+<li data-list-item-id="e774b703795eebd7bbac1ec90443b3ec7">Correlates ServiceNow tickets with Okta contractor identities using configured correlation attributes to ensure a new account is created when the user does not exist in Okta. If the contractor account already exists, the record is updated. If there are no differences between the two systems, no changes are made.</li>
+<li data-list-item-id="eb6a4568fc2dedf4fd5b6de4872e7d821">Automatically detects contractor accounts in Okta that are approaching their configured end date based on the defined expiration threshold and creates ServiceNow contractor access extension request tickets accordingly.</li>
+<li data-list-item-id="ea15061126d757804ce8743bcfc5df9a9">Continuously monitors ServiceNow tickets and evaluates their status to determine contractor access extension approval, extending the contractor’s end date in Okta only when the corresponding ticket reaches an approved or resolved status.</li>
+<li data-list-item-id="e6d672262a3353719aa734efc9bb201a8">Automatically closes the ServiceNow ticket after the contractor’s end date is successfully extended, when auto-close is enabled.</li>
+<li data-list-item-id="e2ae3824317560247c1dffafb8acbe6e4">Generates detailed logs, notifications, and execution reports for contractor expiration detection, ticket creation, access extensions, and integration runs.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ec29d77edd37cb6c229cb40782e52a8da">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e4ad655f932a32c2b35ed67487a121bf5">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ef9efbf63ca142f6c546e85a36d24e49c">
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854-ServiceNow-Configuration-Guide" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details.</li>
+<li data-list-item-id="e198187608d0d4e92ee03257ceb5e7bfd">
+<strong>Okta (AD)</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934-Active-Directory-AD-Configuration-Guide" rel="noopener noreferrer" target="_blank">Okta (AD) Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push the contractor management ticket data from ServiceNow to Okta. </p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="eaf3a491bde700f9ea82cd0c9a20fbac7">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ed260171d36edfe1c7903db534560e412">Navigate to <strong>Integrations</strong> from the left-side panel.</li>
+<li data-list-item-id="e9bfdde369ed1399cc97c2cd1964d003c">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e055465614ddf7b1800113e89e34a3b65">Select <strong>ServiceNow to Okta Contractor</strong>.</li>
+<li data-list-item-id="ef02def9b7767c2846422d3b1794aaa53">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e270e5d959ab357b60393d8d06bbaffad">Select your ServiceNow and Okta connector instances.</li>
+<li data-list-item-id="eb6bdc826e93636e56469632dc7f6f62e">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4><p>Configure the following integration scenario(s):</p><p><strong>Contractor Lifecycle Management Operations</strong>: Select one of the following operations (use case) from the dropdown menu:</p><ul>
+<li data-list-item-id="ee1ea9cf52d0aad66ab519e8dbf21468e">
+<strong>Contractor Creation</strong>: Choosing this option enables the <strong>Contractor Creation</strong> section under the <strong>Configuration</strong> tab.</li>
+<li data-list-item-id="e69c4a1733ffa7d3ba1fa8c10e8f5e4a6">
+<strong>Contractor Extension</strong>: Choosing this option enables the <strong>Contractor Extension</strong> section under the <strong>Configuration</strong> tab.</li>
+</ul><h4 id="h_01K591CVY4H0XNHQ9SF2Y7PHHW">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="ec89991f7219943b2899b9267f29a3c6d">
+<strong>Enable Notifications</strong>: Select this option to enable the integration-related notifications.</li>
+<li data-list-item-id="e3c03b16f9c2b63cb317812a9dbb5b994">
+<strong>Enable Logging</strong>: Select this option to generate logs outlining data changes.</li>
+<li data-list-item-id="e4c84bf9c117e83278cab4298100d6fa5">
+<strong>Enable Reporting</strong>: Select this option to generate the integration report.</li>
+<li data-list-item-id="e12d21dd568c65eff3df894dc864bf422">
+<strong>Enable Log Insights</strong>: Select this option to visualize integration-related metrics.</li>
+<li data-list-item-id="e7b865917398fc2215fd12b8088e63738">
+<strong>Debug Mode</strong>: Select this option to enable verbose diagnostic logging for troubleshooting identity lifecycle management operations. When enabled, it provides detailed execution traces, API request/response logging, and error diagnostics.</li>
+</ul><h4 id="h_01K56EHTHTWR2ZA7WXBTBDY9PH">Contractor Creation</h4><p>Configure the following contractor creation settings:</p><h5 id="h_01KFZEGGV68F71BB72KC3GH9F4">Match Expression</h5><ul>
+<li data-list-item-id="e01800b62ae3b69655add2a8ce2dd8d37">
+<strong>Source Correlation Attribute</strong>: Select the unique identifier attribute from ServiceNow used for identity correlation and record matching with Okta. This attribute enables deterministic identity linking between ServiceNow contractor records and Okta user objects during provisioning, updates, and reconciliation operations.</li>
+<li data-list-item-id="ed2dab7194f4e366c60f6be20ea9f42ec">
+<strong>Target Correlation Attribute</strong>: Select the unique identifier attribute from Okta used for identity correlation and record matching with ServiceNow. This attribute enables deterministic identity linking between ServiceNow contractor records and Okta user objects during provisioning, updates, and reconciliation operations.</li>
+</ul><h5 id="h_01KFZEHYZWX84H2VQ9DAJ8XQ7W">Contractor Creation Settings</h5><ul>
+<li data-list-item-id="e91598ecfa7dae7bee66ff05f8de39014">
+<strong>ITSM Workflow Trigger</strong>: Select the ITSM workflow trigger mechanism for contractor identity provisioning requests from the drop-down list. The available options are <strong>Ticket</strong>, <strong>Flow Designer Trigger</strong>, and <strong>Service Catalog</strong>. Based on your selection, the settings will change. For example,<ul>
+<li data-list-item-id="ea5147bc8fbee23bbc69db0d39b9c45c7">If you select <strong>Service Catalog</strong>, the following settings will appear:<ul>
+<li data-list-item-id="edf8fdcb0bfd2eb449350595e2a763146">
+<strong>Service Catalog Category</strong>: Select the ITSM service catalog category classification for contractor onboarding requests from the drop-down list. This categorization enables proper service request routing, workflow assignment, and catalog item selection for identity provisioning operations.</li>
+<li data-list-item-id="edc24c2332c3b8f25b656763b694ee7f0">
+<strong>ITSM Ticket Category</strong>: Select the appropriate ITSM ticket category for contractor onboarding requests. This categorization ensures proper routing, workflow assignment, SLA management, and accurate reporting for identity provisioning operations. Categories help organize tickets by business function and ensure assignment to the appropriate support teams.</li>
+</ul>
+</li>
+<li data-list-item-id="e8b1b74efa24b2251c474021d390f3bcd">If you select <strong>Ticket</strong>, the following settings will appear:<ul><li data-list-item-id="e0df1a17a0dac43249831ab053adc7ac1">
+<strong>ITSM Ticket Type</strong>: Select the appropriate ITSM ticket type for contractor identity provisioning requests when using ticket-based triggers. This selection determines the ticket schema, workflow rules, SLA policies, and access governance controls applied to onboarding operations. Common ticket types include Incident, Change Request, HR Case, Service Catalog Request, or custom ticket types configured in the ITSM system.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ea107c29915dc50ec01d659ac3539537f"> <strong>Trigger Ticket Statuses</strong>: Select the ITSM ticket status values that will trigger contractor identity provisioning workflows. Only tickets with these statuses will be processed for account creation and access provisioning in Okta. This ensures that provisioning occurs only when tickets reach the appropriate workflow stage, maintaining proper approval and validation controls.</li>
+<li data-list-item-id="e3514335ecf5966f7b082d357ab14e282">
+<strong>Auto-Close Ticket After Provisioning</strong>: Automatically resolve and close the ITSM ticket upon successful completion of contractor identity provisioning in Okta. When enabled, tickets are transitioned to a closed state after account creation, ensuring ticket lifecycle management aligns with the identity lifecycle. This reduces manual ticket management overhead and maintains accurate ticket status tracking.<ul>
+<li data-list-item-id="ed8739e2e006a78c5f60c92e0fb712a20">
+<strong>Post-Provisioning Ticket Status</strong>: Select the ITSM ticket status to apply after successful contractor identity provisioning in Okta. This status indicates that the provisioning workflow has been completed and that the ticket can be closed or resolved. The selected status should align with your organization's ticket lifecycle management practices.</li>
+<li data-list-item-id="e0e5df694978ea86e284f942f1a793f16">
+<strong>Ticket Resolution Code</strong>: Select the ITSM resolution code to apply when closing tickets after successful contractor provisioning. Resolution codes provide categorization for closed tickets, enabling better reporting and analysis of completed identity lifecycle operations. This helps track provisioning success rates and identify common resolution patterns.</li>
+</ul>
+</li>
+</ul><h4 id="h_01KC6HYWY0APQ3BRAS1FXAEQK6">Manage End Date</h4><p>Configure the following settings under the <strong>Expiry Notification Settings</strong> section:</p><ul>
+<li data-list-item-id="e13166918cb759cf87f75f51fbc48bde0">
+<strong>Enable Expiry Notifications</strong>: Select this option to enable automated identity lifecycle expiration notifications for contractor access governance. When enabled, the system generates proactive alerts and notifications based on configured thresholds to ensure timely access reviews and extension workflows.<ul><li data-list-item-id="ee176ff99345b27c2e8c6c1fc940a15a0">
+<strong>Notification Days Before Expiry</strong>: Configure multiple notification thresholds (in days) before contractor access expiration. Notifications will be sent at each configured interval to support proactive access governance, compliance monitoring, and timely access extension. Common thresholds include 90, 60, 30, 14, 7, 3, 1, and 0 days.</li></ul>
+</li>
+<li data-list-item-id="ec4d218e2f58199cce0d6556ff23ef8ae">
+<strong>Create Contractor Extension Tickets Automatically</strong>: Select this option to automatically generate contractor extension tickets for contractor access governance.<ul><li data-list-item-id="e6d82003bbba8d191a52d1263be08da9b">
+<strong>Create Tickets X Days Before Contractor Expiry</strong>: Enter the number of days before contractor access expiration to create the extension tickets for contractor access governance.</li></ul>
+</li>
+<li data-list-item-id="ea82ab2650c245aa841feb8f7d4732257">
+<strong>Update Contractor End Date</strong>: Select this option to update the contractor end date in Okta after receiving the appropriate approval in ServiceNow for contractor access governance. When enabled, the <strong>Auto-Close Ticket After Provisioning </strong>option will appear under the <strong>Contractor Extension Settings</strong> section.</li>
+</ul><p>Configure the following settings under the <strong>Contractor Extension Settings</strong> section:</p><ul>
+<li data-list-item-id="ed32c3eccda37b0f2b431c0c96f3a1d81">
+<strong>ITSM Workflow Trigger</strong>: Select the ITSM workflow trigger mechanism for contractor identity provisioning requests from the drop-down list. The available options are <strong>Ticket</strong>, <strong>Flow Designer Trigger</strong>, and <strong>Service Catalog</strong>. Based on your selection, the settings will change. For example,<ul>
+<li data-list-item-id="e7e51d6f896da57a2c2552ff3937679b3">If you select <strong>Service Catalog</strong>, the following settings will appear:<ul>
+<li data-list-item-id="e8447d41103abf716352c849cb79c7dcc">
+<strong>Service Catalog Category</strong>: Select the ITSM service catalog category classification for contractor onboarding requests from the drop-down list. This categorization enables proper service request routing, workflow assignment, and catalog item selection for identity provisioning operations.</li>
+<li data-list-item-id="ec5eb3bea3ebd69a7db766668c7f7c952">
+<strong>ITSM Ticket Category</strong>: Select the appropriate ITSM ticket category for contractor onboarding requests. This categorization ensures proper routing, workflow assignment, SLA management, and accurate reporting for identity provisioning operations. Categories help organize tickets by business function and ensure assignment to the appropriate support teams.</li>
+</ul>
+</li>
+<li data-list-item-id="e327c5a297d827057ca6afda2c001f196">If you select <strong>Ticket</strong>, the following settings will appear:<ul><li data-list-item-id="e24b426e38f56f2292514939d15bf881d">
+<strong>ITSM Ticket Type</strong>: Select the appropriate ITSM ticket type for contractor identity provisioning requests when using ticket-based triggers. This selection determines the ticket schema, workflow rules, SLA policies, and access governance controls applied to onboarding operations. Common ticket types include Incident, Change Request, HR Case, Service Catalog Request, or custom ticket types configured in the ITSM system.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e1fd8088ff8f2d7628fa84754b0c14ad9"> <strong>Trigger Ticket Statuses</strong>: Select the ITSM ticket status values that will trigger contractor identity provisioning workflows. Only tickets with these statuses will be processed for account creation and access provisioning in Okta. This ensures that provisioning occurs only when tickets reach the appropriate workflow stage, maintaining proper approval and validation controls.</li>
+<li data-list-item-id="eadea5ead0495e8b4f67e63ec8e4e8427">
+<strong>Auto-Close Ticket After Provisioning</strong>: Automatically resolve and close the ITSM ticket upon successful completion of contractor identity provisioning in Okta. When enabled, tickets are transitioned to a closed state after account creation, ensuring ticket lifecycle management aligns with the identity lifecycle. This reduces manual ticket management overhead and maintains accurate ticket status tracking.<ul>
+<li data-list-item-id="e6d7d7ed03a6ebe6f8582a4c48c7bef55">
+<strong>Post-Provisioning Ticket Status</strong>: Select the ITSM ticket status to apply after successful contractor identity provisioning in Okta. This status indicates that the provisioning workflow has been completed and that the ticket can be closed or resolved. The selected status should align with your organization's ticket lifecycle management practices.</li>
+<li data-list-item-id="e6eba45762fedb85082c990d6854b8989">
+<strong>Ticket Resolution Code</strong>: Select the ITSM resolution code to apply when closing tickets after successful contractor provisioning. Resolution codes provide categorization for closed tickets, enabling better reporting and analysis of completed identity lifecycle operations. This helps track provisioning success rates and identify common resolution patterns.</li>
+</ul>
+</li>
+</ul><h4 id="h_01K0PGWJSDWRPH0DRX23RJ5DDJ">Notification Center</h4><p>Configure the following settings under the <strong>General Notification Settings</strong>:</p><ul>
+<li data-list-item-id="ede29cba444f325a0e39d3950997d8153">
+<strong>Send Email Notification On</strong>: Select the contractor events that should trigger email notifications. Based on your selection, the corresponding settings section will be displayed.<ul>
+<li data-list-item-id="e088efb518be2733b15a1ddc58c77b877">If you select <strong>Contractor Creation</strong>, the <strong>Contractor Creation Notifications</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="ec8fd92f48d62181d828248b37ebedff2">
+<strong>Creation - Send To</strong>: Select the primary recipients for contractor creation notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="efc1da6951b31a5c497441cff06a5e9ad">
+<strong>Creation - Custom Recipients</strong>: Enter custom email addresses to receive contractor creation notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="e249244a292b9b243c3364e11865a518b"> <strong>Creation - CC</strong>: Enter CC recipients for contractor creation notifications.</li>
+<li data-list-item-id="e8fbcb96604b892ff7d21ef1d0c8606d1"> <strong>Creation - Email Subject</strong>: Enter the subject line to be used for contractor creation email notifications.</li>
+<li data-list-item-id="e2839830c689971a7da8f7a61b37f501f">
+<strong>User Creation Email Template</strong>: Enter the content to be used as the email body for all contractor creation notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="efddd97648dd67505eae5fa174d2f5c62">If you select <strong>Contractor Update</strong>, the <strong>Contractor Update Notifications</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="e78a19aba88ba3e4d77dee9c8ed562175">
+<strong>Update - Send To</strong>: Select the primary recipients for contractor update notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="e57a1bc9762757dee9657edd2e453250a">
+<strong>Update - Custom Recipients</strong>: Enter custom email addresses to receive contractor update notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="e9c514bd55f099d18d850b41b768c5d08">
+<strong>Update - CC</strong>: Enter CC recipients for contractor update notifications.</li>
+<li data-list-item-id="ed7923459904e62753c60a4108c80aeb4">
+<strong>Update - Email Subject</strong>: Enter the subject line to be used for contractor update email notifications.</li>
+<li data-list-item-id="e470b9e1ee5ee0efae178736935570c86">
+<strong>User Update Email Template</strong>: Enter the content to be used as the email body for all contractor update notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e0d6ed8aac0deceef87dec825f5f48e06">If you select <strong>Contractor Termination</strong>, the <strong>Contractor Termination Notifications</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="ee25d1bc61517ad6eb44b83a94c8202ab">
+<strong>Termination - Send To</strong>: Select the primary recipients for contractor termination notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="efc4401397b791d1b6469d997ff54e813">
+<strong>Termination - Custom Recipients</strong>: Enter custom email addresses to receive contractor termination notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="e81e5d75f5e874e21cf56d51669c3e0c7">
+<strong>Termination - CC</strong>: Enter CC recipients for contractor termination notifications.</li>
+<li data-list-item-id="eefe2c4bc5bbc1c717120a466fa02ffec">
+<strong>Termination - Email Subject</strong>: Enter the subject line to be used for contractor termination email notifications.</li>
+<li data-list-item-id="e6bd26417024ac09c2683f375ecdc71d1">
+<strong>User Termination Email Template</strong>: Enter the content to be used as the email body for all contractor termination notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e00782b13830a317c11acd8e93dd9f8a9">If you select <strong>Success Event</strong>, the <strong>Success Notification</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="e0c55ed3e4dcc12bdea1146b54ba453f7">
+<strong>Success - Send To</strong>: Select the primary recipients for successful integration execution notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="e9d0daa1d7cc76967d2691c84f4f39938">
+<strong>Success - Custom Recipients</strong>: Enter custom email addresses to receive successful integration execution notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="e63a9ff2d907cc4b98540690b86199987">
+<strong>Success - CC</strong>: Enter CC recipients for successful integration execution notifications.</li>
+<li data-list-item-id="e889495c24007cdd1ead8f7d001d9c7c7">
+<strong>Success - Email Subject</strong>: Enter the subject line to be used for successful integration execution notifications.</li>
+<li data-list-item-id="eab63093106fc82313bb656e845b326c1">
+<strong>Success Event Email Template</strong>: Enter the content to be used as the email body for all successful integration execution notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e8f0c5f017187dff47d33194f08275188">If you select <strong>Failure Event</strong>, the <strong>Failure Notification</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="ed2b7b00767339cbfd014b05c171b410a">
+<strong>Failure - Send To</strong>: Select the primary recipients for failed integration execution notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="e0063cd0367e947b7af963cdf4dad3cc3">
+<strong>Failure - Custom Recipients</strong>: Enter custom email addresses to receive failed integration execution notifications (For example, abcd@gmail.com).</li>
+<li data-list-item-id="efbf44c6a1c5f25d58ef53805a6951cac">
+<strong>Failure - CC</strong>: Enter CC recipients for failed integration execution notifications.</li>
+<li data-list-item-id="e6fe4938040057efdd5dbb6419f7f96a5">
+<strong>Failure - Email Subject</strong>: Enter the subject line to be used for failed integration execution notifications.</li>
+<li data-list-item-id="e06e97d06b19410b17f0af04bb6d7fea0">
+<strong>Failure Event Email Template</strong>: Enter the content to be used as the email body for all failed integration execution notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e388208f433c751714c6ab09305dbf9b9">If you select <strong>Contractor Expiry Ticket Creation</strong>, the <strong>Expiry Email Templates</strong> section will appear. Configure the following settings under this section:<ul>
+<li data-list-item-id="e5dbf1c4f78cf434ab32919f59b5ce422">
+<strong>Expiry - Send To</strong>: Select the primary recipients for contractor expiry notifications from the drop-down list, such as admin, user, HR manager, IT team, etc.</li>
+<li data-list-item-id="eb8671be5d40f21693b85464ea71f7e4e">
+<strong>Expiry - Email Subject</strong>: Enter the subject line to be used for contractor expiry notifications.</li>
+<li data-list-item-id="e5ba254db46d96bff43f99b65860ec082">
+<strong>Contractor Expiry Email Template</strong>: Enter the content to be used as the email body for all contractor expiry notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e991ed7964f7928c9d8425cac90135958">If you select <strong>Contractor Expiry Notification</strong>, the  section will appear. Configure the following settings under this section:</li>
+</ul>
+</li>
+<li data-list-item-id="e7167d86f4970e2d7c4da4645045557aa">
+<strong>Include Contractor Report as Attachment</strong>: Select this option to attach contractor change reports to notification emails. When enabled, the following settings will appear:<ul>
+<li data-list-item-id="efae36ba2556dd7d798231918c53e733a">
+<strong>Report File Format</strong>: Select the file format for contractor notification reports from the drop-down list. Available options include <strong>CSV Report</strong> and <strong>Excel Report</strong>.</li>
+<li data-list-item-id="e59dbaa587bd563955a012d08975f015d">
+<strong>Contractor Report Dataset:</strong> Select the level of contractor data to include in attached reports from the drop-down list. The following are the available options:<ul>
+<li data-list-item-id="e3ee821080ed3ffce017684f04df0e062">
+<strong>Minimum Changes</strong>: Includes only the operation performed, with no identifiers, field names, or data values.</li>
+<li data-list-item-id="ea4108bfcf5aa48ceff080d2e8941c77b">
+<strong>Metadata Changes</strong>: Includes the operation and field names involved, without identifiers or data values.</li>
+<li data-list-item-id="e8b227b7ab3ad574f76871ee0a23fbe1e">
+<strong>Non-PII Data Changes</strong>: Includes the operation, field names, and selected non-PII values, without any identifiers.</li>
+<li data-list-item-id="e4be817446db73c20e6541e8b21bc38a2">
+<strong>GUID with Non-PII Data</strong>: Includes a GUID along with the operation, field names, and selected non-PII values.</li>
+<li data-list-item-id="ec35b47eb44571d284b82d3694d2d5729">
+<strong>Contractor ID with Non-PII Data</strong>: Includes the contractor ID with the operation, field names, and selected non-PII values.</li>
+<li data-list-item-id="eed0d0631277b8187df75340845b2258a">
+<strong>Contractor ID with All Data Changes</strong>: Includes the contractor ID with the operation, field names, and all data values, including PII.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="h_01KC6J2N08947K00S859KHW0PV">Execution</h4><p>Configure the following execution parameter settings:</p><ul>
+<li data-list-item-id="eaa70b11dcd2dea51bc099825d876b227">
+<strong>Run in Incremental Mode</strong>: Select this option to process only the changes since the last execution, improving performance by avoiding full synchronization of contractors from ServiceNow.</li>
+<li data-list-item-id="e322ee131cc1d31d0a85314eb6e760d7d">
+<strong>Report-Only Mode</strong>: Select this option to enable read-only simulation mode for testing and validation. When enabled, the integration performs all operations in dry-run mode without executing provisioning or deprovisioning actions against Okta. This allows for safe testing of identity lifecycle workflows and validation of business rules without impacting production directory services.</li>
+<li data-list-item-id="e11c5b080ab7656d17c6de51ce4f8ce83">
+<strong>Import Limit</strong>: Specify the maximum number of contractor records to import from ServiceNow to Okta in a single execution. Leave blank for no limit.</li>
+<li data-list-item-id="e415232fbb9012d3d2ffa3eeff9f9633c">
+<strong>Update Limit</strong>: Specify the maximum number of contractor records that can be updated in Okta in a single execution. Leave blank for no limit.</li>
+<li data-list-item-id="e4b7184be9a54ad2b8c36041524500fbc">
+<strong>Set the Termination Limit for Contractors</strong>: Enter a numeric value to limit the number of contractor records terminated in Okta per execution.</li>
+</ul><h2 id="h_01K04HD998SCMWKJ7BWM43V581">Policy</h2><p>The following sections are displayed under the <strong>Policy</strong> tab:</p><h3 id="h_01KC61HN1T7APW85CMB7R1HRRM">Contractor Naming Policy</h3><h4 id="h_01KC61MFYNGXQ0TKK3EJ443G16">Naming Policy Settings</h4><p>Configure the following naming policy settings:</p><p><strong>Generate Common Name</strong>: Select this option to define a custom policy for generating a unique Common Name. Selecting this option enables the following settings:</p><ul>
+<li data-list-item-id="e60c667049319c1afb63ac92e71dca8a3">
+<strong>Generate Common Name (CN) using</strong>: Select the drop-down option for generating a common name for the user. The available option is <strong>Use Custom Policy to Generate CN</strong>.</li>
+<li data-list-item-id="ef25448f01dd5d83cb22b775b166d9ead">Configure the following settings under the <strong>Generate Common Name (CN)</strong> section:<ul><li data-list-item-id="ed8b053ffe165c4f45c213c30b21aa0bc">
+<strong>Unique CN Generation Pattern</strong>: Select any of the predefined patterns for generating a CN, or use the <strong>Custom</strong> option to define your own CN generation pattern from the dropdown. When the <strong>Custom</strong> option is selected, the following settings appear:<ul>
+<li data-list-item-id="ed94269ed4f4ba6364cfac1367abe4f54">
+<p><strong>Enter Your Prompt</strong>: Enter your policy for generating the common name. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote><p>Generate a first name where the first character of the first name is capitalized, followed by a space and a last name where the first character is capitalized, followed by numbers up to 2 — but the first one should be without a number.</p></blockquote>
+</li>
+<li data-list-item-id="eeb916d12330ed26bbf6225686eb05ff8">
+<strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: john, <strong>Last Name</strong>: smith), the generated common name values are John Smith, John Smith1, and John Smith2, as displayed under the <strong>Preview</strong> section. To view the first, middle, and last name values from which the preview results are generated, turn on the <strong>Advanced Preview Options</strong> toggle.</li>
+<li data-list-item-id="eea0e5e10ca76f416a19c8fca37814c3c">
+<strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name, middle name, and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated common name values will appear in the <strong>Preview</strong> section.</li>
+</ul>
+</li></ul>
+</li>
+</ul><p><strong>Generate Contractor Principal Name (UPN)</strong>: Select this option to define a custom policy for generating a unique Contractor Principal Name. Selecting this option enables the following settings:</p><ul>
+<li data-list-item-id="e39031812c33cf164ae1120da68b28da3">
+<strong>Generate Contractor Principal Name (UPN) using</strong>: Select the drop-down option for generating a unique contractor principal name for the user. The following are the available options:<ul>
+<li data-list-item-id="e4e6a2dfda0645faf9bc8d8bb72147327">
+<strong>Use CN as UPN</strong>: Select this option to use the common name generated from the <strong>Generate Common Name</strong> section as the Contractor Principal Name (UPN).</li>
+<li data-list-item-id="e3e6498b079d2f579206c94e6f40421ce">
+<strong>Use Custom Policy to Generate UPN</strong>: Select this option to customize your own UPN generation pattern.</li>
+</ul>
+</li>
+<li data-list-item-id="ea74f3a2818b2cec386c9ae478ff19b7a">Configure the following settings under the <strong>Generate Contractor Principal Name (UPN)</strong> section:<ul><li data-list-item-id="ef7415361971771ff7b711607d292ffa3">
+<strong>Unique UPN Generation Pattern</strong>: Select any of the predefined patterns for generating a UPN, or use the <strong>Custom</strong> option to define your own UPN generation pattern from the dropdown. When the <strong>Custom</strong> option is selected, the following settings appear:<ul>
+<li data-list-item-id="e829e7d64a81fc30d10eaebf228f5f6b3">
+<p><strong>Enter Your Prompt</strong>: Enter your policy for generating the UPN. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote>
+<p><em>Generate three username outputs using the following rule:</em></p>
+<p><em>Take the first name and create three variants by using its first 1, 2, and 3 letter, respectively.</em></p>
+<p><em>Combine these first-name letters with the truncated last name to form three usernames, inserting the middle initial in between.</em></p>
+<p><em>Make sure that the total length does not exceed 10 characters.</em></p>
+<p><em>All characters must be in lowercase and contain no spaces.</em></p>
+</blockquote>
+</li>
+<li data-list-item-id="e38208b9c806e614fba803da3745b8f67">
+<strong>Preview</strong>: Based on the prompt and the default input (<strong>First Name</strong>: Alexander, <strong>Last Name</strong>: Johnson, <strong>Middle Name</strong>: Michael), the generated contractor principal name values are amjohnson, almjohnson, and alemjohnso, as displayed under the <strong>Preview</strong> section. To view the first, middle, and last name values from which the preview results are generated, turn on the <strong>Advanced Preview Options</strong> toggle.</li>
+<li data-list-item-id="e4a41ae434833864f3606badf625d15a4">
+<strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name, middle name, and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated UPN values will appear in the <strong>Preview</strong> section.</li>
+</ul>
+</li></ul>
+</li>
+</ul><p><strong>Generate Email</strong>: Select this option to define a custom policy for generating a unique email. Selecting this option enables the following settings:</p><ul>
+<li data-list-item-id="e8872d5af378a6fec5adf9263e279d694">
+<strong>Generate Email using</strong>: Select the drop-down option for generating an email for the contractor. The following are the available options:<ul>
+<li data-list-item-id="e94a561eee227d03412f76ddd4959855c">
+<strong>Use UPN as Email Prefix</strong>: Select this option to use the contractor principal name generated from the <strong>Generate Contractor Principal Name (UPN)</strong> section as the email prefix.</li>
+<li data-list-item-id="e162a3cd19b38e587fb754e01910d3603">
+<strong>Use Custom Policy to Generate Email Suffix</strong>: Select this option to customize your own email suffix generation pattern.</li>
+</ul>
+</li>
+<li data-list-item-id="e18d57c4b7ca3b02dfea2411f9fb0ae99">Configure the following settings under the <strong>Generate Email</strong> section:<ul><li data-list-item-id="ec3e44b56ad4830c3b33e88fab0a612a8">
+<strong>Unique Email Generation Pattern</strong>: Select any of the predefined patterns for generating an email suffix, or use the <strong>Custom</strong> option to define your own email suffix generation pattern from the dropdown. When the <strong>Custom</strong> option is selected, the following settings appear:<ul>
+<li data-list-item-id="e36c820aa826fc78e493a5c2cb5a35172">
+<p><strong>Enter Your Prompt</strong>: Enter your policy for generating the UPN. For example, enter the following prompt and click <strong>Analyze and Preview</strong>:</p>
+<blockquote>
+<p><em>Generate three username outputs using the following rule:</em></p>
+<p><em>Take the first name and create three variants by using its first 1, 2, and 3 letter, respectively.</em></p>
+<p><em>Combine these first-name letters with the truncated last name to form three usernames, inserting the middle initial in between.</em></p>
+<p><em>Make sure that the total length does not exceed 10 characters.</em></p>
+<p><em>All characters must be in lowercase and contain no spaces.</em></p>
+</blockquote>
+</li>
+<li data-list-item-id="e0325b697ffc7f101fab85e227312560b">
+<strong>Preview</strong>: Based on the prompt and the default input (First Name: John, Last Name: Smith), the generated email suffix values are jsmith, josmith, and johsmith, as displayed under the <strong>Preview</strong> section. To view the first and last name values from which the preview results are generated, turn on the <strong>Advanced Preview Options</strong> toggle.</li>
+<li data-list-item-id="e2feb5d02ded5c34b1a5c206e1c2744cc">
+<strong>Advanced Preview Options</strong>: If you want to test with custom values, turn on the <strong>Advanced Preview Options</strong> toggle to display the <strong>Add Custom Values</strong> panel. There, you can enter the first name and last name, and click <strong>Refresh Preview</strong>. Based on these values and the defined prompt, the generated email suffix values will appear in the <strong>Preview</strong> section.</li>
+</ul>
+</li></ul>
+</li>
+</ul><h3 id="h_01KC6BVBDVTRAAN3EFX130CVVW">Contractor Password Policy</h3><p>Configure the following password policy settings:</p><p><strong>Password Generation Method</strong>: Select the method used to generate passwords for contractor identity provisioning in Okta from the drop-down list. The available options are:</p><ul>
+<li data-list-item-id="e6dc8613339f52e5deeb2edb085e2ec4b">
+<strong>Auto-Generate Password</strong>: Select this option if you want the system to generate the password securely.</li>
+<li data-list-item-id="ed496396261f92809a2dcda9ed972e04c">
+<strong>Custom Password Policy</strong>: Select this option to define your own password requirements for contractor accounts based on your organization’s policies. When selected, the following settings will appear under the <strong>Custom Password Policy section</strong>:<ul>
+<li data-list-item-id="eee423ed21f72ab41843ec22105520449">
+<strong>Minimum Character Length</strong>: Specify the minimum number of characters a contractor password must have to meet organizational password policy and authentication security standards.</li>
+<li data-list-item-id="ef06e445934800900758d5a323d5c51e4">
+<strong>Allowed Special Characters</strong>: Select which special symbols (such as !, @, #, $, etc.) can be included in passwords from the drop-down list. Each password must consist of at least one character from this set to meet security requirements.</li>
+<li data-list-item-id="e0c3a1f2ec50d786b736a9b442979c287">
+<strong>Password Complexity Requirements</strong>: Select rules about what types of characters a password must contain from the drop-down list. You can require one or more of the following:<ul>
+<li data-list-item-id="e2298b777f13c8d664610cb0356043759"><strong>Require Uppercase Letters</strong></li>
+<li data-list-item-id="ed8370b47ccf8dead33708e7109780ab1"><strong>Require Lowercase Letters</strong></li>
+<li data-list-item-id="e0abba4fca1ef3144a790da95428e29d7"><strong>Require Numbers</strong></li>
+<li data-list-item-id="ef9f91fd0d5b621f2f1d506baa784d325"><strong>Require Special Characters</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01KC8N0H76EWR3JBVXRFPB18KZ">Operational Settings</h2><p>Configure the following operational settings:</p><h3 id="01K5RAXMQQAWTTT5GM0YKX2RKZ">Log Settings</h3><p>Configure the following logging settings:</p><p><strong>Select Log Type</strong>: Choose the level of contractor data visibility captured in the ServiceNow to Okta logs.</p><h3 id="h_01KC6HD3EB177Y4AE6GFEJQPEW">Log Insights</h3><p>Configure the following log insight settings:</p><p><strong>Select Log Insight Type</strong>: Select the level of contractor insight data captured from ServiceNow to Okta.</p><h3 id="h_01KC6HHSMA0FQQRJ7C15ASJ2EK">Reporting</h3><p>Configure the following report settings:</p><ul>
+<li data-list-item-id="ecac42ccda9d0148c45954e28abf97160">
+<strong>Reporting Type</strong>: Select the level of contractor data set that should appear in generated reports.</li>
+<li data-list-item-id="ed32e8da569e75b1be147c9842bbad168">
+<strong>Select Report Format</strong>: Select the file format for contractor reporting output. You can select either <strong>CSV Report</strong> or <strong>Excel Report</strong> from the drop-down list based on your use case.</li>
+</ul><h2 id="h_01KC8N0H76M1RZ12RH0654ADZQ">Attribute Map</h2><p>The <strong>ServiceNow to Okta Contractor Management</strong> integration maps the attributes from ServiceNow and Okta. The attributes displayed in this section depend on the type of synchronization the integration supports:</p><ul>
+<li data-list-item-id="e0f876b10581b9706ca29cc3d86aeac15">
+<strong>End Date Update</strong>: To extend a contractor's tenure in Okta, the integration utilizes ServiceNow attributes as the source and maps them to the corresponding Okta attributes as the target.</li>
+<li data-list-item-id="ee33fa99055b1da7e3d66bfb9ad5c0e94">
+<strong>Contractor Creation</strong>: To create a contractor in Okta, the integration utilizes ServiceNow attributes as the source and maps them to the corresponding Okta attributes as the target.</li>
+<li data-list-item-id="ef77a64a73ba43e898f90b873f531436b">
+<strong>Extension Ticket</strong>: For creating a ticket to extend the contractor's tenure, the integration uses Okta attributes as the source and maps them to the corresponding ServiceNow attributes as the target.</li>
+</ul><p>Only the source attributes can be modified, as needed, to align with your specific use case.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Tables</h2><p id="h_01J7XEGA5M57172Y4JT9508Q9D">Tables enable you to update specific data of a resource in a target application during integration runs when that data is missing in the source application from which the resource data is retrieved.</p><p>You can add tables in integrations to sync the values in tables to another application. Tables are used to update an attribute value in another application when the application attribute does not provide specific data.</p><p>The following tables are available:</p><ul><li data-list-item-id="e745d1a992a9bb2084ad60c3988253afb">
+<p><strong>Okta OU Mapping Table</strong>: Click the table row to display the <strong>Update Table</strong> pop-up window. Each row in the table corresponds to a key name and key value pair. You can add rows to the table using one of the following options:</p>
+<ul>
+<li data-list-item-id="e7a25deb44de7202465fd8f53278a2657">
+<strong>Add Row</strong>: Click <strong>Add Row</strong> to manually add a row by providing a key name and a key value.</li>
+<li data-list-item-id="ebe21b038c124f88668950337ae066e3d">
+<strong>Upload CSV</strong>: Click <strong>Upload CSV </strong>to upload rows to the table using a CSV file. The CSV file should have two columns with headings 'NAME' and 'VALUE.'<br/><strong>Notes</strong>:<ul>
+<li data-list-item-id="e920e4107062f511cdd1d9fa45e0ca5ad">The key name within a table should be unique. The key name can include a combination of letters and numbers.</li>
+<li data-list-item-id="e0f92a09646fba4ff99046e49c995d64e">The key name supports all the special characters except the following:<ul>
+<li data-list-item-id="e8c0115b97d33522e07eec94e71265ff4">/ (forward slash)</li>
+<li data-list-item-id="ebce4d80096a32bc92c4fec807f8da4a5">\ (backslash)</li>
+<li data-list-item-id="e64e29399d3a10ffa21f326fc4e29305a">" " (double quotes)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Click <strong>Save</strong> to save the changes made.</p>
+</li></ul><h2 id="h_01KC8N0H76E09222N9K6SS7PCP">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

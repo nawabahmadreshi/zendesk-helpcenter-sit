@@ -1,0 +1,289 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Greenhouse Onboarding Candidates to BambooHR Employees</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Greenhouse Onboarding Candidates to BambooHR Employees</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating the integration of data across resource types. This guide covers the end-to-end tasks in setting up a data integration to sync the <em>Candidates</em> resource of Greenhouse Onboarding to the <em>Employees</em> resource of BambooHR.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure following application connectors in the Aquera Admin portal to integrate with Microsoft Entra ID:
+<ul>
+<li>
+<strong>Greenhouse Onboarding</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360050540634" rel="noopener noreferrer" target="_blank">Greenhouse Onboarding Configuration Guide</a> for details.</li>
+<li>
+<strong>BambooHR</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360020300534">BambooHR Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01J46B7Y1FJFZ9EF69E21925AA">Data Integration Setup</h1>
+<p>Aquera's data integration automatically imports candidates from Greenhouse Onboarding and provisions these employees in BambooHR. </p>
+<p>Aquera provides templates that are pre-configured integrations created for specific use cases. You can use these templates to create a data integration.</p>
+<p>Perform the following steps to create a data integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>integrations</strong> on the left panel.</li>
+<li>Click<strong> Create integration</strong>.</li>
+<li>Select a pre-built data integration template based on your requirements. For this use case, select the template <em>Greenhouse Onboarding Employees to BambooHR Employees</em>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select the Greenhouse Onboarding connector in the <strong>Source Application</strong> dropdown field.</li>
+<li>Select the BambooHR connector in the <strong>Target Application</strong> dropdown field.</li>
+<li>Click <strong>Continue</strong>. A new page with the fields and tabs to configure the data integration is displayed.</li>
+<li>You can update the configurations if required. For more details, refer to the <a href="../Data-Integration-Setup-Guide/#h_01EZA56Y42W6PYT30MAC9TBWV6" rel="noopener noreferrer" target="_blank">Data Integration Setup Guide</a>. </li>
+<li>Click <strong>Create</strong> to create the data integration.</li>
+</ol>
+<h2 id="h_01J4PAZQ130M14QJ5WWR1KVF5A">Attribute Mapping</h2>
+<p>The <strong>Attribute Map </strong>tab allows you to map employees from Greenhouse Onboarding to the Payroll resource of BambooHR.</p>
+<p>The following is a sample attribute mapping from Greenhouse Onboarding to ADP iHCM:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Greenhouse Onboarding Attribute / Value / Expression</strong></td>
+<td><strong>BambooHR Attribute</strong></td>
+</tr>
+<tr>
+<td>SOURCE.customFieldValues.find(field =&gt; field.customField.name === 'Shipping Address').value.address_line_1.trim()</td>
+<td>address1</td>
+</tr>
+<tr>
+<td>SOURCE.customFieldValues.find(field =&gt; field.customField.name === 'Shipping Address').value.address_line_2</td>
+<td>address2</td>
+</tr>
+<tr>
+<td>SOURCE.customFieldValues.find(field =&gt; field.customField.name === 'Shipping Address').value.city</td>
+<td>city</td>
+</tr>
+<tr>
+<td>const startDate = SOURCE.startDate; <br/>const currentDate = new Date(); <br/>const start = new Date(startDate); <br/>const timeDiff = currentDate.getTime() - start.getTime(); <br/>const daysDiff = timeDiff / (1000 * 3600 * 24);<br/>start &gt; currentDate || daysDiff &lt;= 10;</td>
+<td>contractEndDate</td>
+</tr>
+<tr>
+<td>if(SOURCE.location.name.startsWith("US-")){<br/>"United States";<br/>}<br/>else if(TABLE.CountryCodeToCountry[SOURCE.location.name] != undefined){<br/>TABLE.CountryCodeToCountry[SOURCE.location.name];<br/>}<br/>else{<br/>SOURCE.location.name;<br/>}</td>
+<td>country</td>
+</tr>
+<tr>
+<td>SOURCE.dateOfBirth</td>
+<td>dateOfBirth</td>
+</tr>
+<tr>
+<td>const value = SOURCE.customFieldValues.find(field =&gt; field.customField.id === 'dietary_restrictions').value;<br/>value;</td>
+<td>dietaryRestrictions</td>
+</tr>
+<tr>
+<td>TABLE.employmentStatus[SOURCE.employmentStatus]</td>
+<td>employmentHistoryStatus</td>
+</tr>
+<tr>
+<td>const startDate = SOURCE.startDate;<br/>const currentDate = new Date();<br/>const start = new Date(startDate);<br/>const timeDiff = currentDate.getTime() - start.getTime();<br/>const daysDiff = timeDiff / (1000 * 3600 * 24);<br/>start &gt; currentDate || daysDiff &lt;= 10;</td>
+<td>employmentStatus</td>
+</tr>
+<tr>
+<td>const gender = SOURCE.customFieldValues.find(field =&gt; field.customField.id === 'gender').value;<br/>gender</td>
+<td>gender</td>
+</tr>
+<tr>
+<td>const startDate = SOURCE.customFieldValues.find(field =&gt; field.customField.id === 'start_date').value;<br/>startDate</td>
+<td>startDate</td>
+</tr>
+<tr>
+<td>SOURCE.personalEmail</td>
+<td>homeEmail</td>
+</tr>
+<tr>
+<td>SOURCE.title</td>
+<td>jobTitle</td>
+</tr>
+<tr>
+<td>SOURCE.lastName</td>
+<td>lastName<span>*</span>
+</td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+<p>In the source attribute field, you can include source attributes or write JavaScript expressions to map to the corresponding target attribute. The target attributes marked with a red asterisk (<span>*</span>) are mandatory to be mapped.</p>
+<h2 id="h_01JD417X0N8F6HMPB4NQQTZ7HJ">Greenhouse Onboarding Employee Attributes</h2>
+<p>Refer to the following table for the Greenhouse Onboarding employee attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Attribute Name</span> </font> </strong></td>
+<td><strong> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Description</span> </font> </strong></td>
+<td><strong> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>Data Type</span> </font> </strong></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>email</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The email ID of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>hr.salary</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The salary of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>empCompensation.endDate</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The employee compensation end date</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td>empCompensation.startDate <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span><br/></span> </font>
+</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The employee compensation start date </span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>person.dateOfBirth</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The birth date of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>perPerson.phoneNumbers[].phoneNumber</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The phone number of the employee </span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> gender</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The gender of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> lastName</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The last name of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> firstName</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The first name of the employee </span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td>salutation</td>
+<td>The salutation of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>hireDate</td>
+<td>The hire date of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>personKeyNav.personIdExternal</td>
+<td>The person ID of the employee</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h2 id="01JD419KSBZWWJMETD7T2W8C97">BambooHR Payroll Attributes</h2>
+<p>Refer to the following table for the BambooHR payroll attributes:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong> <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">Attribute Name</font> </span> </strong></td>
+<td><strong> <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">Description</font> </span> </strong></td>
+<td><strong> <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">Data Type</font> </span> </strong></td>
+</tr>
+<tr>
+<td>businessCommunication.emails.emailUri<span>*</span>
+</td>
+<td>The email address used for business communication</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> payDataInput.earnings.earningRateValue</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The salary of the employee</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">payDataInput.payPeriodEndDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The pay period end date</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> payDataInput.payPeriodStartDate</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The pay period start date</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>person.birthDate<span>*</span></span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The birth date of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string</span> </font></td>
+</tr>
+<tr>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> person.communication.mobiles</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The phone number of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> string array</span> </font></td>
+</tr>
+<tr>
+<td>person.genderCode.codeValue</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The gender of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td>person.legalName.familyName1</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span> The last name of the employee</span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td>person.legalName.givenName</td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>The first name of the employee </span> </font></td>
+<td><font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> <span>string </span> </font></td>
+</tr>
+<tr>
+<td>person.legalName.preferredSalutations</td>
+<td>The salutation of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments</td>
+<td>The work assignment details of the employee</td>
+<td>string array</td>
+</tr>
+<tr>
+<td>workerID.idValue</td>
+<td>The worker ID of the employee</td>
+<td>
+<p>string</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01JD90F0KPF2YC4RXKVAYB2WYK">Running the Data Integration</h1>
+<p>You can click the <strong>Execute</strong> button at the top-right corner to manually run the data integration. You can also schedule the data integration to run automatically at specified intervals by configuring a frequency in the Schedule tab.</p>
+<p>You can navigate to <strong>Logs  &gt; Integrations</strong> in the Aquera Admin portal to view the integration execution logs.</p>
+<p>After the data integration is successfully executed, new employees will be created and existing employees will be updated in the BambooHR application.</p>
+  </div>
+</body>
+</html>

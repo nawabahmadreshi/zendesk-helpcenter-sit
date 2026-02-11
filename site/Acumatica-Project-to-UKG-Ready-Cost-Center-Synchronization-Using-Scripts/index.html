@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Acumatica Project to UKG Ready Cost Center Synchronization Using Scripts</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Acumatica Project to UKG Ready Cost Center Synchronization Using Scripts</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<p>This guide covers the end-to-end tasks in setting up a script synchronization to sync the <em>Project</em> resource of Acumatica to the <em>Cost Center</em> resource of UKG Ready.</p>
+<p>The following tasks are involved in setting up the synchronization from Acumatica to UKG Ready:</p>
+<ul>
+<li><a href="#h_01F6EH0A638QSV3GWRKPF09R35">Initial Preparation</a></li>
+<li><a href="#h_01F6EH0MBC837JQFE5ZJRW7P94">Configure Applications in Aquera Admin Portal</a></li>
+<li><a href="#h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</a></li>
+<li><a href="#h_01J0JGNMSF23VMWXYZVG21ZV1T">Run Script Synchronization</a></li>
+</ul>
+<h1 id="h_01F6EH0A638QSV3GWRKPF09R35">Initial Preparation</h1>
+<h2 id="h_01HTPFFWW97N4H416GAK9XQBFG">Aquera Admin Portal</h2>
+<ol>
+<li>Your IT admin must <a href="https://admin.aquera.io/home/register" rel="noopener noreferrer" target="_blank">register as an Aquera Admin</a>.</li>
+<li>Once registered successfully, Aquera creates a tenant for the IT Admin and provides access to it.</li>
+</ol>
+<h1 id="h_01F6EH0MBC837JQFE5ZJRW7P94">Configure Applications in Aquera Admin Portal</h1>
+<p>You must add and configure the following applications in the Aquera Admin portal:</p>
+<ul>
+<li>
+<strong>Acumatica</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/22469599108887" rel="noopener noreferrer" target="_blank">Acumatica Configuration Guide</a> for details.</li>
+<li>
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for details.</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</h1>
+<p>This section details how the synchronization must be configured to allow data push from Acumatica to UKG Ready.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Script Synchronization</h2>
+<p>Perform the following steps to create a new script synchronization:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Synchronizations</strong> on the left panel which displays the list of synchronizations created by the user. <br/><strong>Note</strong>: The number of synchronization records displayed on this page is based on the display size of the user's screen.</li>
+<li>Click<strong> Create Synchronization</strong>.</li>
+<li>Select <strong>Script</strong>.</li>
+<li>Enter a name and a description for the synchronization.</li>
+<li>Click <strong>Continue</strong>. A new page is displayed to configure the synchronization.</li>
+<li>Click <strong>Create</strong> to create the script synchronization.</li>
+</ol>
+<h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Configure Script Synchronization</h2>
+<p>This document describes how to set up the synchronization using the<em> Script </em><em>Synchronization</em> method.</p>
+<h3 id="h_01J0JGGWC9JXT1W6YJ953C13S6">Connections</h3>
+<ul>
+<li>Set Acumatica as an application from the <strong>Connections</strong> tab with the variable <em>acumatica</em>.</li>
+<li>Set UKG Ready as an application from the <strong>Connections</strong> tab with the variable <em>ukg.</em>
+</li>
+</ul>
+<p>Refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Synchronization Setup Using Scripts</a> and <a href="../Working-With-Integration-Scripts/" rel="noopener noreferrer" target="_blank">Working With Synchronization Scripts</a> guides for details on the configurations.</p>
+<h3 id="h_01J0JGJKQVW6MTKAR0M7VMT2T6">Script</h3>
+<p>This section allows you to write a script to set up the synchronization. The script is based on JavaScript, so all the functions and language constructs are available in the script.</p>
+<p><strong>Note</strong>: The following script covers the synchronization of the <em>Project</em> resource type from Acumatica to the <em>Cost Center</em> resource type of UKG Ready. During the synchronization, the script checks the existence of the Acumatica <em>Project</em> in UKG Ready based on the cost center level name and creates a new cost center in UKG Ready if a matching cost center does not exist. You must modify the script based on your use case.</p>
+<p>Configure the following script in the <strong>Script</strong> tab to synchronize the <em>Project</em> resource of Acumatica to the <em>Cost Center</em> resource of UKG Ready:</p>
+<div>
+<pre><code>let ukgCC = ukg.getCostCenters();
+let reportOnly = false;
+let logsCreated = "Name,Level,ParentID,ExternalID,GlCode\n";
+let logsFailed = "Name,Level,ErrorDetails\n";
+let logsIgnored = "Name,Level,ParentID,ExternalID,GlCode\n";
+let context = {};
+context['$filter'] = "ProjectID eq '23THDRR028'"
+context['$custom'] = "Project.ContractID";
+let projectsObj = acumatica.getProject(context);
+let projects = JSON.parse(projectsObj.body);
+for(var project of projects){
+    let level1Name = project.ProjectID.value+"--"+project.Description.value;
+    //Find if the level 1 CC Already exists
+    let level1Found = ukgCC.find(cc = cc.name === level1Name) != undefined ? true : false;
+    let level1ID = null;
+    let level1Obj = null;
+    let level1ExternalId = project.custom.Project.ContractID.value/*Add the externalID*/;
+    if(level1Found == true){
+        log.info("Level 1 Cost center "+level1Name+" Hence not created");
+        level1Obj = ukgCC.find(cc = cc.name === level1Name);
+        level1ID = level1Obj.id;
+        logsIgnored+= level1Name+","+1+","+level1Obj.parentCc.id+","+level1Obj.externalId+","+level1Obj?.glCodes?.[0]?.value+"\n";
+    }
+    else{
+        //Write logic to create Level 1 Cost Center
+        let level1Desc =  project.Description.value;
+        let level1ParentID = 60251205046/*Need to Hardocode to the Tree Cost center ID*/;
+        let level1Glcode = project.ProjectID.value.substring(0,2)+"-"+project.ProjectID.value.substring(2,5)+"-"+project.ProjectID.value.substring(5,7)+"-"+project.ProjectID.value.substring(7);
+        let level1Abbreviation = project.ProjectID.value;
+        if(!reportOnly){
+            let level1Response = await createCostCenter(level1Name,level1Abbreviation,level1Desc,level1ExternalId,null,level1ParentID,level1Glcode,true,false)
+            if(level1Response.items[0].status == "OK"){
+                level1ID = level1Response.items[0].id;
+                ukgCC.push({"id":level1ID,"name":level1Name});
+                logsCreated += level1Name+","+1+","+level1ParentID+","+level1ExternalId+","+level1Glcode+"\n";
+            }
+            else{
+                level1ID = null;
+                logsFailed+= level1Name+","+1+","+level1Response.items[0].errors[0].message+"\n";
+            }
+        }
+        else{
+            logsCreated += level1Name+","+1+","+level1ParentID+","+level1ExternalId+","+level1Glcode+"\n";
+        }
+    }
+    var contextProjBudget = {};
+    contextProjBudget['$filter'] = "ProjectID eq '"+project.ProjectID.value+"'";
+    let projectBudgetsObj = acumatica.ProjectBudget_GetList(contextProjBudget);
+    let projectBudgets = JSON.parse(projectBudgetsObj.body);
+    for(var projBudget of projectBudgets){
+        if(projBudget.AccountGroup.value === "LABOR"){
+            var contextProjectTask = {};
+            contextProjectTask['$filter'] = "ProjectID eq '"+project.ProjectID.value+"'";
+            contextProjectTask['$custom'] = "Task.TaskID";
+            let projectTaskObj = acumatica.ProjectTask_GetList(contextProjectTask);
+            let projectTask = JSON.parse(projectTaskObj.body);
+            //Level 2 required details
+            let level2Name = projBudget.ProjectTaskID.value+"--"+projectTask.find(pt = pt.ProjectTaskID.value === projBudget.ProjectTaskID.value).Description.value;
+            let level2Found = ukgCC.find(cc = cc.name === level2Name) != undefined ? true : false;
+            let level2ID = null;
+            let level2Obj = null;
+            let level2ExternalId = level1ExternalId+"/"+projectTask.find(pt = pt.ProjectTaskID.value === projBudget.ProjectTaskID.value).custom.Task.TaskID.value/*Add the externalID*/;
+            let level2Desc =  projectTask.find(pt = pt.ProjectTaskID.value === projBudget.ProjectTaskID.value).Description.value;
+            let level2Glcode = projBudget.ProjectTaskID.value;
+            let level2Abbreviation = projBudget.ProjectTaskID.value;
+            //Level 3 required details
+            let level3Name = projBudget.CostCode.value+"--"+projBudget.Description.value;
+            let level3ID = null;
+            let level3Obj = null;
+            let level3ExternalId = null/*Add the externalID*/;
+            let level3Desc =  projBudget.Description.value;
+            let level3Glcode = projBudget.CostCode.value;
+            let level3Abbreviation = projBudget.CostCode.value;
+            if(level2Found == true){
+                log.info("Level 2 Cost center "+level2Name+"Already Exists Hence not created");
+                level2Obj = ukgCC.find(cc = cc.name === level2Name);
+                level2ID = level2Obj.id;
+                logsIgnored+= level2Name+","+1+","+level2Obj?.parentCc?.id+","+level2Obj.externalId+","+level2Obj?.glCodes?.[0]?.value+"\n";
+                let level3Found = ukgCC.find(cc = cc.name === level3Name) != undefined ? true : false;
+                if(level3Found == true){
+                    log.info("Level 3 Cost center "+level3Name+"Already Exists Hence not created");
+                    level3Obj = ukgCC.find(cc = cc.name === level3Name);
+                    logsIgnored+= level3Name+","+3+","+level3Obj.parentCc.id+","+level3Obj.externalId+","+level3Obj?.glCodes?.[0]?.value+"\n";
+                }
+                else{
+                    //Write Logic to create level3
+                    if(!reportOnly){
+                        let level3Response = await createCostCenter(level3Name,level3Abbreviation,level3Desc,level3ExternalId,null,level2ID,level3Glcode,true,true);
+                        if(level3Response.items[0].status == "OK"){
+                            level3ID = level3Response.items[0].id;
+                            logsCreated += level3Name+","+3+","+level2ID+","+level3ExternalId+","+level3Glcode+"\n";
+                        }
+                        else{
+                            level3ID = null;
+                            logsFailed+= level3Name+","+3+","+level3Response.items[0].errors[0].message+"\n";
+                        }
+                    }
+                    else{
+                        logsCreated += level3Name+","+3+","+level2ID+","+level3ExternalId+","+level3Glcode+"\n";
+
+                    }
+                }
+
+            }
+            else{
+                //Write Logic for creating level 2 CC and level 3 CC;
+                if(!reportOnly){
+                    let level2Response = await createCostCenter(level2Name,level2Abbreviation,level2Desc,level2ExternalId,null,level1ID,level2Glcode,true,false)
+                    if(level2Response.items[0].status == "OK"){
+                        level2ID = level2Response.items[0].id;
+                        logsCreated += level2Name+","+2+","+level1ID+","+level2ExternalId+","+level2Glcode+"\n";
+                        ukgCC.push({"id":level2ID,"name":level2Name});
+                        let level3Response = await createCostCenter(level3Name,level3Abbreviation,level3Desc,level3ExternalId,null,level2ID,level3Glcode,true,true);
+                        if(level3Response.items[0].status == "OK"){
+                            level3ID = level3Response.items[0].id;
+                            logsCreated += level3Name+","+3+","+level2ID+","+level3ExternalId+","+level3Glcode+"\n";
+                        }
+                        else{
+                            level3ID = null;
+                            logsFailed+= level3Name+","+3+","+level3Response.items[0].errors[0].message+"\n";
+                        }
+                    }
+                    else{
+                        level2ID = null;
+                        logsFailed+= level2Name+","+2+","+level2Response.items[0].errors[0].message+"\n";
+                    }
+                }
+                else{
+                    logsCreated += level2Name+","+2+","+level1ID+","+level2ExternalId+","+level2Glcode+"\n";
+                    logsCreated += level3Name+","+3+","+level2ID+","+level3ExternalId+","+level3Glcode+"\n";
+                }
+                
+            }
+        }
+    }
+}
+log.info("List of Cost center Created\n"+logsCreated);
+log.info("================================================================================================");
+log.info("List of Cost center Failed to create\n"+logsFailed);
+log.info("================================================================================================");
+log.info("List of Cost center Ignored as they already Existed\n"+logsIgnored);
+log.info("================================================================================================");
+
+async function createCostCenter(name,abbreviation,description,externalId,parentLevel,parentId,glCode,visible,timeAllocation){
+    let createBody = {};
+    createBody.companyName = "6204759";
+    createBody.cost_centers = {};
+    createBody.cost_centers.name = name;
+    createBody.cost_centers.abbreviation = abbreviation;
+    createBody.cost_centers.description = description;
+    createBody.cost_centers.external_id = externalId;
+    createBody.cost_centers.parent_cc = {};
+    createBody.cost_centers.parent_cc.tree_index = null;
+    createBody.cost_centers.parent_cc.id = parentId;
+    createBody.cost_centers.gl_codes = [];
+    createBody.cost_centers.gl_codes.push({"index": 0, "value": glCode});
+    createBody.cost_centers.visible = visible;
+    createBody.cost_centers.time_allocation= timeAllocation;
+    let newCCObjUKG = ukg.costCentersBatchUpload(createBody);
+    let ccUKGResponse = JSON.parse(newCCObjUKG.body);
+    log.info("For CC "+name+" Response is: "+JSON.stringify(ccUKGResponse));
+    return ccUKGResponse;
+}  </code></pre>
+<div> </div>
+</div>
+<h1 id="h_01J0JGNMSF23VMWXYZVG21ZV1T">Run Script Synchronization</h1>
+<p>You can set event or schedule triggers to run the script synchronization. For more details, refer to the <a href="../Integration-Studio-Guide/#h_01HTM4C4A80M67Y1EP5SJWTAV1" rel="noopener noreferrer" target="_blank">Executing a Synchronization</a> section.</p>
+  </div>
+</body>
+</html>

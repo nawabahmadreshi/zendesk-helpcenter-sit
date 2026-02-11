@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Integration Expressions - Keywords, Methods, and Functions</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Integration Expressions - Keywords, Methods, and Functions</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01GHG95MXBQPXP4RBZWS3R15EE">Overview</h1>
+<p>Expressions are necessary for complex data transformations. Aquera provides extensions to JavaScript expressions to support full JavaScript syntax, and the extensions are designed to make it easier to work with SCIM attributes. </p>
+<p>All the JavaScript operators and functions are supported in the expressions of integrations. JavaScript expressions are used in some configuration fields, attribute mappings, tables, and groups when you set up integrations. </p>
+<ul>
+<li>In <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Integration</a>, <a href="../Data-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">Data Integration</a>, and <a href="../Bulk-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">Bulk Integration</a>, you can write JavaScript expressions in configurations such as <a href="../User-Integration-Setup-Guide/#h_01GYETEJHRGTX46BYBRFSKNFHG" rel="noopener noreferrer" target="_blank">Match Expression</a>, <a href="../User-Integration-Setup-Guide/#h_01GYETP0MHT03VXNH1DJ4HJ0QN" rel="noopener noreferrer" target="_blank">Create Condition</a>, and <a href="../User-Integration-Setup-Guide/#h_01GYETP5N1ENJCFYKX52KXBAYE" rel="noopener noreferrer" target="_blank">Update Condition</a> based on your requirements.</li>
+<li>In the <strong>Attribute Map</strong> tab of the integrations, you can write JavaScript expressions to perform operations on the values received from the source applications. When the integration runs, the methods, and functions in the expressions are executed on the source attribute's values, and the resulting values are updated in the target attributes. For attribute mapping details, refer to the respective integration guide.</li>
+<li>In the <strong>Group Rules</strong> tab of User Integration, you can write JavaScript expressions to set the rules for updating group-related data. For details on how to manage groups, refer to the <a href="../Managing-Groups-in-User-Integrations/" rel="noopener noreferrer" target="_blank">Managing Groups in User Integrations</a> guide.</li>
+</ul>
+<p><strong>Note</strong>: You must use <strong>SCIM Filter Expressions</strong> in the <a href="../User-Integration-Setup-Guide/#h_01GYETHB98MMAZ5Q91SHB5ES0M" rel="noopener noreferrer" target="_blank">Source SCIM Filter</a> configuration of integrations since it follows the SCIM RFC specification. Refer to the <a href="../SCIM-Filter-Expressions-in-Integrations/" rel="noopener noreferrer" target="_blank">SCIM Filter Expressions in Integrations</a> guide for details on SCIM filter expressions.</p>
+<p>This guide details Aquera's keywords, inbuilt methods, and inbuilt functions that can be used in integration expressions to perform the respective actions.</p>
+<h1 id="h_01GRP3QCC93WMG4X1DJ5GVGFZ1">Keywords Used in Expressions</h1>
+<p>The following are the keywords that can be used in the expressions of integrations:</p>
+<h2 id="h_01F5JPM36MCFGS0W77MVQ6NRTC">SOURCE</h2>
+<p>References the source entry object.<br/>Examples: <em>SOURCE.userName, SOURCE[ENT].department=="Accounting"</em></p>
+<h2 id="h_01F5JPMAS8PA7R6H1XP5MCYQGC">DEST</h2>
+<p>References the destination entry object<br/>Examples: <em>DEST.userName, DEST[IAN].hireDate</em></p>
+<h2 id="h_01F5JPN5GE6F0DBTHD0PFPSVHK">ENT</h2>
+<p>References the SCIM enterprise schema.<br/>Example: <em>SOURCE[ENT].employeeNumber</em> refers to the SOURCE employeeNumber field that resides in the enterprise schema.</p>
+<h2 id="h_01F5JPNCWPDM6H4KTVJ0CQHVH3">IAN</h2>
+<p>References Aquera's SCIM extension schema. IAN stands for Integrated Aquera Network.<br/>Example: <em>SOURCE[IAN].employmentStatus</em></p>
+<h2 id="h_01GRK2E51ZXGMSN1GQTRNF4F84">TABLE</h2>
+<p><span>References a defined table.<br/>Example: <em>TABLE.hireDate</em> where <em>hireDate</em> is the name of the table.</span></p>
+<h2 id="h_01GS7SP5QX7NT777A0P61ZB9AA">UTILS</h2>
+<p><span>Keyword prefix for </span><span>utility</span><span> functions.</span></p>
+<h1 id="h_01F48WBGZF866P9NX2HPN2CYVN">Inbuilt Methods Used in Expressions</h1>
+<p>The following are the inbuilt methods that can be used with string objects in the expressions of integrations:</p>
+<h2 id="h_01F49QAWBVN99NBWWCS8CGSCFM">toNormalizedDiacritics()</h2>
+<p>This method replaces all the characters that have diacritics in a string with the closest non-diacritic format of those characters.</p>
+<p>For example, if the given name is "Jénsen", using the method <em>toNormalizedDiacritics</em> in the expression "SOURCE.name.givenName.toNormalizedDiacritics()" will return "Jensen".  </p>
+<p>Sample Expressions:</p>
+<ul>
+<li data-stringify-type="pre"><em>(SOURCE.emails[home].value ? SOURCE.emails[home].value.trim().toNormalizedDiacritics() : undefined)</em></li>
+<li><em>(SOURCE.name.familyName.substring(0, 1).toUpperCase() + SOURCE.name.familyName.toLowerCase().substring(1)).toNormalizedDiacritics()</em></li>
+<li data-stringify-type="pre"><em>(SOURCE.name.givenName.substring(0, 1).toUpperCase() + SOURCE.name.givenName.toLowerCase().substring(1)).toNormalizedDiacritics() </em></li>
+</ul>
+<h2 id="h_01F5JPPW77E0A04YCJ8W9K4B33">toCapitalized()</h2>
+<p>This method converts the first character of each word in a string to uppercase and all the remaining characters in the string to lowercase. Along with the case conversion, it also does the following operations:</p>
+<ul>
+<li>Trim spaces at the beginning and end of the string</li>
+<li>Replaces instances of two or more spaces in the string with a single space character</li>
+<li>Removes all non-printable characters from the string</li>
+</ul>
+<p>For example, if the display name is "barbara  jénsen", using the method <em>toCapitalized</em> in the expression "SOURCE.displayName.toCapitalized()" will return "Barbara Jnsen".  </p>
+<h2 id="h_01F5JPQ35X9R5EYGMBWP9KX1T8">toSAMAccountName()</h2>
+<p>This method converts the string to a valid SAM Account Name for Active Directory by truncating the string to 20 characters or less and by removing the following invalid characters from the string:</p>
+<p>" [ ] : ; | = + * ? &lt; &gt; / \</p>
+<p>This method also removes all non-printable characters from the string.</p>
+<p>For example, if the work email is "barbarajénsen@example.com", using the method <em>toSAMAccountName</em> in the expression "SOURCE.emails[work].value.toSAMAccountName()" will return "barbarajnsen@example".  </p>
+<p><strong>Note</strong>: The period character (.) is allowed in the SAM Account Name, but it cannot be the final character.</p>
+<h2 id="h_01F5JPQPDBAT850J2KT3M52R99">toEmail()</h2>
+<p>This method converts a string to a valid email address. It includes removing invalid characters and replacing diacritics with valid email-compatible characters.</p>
+<p>For example, if the work email is "barbarajénsen@example.com", using the method <em>toEmail</em> in the expression "SOURCE.emails[work].value.toEmail()" will return "barbarajensen@example.com". </p>
+<h2 id="h_01F49QBBCC3RWVVD9EJN37YNZX">toPrintable()</h2>
+<p>This method removes all non-printable characters (including tab spaces and new lines) from a string.</p>
+<p>For example, if the work email is "barbarajénsen@example.com", using the method <em>toPrintable</em> in the expression "SOURCE.emails[work].value.toPrintable()" will return "barbarajnsen@example.com". </p>
+<h1 id="h_01F48WEMC7S21RDAC3CM8XY146">Inbuilt Function Used in Expressions</h1>
+<p><span>The following is the inbuilt function that can be used in the expressions of integrations:</span></p>
+<h2 id="h_01F5JPR5032SCR1YH71H8H1MBY">UTILS.isSubordinate(String userid, String managerId)</h2>
+<p>This function returns true if the user's manager or any manager of the user's manager is equal to the managerid that is passed in the function. This function takes the user ID and the manager's user ID and looks up the management hierarchy to see if the user reports directly or indirectly to the manager user. This function is useful in creating groups of users that fall within the reporting structure of a higher-level organization supervisor.</p>
+<h1 id="h_01HRP807P5RD22S3AQYVPZGCQJ">Keywords Used in Attribute Mapping Expressions</h1>
+<p>The following are the keywords that can be used in the Attribute Mapping expressions:</p>
+<h2 id="h_01F5JPNK2NN4GSJFQ914AZR4WD">%ATTEMPT</h2>
+<p>%ATTEMPT is useful to resolve duplicate attribute values when mapping to attributes that must have unique values.</p>
+<p>%ATTEMPT can be used to configure and prioritize a sequence of values for a group of attributes. Initially, the value 1 will be used for all attributes containing the keyword, and if they all result in a defined and unique value, then the process is complete; otherwise, %ATTEMPT moves on to use 2 up to 20.</p>
+<p>The set of defined attributes will be sent in an initial POST and when a 409 POST failure is encountered due to a conflict, it will increment %ATTEMPT in all fields containing the sequence and try up to 20 post retries. PUT retries are also possible.</p>
+<p>Example: </p>
+<!-- Code Block-->
+<div>
+<pre><code><strong>userName Mapping:</strong><br/>if(%ATTEMPT == 1){
+SOURCE.name.givenName + SOURCE.name.familyName
+}
+else {
+SOURCE.name.givenName + SOURCE.name.familyName + (%ATTEMPT-1)
+}<br/><br/><strong>email Mapping:</strong><br/>if(%ATTEMPT == 1){
+SOURCE.name.givenName + SOURCE.name.familyName + "@office.com"
+}
+else {
+SOURCE.name.givenName + SOURCE.name.familyName + (%ATTEMPT-1)+ "@office.com"
+}
+</code></pre>
+</div>
+<p>In this example, the value of %ATTEMPT will be the same for both attributes.</p>
+<h2 id="h_01HRRJZ4BNZ30F0BRZRDZBM3N2">%UATTEMPT</h2>
+<p>%UATTEMPT uses the same logic as %ATTEMPT; however, %UATTEMPT operates on each attribute containing the keyword independently rather than as a set.</p>
+<p>%UATTEMPT can be used to achieve the uniqueness of all the attributes in the same integration. This keyword operates like %ATTEMPT but settles on a unique value without regard for any other attributes.</p>
+<p>%ATTEMPT enforces the same attempt value for multiple attributes. However, %UATTEMPT may use different attempt values for multiple attributes.</p>
+<p>This keyword is available from User Integration V4 onwards.</p>
+<p>Example:</p>
+<!-- Code Block-->
+<div>
+<pre><code><strong>userName Mapping:</strong><br/>if(%UATTEMPT == 1){
+SOURCE.name.givenName + SOURCE.name.familyName
+}
+else {
+SOURCE.name.givenName + SOURCE.name.familyName + (%UATTEMPT-1)
+}<br/><br/><strong>email Mapping:</strong><br/>if(%UATTEMPT == 1){
+SOURCE.name.givenName + SOURCE.name.familyName + "@office.com"
+}
+else {
+SOURCE.name.givenName + SOURCE.name.familyName + (%UATTEMPT-1) + "@office.com"
+}
+</code></pre>
+</div>
+<p>In this example, the value of %UATTEMPT might be different for both attributes.</p>
+<h2 id="h_01F5JPNRYJ52YRXZ7SVAS9YBPK">%USEQ</h2>
+<p>%USEQ is similar to %UATTEMPT, but rather than increasing from 1 to 20, %USEQ is replaced in the string with a unique sequence number.</p>
+<p>%USEQ tries to keep the existing value when the value already matches the pattern (that is, removing or replacing %USEQ with a number results in a string satisfying the mapping).</p>
+<p>All fields containing a %ATTEMPT or %USEQ will be incremented up to 20 times, should user creation fail as duplicate.</p>
+<p>For full runs, <em>Integration</em> guarantees that a map with %USEQ in it results in a unique value for the mapped attribute for each user. </p>
+<p>Example:</p>
+<!-- Code Block-->
+<div>
+<pre><code><strong>userName Mapping:</strong><br/>SOURCE.name.givenName + SOURCE.name.familyName + "%USEQ"<br/><br/><strong>email Mapping:</strong><br/>SOURCE.name.givenName + SOURCE.name.familyName + "%USEQ" + "@office.com"
+</code></pre>
+</div>
+<p>In this example, the value of %USEQ might be different for both attributes.</p>
+<h1 id="h_01F5JPRWZW1346S4HVD3K63FK2">Automatic Reference Navigation</h1>
+<p>SCIM supports a special type of attribute that is a reference to another object.  The manager of an object is an example of this type of reference.  In the Group Expressions and Attribute Map expressions, this can be used to access the attribute value of a user's manager.  </p>
+<p>For example,<em> SOURCE[ENT].manager.ref[ENT].employeeID</em> is used to access the employee ID of the user's manager.</p>
+<h1 id="h_01F7R89VTX201V7NGPK71MQTYP">Escaping Special Characters in Expressions</h1>
+<p>To escape any special characters in the Javascript expressions, use a double-backslash before the special character.</p>
+<p>For example, if the OU name in an Active Directory is<em> #Terminated</em>, mention it in the expression as \\<em>#Terminated</em>. </p>
+<p><em>Sample Expression:</em></p>
+<p><em>DEST[IAN].distinguishedName.split(",")[0] + ",OU=\\#Terminated, DC=local"</em></p>
+<h1 id="h_01GR8GNCV7EC57CYWJ5S87DGYC">Checking for Null Characters</h1>
+<p>To check for the null value of an attribute, for example, the <em>jobFunctionName</em> attribute in the Source application, use the expression as follows:</p>
+<p><em>SOURCE[IAN].jobFunctionName != undefined</em></p>
+<p>This expression will return true or false based on whether the attribute has a null value.</p>
+<h1 id="h_01H02H9WB603XRNADRN1EK60SB">References</h1>
+<p id="h_01HF9BD6QSNR5B7QV1VRSA8STW" title="Syntax for AND NOT in Expressions"><a href="https://support.aquera.com/hc/en-us/articles/9797764891159" rel="noopener noreferrer" target="_blank">Syntax for Logical Operators in Integrations</a></p>
+<p><a href="../Integrations-Overview-Guide/" rel="noopener noreferrer" target="_blank">Integration Overview Guide</a></p>
+<p><a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Integration Setup Guide</a></p>
+<p><a href="../Bulk-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">Bulk Integration Setup Guide</a></p>
+<p><a href="../Attribute-Mapping-in-Integrations/" rel="noopener noreferrer" target="_blank">Attribute Mapping in Integrations</a></p>
+<p><a href="../Managing-Groups-in-User-Integrations/" rel="noopener noreferrer" target="_blank">Managing Groups in User Integrations</a></p>
+<p id="h_01HG04BGYME8T8Y2RNA0MPR5FM" title="Filtering Data in Orchestrations"><a href="../SCIM-Filter-Expressions-in-Integrations/" rel="noopener noreferrer" target="_blank">SCIM Filter Expressions in Integrations</a></p>
+<div>
+<div> </div>
+</div>
+<p> </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User Integration Setup Guide - UKG Workforce Central to Active Directory</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>User Integration Setup Guide - UKG Workforce Central to Active Directory</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01GK3YN68PF1KTG48KMA2EJT00">Overview</h1><p>This guide covers the end-to-end tasks involved in setting up synchronization to sync users in UKG Workforce Central with Active Directory.</p><p>The following tasks are involved in setting up the user synchronization from UKG Workforce Central to Active Directory:</p><ul>
+<li data-list-item-id="ef8957a9ff2aa778b07983a361fd1ade0"><a href="#h_01F6EH0A638QSV3GWRKPF09R35" rel="undefined" target="_self">Initial Preparation</a></li>
+<li data-list-item-id="e7227da26eeeb269261126fc6006b5631"><a href="#h_01F6EH0MBC837JQFE5ZJRW7P94" rel="undefined" target="_self">Configuring Applications in Aquera Admin</a></li>
+<li data-list-item-id="e804c2f3754e1d1b8b3e45263399a4440"><a href="#h_01F6EH0W486EMXD6A000X2Z4YZ" rel="undefined" target="_self">Synchronization Setup</a></li>
+<li data-list-item-id="e11f623852bb69f4cc16b848a0a4cd358"><a href="#h_01F6EH144YSHC99KVTGPC8D65M" rel="undefined" target="_self">Running Synchronization</a></li>
+</ul><h1 id="h_01F6EH0A638QSV3GWRKPF09R35">Initial Preparation</h1><h2 id="h_01GK3YNKNQVB7FK8Q8NB4MYF7A">Aquera Admin Console</h2><ol>
+<li data-list-item-id="e30a8b285165d44e3ab91450a4f41007a">Your IT admin must <a href="https://admin.aquera.io/home/register" rel="noopener noreferrer" target="_blank">register as an Aquera Admin</a>.</li>
+<li data-list-item-id="e9fa8014c15d34d9bda35bc13cc6f61e9">Once registered successfully, Aquera creates a tenant for the IT Admin and provides access to it.</li>
+</ol><h2 id="h_01GK3YNRW9G12QH59R8KNE3TJY">Active Directory</h2><p>Determine the architecture to be followed for setting up communication between Aquera and the Windows Active Directory Domain Controller. Refer to this <a href="https://support.aquera.com/hc/en-us/articles/360052111073" rel="noopener noreferrer" target="_blank">Aquera guide</a> for detailed information on the different architectural approaches.</p><p>Based on the selected approach, the following procedures may have to be performed:</p><ul>
+<li data-list-item-id="e8ed8ef2357cf7845e1d53253df05bb12">A Windows Server must be ready to deploy Aquera Agent onto the server where Domain Controller is present. For instructions on installing Aquera Agent, refer to the<a href="https://support.aquera.com/hc/en-us/articles/360010090513" rel="noopener noreferrer" target="_blank"> Installation and Configuration Guide</a>.</li>
+<li data-list-item-id="e752e55b75be438dec1372f9af24f50a2">A firewall must be set up to allow communication with Aquera.</li>
+<li data-list-item-id="ea452a1dc65eb62e43f5113e35d32f1b3">The static IP address of Aquera needs to be whitelisted. Contact the <a href="mailto:support@aquera.com" target="_self">Aquera Support team</a>.</li>
+</ul><p>To allow Aquera to make updates to Active Directory (for creating, updating, and deleting users), LDAPS communication to Active Directory needs to be set up, which requires a TLS connection. Active Directory Certificate Services must be enabled for this. To install Active Directory Certificate Services, see <a href="https://docs.microsoft.com/en-us/windows-server/networking/core-network-guide/cncg/server-certs/install-the-certification-authority" rel="noopener noreferrer" target="_blank">docs.microsoft.com</a>.</p><h1 id="h_01F6EH0MBC837JQFE5ZJRW7P94">Configuring Applications in Aquera Admin</h1><p>The following applications must be added and configured in the Aquera Admin console:</p><ul>
+<li data-list-item-id="ef841e38e0c9b4e34d6c0587d587bdda2">UKG Workforce Central. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4403843991959-UKG-Workforce-Central-Configuration-Guide-" rel="noopener noreferrer" target="_blank">UKG Workforce Central Configuration Guide </a>for details.</li>
+<li data-list-item-id="e6e6ad282ff3b2c6bff9164424c8f3b7a">Active Directory. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory Configuration Guide</a> for details.</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Synchronization Setup</h1><p>This section details how to configure the User Synchronization to allow data push from UKG Workforce Central to Active Directory. </p><p>It also describes the various analyses and the important points to be considered before setting up the user synchronization.</p><h2 id="h_01GK3YPEAPEEBCS9B8MDS9VXS2">Considerations</h2><ul>
+<li data-list-item-id="ef4e9164d82b3aabfc6bf75b5e6865e0f">The naming convention for the User Principal Name (UPN) in the Active Directory</li>
+<li data-list-item-id="e243d7b99304d1b7ee529b055aee4c10c">The naming convention for the SAM Account Name in the Active Directory</li>
+<li data-list-item-id="ebdbad26e67461621eedcc5bbbe7948c2">Fields currently populated in the Active Directory</li>
+<li data-list-item-id="e8af74f098da133ab3e5c089a5bed5675">Work email can be retrieved from the UKG Workforce Central system or be generated by Aquera synchronization and updated back to the system.</li>
+<li data-list-item-id="eba212369e65b5642af67533f969bf60b">The criteria for matching a user record from UKG Workforce Central with that in the Active Directory.</li>
+</ul><h2 id="h_01GK3YPTXG1DYM3ZTYAR9BP301">General Analysis Steps</h2><p>Before setting up the user synchronization, the following analyses need to be done:</p><ul>
+<li data-list-item-id="e291b66e991ed0c12b2d5352c5dcc37f7">Fill out the <a href="https://support.aquera.com/hc/article_attachments/4458559781143" rel="noopener noreferrer" target="_blank">mapping template</a> attached with this guide for mapping UKG Workforce Central user attributes to Active Directory user attributes. The most common attributes are mapped in the attached template. You can add more attribute maps to the sheet as per your requirement.</li>
+<li data-list-item-id="eda8420aff684a62e4abeb6939121cd65">Expression language can be used in the mapping to create UPNs and SAM Account Names without duplicates or errors. In the expressions, you can use inbuilt methods such as <strong>toNormalizedDiacritics</strong>() and <strong>toSAMAccountName</strong>() for this purpose. You can also use the keywords such as <strong>%ATTEMPT, %USEQ, SEQUENCENUMBER</strong> to avoid duplicates. For details, refer to the <a href="../Integration-Expressions-Keywords-Methods-and-Functions/" rel="noopener noreferrer" target="_blank">Synchronization- Expressions Guide</a>.</li>
+<li data-list-item-id="eb71ee7ae96144a6574c0000b846cd529">Define the logical OU mapping rules for user containers.</li>
+</ul><p>For detailed analyses of UKG Workforce Central users and the users/groups in Active Directory using scripts, refer to the <a href="#h_01F6EGQ8TRT9E064C1YJVS653G" target="_self">Appendix.</a></p><h2 id="h_01GK3YQ234SNBM7XWZRSNV8AGS">Building Synchronization</h2><p>This document describes how to set up the synchronization using the <em>User</em> <em>Synchronization</em> method.</p><ul><li data-list-item-id="eddb73bba1bc06f5d732d492d5adedb27">
+<strong>User Synchronization: </strong> In this synchronization, set <em>UKG Workforce Central</em> as the <strong>Source Application</strong> and <em>Active Directory</em> as the <strong>Target Application</strong>. Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Synchronization Setup Guide</a> for details on the configurations.</li></ul><p>You can set the following configurations in the <em>User Synchronization</em>:</p><ul>
+<li data-list-item-id="e806a8a25a5d0fb2236df4e5bbdc22766">Set the <strong>Admin Email Options</strong> to receive email notifications for success/failures during the synchronization run.</li>
+<li data-list-item-id="e5ed350d2913934c035faec166a0e61a6">Set the email list of the IT admin or manager to receive user creation notification emails and user deactivation notification emails.</li>
+<li data-list-item-id="e93a61dd0bd9c30a50819e6845262beec">Use tables to create lookup tables based on location and department values from the source.</li>
+<li data-list-item-id="e7f8576b27c235f5e0cc03fbc08c50b7d">Enable Group management if Aquera has to manage the groups and group assignment rules based on your group analysis. Set the group names in the restriction list to scope the groups Aquera would manage.</li>
+</ul><p>Refer to the <a href="../User-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">User Synchronization Setup Guide</a> for details on User S<em>ynchronization</em> configurations.</p><figure><table><tbody><tr>
+<td><p><strong>Note: </strong></p></td>
+<td>Any custom fields you add to the Active Directory are not displayed automatically on the <strong>Attribute Map</strong> tab. You must manually add those custom attributes using the <strong>Add Row to Map</strong> option on the<strong> Attribute Map</strong> page and then complete the mapping.</td>
+</tr></tbody></table></figure><h3 id="h_01G2MCT423GNZKQN0RS2CTFK60">Synchronization Scenarios</h3><p>This section details the Synchronization scenarios.</p><h4 id="h_01GK1TQMH4YB70PMFT3H3TWXRR"><strong>Creating a user of type NORMAL_ACCOUNT in the Active Directory</strong></h4><p>To create a user of type NORMAL_ACCOUNT in Active Directory, set the attributes mapping as follows:</p><p>Enter <strong>"512"</strong> as the source attribute and map it to the <strong>[IAN].userAccountControl </strong>attribute of AD. Set the mapping criterion as <em>Map on Create</em>.</p><p><img alt="Map.png" src="./assets/b12d8890f97a7528.bin"/></p><p><strong>Note</strong>: <em>512</em> is the decimal value corresponding to the <em>NORMAL_ACCOUNT</em> property flag in Active Directory. For all property flags and the corresponding decimal values, refer to the <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties#list-of-property-flags" rel="noopener noreferrer" target="_blank">Microsoft documentation</a>.</p><h4 id="h_01GK3YQRT2Q899CYBRCTG232ZW"><strong>Escaping Special Characters in OUs and DNs for Active Directory</strong></h4><p>To escape any special characters in OUs and DNs in the expressions, use a double-backslash before the special character. For example, if the OU name is<em> #Terminated</em>, mention it in the expression as \\<em>#Terminated</em>. </p><p><em><strong>DEST[IAN].distinguishedName.split(",")[0] + ",OU=\\#Terminated, DC=local"</strong></em></p><p>Double-backslash must be introduced before any of the following special characters:</p><figure><table><tbody>
+<tr>
+<td>Comma</td>
+<td>,</td>
+</tr>
+<tr>
+<td>Backslash character</td>
+<td>\</td>
+</tr>
+<tr>
+<td>Pound sign (hash sign)</td>
+<td>#</td>
+</tr>
+<tr>
+<td>Plus sign</td>
+<td>+</td>
+</tr>
+<tr>
+<td>Less than symbol</td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td>Greater than symbol</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>Semicolon</td>
+<td>;</td>
+</tr>
+<tr>
+<td>Double quote (quotation mark)</td>
+<td>"</td>
+</tr>
+<tr>
+<td>Equal sign</td>
+<td>=</td>
+</tr>
+<tr>
+<td>Leading or trailing spaces</td>
+<td> </td>
+</tr>
+</tbody></table></figure><h4 id="h_01GK3YQZQJ61FRJ3665HX91J74"><strong>Prompting for Password Change at Login</strong></h4><p>To make it mandatory for the new users in Active Directory to change their password on their first login, map the Active Directory attribute <strong>pwdLastSet</strong> to <strong>"0"</strong> with the mapping option of <strong>Map on create</strong> only. If this mapping is not done and users sign into their account for the first time, it will not prompt them to change their password.</p><p>To prompt the existing users also for a password reset, set the mapping option as <strong>Map on Create and Update</strong>.</p><h4 id="h_01GK1W1C5GEZX22S6634GSWCRR"><strong>Requirements to set user password</strong></h4><p>Active Directory requires a secure LDAPS (LDAP over SSL) connection to set or change user passwords. This is an Active Directory’s security requirement. Random generation of passwords when creating new users does not work without using LDAPS. Also, setting the password through attribute mapping requires a secure LDAPS connection.</p><p><strong>Note:</strong> If the connection is not secured (non-SSL), Active Directory does not allow you to update the user password. </p><p>Active Directory imposes strength requirements on the password, and the requirements vary from one instance to another.</p><h1 id="h_01F6EH144YSHC99KVTGPC8D65M">Running Synchronization</h1><ul>
+<li data-list-item-id="eb33f092f8ec0dd39ef7f188dca004d95">Enter the matching expression to match the source records with the destination records.</li>
+<li data-list-item-id="e9990aebaaa96ddfedefb7edc979d21f9">Run the synchronization in<em> Report Only</em> mode and determine if the correct data is updated in the Active Directory. If the data is not correctly updated, change the matching expression to match users correctly and/or update the data, for example, employeeNumber, in the Active Directory.</li>
+<li data-list-item-id="e8606d07d83d6e34a1e55621939c8966f">Increment the <strong>Update Limit</strong> (maximum number of records to be updated in a single run) for each run in <strong>Report Only</strong> mode to ensure that the records are updated correctly when the records count is more.</li>
+<li data-list-item-id="ea21c7d18ceeaf1f33a76420d804e73d5">Based on your analysis and considerations,<ul>
+<li data-list-item-id="ee3b1c54988f46974bf937142d80f0861">Translate the logical maps to the Aquera attribute maps for the fields</li>
+<li data-list-item-id="e3ecb9b5b246674b9c604938e9e1d5b4f">Translate the logical OU/container locations into tables and expressions</li>
+<li data-list-item-id="e8327fcc27e5b1c3aa7b188ec0f1df309">Translate the logical group assignment rules into Aquera rules</li>
+</ul>
+</li>
+<li data-list-item-id="eb4e7a4cf469471c9a663415b1b78597f">Modify the attributes mapping and repeat the process until the data is correctly updated.</li>
+<li data-list-item-id="edb21af888ee09ab606cf595a28160c11">Monitor the synchronization logs thoroughly to ensure that no errors are encountered. If errors are encountered, modify the synchronization configurations to fix them.</li>
+<li data-list-item-id="e54995acc9859633e77cd72c53a90b20e">Once all users are synced, user creations and updates are based on the incremental changes in UKG Workforce Central.</li>
+</ul><h1 id="h_01F6EGQ8TRT9E064C1YJVS653G">Appendix</h1><p>This section provides the scripts that the Customer Support team may use to analyze the existing users in UKG Workforce Central and Active Directory before setting up the synchronization. It also provides the script to analyze the existing user groups in Active Directory.</p><p>This document explains how analyses can be done using a scheduled script synchronization. Add UKG Workforce Central and Active Directory applications to this synchronization and set the corresponding variable names. The variable names must be used to refer to the applications in the script.<br/>For details on configuring the script synchronization, refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Custom Script Synchronization Guide</a>.</p><p>A few sample scripts are provided here for your reference. The scripts may vary based on your use case and the attributes to be retrieved for analysis.</p><h2 id="h_01GK3YRZWZV6C6MXCFMEKV1BZD">Analyzing the Users in UKG Workforce Central</h2><p>Use the following sample script in a scheduled script synchronization for generating a report from UKG Workforce Central to analyze user status, location, department, and so on.</p><!-- Code Block--><div>
+<pre><code>
+let ukg_users = ukg_user.getUsers();
+let i = 0;
+
+log.info('UKG ID,UKG STATUS,UKG EMPNO,UKG GIVENNAME,UKG FAMILYNAME,UKG WORK EMAIL,UKG NICKNAME,UKG USERNAME,UKG MANAGER');
+
+for (i = 0; i &lt;ukg_users.length; i++)="i++)" {="{" let="let" ukg_id="ukg_users[i].id;" ukg_status="ukg_users[i][IAN].status;" ukg_emp="ukg_users[i][ENT].employeeNumber;" ukg_given="ukg_users[i].name.givenName;" ukg_family="ukg_users[i].name.familyName;" ukg_work="ukg_users[i].emails" &amp;&amp;="&amp;&amp;" ukg_users[i].emails.find(x="ukg_users[i].emails.find(x"&gt; x.type == 'work') &amp;&amp; ukg_users[i].emails.find(x = x.type == 'work').value || '';
+    let ukg_username = ukg_users[i].userName;
+    let ukg_manager = ukg_users[i].manager;
+
+    log.info(
+        '"' + ukg_id + '","' +
+        ukg_status + '","' +
+        ukg_emp + '","' +
+        ukg_given + '","' +
+        ukg_family + '","' +
+        ukg_work + '","' +
+        ukg_username + '","' +
+        ukg_manager + '"'
+    );
+}</code></pre>
+<div>
+<button> <span></span> Copy</button>  </div>
+</div><div><div data-test-id="issue.views.issue-details.issue-layout.left-most-column"><div data-test-id="issue.activity.comments-list"><div><div><div><div><div><div><div><div></div></div></div></div></div></div></div></div></div></div></div><div><div data-test-id="issue.views.issue-details.issue-layout.right-most-column"><div id="jira-issue-header-actions"><div><div><div><div><div><div><div><div><span>Analyzing the Users in Active Directory</span></div></div></div></div></div></div></div></div></div></div></div><p>Use the following sample script in a script synchronization to generate a report from Active Directory to analyse user domain, status, etc.</p><!-- Code Block--><div>
+<pre><code>log.info('AD ID,AD ACTIVE,AD EMPNO,AD GIVENNAME,AD FAMILYNAME,AD USERNAME,AD SAMACCOUNT,AD DN');
+for (let user of AD.getUsers()) {
+    log.info(
+        '"' + user.id + '","' +
+        user.active + '","' +
+        (user[ENT] &amp;&amp; user[ENT].employeeNumber || '') + '","' +
+        user.name.givenName + '","' +
+        user.name.familyName + '","' +
+        user.userName + '","' +
+        user[IAN].sAMAccountName + '","' +
+        user[IAN].distinguishedName.split(',').slice(1).join(',') + '"'
+    );
+}</code></pre>
+<div>
+<button> <span></span> Copy</button>  </div>
+</div><h2 id="h_01GK3YS56S4CDVDY3FYZWBY3N5">Analyzing the Groups in Active Directory</h2><p>Use the following script to analyze the groups of existing users in the Active Directory.</p><!-- Code Block--><div>
+<pre><code>let ad_users = ad.getUsers();
+let ad_users_length = ad_users.length;
+let i = 0;
+let total = ad_users_length;
+
+log.info('AD ID,GROUP NAME');
+
+for (i = 0; i &lt;total; i++)="i++)" {="{" let="let" groups="ad_users[i].groups;" 
+if="if" (groups)="(groups)" for="for" (let="(let" group="group" of="of" groups)="groups)" 
+log.info(ad_users[i].username="log.info(ad_users[i].userName" +="+" ,="," group.display);="group.display);" }="}"&gt;&lt;/total;</code></pre>
+<div>
+<button> <span></span> Copy</button>  </div>
+</div>
+  </div>
+</body>
+</html>

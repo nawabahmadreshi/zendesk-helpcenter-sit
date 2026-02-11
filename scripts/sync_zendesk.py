@@ -43,6 +43,13 @@ def write_last_sync(ts: int):
 
 def zendesk_get(url: str, params=None):
     r = session.get(url, params=params, timeout=90)
+    if r.status_code >= 400:
+        # Print Zendesk's error message to GitHub Actions logs
+        try:
+            print("Zendesk API error:", r.status_code, url)
+            print("Response:", r.text[:2000])
+        except Exception:
+            pass
     r.raise_for_status()
     return r.json()
 
@@ -50,7 +57,7 @@ def zendesk_get(url: str, params=None):
 def paginate(url: str, key: str):
     out = []
     while url:
-        data = zendesk_get(url)
+        data = zendesk_get(url, params={"per_page": 100})
         out.extend(data.get(key, []))
         url = data.get("next_page")
     return out
@@ -62,10 +69,22 @@ def get_sections_in_category(category_id: str):
     return paginate(url, "sections")
 
 
+
 def get_articles_in_section(section_id: int):
-    # /sections/{id}/articles.json
     url = f"{API_BASE}/sections/{section_id}/articles.json"
-    return paginate(url, "articles")
+    try:
+        return paginate(url, "articles")
+    except requests.exceptions.HTTPError as e:
+        # Fall back to locale endpoint (common: en-us)
+        # If your locale differs, update LOCALE below.
+        LOCALE = os.environ.get("ZENDESK_LOCALE", "en-us")
+        url2 = f"{API_BASE}/{LOCALE}/sections/{section_id}/articles.json"
+        try:
+            return paginate(url2, "articles")
+        except Exception:
+            # As last resort: skip section instead of failing whole run
+            print(f"Skipping section {section_id} due to repeated errors.")
+            return []
 
 
 def get_article(article_id: int):

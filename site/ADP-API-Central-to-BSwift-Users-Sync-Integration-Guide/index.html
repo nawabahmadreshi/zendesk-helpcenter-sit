@@ -1,0 +1,244 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP API Central to BSwift Users Sync Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP API Central to BSwift Users Sync Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide describes the process for setting up an integration to retrieve employee demographic and compensation data from ADP API Central, convert that data into CSV format, and deliver the resulting file to Bswift via FTP.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The ADP API Central to BSwift integrations provides the following functions:</p>
+<ul>
+<li>Retrieves employee demographic and compensation data from ADP Workforce Now.</li>
+<li>Transforms the retrieved data into CSV format.</li>
+<li>Delivers the CSV file to Bswift via FTP server.</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:
+<ul>
+<li>
+<strong>ADP Workforce Now for ADP API Central Customers</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/21457610148375" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide for ADP API Central Customers</a> for details.</li>
+<li>
+<strong>BSwift</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360058816934" rel="noopener noreferrer" target="_blank">FTP Generic Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured to push worker data from ADP Workforce Now for ADP API Central Customers to BSwift via FTP.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>ADP Central to BSwift Users Sync</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your ADP Workforce Now for ADP API Central Customers and BSwift connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K5R20TKMWRB8QJARZK73Q9HB">Integration Scenario</h4>
+<p>Configure the following integration scenario:</p>
+<ul>
+<li>
+<strong>Enable Workers Sync</strong>: Select this checkbox to enable workers sync from ADP to Bswift. If the checkbox is not selected, the worker records will not be synced.<br/><strong>Note</strong>: The<strong> Workers Sync Settings</strong> section will be displayed only when this checkbox is selected.</li>
+</ul>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes.<br/><strong>Note</strong>: The <strong>Log Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report.<br/><strong>Note</strong>: The <strong>Report Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable the integration-related notifications.<br/><strong>Note</strong>: The <strong>Notification</strong> <strong>Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.<br/><strong>Note</strong>: The <strong>Log Insights</strong> Settings section will be displayed only when this checkbox is selected.</li>
+</ul>
+<h3 id="h_01K0PGWJSDQBPT1BZ25EAQGNYR">Workers Sync Settings</h3>
+<p>Configure the following settings in the <strong>Workers Settings</strong> section:</p>
+<ul>
+<li>
+<strong>Enable Worker Filtering</strong>: Select this checkbox to apply filtering options while retrieving a specific worker from ADP Workforce Now. When this checkbox is selected, the following settings will be displayed:<br/><strong>Note</strong>: Leave this checkbox unchecked when running a full sync integration.<br/>
+<ul>
+<li>
+<strong>Source Filter</strong>: Select the source filter to filter the workers while retrieving from ADP Workforce Now. The available options are <strong>Filter</strong> <strong>By Associate ID, </strong><strong>Filter By Position ID,</strong> and <strong>Import Limit</strong>.</li>
+<li>
+<strong>Source Filter Value</strong>: Provide the value for the selected source filter. This option will appear when you select <strong>Filter By Associate ID</strong> or <strong>Filter By Position ID</strong> as the source filter.</li>
+<li>
+<strong>Worker Import Limit</strong>: Specify the maximum number of worker records that can be imported from ADP Workforce Now during a single run of the integration.<br/><strong>Note</strong>: This option will appear when you select <strong>Import Limit</strong> as the source filter.</li>
+<li>
+<strong>Employee Creation Condition in BSwift</strong>: Select the create condition for creating a worker in BSwift. The available options are <strong>Create All Workers</strong>, <strong>Create Active Users,</strong> and <strong>Create Full-Time Workers</strong>.<br/><strong>Note</strong>: After you select the source filter and supply its value, any worker retrieved must satisfy this creation condition for the integration to produce the desired result.</li>
+<li>
+<strong>Employee Create Limit</strong>: Specify the maximum number of worker records that can be imported into BSwift during a single run of the integration.</li>
+</ul>
+</li>
+</ul>
+<p>If <strong>Enable Worker Filtering</strong> is not checked, the following options become visible for the full integration sync:</p>
+<ul>
+<li>
+<strong>Employee Creation Condition in BSwift</strong>: Select the create condition for creating workers in BSwift. The available options are <strong>Create All Workers</strong>, <strong>Create Active Users,</strong> and <strong>Create Full-Time Workers</strong>.</li>
+<li>
+<strong>Employee Create Limit</strong>: Specify the maximum number of worker records that can be imported into BSwift during a single run of the integration.</li>
+</ul>
+<p>Configure the following settings in the <strong>CSV Column Header Settings</strong> section:</p>
+<ul>
+<li>
+<strong>CSV Column Header Names</strong>: Enter the worker attributes to serve as CSV column headers in the report.</li>
+</ul>
+<h3 id="01K5RAXMQQAWTTT5GM0YKX2RKZ">Log Settings</h3>
+<p>Configure the following logging settings:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting this option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes</strong>: Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select to populate the attribute values when choosing the <em>Full Details</em> or <em>Custom</em> option.</li>
+</ul>
+<h3 id="h_01JZ7GJ97ZX233WAF2MGX9PFME">Report Settings</h3>
+<p>Configure the following report settings:</p>
+<ul>
+<li>
+<strong>Select the Report Detail Level: </strong> Select the desired report detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting this option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes: </strong> Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes: </strong> Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select to populate the attribute values when choosing the <em>Full Details</em> or <em>Custom</em> option.</li>
+</ul>
+<h3 id="h_01K5TEHNZK8ZQ1P48ZQSRAR19M">Log Insights Settings</h3>
+<p>Configure the following log insight settings:</p>
+<ul>
+<li>
+<strong>Select the Log Insights Detail Level: </strong> Select the desired log insights detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting this option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes: </strong> Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes: </strong> Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select to populate the attribute values when choosing the <em>Full Details</em> or <em>Custom</em> option.</li>
+<li>
+<strong>Dashboard Name for Log Insights</strong>: Enter the name you want to use for the Log Insights dashboard.<br/><strong>Note</strong>: Modifying the value will create a new dashboard. Logs will no longer be sent to the old one (if it exists).</li>
+</ul>
+<h3 id="01K2C3V86CTCZR5NZXJ1805N9K">Notification Settings</h3>
+<p>Configure the following settings in the <strong>Email Report</strong> <strong>Section</strong>:</p>
+<ul>
+<li>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for all integration runs. When this checkbox is selected, the following settings will be displayed:
+<ul>
+<li>
+<strong>Select the Notification Report Detail Level</strong>: Select the desired notification report level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li>
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting this option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:
+<ul>
+<li>
+<strong>Included Attributes: </strong> Select the attributes to be included in the report.</li>
+<li>
+<strong>Excluded Attributes: </strong> Select the attributes to be excluded from the report.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Show Attribute Values for Each Event</strong>: Select to populate the attribute values when choosing the <em>Full Details</em> or <em>Custom</em> option.</li>
+<li>
+<strong>Notify Aquera Support on Integration Failure: </strong>Select this checkbox to send an alert to Aquera Support if the integration fails.</li>
+</ul>
+<p>Configure the following settings in the <strong>Admin Email Section</strong>:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li>
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+<li>
+<strong>Send Only to This Domain</strong>: Restrict sending emails only to addresses at the specified domain in this field. For example, <em>aquera.com</em>. The sender is only allowed to send emails to email addresses whose domain matches the aquera.com domain.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The ADP Central to BSwift Users Sync integration maps the ADP Workforce Now for ADP API Central Customers and BSwift attributes. Only the source attributes can be modified, as needed, to align with your specific use case.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

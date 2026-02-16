@@ -24,6 +24,7 @@
 <li data-list-item-id="eb6a4568fc2dedf4fd5b6de4872e7d821">Automatically detects contractor accounts in Okta that are approaching their configured end date based on the defined expiration threshold and creates ServiceNow contractor access extension request tickets accordingly.</li>
 <li data-list-item-id="ea15061126d757804ce8743bcfc5df9a9">Continuously monitors ServiceNow tickets and evaluates their status to determine contractor access extension approval, extending the contractor’s end date in Okta only when the corresponding ticket reaches an approved or resolved status.</li>
 <li data-list-item-id="e6d672262a3353719aa734efc9bb201a8">Automatically closes the ServiceNow ticket after the contractor’s end date is successfully extended, when auto-close is enabled.</li>
+<li data-list-item-id="ea3f837b870870f032debd358f2331f50">Supports full execution, incremental execution, and report-only mode. In report-only mode, the integration generates reports without creating tickets or updating Okta.</li>
 <li data-list-item-id="e2ae3824317560247c1dffafb8acbe6e4">Generates detailed logs, notifications, and execution reports for contractor expiration detection, ticket creation, access extensions, and integration runs.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="ec29d77edd37cb6c229cb40782e52a8da">
@@ -37,7 +38,7 @@
 <strong>Okta (AD)</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934-Active-Directory-AD-Configuration-Guide" rel="noopener noreferrer" target="_blank">Okta (AD) Configuration Guide</a> for details.</li>
 </ul>
 </li>
-</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push the contractor management ticket data from ServiceNow to Okta. </p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how to set up the <strong>ServiceNow to Okta Contractor Management integration</strong> in the Aquera Admin Portal to manage contractor creation and extensions.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="eaf3a491bde700f9ea82cd0c9a20fbac7">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="ed260171d36edfe1c7903db534560e412">Navigate to <strong>Integrations</strong> from the left-side panel.</li>
 <li data-list-item-id="e9bfdde369ed1399cc97c2cd1964d003c">Click<strong> Create Integration</strong>.</li>
@@ -45,27 +46,42 @@
 <li data-list-item-id="ef02def9b7767c2846422d3b1794aaa53">Enter a name and a description for the integration.</li>
 <li data-list-item-id="e270e5d959ab357b60393d8d06bbaffad">Select your ServiceNow and Okta connector instances.</li>
 <li data-list-item-id="eb6bdc826e93636e56469632dc7f6f62e">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
-</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4><p>Configure the following integration scenario(s):</p><p><strong>Contractor Lifecycle Management Operations</strong>: Select one of the following operations (use case) from the dropdown menu:</p><ul>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The <strong>Configuration</strong> tab is used to review and customize the behavior of the ServiceNow to Okta Contractor Management integration.</p><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4><p>Configure the following integration scenario(s):</p><ul>
+<li data-list-item-id="ec1ee566bf7d19685bebf0baff3056dd3">
+<strong>Contractor Lifecycle Management Operations</strong>: Select one of the following operations (use case) from the dropdown menu:<ul>
 <li data-list-item-id="ee1ea9cf52d0aad66ab519e8dbf21468e">
-<strong>Contractor Creation</strong>: Choosing this option enables the <strong>Contractor Creation</strong> section under the <strong>Configuration</strong> tab.</li>
+<strong>Contractor Creation</strong>: Select this option to create contractors in Okta. Choosing this option enables the <strong>Contractor Creation</strong> section under the <strong>Configuration</strong> tab.</li>
 <li data-list-item-id="e69c4a1733ffa7d3ba1fa8c10e8f5e4a6">
-<strong>Contractor Extension</strong>: Choosing this option enables the <strong>Contractor Extension</strong> section under the <strong>Configuration</strong> tab.</li>
+<strong>Contractor Extension</strong>: Select this option to monitor and manage contractors’ end dates in Okta. Choosing this option enables the <strong>Contractor Extension</strong> section under the <strong>Configuration</strong> tab.</li>
+</ul>
+</li>
+<li data-list-item-id="ecca83997169194fe03c61ba09c932676">
+<strong>Contractor Type</strong>: Select the contractor resource type from the dropdown menu.</li>
 </ul><h4 id="h_01K591CVY4H0XNHQ9SF2Y7PHHW">General Settings</h4><p>Configure the following general settings:</p><ul>
 <li data-list-item-id="ec89991f7219943b2899b9267f29a3c6d">
-<strong>Enable Notifications</strong>: Select this option to enable the integration-related notifications.</li>
+<strong>Enable Incremental Mode</strong>: Select this option to run the integration in incremental mode. For example, process only contractors or ServiceNow tickets that changed since the last run.</li>
+<li data-list-item-id="ece238e88d8ac7519fc488e1e0086cb8a">
+<strong>Enable Report-Only Mode</strong>: Select this option to generate a report detailing the data changes that would happen, but without applying them. For example, you can review which contractor extension tickets would be created and which end dates would be updated, without making any changes in the target system.</li>
+<li data-list-item-id="e1122a65a391e5142ee34ee687564ea84">
+<strong>Enable Notifications</strong>: Select this option to enable the integration-related notifications. For example, send email notifications when the integration completes successfully or fails. Enabling this will enable the <strong>Notification Center</strong> section under the <strong>Configuration</strong> tab.</li>
 <li data-list-item-id="e3c03b16f9c2b63cb317812a9dbb5b994">
-<strong>Enable Logging</strong>: Select this option to generate logs outlining data changes.</li>
+<strong>Enable Logging</strong>: Select this option to generate logs outlining data changes. For example, capture logs for contractor expiration checks, ticket creation, and approval-based updates. Enabling this will enable the <strong>Logging</strong> section under the <strong>Configuration</strong> tab.</li>
 <li data-list-item-id="e4c84bf9c117e83278cab4298100d6fa5">
-<strong>Enable Reporting</strong>: Select this option to generate the integration report.</li>
+<strong>Enable Report Generation</strong>: Select this option to generate the integration report. Enabling this will enable the <strong>Reporting</strong> section under the <strong>Configuration</strong> tab.</li>
 <li data-list-item-id="e12d21dd568c65eff3df894dc864bf422">
-<strong>Enable Log Insights</strong>: Select this option to visualize integration-related metrics.</li>
+<strong>Enable Log Insights</strong>: Select this option to visualize integration-related metrics. Enabling this will enable the <strong>Log Insights</strong> section under the <strong>Operational Settings</strong> tab.</li>
 <li data-list-item-id="e7b865917398fc2215fd12b8088e63738">
-<strong>Debug Mode</strong>: Select this option to enable verbose diagnostic logging for troubleshooting identity lifecycle management operations. When enabled, it provides detailed execution traces, API request/response logging, and error diagnostics.</li>
-</ul><h4 id="h_01K56EHTHTWR2ZA7WXBTBDY9PH">Contractor Creation</h4><p>Configure the following contractor creation settings:</p><h5 id="h_01KFZEGGV68F71BB72KC3GH9F4">Match Expression</h5><ul>
+<strong>Enable Debug Mode</strong>: Select this option to enable verbose diagnostic logging for troubleshooting identity lifecycle management operations. When enabled, it provides detailed execution traces, API request/response logging, and error diagnostics.</li>
+</ul><h4 id="h_01K56EHTHTWR2ZA7WXBTBDY9PH">Contractor Creation</h4><p>Configure the following contractor creation settings:</p><h5 id="h_01KHK3JKV34Y0D32P0Y4F91316">Source Filter Settings</h5><p>Configure the following source filter settings:</p><ul>
+<li data-list-item-id="e54b7f7dec3ca6c191ea3b15c6622575f">
+<strong>Source Filter Key</strong>: Select the ServiceNow field used to filter which records are processed by the integration. For example, select the <strong>RITM Number/Ticket number</strong> to target a specific request item.</li>
+<li data-list-item-id="e4f9bd1c840bd2a0c342aa8c8dee2980a">
+<strong>Source Filter Value</strong>: Enter the value that must match the selected source filter key. For example, enter <em>RITM0011428</em> to process only that specific ServiceNow request.</li>
+</ul><h5 id="h_01KFZEGGV68F71BB72KC3GH9F4">Match Expression</h5><p>Configure the following match expression settings:</p><ul>
 <li data-list-item-id="e01800b62ae3b69655add2a8ce2dd8d37">
-<strong>Source Correlation Attribute</strong>: Select the unique identifier attribute from ServiceNow used for identity correlation and record matching with Okta. This attribute enables deterministic identity linking between ServiceNow contractor records and Okta user objects during provisioning, updates, and reconciliation operations.</li>
+<strong>Source Correlation Attribute</strong>: Select the unique identifier attribute from ServiceNow that is used for identity correlation and record matching with Okta.</li>
 <li data-list-item-id="ed2dab7194f4e366c60f6be20ea9f42ec">
-<strong>Target Correlation Attribute</strong>: Select the unique identifier attribute from Okta used for identity correlation and record matching with ServiceNow. This attribute enables deterministic identity linking between ServiceNow contractor records and Okta user objects during provisioning, updates, and reconciliation operations.</li>
+<strong>Target Correlation Attribute</strong>: Select the corresponding unique identifier attribute from Okta that is used for identity correlation and record matching with ServiceNow.</li>
 </ul><h5 id="h_01KFZEHYZWX84H2VQ9DAJ8XQ7W">Contractor Creation Settings</h5><ul>
 <li data-list-item-id="e91598ecfa7dae7bee66ff05f8de39014">
 <strong>ITSM Workflow Trigger</strong>: Select the ITSM workflow trigger mechanism for contractor identity provisioning requests from the drop-down list. The available options are <strong>Ticket</strong>, <strong>Flow Designer Trigger</strong>, and <strong>Service Catalog</strong>. Based on your selection, the settings will change. For example,<ul>

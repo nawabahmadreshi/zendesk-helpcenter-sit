@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce / Oracle Identity Manager Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce / Oracle Identity Manager Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KHJVWED9QJ6M41S68GEY9RVM">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This integration retrieves employee data from Dayforce, identifies managers, and updates a manager flag in Oracle Identity Manager (OIM). It also counts the total number of direct reportees for each manager in Dayforce and updates the number in OIM.</p><p>This guide outlines the end-to-end steps required to set up the integration that synchronizes managers' data between Dayforce and Oracle Identity Manager.</p><p>To identify records across both systems, the integration uses the employee number attribute from Dayforce and matches it to the employee number attribute in Oracle Identity Manager as a correlation attribute.</p><h1 id="h_01KHJWBXCD7MDNEET5RDNSBTNR">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e4e8f04e442828272edbcdb02ed026a1e">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e24bb9bb691f46eae14e61df629501196">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ea2caf1a59a3008b2ceea11ac7e36fad5">
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="eaa63cbd12f8979484187e7b56d2bfac0">
+<strong>Oracle Identity Manager</strong>: <span><strong>????????</strong></span>
+</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section details the configuration and mapping process for integrating Dayforce with Oracle Identity Manager. It outlines the steps to create the integration, set up integration preferences, and define how data is mapped.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ec608e4e05575d74f5f5d7bab882a98de">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ef8c48028cda0a0414c3d89c039556a68">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e0e9efb23c5ceebaa7160635fb809d6a7">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ec0c2ec0317b4925e0d16a84d52852770">Select <strong>Dayforce / Oracle Identity Manager</strong>. <span><strong>- Confirm the name</strong></span>
+</li>
+<li data-list-item-id="e3f10dc104f8211102b0f62bca74af0e2">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e2d9799ad9749b47245c7359e7f19ee40">Select your <strong>Dayforce</strong> and<strong> Oracle Identity Manager</strong> connector instances.</li>
+<li data-list-item-id="e4ae1e24a21b9038731a49b8735e5e668">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01K3TMT9CQB86XXAZ9FY9M1QYW">Configuration</h2><p>On the <strong>Configuration</strong> page, the following sections are displayed:</p><h3 id="h_01K3TMW0YGBNCAV57V69WX0VWV">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and general settings according to your specific use case.</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Scenario <span><strong>- in UI keep it first</strong></span>
+</h4><p>Enable the following feature:</p><ul><li data-list-item-id="eb34d50d8852935f343a8cdc1bd1396be">
+<strong>Enable User Management</strong>: Select this checkbox to synchronize managers' data from <strong>Dayforce</strong> to <strong>Oracle Identity Manager</strong>. When enabled, the <a href="#01K4A9WTC4984KJ3X6ABQ5B8WR">User Management</a> section is displayed to configure further integration settings. <span><strong>- Help text missing in the UI</strong></span>
+</li></ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e07e8ffbd3e5eb82fc6f57c356b67d17f">
+<strong>Enable Report Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="ec061621a7121c8ca174bcb9720517f4f">
+<strong>Debug Mode</strong><span><strong> / Enable Debug Mode</strong></span>: Select this checkbox to execute the integration in debug mode. When enabled, the <a href="#h_01KGHCM05P16HDNGNGD0D9R5CG">Debug Mode</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e20ddb78da1dc11df3a573c02d04313b7">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01KGHH3ZZ8TA8NBG5BHDVSRZBB">Logging</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e240c96cf0e5c99e4187e917f7d1b26d2">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01KGHH5EYXPD55T3QNB33EB738">Notification</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eddbaa8573a37f2ceaf6efc7b94c857cb">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#h_01KGHFT7BX2WGGEDSQZ75MJ1TQ">Reporting</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e9b79b1d31cd2ca07b99ea806fc3e58ab">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the <a href="#h_01KGF6VEY028ED2AR4GQJQKE7F">Log Insights</a> section is displayed for further configuration.</li>
+</ul><h3 id="01K4A9WTC4984KJ3X6ABQ5B8WR">User Management</h3><p>The <strong>Manage Employees</strong> section enables you to customize the integration settings for employee lifecycle management according to your specific use case. It synchronizes employees and students data from <strong>Ellucian Banner</strong> to <strong>Entra ID</strong>.<br/><strong>Note</strong>: This section appears only if the <strong>Enable User Lifecycle Management</strong> setting is enabled in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following fields:</p><h3 id="h_01KGHCM05P16HDNGNGD0D9R5CG">Debug Mode</h3><p>This section enables you to customize the debug mode settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Debug Mode</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="ebbd1872133b408bc01780b6d15209b44">
+<strong>Import Limit</strong>: Enter the maximum number of records that should be imported for debugging during each integration run. By default, the value is set to <em>unlimited</em>.</li>
+<li data-list-item-id="e834097e3e7eefc6fa8914f09cdce41e0">
+<strong>Employee Filter</strong>: Select a filter criteria to filter employees in Ellucian Banner and run the integration for debugging purposes. The following are the available options:<ul>
+<li data-list-item-id="ed8eb93535c8ffcefda97ce40ef04c880">
+<strong>Filter By Banner ID</strong>: Select this to filter employees by banner ID.</li>
+<li data-list-item-id="ef264a6d96d1897c08d0c8c64c4c32d5b">
+<strong>Filter By Employee ID</strong>: Select this to filter employees by employee ID.</li>
+<li data-list-item-id="e49588270c6d9d4739f69b2bad10c0695">
+<strong>Filter By Person ID</strong>: Select this to filter employees by person ID.</li>
+<li data-list-item-id="ea2aada24f2e4a72d5dcb57f684bebd3c">
+<strong>Filter By Start Date of Employee</strong>: Select this to filter employees by their start date.</li>
+</ul>
+</li>
+<li data-list-item-id="e5931e5d51c23352c6dbb3bd2c82297c2">
+<strong>Employee Filter Value</strong>: Enter a value corresponding to the selected filter.</li>
+</ul><p> </p><p> </p><p> </p><p> </p>
+  </div>
+</body>
+</html>

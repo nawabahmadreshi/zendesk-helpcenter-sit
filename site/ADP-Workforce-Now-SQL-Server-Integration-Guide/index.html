@@ -1,0 +1,230 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now / SQL Server Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now / SQL Server Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>The ADP Workforce Now to SQL server integration extracts the workers, payroll, department, and personal contacts resource types and their selected attributes from the ADP Workforce Now - API Central app and creates the tables in the configured SQL server database. </p><p>Refer to the <a href="https://support.aquera.com/hc/en-us/articles/38348907034391" rel="noopener noreferrer" target="_blank">ADP Workforce Now / Microsoft SQL Server Integration Template Version History</a> to view new features and improvements added in different versions of this integration template.</p><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e56b2ceded606b963d5a2476ebc310779">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e6923cd457feade01bd14fa324b4979a4">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal for integration:<ul>
+<li data-list-item-id="e0bb7626536167fc333aaa9491d04fecd">
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/21457610148375" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide for ADP API Central Customers</a> for details.</li>
+<li data-list-item-id="efb10289e409b210773956b9c0a4e773c">
+<strong>Microsoft SQL Server</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360047261253" rel="noopener noreferrer" target="_blank">Microsoft SQL Server Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines the configuration required to integrate ADP Workforce Now API Central with Microsoft SQL Server, enabling seamless transfer of pre-hire (candidate) and worker data from ADP Workforce Now to SQL Server.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ef3f4b557614a70557574fd2c8075b144">Perform the following steps to create the integration:</li>
+<li data-list-item-id="e536cc02c2300174218988a3cf428bb49">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ec2f9bbbf6a86854f994595c9fe3d2ca2">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="efb2847021f9d334db72b7a9ad11fbe92">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ed58e6f852cfb784873c73456c1f001eb">Search for <strong>ADP Workforce Now / SQL Server </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="eeed8df3d737530337bd1acb2b52e2f6e">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e418e8c38e23c92931fd0f89519c299c9">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ead5b41bc3fda6c6a24af9bafffa1891e">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="e3d4f3943ac44f3002b0c2e87282584fa">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Operational Settings</h3><p>The <strong>Operational Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="e5ba3d34b815351fef2e07b5b1a94746f">
+<strong>Report Only mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="ee7fbd0048fdb7caeceec86b027b609fd">
+<strong>Enable Logging</strong>: Select to display the <strong>Log level</strong> dropdown menu. Enabling logging generates logs outlining data changes.</li>
+<li data-list-item-id="e71fe5b414c736a50436ed718ca72dc53">
+<strong>Log Level</strong>: Select the level of detail to include in the integration logs from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ebc4d85256b933a32517b68c9f46f0662">
+<strong>Minimum - Operations only; no GUID or fields</strong>: Include operation details in the logs. Any field names and GUIDs are excluded.</li>
+<li data-list-item-id="e7c0cbb7e378261ad7bdc429ed5455660">
+<strong>Metadata - Operations + field names; no GUID</strong>: Include operation details and field names in the logs. GUIDs are excluded.</li>
+<li data-list-item-id="e400fe2e05a56aa49c2ccb9f4d05d866f">
+<strong>Non-PII Data - Operations + field names + selected non-PII values; no GUID</strong>: Include operation details, field names, and selected non-PII values in the logs. GUIDs are excluded.</li>
+<li data-list-item-id="ef40fa68426cbc5cf23ee6b1069a21ac5">
+<strong>GUID with Non-PII Data - GUID + operations + field names + selected non-PII values</strong>: Include GUIDs with operation details, field names, and selected non-PII values in the logs.</li>
+<li data-list-item-id="e22a8b6eb7ec02da5662ffed92c9cd151">
+<strong>Employee Number with Non-PIl Data - Employee # + operations + field names + selected non-PII values</strong>: Include employee numbers, operation details, field names, and selected non-PII values in the logs.</li>
+<li data-list-item-id="e234d2b7ea924badf8781b77a04355707">
+<strong>Employee Number with All Data - Employee # + operations + field names + all values (PII + Non-PII)</strong>:<strong> I</strong>nclude employee numbers, operation details, field names, and all values, including both PII and non-PII data, in the logs.</li>
+</ul>
+</li>
+<li data-list-item-id="e0b8f14f9331c35670f8217cc07dfce61">
+<strong>Enable Reporting</strong>: Select to display the <strong>Reporting Type </strong>and <strong>Report Format Type </strong>fields. Enabling reporting generates integration reports.</li>
+<li data-list-item-id="e95f5e7761343635fde2cfba137dc1054">
+<strong>Reporting Type</strong>: Choose the level of detail to include in the integration reports from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e4b58d9e15ba35c8c92bd091cd2634452">
+<strong>Minimum - Operations only; no GUID or fields</strong>: Include operation details in the report. Any field names and GUIDs are excluded.</li>
+<li data-list-item-id="e01fa58c29752d777db19fb5f1c4f543e">
+<strong>Metadata - Operations + field names; no GUID</strong>: Include operation details and field names in the report. GUIDs are excluded.</li>
+<li data-list-item-id="e6584588891483988eab7422334ecd83e">
+<strong>Non-PII Data - Operations + field names + selected non-PII values; no GUID</strong>: Include operation details, field names, and selected non-PII values in the report. GUIDs are excluded.</li>
+<li data-list-item-id="e9e1497c4785e142e83e5a4f29ad16c4c">
+<strong>GUID with Non-PII Data - GUID + operations + field names + selected non-PII values</strong>: Include GUIDs with operation details, field names, and selected non-PII values in the report.</li>
+<li data-list-item-id="effc01487dfa5cf44495e200ee843b2e8">
+<strong>Employee Number with Non-PIl Data - Employee # + operations + field names + selected non-PII values</strong>: Include employee numbers, operation details, field names, and selected non-PII values in the report.</li>
+<li data-list-item-id="e72097d2a0c3cf029e79b7bf3a74d4a58">
+<strong>Employee Number with All Data - Employee # + operations + field names + all values (PII + Non-PII)</strong>:<strong> I</strong>nclude employee numbers, operation details, field names, and all values, including both PII and non-PII data, in the report.</li>
+</ul>
+</li>
+<li data-list-item-id="ef7337220c8554cf772cf131795aebf5a">
+<strong>Report Format Type</strong>: Select the format in which the integration report is created. The available options are CSV and Excel.</li>
+<li data-list-item-id="ea2dec2a93a6bd6d31e85ed549a8a7bcf">
+<strong>Enable Log Insights</strong>: Select to display the <strong>Log Insights Level </strong>dropdown menu. Enabling log insights generates dashboards.</li>
+<li data-list-item-id="ed2c603ac230c2e4a8bbc8a8360d42da8">
+<strong>Log Insights Level</strong>: Select the level of detail to include in the log insights dashboard from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ec67fc38a148a1158902ab0b8a6fa77d3">
+<strong>Minimum - Operations only; no GUID or fields</strong>: Include operation details in the log insights dashboard. Any field names and GUIDs are excluded.</li>
+<li data-list-item-id="e73d19ad41b5914e2b4b1f5d685571484">
+<strong>Metadata - Operations + field names; no GUID</strong>: Include operation details and field names in the log insights dashboard. GUIDs are excluded.</li>
+<li data-list-item-id="e42acb17624590630bdfd7b9d3bbe2400">
+<strong>Non-PII Data - Operations + field names + selected non-PII values; no GUID</strong>: Include operation details, field names, and selected non-PII values in the log insights dashboard. GUIDs are excluded.</li>
+<li data-list-item-id="e875f03ed65c667c4a5ffcdab6b575091">
+<strong>GUID with Non-PII Data - GUID + operations + field names + selected non-PII values</strong>: Include GUIDs with operation details, field names, and selected non-PII values in the log insights dashboard.</li>
+<li data-list-item-id="e334fb0a321b6445ca06bc305c5538bf5">
+<strong>Employee Number with Non-PIl Data - Employee # + operations + field names + selected non-PII values</strong>: Include employee numbers, operation details, field names, and selected non-PII values in the log insights dashboard.</li>
+<li data-list-item-id="ef554b8ea3f853c4da4ac7a09924d9b86">
+<strong>Employee Number with All Data - Employee # + operations + field names + all values (PII + Non-PII)</strong>:<strong> I</strong>nclude employee numbers, operation details, field names, and all values, including both PII and non-PII data, in the log insights dashboard.</li>
+</ul>
+</li>
+</ul><h3 id="h_01KFDNVV411T92KRVN0G17H9D2">Notification Center</h3><p>The <strong>Notification Center</strong> section enables you to customize email notification settings for the integration. It has the following sections:</p><h4 id="h_01KFDPQC99R8SX4J34G4REV4M3">Notification Settings</h4><p>Set up the following email notification setting:</p><p><strong>Enable Email Notification</strong>: Select to enable email notifications for the integration.</p><h4 id="h_01KFDPWRK3JBR0HV1SHVH6ZA32">Email Notification - Success</h4><p>Set up the following integration success email notification settings:</p><ul>
+<li data-list-item-id="e8973f42aebaa645c7dd897cf4d223ca2">
+<strong>Send To</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li data-list-item-id="e7844f617af5a39fa7763144ecbd4b7d3">
+<strong>Subject Line</strong>: Enter the content that must be used as the email subject.</li>
+<li data-list-item-id="e173bb7330daecac0fafba61983b36b12">
+<strong>Email Template - Success</strong>: Enter the content for the email body to use for notifications sent upon successful integration execution.</li>
+<li data-list-item-id="e14a6b74d87563af7275003b725fba880">
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a report for all successful integration runs.</li>
+<li data-list-item-id="e1f95b905ebc1eddcfef571b686fb2923">
+<strong>Select Report Format</strong>: Select the format of the integration report. The available options are CSV and Excel.</li>
+</ul><h4 id="h_01KFDPX0TC9016VNCP6C29YPND">Email Notification - Failure</h4><p>Set up the following integration failure email notification settings:</p><ul>
+<li data-list-item-id="e8486cf3281878acf30499da40c6cca60">
+<strong>Send To</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li data-list-item-id="e58b03991aa479f27eefd942c537479e7">
+<strong>Subject Line</strong>: Enter the content that must be used as the email subject</li>
+<li data-list-item-id="e177e3cbbf5c4df325ed54721a5410ce0">
+<strong>Email Template - Failure</strong>: Enter the content that must be used as the email body in the notifications sent for integration errors</li>
+<li data-list-item-id="e69098bec845309130a547d25a5e24352">
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a report for all unsuccessful integration runs.</li>
+<li data-list-item-id="e3c1975ed8be275df33a582b116101224">
+<strong>Select Report Format</strong>: Select the format of the integration report. The available options are CSV and Excel.</li>
+</ul><h2 id="h_01KFDNSZES3BV0H74QJHGBG6BV">Data Mapping</h2><p>Configure the following data mapping settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Source Setting</h4><p>Configure the following source settings:</p><ul>
+<li data-list-item-id="e7846ee66ca0e6461c1dfaa76a87ab509">
+<strong>Select Source Application</strong>: Select the configured ADP Workforce API Central app.</li>
+<li data-list-item-id="edfd010c3c8d131d52cb4adcb56550389">
+<strong>Workers</strong>: Select to display the <strong>Worker Columns</strong> dropdown menu.</li>
+<li data-list-item-id="eb7094e88388b98d3dbfbe58e65f6df79">
+<strong>Workers Columns</strong>: Select the worker attributes from the dropdown menu to create the respective columns in the SQL server database.</li>
+<li data-list-item-id="e4edcd2e8b87991473a8c0da06ff2d102">
+<strong>Personal Contacts</strong>: Select to display the <strong>Personal Contact Columns</strong> dropdown menu.</li>
+<li data-list-item-id="ee4c5056b9da9dd72762903cb2c2f6a1f">
+<strong>Personal Contact Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="ee0fff9b408d9804529e0923168b566e3">
+<strong>Department</strong>: Select to display the <strong>Department Columns</strong> dropdown menu.</li>
+<li data-list-item-id="ef6b737cdd14da473d8b18c374521be63">
+<strong>Department Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="edc8172c1b3e46f8c9e82169b809bb4ca">
+<strong>US Tax Profiles</strong>: Select to display the <strong>US Tax Profile Columns</strong> dropdown menu.</li>
+<li data-list-item-id="ea20e376a41f9fcefdf7adc67819d6bcd">
+<strong>US Tax Profile Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e5c46a7e71c51f09ebaa11ffa9324d4a7">
+<strong>Payroll Instructions</strong>: Select to display the <strong>Payroll Instruction Columns</strong> dropdown menu.</li>
+<li data-list-item-id="edfa49131e5c9129d1e91d450e21f0dcc">
+<strong>Payroll Instruction Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e990f8f87bd70a992bfe24aa2ea601706">
+<strong>Pay Statements</strong>: Select to display the <strong>Pay Statement Columns</strong> dropdown menu.</li>
+<li data-list-item-id="eb8211ee94ecc831a03e0d87fc68e3696">
+<strong>Pay Statement Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e836d8fbda1e655522678a02761da7712">
+<strong>Worker Demographics</strong>: Select to display the <strong>Worker Demographic Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e50ad739cf97dcc168cc40f5fd43e2230">
+<strong>Worker Demographic Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="eb60dc51f2eb2b626f53d1bc11276e547">
+<strong>Payroll</strong>: Select to display the <strong>Fetch Payroll Data Starting From A Given Week</strong>,<strong> Fetch Payroll Data Starting From A Given Year</strong>,<strong> Payroll Columns</strong>,<strong> Associate Payments</strong>, and <strong>Alternate Job IDs</strong> fields.</li>
+<li data-list-item-id="e654c094a5b46c453df7d9d3871f60c51">
+<strong>Fetch Payroll Data Starting From a Given Week</strong>: Enter a value between 1 and 52 to specify the week number starting from which the payroll data will be retrieved.</li>
+<li data-list-item-id="e63188c8f5658e5f4c64a72c23902f9e6">
+<strong>Fetch Payroll Data Starting From a Given Year</strong>: Enter the year in YYYY format to specify the year number starting from which the payroll data will be retrieved.</li>
+<li data-list-item-id="e9ee3d4ede06fad63a987596110427332">
+<strong>Payroll Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e38b7e7795edaa3b7a492d50810d3e9ca">
+<strong>Associate Payments</strong>: Select to display the <strong>Associate Payments Columns</strong>,<strong> Payment Summary Earnings Items</strong>,<strong> Payment Summary Earnings Configuration Tags</strong>,<strong> Payment Summary Statutory Deductions</strong>, <strong>Payment Summary Non Statutory Deductions</strong>, <strong>Payment Allocations</strong>, <strong>Payment Distributions</strong>, and <strong>Configuration Tags</strong> fields.</li>
+<li data-list-item-id="e8125444c2b960e2ea7a2337085660f94">
+<strong>Associate Payments Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="ed1c5a51043358633a70ef0dc2e71398a">
+<strong>Alternate Job IDs</strong>: Select to display the <strong>Alternate Job IDs Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e99b7a4405961871131252be34f32ad16">
+<strong>Alternate Job IDs Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="ec797fbadaffb7d1d2c1d0ce6b3e49054">
+<strong>Payment Summary Earnings Items</strong>: Select to display the <strong>Payment Summary Earnings Items Columns</strong> dropdown menu.</li>
+<li data-list-item-id="ebc3945401c768f025590025873a2783f">
+<strong>Payment Summary Earnings Items Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e1933dfa8463d2405a90cfa36e4888f0c">
+<strong>Payment Summary Earnings Configuration Tags</strong>: Select to display the <strong>Payment Summary Earnings Configuration Tags Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e63260d15678a5c34e7a12dbd8fe748fd">
+<strong>Payment Summary Earnings Configuration Tags Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e141a5c5b87a9de85bcae889e6b897421">
+<strong>Payment Summary Statutory Deductions</strong>: Select to display the <strong>Payment Summary Statutory Deductions Columns</strong> dropdown menu.</li>
+<li data-list-item-id="edcda60eae53069d9e259e228a92f8ea2">
+<strong>Payment Summary Statutory Deductions Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="ead39e6c5fba38b6882ae5f6a6fff0697">
+<strong>Payment Summary Non-Statutory Deductions</strong>: Select to display the <strong>Payment Summary Non-Statutory Deductions Columns</strong> dropdown menu.</li>
+<li data-list-item-id="ed61da96c4b88d89e89a8a6cfa96c123d">
+<strong>Payment Summary Non-Statutory Deductions Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e94af476168d6b8ce641c5d7a2aee591c">
+<strong>Payment Allocations</strong>: Select to display the <strong>Payment Allocations Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e2e0e14e525e80e93d4f518efe02352e1">
+<strong>Payment Allocations Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e02a3016307fc503d4fd2c90c910486a4">
+<strong>Payment Distributions</strong>: Select to display the <strong>Payment Distributions Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e87abd562d2251e616884c6e8cb35d88a">
+<strong>Payment Distributions Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e45f6dcf156d451fd9e26a79b063f2e6b">
+<strong>Configuration Tags</strong>: Select to display the <strong>Configuration Tags Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e21148b7e4a8d1157513338b9a4ac2e69">
+<strong>Configuration Tags Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+</ul><h4 id="h_01K04B51EEX43EAV95YABBP3F5">Target Setting</h4><p>Configure the following target settings:</p><ul>
+<li data-list-item-id="ea9ed290c96d868b093352706b60f7f8d">
+<strong>Select Target Application</strong>: Select the configured Microsoft SQL Server app.</li>
+<li data-list-item-id="ee3ddf103baf5bb7b72147ecb1cd9b9e4">
+<strong>Select Database</strong>: Select the database from the dropdown menu for the configured SQL server.</li>
+<li data-list-item-id="e6c9138a2608888920afbb8793a76e997">
+<strong>Select Schema</strong>: Select the corresponding desired schema from the dropdown menu.</li>
+<li data-list-item-id="e9185d87001266deb286068b8779f13a9">
+<strong>Choose Slowly Changing Dimension (SCD) Type</strong>: Select the SCD type to write the data in the selected database. The integration currently supports only SCD-2. <br/>SCD-2 retains the latest data along with the full history. With SCD-2, a new row is inserted into the SQL database for every change, maintaining unlimited history.</li>
+</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically at your chosen time interval. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="e4e6f322a3531898716f5545772a4643c">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="e39dc211ced8a964946ed5855a7baaf47">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="ed4c631359919ee5b98d8a68f61e87a4f">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="ead423205538e6887c78149973a8abe34">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="e153a6130fdee084a134e0d2336b34326">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e06fdb0e8d9fc4cd09001b5bf89995f04">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="ecf184d31ae38045dbe24a0c4e325ec53">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e213d7dacd71a00fc39f11a9c9f7d090e">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current and upgraded version numbers are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="eb29ff107832058cb021a8382afd094cb">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
+  </div>
+</body>
+</html>

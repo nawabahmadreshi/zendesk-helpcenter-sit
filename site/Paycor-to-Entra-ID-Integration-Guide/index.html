@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Paycor to Entra ID Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Paycor to Entra ID Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the process of synchronizing employee termination events from Paycor with Microsoft Entra ID to enable real-time user deactivation.</p><p>To identify user records across both systems, the integration uses the <strong>employeeNumber</strong> attribute from Paycor and matches it to the <strong>employeeNumber</strong> in the Microsoft Entra ID as a correlation attribute.</p><h2 id="h_01KHR3961J01YSVRG3Q6Z14GED">Key Functions</h2><p>The Paycor to Microsoft Entra ID integration provides the following functions:</p><ul>
+<li data-list-item-id="e15aa64099fc8e36c30d3c3f2753e0b6b">Synchronizes employee termination events from Paycor to Microsoft Entra ID. The service identifies the corresponding user in Microsoft Entra ID and deactivates the user’s account.</li>
+<li data-list-item-id="e58dbfb458ba681c78e6e7026797b22c7">Sends an automated notification email to the configured recipients upon successful integration execution.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="eac4951fd2d22eca7753d32227b98d530">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e97286a52a093cf835b0e7adb9bc2cc30">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:<ul>
+<li data-list-item-id="e3194d7329f44c700cc0d1a4f35698803">
+<strong>Paycor</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/17896615676951" rel="noopener noreferrer" target="_blank">Paycor Configuration Guide</a> for details.</li>
+<li data-list-item-id="eb86c46c7f759d085a589a269b9ec62e1">
+<strong>Microsoft Entra ID</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li data-list-item-id="eeba90be5159fc253e0fee56506fecc96">
+<strong>Set up Webhooks in Paycor</strong>: Your Paycor admin must configure webhooks in the Paycor application to trigger events when an employee is terminated. For details on the webhooks setup, refer to the <a href="../Set-Up-Webhooks-in-Paycor/" rel="noopener noreferrer" target="_blank">Set Up Webhooks in Paycor</a> guide.</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push termination events from Paycor with Microsoft Entra ID.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ebc9c6b61137428d3291a9bf41c7af13b">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e68168e472d1d85b57e0f9279ffc52c93">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e37b8ad1c35f42eba17179083b161a588">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e6d5336fde8d0fd48a974a943c9e7c57a">Search for <strong>Entra ID / Paycor (Webhook) </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="e418642dd282a904d53a15701bba63d5b">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e9c5c6f97a61f335b0a94b25436173b2d">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e81dc0c5ea024ec5b5bb5ce392992cf6d">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="e112286b7b0c382d4dc9d4d519ec86937">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="ebe667388157d98542a9368bce90bc5ec">
+<strong>Report - Only Mode</strong>: Select this option to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="ebe3801cdf214f2c9ec550e432dbb3432">
+<strong>Enable Notification Setting</strong>: Select this option to enable the integration-related notifications.</li>
+</ul><h3 id="h_01K0EPNYJEHDW4TQRTN6PXT579">Notification Settings</h3><p>Configure the following settings for email notifications:</p><ul>
+<li data-list-item-id="e00b340fc28a8f357f060b10f47c551f3">
+<strong>Send Email Notification To</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li data-list-item-id="e51528ed188c5671cf2df77b587a4281a">
+<strong>Subject</strong>: Enter the content that must be used as the email subject for successful integration execution.</li>
+<li data-list-item-id="e2d096bbe55e984e8043bb7517c55a2d0">
+<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body in the notifications for successful integration execution.</li>
+</ul><h2 id="h_01JVP6WJ681AK5EKZYA0EHHYMZ">Event</h2><p>The <strong>Event</strong> tab is used to configure the webhook details. </p><p>Provide the following details and save the changes:</p><ul>
+<li data-list-item-id="ee5d2556c455cf682c48476806ece9aeb">
+<strong>Event Source</strong>: Select your Paycor application from which employee-termination events are triggered.</li>
+<li data-list-item-id="e165b6efc6d5932135642d268491a3558">
+<strong>URL</strong>: Copy this URL and paste it into the appropriate webhook field on the Paycor Webhooks setup page. For details on setting up a webhook in the Paycor application, refer to the <a href="../Set-Up-Webhooks-in-Paycor/" rel="noopener noreferrer" target="_blank">Set Up Webhooks in Paycor</a> guide.</li>
+<li data-list-item-id="e7944c2bb09835c8412db86e8c881b428">
+<strong>Refresh Token</strong>: Click <strong>Refresh Token</strong>. Copy the generated token and paste it into the appropriate webhook field on the Paycor Webhooks setup page. For details on setting up a webhook in the Paycor application, refer to the <a href="../Set-Up-Webhooks-in-Paycor/" rel="noopener noreferrer" target="_blank">Set Up Webhooks in Paycor</a> guide.</li>
+</ul><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

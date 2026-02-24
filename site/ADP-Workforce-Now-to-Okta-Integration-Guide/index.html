@@ -32,6 +32,7 @@
 <li>Allows records to be synchronized based on the specified date offset and time zone.</li>
 <li>Deletes the user records upon deactivation in Okta.</li>
 <li>Automatically generates unique usernames and email IDs in Okta.</li>
+<li>Manages group assignments in Okta.</li>
 </ul>
 <h2 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h2>
 <p>The following are the prerequisites:</p>
@@ -80,7 +81,7 @@
 <li>Log in to the Aquera Admin portal.</li>
 <li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li>Click<strong> Create Integration</strong>.</li>
-<li>Select <strong>ADP Workforce Now to Okta</strong>.</li>
+<li>Select <strong>ADP Workforce Now / Okta</strong>.</li>
 <li>Enter a name and a description for the integration.</li>
 <li>Select your ADP Workforce Now and Okta connector instances.</li>
 <li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
@@ -112,6 +113,8 @@
 <strong>Enable Deletion of User when Deactivated in Okta</strong>: Select this checkbox to delete the user record upon deactivation in Okta. When enabled, the <a href="#01K5X4A50C76J748QCZ7S6Y5S2">Okta Deletions</a> section is displayed to configure the deletion policy.</li>
 <li>
 <strong>Generate Unique Username/Email</strong>: Select this checkbox to automatically generate unique usernames and email IDs in Okta. When enabled, the <a href="#h_01K5VEHZF56V5FCKR8PQ1NN7TQ">Unique Identity</a> section is displayed for further configuration.</li>
+<li>
+<strong>Enable Okta Group Management</strong>: Select this checkbox to manage group assignments in Okta. When enabled, the <a href="#h_01KJ53Y3H4BWX0QQW00JSQW5WC">Group Rules</a> tab is displayed for further configuration.</li>
 </ul>
 <h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4>
 <p>Configure the following settings:</p>
@@ -295,13 +298,13 @@
 <p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Deletion of User when Deactivated in Okta</strong> setting in the <strong>Parameters</strong> section.</p>
 <ul>
 <li>
-<strong><font color="#2f3941"><span>Delete </span></font> Deprovisioned Users After (Days)</strong><span>*</span>: Enter the number of days after deprovisioning to automatically delete users in Okta. For example, if you enter 2, users will be deleted 2 days after they are deprovisioned.</li>
+<strong> <font color="#2f3941"> <span>Delete </span> </font> Deprovisioned Users After (Days) </strong> <span>*</span>: Enter the number of days after deprovisioning to automatically delete users in Okta. For example, if you enter 2, users will be deleted 2 days after they are deprovisioned.</li>
 <li>
 <strong>Delete Limit</strong><span>*</span>: Enter the maximum number of user records that should be deleted during each integration run.</li>
 </ul>
 <h3 id="h_01K5VEHZF56V5FCKR8PQ1NN7TQ"><span>Unique Identity</span></h3>
-<p><font color="#000000"> <span>This section enables you to customize the settings to <span>automatically generate unique usernames and email IDs in Okta. It has the following settings:</span></span></font></p>
-<p><font color="#000000"> <span><span><strong>Note</strong>: This section appears only if you have selected the <strong>Generate Unique Username/Email</strong> setting in the <strong>Parameters</strong> section.</span></span> </font></p>
+<p><font color="#000000"> <span>This section enables you to customize the settings to <span>automatically generate unique usernames and email IDs in Okta. It has the following settings:</span></span> </font></p>
+<p><font color="#000000"> <span><span><strong>Note</strong>: This section appears only if you have selected the <strong>Generate Unique Username/Email</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</span></span> </font></p>
 <ul>
 <li>
 <strong>Enable Unique Username</strong><span>: Select this checkbox to automatically generate unique usernames in Okta. This ensures that each user record has a unique username to avoid conflicts during provisioning. When enabled, the following field is displayed for further configuration:</span>
@@ -315,26 +318,53 @@
 <strong>Enable Unique Email</strong><span>: Select this checkbox to automatically generate unique email IDs in Okta. This ensures that each user record has a unique email ID to avoid conflicts during provisioning. When enabled, the following fields are displayed for further configuration:</span>
 <ul>
 <li>
-<strong>Email Generation Mode</strong>: This field allows you to select whether the user’s email should be the same as their username or generated separately. Choose one of the following option:
+<strong>Email Generation Mode</strong>: This field allows you to select whether the user’s email should be the same as their username or generated separately. Choose one of the following options:
 <ul>
 <li>
 <ul>
 <li>
 <strong>Same as Username</strong>: Select this if you want email IDs to be same as username.</li>
 <li>
-<strong>Different Email</strong>: Select this if you want email IDs to be different than username. When selected, the <strong>Unique Email Pattern Builder</strong> field is displayed to provide your promt for email generation.</li>
-</ul>
-</li>
-</ul>
-</li>
+<strong>Different Email</strong>: Select this if you want email IDs to be different than username. When selected, the following field is displayed to provide your promt for email generation:
+<ul>
 <li>
 <strong>Unique Email Pattern Builder</strong>: Enter your prompt to define the format to be used while generating unique email IDs in Okta.<br/>After defining the format, click <strong>Analyse and Preview</strong> to view the output. You can also use the <strong>Advanced Preview Options</strong> to test the preview with custom values.</li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Correlation for existing users in Okta</strong>: This section enables you to customize settings for existing users. The following fields are displayed in this section:
+<ul>
+<li>
+<strong>Generate Unique Email for Existing Users in Okta</strong>: Select this checkbox to generate a unique email ID for existing users in Okta. If not selected, the unique email IDs will be generated only for the new users. To use this feature, you must select correlation attributes.</li>
+<li>
+<strong>Generate Unique User Name for Existing Users in Okta</strong>: Select this checkbox to generate a unique username for existing users in Okta. To use this feature, you must select correlation attributes.</li>
+<li>
+<strong>Workforce Now Correlation Attribute</strong>: Select the ADP Workforce Now correlation attribute to distinctly find associated Okta user. For example, select <strong>Associate ID</strong>.</li>
+<li>
+<strong>Okta Correlation Attribute</strong>: Select the Okta attribute to be correlated with the ADP Workforce Now correlation attribute. For example, select <strong>Employee number</strong>.</li>
+</ul>
+</li>
+<li>
+<strong>Check Entra for Unique Email Generation</strong>: Select this checkbox to validate the Entra ID application instance while generating unique email IDs. When enabled, the following fields are displayed for further configuration:
+<ul>
+<li>
+<strong> Entra Application</strong>: Select the Entra ID application connector.</li>
+<li>
+<strong>Check against User Principal Name</strong>: Select this checkbox to verify uniqueness against the User Principal Name (UPN) in Entra ID.</li>
+<li>
+<strong>Check against Entra Email</strong>: Select this checkbox to verify uniqueness against the email ID in Entra ID.</li>
+</ul>
+</li>
+</ul>
 <h3 id="01K5V7T6T6MJ13XCZYCT1T59VP">Debug Mode</h3>
 <p>This section enables you to customize the debug mode settings. It has the following settings:</p>
-<p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Debug Mode</strong> setting in the <strong>Parameters</strong> section.</p>
+<p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Debug Mode</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p>
 <ul>
 <li>
 <strong>Workforce Now Filter</strong><span>*</span>: <span>Select the filter to retrieve data of a specific worker from ADP and run the integration for debugging purposes. </span><span>The following are the available options:</span><br/>
@@ -360,7 +390,7 @@
 </ul>
 <h3 id="h_01K3JDHSDXSJJHPRZMHT47QV8A">Log Settings</h3>
 <p>This section enables you to customize the log generation settings. It has the following settings:</p>
-<p><strong>Note</strong>: This section appears only if you have selected the <strong data-end="1326" data-start="1308">Enable Logging</strong> setting in the <strong>Parameters</strong> section.</p>
+<p><strong>Note</strong>: This section appears only if you have selected the <strong data-end="1326" data-start="1308">Enable Logging</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p>
 <ul>
 <li>
 <strong>Log Detail Level</strong>: Select the log detail level from the dropdown menu. The following are the available options:
@@ -385,7 +415,7 @@
 </ul>
 <h3 id="h_01K04B51EEX43EAV95YABBP3F5">Report Settings</h3>
 <p>This section enables you to customize the report generation settings. It has the following settings:</p>
-<p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Report Generation</strong> setting in the <strong>Parameters</strong> section.</p>
+<p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Report Generation</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p>
 <ul>
 <li>
 <strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<br/>
@@ -408,7 +438,7 @@
 </ul>
 <h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h3>
 <p>This section enables you to customize the notification settings. It has the following settings:</p>
-<p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Notifications</strong> setting in the <strong>Parameters</strong> section.</p>
+<p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Notifications</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p>
 <ul>
 <li>
 <strong>Send Notifications to</strong><span>*</span>: Enter the list of email addresses to which notifications on this integration have to be sent. After entering each email, hit enter to save.</li>
@@ -451,7 +481,7 @@
 </ul>
 <h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights Settings</h3>
 <p>This section enables you to customize the log insight settings. It has the following settings:</p>
-<p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <strong>Parameters</strong> section.</p>
+<p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p>
 <p id="01K5B9P929CY5YBAY51DATK62B">It has the following settings:</p>
 <ul>
 <li>
@@ -475,19 +505,6 @@
 </ul>
 </li>
 </ul>
-<h4 id="h_01K5VEYCS797A06QXKZWJXFDJY">Correlation for Existing Users in Okta</h4>
-<p>This section allows you to select correlation attributes in ADP Workforce Now and Okta to identify the associated Okta users.</p>
-<p>It has the following settings:</p>
-<ul>
-<li>
-<strong>Generate Unique Email for Existing Users in Okta</strong>: Select this checkbox to generate a unique email ID for existing users in Okta. If not selected, the unique email IDs will be generated only for the new users. To use this feature, you must select correlation attributes.</li>
-<li>
-<strong>Generate Unique User Name for Existing Users in Okta</strong>: Select this checkbox to generate a unique username for existing users in Okta. To use this feature, you must select correlation attributes.</li>
-<li>
-<strong>Workforce Now Correlation Attribute</strong>: Select the ADP Workforce Now correlation attribute to distinctly find associated Okta user. For example, select <strong>Associate ID</strong>.</li>
-<li>
-<strong>Okta Correlation Attribute</strong>: Select the Okta attribute to be correlated with the ADP Workforce Now correlation attribute. For example, select <strong>Employee number</strong>.</li>
-</ul>
 <p><!-- notionvc: 1a4f7d78-3c21-40af-958e-9e265860c952 --></p>
 <h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</h2>
 <p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p>
@@ -499,6 +516,51 @@
 <p>Click the <strong>refresh icon</strong> next to the target application name to fetch custom attributes available in Okta under the target application column for mapping.</p>
 <p>Additionally, clicking the <strong>refresh icon</strong> populates the attributes specified in the <strong>Custom Attributes to be Created in Okta</strong> parameter (in the <a href="#01K4ABZPKAE6TPEMRK2JZV9RY7">Okta Attributes</a> section). This allows you to map ADP Workforce Now attributes to the custom attributes that will be created in Okta.</p>
 <p>The new custom attributes will be automatically created in Okta during the next integration run, and their data will be synchronized in subsequent runs.</p>
+<h2 id="h_01KJ53Y3H4BWX0QQW00JSQW5WC">Group Rules</h2>
+<p>The <strong>Group Rules</strong> tab allows you to configure how group assignments are managed through this integration. In this tab, you can define conditions that determine how users are assigned to groups in Okta.</p>
+<p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Okta Group Management</strong> checkbox in the <a href="#01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</a> section.</p>
+<p>Perform the following steps to create a group rule:</p>
+<ol>
+<li>Navigate to the <strong>Group Rules</strong> tab. The following fields are displayed:<br/><img alt="2026-02-23_17-03-46.png" src="./assets/4107449ff68a15b5.bin"/>
+</li>
+<li>Click <strong>Choose Attribute</strong> to view the list of available attributes that you can use to set conditions.</li>
+<li>Search and select the attribute you want to use to define a condition. For example, select <em>Title</em>.</li>
+<li>Select the attribute value to define the rule. If multiple values are provided, an <strong>OR</strong> condition is applied among them. For example, in the following sample condition, a user's title must be either <em>Consultant</em> or <em>Director</em> to satisfy this assignment rule.<br/><img alt="2026-02-23_17-12-56.png" src="./assets/7cc6182e2c316997.bin"/>
+</li>
+<li>In the<strong> Okta Groups</strong> column, select the groups to which users who satisfy the specified condition should be assigned.</li>
+<li>If required to add another condition and assignment for the same selected attribute, click <strong>Add Row</strong>. You can add any number of rows within a rule.</li>
+<li>If required to include another attribute to the group assignment rule, click the <strong>+</strong> icon next to the selected attribute name. If multiple columns are added for a rule, the <strong>AND</strong> logic is applied between different columns. For example, in the following sample condition, a user's <strong>Title</strong> must be either <em>Consultant</em> or <em>Director</em>, and the <strong>UserType</strong> must be <em>Employee</em> to satisfy this assignment rule. You can use multiple attributes and their corresponding values to define the group assignment rule.<br/><img alt="2026-02-23_17-21-49.png" src="./assets/2b46770a90375b64.bin"/>
+</li>
+<li>[Optional] If you want to write a JavaScript expression to set the condition, click <strong>Switch to Expression</strong>.<br/><strong>Note</strong>: When you switch to <strong>Expression</strong> mode or back to <strong>Condition Builder</strong> mode, all configured conditions in the rule will be cleared.
+<ol>
+<li>Select one of the following based on your requirement:
+<ul>
+<li>
+<strong>For Conditions Only</strong>: Select this if you want to write a JavaScript expression only for the conditions.</li>
+<li>
+<strong>For Conditions and Assignments</strong>: Select this if you want to write expression for both, conditions and assignments.</li>
+</ul>
+</li>
+<li>Click <strong>Continue</strong><span data-zd-seq="2"> to configure the expression.</span>
+</li>
+<li>
+<p><span data-zd-seq="3">Enter the expression based on your selection:</span></p>
+<ul>
+<li><span data-zd-seq="4">If <strong>For Conditions Only</strong> is selected, enter the expression for the conditions, and then select the group in the <strong>Group Name</strong> column.</span></li>
+<li><span data-zd-seq="5">If <strong>For Conditions and Assignments</strong> is selected, enter the expression that defines both the conditions and the group assignment.</span></li>
+</ul>
+<p><strong>Note</strong>: Expressions can use attributes from both the source and destination applications. The configured expressions must always be evaluated to true or false. The prefix <strong>SOURCE</strong> must be used in an expression to represent an attribute in the source application, and <strong>DEST</strong> must be used to represent an attribute in the destination application. For example, <em>SOURCE.addresses[].locality</em>, <em>SOURCE.addresses[].country</em>, and <em>DEST.group.displayName</em>.</p>
+</li>
+</ol>
+</li>
+<li>Click <strong>Add New Rule</strong> to add another assignment rule, as explained above.</li>
+</ol>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>You can add any number of assignment rules. However, you can see only 5 rules on a single page. If you add more than 5 rules, navigation options will be available at the bottom of the page to navigate to other pages for configuring or viewing the remaining defined rules.</li>
+<li>You can delete a row by using the delete icon at the right end of the row.<br/><img alt="2026-02-23_17-28-26.png" src="./assets/90b27ef7c8c3154b.bin"/>
+</li>
+</ul>
 <h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
 <p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span></p>
 <h1 id="h_01J6XRXE25YXJE5CJ0RQRJDEF1">Create Custom Attributes in Okta</h1>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Slack / Workday Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Slack / Workday Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the Workday to Slack synchronization, which synchronizes user data, such as profile pictures, from Workday to Slack, with Slack serving as the reference system for profile photo updates.</p><p>To identify user records across both systems, the integration uses the <strong>Employee Number</strong> attribute from <strong>Workday</strong> and matches it to the <strong>Employee Number</strong> in <strong>Slack</strong> as a correlation attribute.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The Workday to Slack integration provides the following key functions:</p><ul>
+<li data-list-item-id="e6cc396e2ddcfaed1f4317a94c2bad512">Supports profile photo additions, updates, and deletions.</li>
+<li data-list-item-id="ea844b412c45e11ad16669954b313b82f">Detects and skips users with duplicate correlation values.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ef3321155fafb6502e2790b0f1efb7c6d">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="eaaabfd45fc4f8e9694bb47557d10fb79">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="efbb84861c20b2ca7aea6b77ee5ac7f93">
+<strong>Workday</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360020093234-Workday-Configuration-Guide" rel="noopener noreferrer" target="_blank">Workday Configuration Guide </a>for details.</li>
+<li data-list-item-id="ea681b4abb9531793bdab2a3960c49a24">
+<strong>Slack</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360018583934-Slack-Configuration-Guide" rel="noopener noreferrer" target="_blank">Slack Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push user data from Workday to Slack.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e940018385eeadfe73f74106def9f36b2">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e13ce648259fc3f52570da8d55393ac8e">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e832715864c35f90ff8e9e087055ab542">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e3581c08ccad3c59ac2eb831d0173e14b">Search for <strong>Slack / Workday </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="ee39dc8fd7a2e78d7dfbd5b8a05ab282f">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e588d027641104d85ff7848b4a81b5a95">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ebc4b419cfea9f0707d24bac27445154d">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="e0e39b48db14adb3b034abbf50d3ac486">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Global Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="ec72d6f07fc1eed018b0cd562764b6f10">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e4c3e4a90fb3f957feb810c1f0f54e910">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the Logging section is displayed for further configuration.</li>
+<li data-list-item-id="eccfa6cea7c8f84cf7373ddca5fae55b8">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the Reporting section is displayed for further configuration.</li>
+<li data-list-item-id="e9e2e1c1b64ff26830ae4b98debb96d51">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the Notifications section is displayed for further configuration.</li>
+<li data-list-item-id="e7ec7a405e7c16392acb0452cb4acb31e">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the Log Insights section is displayed for further configuration.</li>
+</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span><span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="ecb659e0ddec56addd7fd5f99474f9707">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="ee8f258ea8d5a46436c8db0345e9cfc1c">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="e7e5040bb98e420ff1331cb93ccf6a315">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="eea292eb1436d00985d0f1dfe9f28a9ab">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="e2601f3f25b99e17821fb641ed72a5a88">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e48a3e7832a894ca6a634d3b4e38b350f">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="ede9906e34ded31b460e62b46b68f6850">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e2826be55111c53ce754c0214c33c1959">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="e6f4f0fa004d91488f516cf412061520a">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
+  </div>
+</body>
+</html>

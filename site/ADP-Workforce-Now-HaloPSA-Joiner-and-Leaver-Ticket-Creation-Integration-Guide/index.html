@@ -1,0 +1,1955 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now / HaloPSA Joiner and Leaver Ticket Creation Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now / HaloPSA Joiner and Leaver Ticket Creation Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This guide covers the end-to-end tasks involved in setting up the <strong>ADP Workforce Now / HaloPSA</strong> integration to create onboarding and offboarding tickets in HaloPSA based on employee onboarding and offboarding in ADP Workforce Now.</p><p>This integration is triggered when the Aquera User Integration retrieves a newly onboarded / offboarded employee from ADP Workforce Now and then successfully creates/deletes that user in a target system (for example, Active Directory). The<strong> ADP Workforce Now / HaloPSA</strong> integration must be selected in the <strong>New User Integration Hook</strong> and the <strong>Deprovision User Integration Hook</strong> configuration fields. When the user integration runs, the <strong>ADP Workforce Now / HaloPSA</strong> integration is triggered for every successful creation or deletion of a user in the target system configured in the user integration.</p><h2 id="h_01KAG54HSP2Q7S6CJSHBK2WNZM">Key Functions</h2><p>The ADP Workforce Now / HaloPSA integration performs the following functions:</p><ul>
+<li data-list-item-id="e2bb0d1ec300a7cc12ea196e2a8851aa3">Syncs worker and candidate (pre-hire) records from ADP Workforce Now into the Okta custom identity application.</li>
+<li data-list-item-id="e06c4c47132014a086d90066fee74c9c3">Updates the email ID of workers from Okta to the ADP Workforce Now application (Writeback).</li>
+<li data-list-item-id="e536ecdc1c76eed0df4631b394845a67d">Creates new custom attributes in Okta.</li>
+<li data-list-item-id="ea91b50ac175010b7f3c6395eef5f4533">Allows records to be synchronized based on the specified date offset and time zone.</li>
+<li data-list-item-id="efc97f0b04f99d8d28c4955b2c3d623a3">Deletes the user records upon deactivation in Okta.</li>
+<li data-list-item-id="ef3bfe28a6278726e6434b77b85854e33">Automatically generates unique usernames and email IDs in Okta.</li>
+</ul><h2 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ee5f16e441fbbdb18e1bb679210cea6ad">
+<strong>Tenant Account in the Aquera Admin Portal</strong>: You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e6858a56bb31853c9800aa82a216864d7">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin portal to integrate with Okta:<ul>
+<li data-list-item-id="e724dbcc85428c404ce56ee3167b11c80">
+<strong>ADP Workforce Now</strong>: Ensure that you configure the ADP Workforce Now connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="eae631db549923a00af9f36640d932d59">
+<strong>Okta</strong>: Ensure that you configure the Okta connector (version 11) in the Aquera Admin portal.</li>
+</ul>
+</li>
+</ul><p>For details on the limitations of Okta's Anything-as-Source (XaaS) solution, refer to the <a href="https://help.okta.com/oie/en-us/content/topics/users-groups-profiles/usgp-anything-as-a-source.htm" rel="noopener noreferrer" target="_blank">Okta documentation</a>.</p><h2 id="h_01K4YTVY5CAS3BF8527S86Z7QQ"> </h2><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section details the configuration and mapping process for integrating ADP Workforce Now with Okta. It outlines the steps to create the integration, set up integration preferences, and define how worker data is mapped from ADP to Okta.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e5378161c7ae33e1d0449a5ef483aebb5">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e052224b192e1304228134797c86cfc03">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e76e02374c5401b2968d8009098baadcb">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ed27247a784b5d4e115dbef1630dfae2b">Select <strong>ADP Workforce Now / Okta</strong>.</li>
+<li data-list-item-id="e9bd3171020b872582a719664e77dc0af">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e88647f3f3b0494a2ca8edf39861c28f4">Select your ADP Workforce Now and Okta connector instances.</li>
+<li data-list-item-id="e9d2b6c7e2a584dd131bc4cfd83d4521c">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01K3TMT9CQB86XXAZ9FY9M1QYW">Configuration</h2><p>On the <strong>Configuration</strong> page, the following sections are displayed:</p><h3 id="h_01K3TMW0YGBNCAV57V69WX0VWV">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and general settings according to your specific use case.</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4><p>Enable the following features based on your requirements:</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e1b8caf946b0bc9d4527f6211e483d1c8">
+<strong>Enable Worker Management</strong>: Select this checkbox to sync worker records from ADP into the Okta custom identity application. When enabled, the <a href="#01K4A9WTC4984KJ3X6ABQ5B8WR">Worker Management</a> section is displayed to configure integration settings for worker management.</li>
+<li data-list-item-id="eb0504892928f09edcc770ea6b440e00b">
+<strong>Enable Candidate Management</strong>: Select this checkbox to sync candidate records from ADP into the Okta custom identity application. When enabled, the <a href="#01K4ABWX5CN4ZFSY5ETKDSK0T8">Candidate Management</a> section is displayed to configure integration settings for candidate management.</li>
+<li data-list-item-id="e481cea5efcaac1b347f831bc234ec2c9">
+<strong>Link Manager in Okta</strong>: Select this checkbox to link the manager custom object in Okta.</li>
+<li data-list-item-id="e098eb8fdb6fa68645f60830ced412389">
+<strong>Enable Okta Email Writeback</strong>: Select this checkbox to enable updating the email ID of workers from Okta to the ADP Workforce Now application. When enabled, the <a href="#h_01KC5YB0G7D2XG9MQ9NHJJ0WB3">Okta Writeback</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ef8cdf7f1dfe7c6cb2c4b92af1edd3efe">
+<strong>Enable Auto-Creation of Custom Attributes in Okta</strong>: Select this checkbox to authorize the creation of new custom attributes in Okta. When enabled, the <a href="#01K4ABZPKAE6TPEMRK2JZV9RY7">Okta Attributes</a> section is displayed to configure the custom attributes to be created in Okta.</li>
+<li data-list-item-id="eecad7a82fa0e7517b252741ae8687786">
+<strong>Enable Monitored Provisioning</strong>: Select this checkbox to enable the monitored provisioning. When enabled, the <a href="#h_01KC3Y89NAAVSS7TXVNZXTEANX">Monitored Provision</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ea2ff584894b2164bb48d221c6807defe">
+<strong>Enable Date Offset</strong>: Select this checkbox to enable date offset, allowing records to be synchronized based on the specified date offset and time zone. When enabled, the <a href="#01K5X4A50C76J748QCZ7S6Y5S2">Date Offset</a> section is displayed for configuration.</li>
+<li data-list-item-id="e56a788e4e3590fba486f17ce86c0354c">
+<strong>Enable Deletion of User when Deactivated in Okta</strong>: Select this checkbox to delete the user record upon deactivation in Okta. When enabled, the <a href="#01K5X4A50C76J748QCZ7S6Y5S2">Okta Deletions</a> section is displayed to configure the deletion policy.</li>
+<li data-list-item-id="ef5bd85e7b9ba09625c22f9d3c1996476">
+<strong>Generate Unique Username/Email</strong>: Select this checkbox to automatically generate unique usernames and email IDs in Okta. When enabled, the <a href="#h_01K5VEHZF56V5FCKR8PQ1NN7TQ">Unique Identity</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e23b546e56c0a5a84002633b6bd1ad8f5">
+<strong>Enable Okta Group Management</strong>: Select this checkbox to manage group assignments in Okta. When enabled, the <a href="#h_01KJ53Y3H4BWX0QQW00JSQW5WC">Group Rules</a> tab is displayed for further configuration.</li>
+</ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e39ecb6e48152d7d933f2b46159ec9361">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e1ae5bdbf1feca4fc9a3e58db6b481a20">
+<strong>Enable Debug Mode</strong>: Select this checkbox to generate logs outlining data changes that would occur, for debugging purposes. When enabled, the <a href="#01K5V7T6T6MJ13XCZYCT1T59VP">Debug Mode</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eac4e479e2b9cb9bf8d78b63ec2cf2421">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K3JDHSDXSJJHPRZMHT47QV8A">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e416d3b61f06f00848bcaf2afaf2905d5">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e7701ea0192d76c0588b6eb4032b8a884">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e93323de4be5a7a379bb7b171b4373f7c">
+<strong>Enable Log Insights</strong>: Select this to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights Settings</a> section is displayed for further configuration.</li>
+</ul><h3 id="01K4A9WTC4984KJ3X6ABQ5B8WR">Worker Management</h3><p>The <strong>Worker Management</strong> section enables you to customize the integration settings for worker management according to your specific use case.<br/><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Worker Management</strong> setting in the <strong>Parameters</strong> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="eab901e067532932c659ceda860b5362a">
+<strong>User to be Created/Updated in Okta</strong>*: Select the ADP Workforce Now workers whose records will be created or updated in Okta. The following are the available options:<ul>
+<li data-list-item-id="ee154e32d6a16cce3ce5c4154da298356">
+<strong>All Workers</strong>: Select this to consider all workers from ADP to be created or updated in Okta.</li>
+<li data-list-item-id="e2b7454e53d59ec2a9c2b0f3b6774936f">
+<strong>All Active Workers</strong>: Select this to consider all active workers to be created or updated in Okta.</li>
+<li data-list-item-id="ec4e1dac7331a30832c5dc0db39b1f28b">
+<strong>All Active Full Time Workers</strong>: Select this to consider all active full-time workers to be created or updated in Okta.</li>
+<li data-list-item-id="ea10a725f24c8823c0ad3e3e5b1b1a756">
+<strong>Custom</strong>: Select this to specify a custom condition for identifying the workers from ADP to be created or updated in Okta.</li>
+</ul>
+</li>
+<li data-list-item-id="e78fe31f79b2b2b2acec42f920faf3a8c">
+<p><strong>Custom Upsert Condition</strong>*: Provide a JavaScript expression to identify the workers to be created or updated in Okta.<br/><strong>Note</strong>: This parameter is available only if you select <strong>Custom </strong>in the <strong>User to be Created/Updated in Okta</strong> parameter.<br/><strong>Examples</strong>:</p>
+<ul>
+<li data-list-item-id="ea33b3d53350794fc5631a4c342709bd9">Upsert workers whose first name is "Bob"</li>
+<li data-list-item-id="e951362686dd9d37d2a67cc7856fba1b8"><pre>person__legalName__givenName === "Bob"</pre></li>
+<li data-list-item-id="e654a0319af66c5fff1fafa2949fb27df">Upsert workers whose first name starts with "A"</li>
+<li data-list-item-id="ea1827fcdbe600f67e7c0a020c1163f9a"><pre>person__legalName__givenName__startsWith("A")</pre></li>
+<li data-list-item-id="eb9aa134969ee67df9267ea9d0847fdf4">Upsert workers whose original hire date is today or in the future</li>
+<li data-list-item-id="ed85335fd77c4618c7b122552fba8d80b"><pre>new Date(workerDates?__originalHireDate) &gt;= new Date()</pre></li>
+</ul>
+<p> </p>
+</li>
+</ul><h3 id="01K4ABWX5CN4ZFSY5ETKDSK0T8">Candidate Management</h3><p>The <strong>Candidate Management</strong> section enables you to customize the integration settings for candidate management according to your specific use case.<br/><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Candidate Management</strong> setting in the <strong>Parameters</strong> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e650aced48c4ba1272416e29a043ea29b">
+<strong>Create Users With Application Status</strong>*: Select the candidates' application statuses in ADP Workforce Now to create corresponding user records in Okta. For example, if you select <em>Accepted Offer</em> in this field, user records will be created in Okta for all the candidates whose application status is <em>Accepted Offer </em>in ADP.</li>
+<li data-list-item-id="e2005f63b3c4afbe4f94cea686bebeeb0">
+<strong>Delete Users With Application Status</strong>: Select the candidates' application statuses in ADP Workforce Now to delete corresponding user records in Okta. For example, if you select <em>Rejected</em> in this field, user records will be deleted in Okta for all the candidates whose application status is <em>Rejected </em>in ADP.</li>
+</ul><h3 id="h_01KC3Y89NAAVSS7TXVNZXTEANX">Monitored Provision</h3><p>This section allows you to configure the settings for monitored provisioning. It has the following settings:<br/><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Monitored Provisioning</strong> in the <strong>Parameters</strong> section.</p><ul>
+<li data-list-item-id="e762ae5f14d2a56dc8fdad01048cc0f2e">
+<strong>Monitor Email Addresses</strong>*: Enter the email IDs of the users who can monitor provisioning or deprovisioning.</li>
+<li data-list-item-id="eee4b6a79e087b2fbcf27146ee3ba66b8">
+<strong>Enable Monitored Provisioning for Creates</strong>: Select this checkbox to monitor all create operations performed during provisioning. If enabled, monitoring will be triggered whenever a new record is created.<br/>When enabled, the following field is displayed for further configuration:<ul><li data-list-item-id="e5cbff895bcbc89683cc1acc7bef35145">
+<strong>Monitored Provisioning Create User Threshold</strong>*: Enter the minimum number of users that must be queued for creation in a provisioning run for the system to consider it as monitored provisioning. If the number of users to be created is greater than this threshold, the provisioning run will be considered as a monitored run. For example, if you set the threshold to 50, any provisioning run that attempts to create more than 50 users will be treated as a monitored provisioning run.</li></ul>
+</li>
+<li data-list-item-id="eb0c675cc65c87bb89f5f3b4da2a9ab7d">
+<strong>Enable Monitored Provisioning for Updates</strong>: Select this checkbox to monitor all update operations performed during provisioning. If enabled, monitoring will be triggered whenever a record is updated.<br/>When enabled, the following field is displayed for further configuration:<ul><li data-list-item-id="e90a5e5027a362321c6961157f0e79b4b">
+<strong>Monitored Provisioning Update User Threshold</strong>*: Enter the minimum number of users that must be queued for updation in a provisioning run for the system to consider it as monitored provisioning. If the number of users to be updated is greater than this threshold, the provisioning run will be considered as a monitored run. For example, if you set the threshold to 50, any provisioning run that attempts to update more than 50 users will be treated as a monitored provisioning run.</li></ul>
+</li>
+<li data-list-item-id="e61a5f15cd23dfde69140540ccb3f37f1">
+<strong>Enable Monitored Provisioning for Attribute level Updates</strong>: Select this checkbox to monitor all attribute-level updates during provisioning. When enabled, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="e8403a89cee15b480add7e757994c5556">
+<strong>Monitored Provisioning Attribute List</strong>*: Enter the user attributes that must be evaluated for attribute-level monitored provisioning. For each attribute you select, if the number of users with updates to that attribute exceeds the number configured in the <strong>Monitored Provisioning Attribute Update Threshold</strong> field, those users will be included in monitored provisioning. Attributes that are not selected, or whose update counts remain below the threshold, will be processed through the standard provisioning flow.</li>
+<li data-list-item-id="e6b24bac6ba0b2743842685aa506a77af">
+<strong>Monitored Provisioning Attribute Update Threshold</strong>*: Enter the minimum number of users that must have updates to a specific monitored attribute for monitored provisioning to apply at the attribute level. If the number of users to be updated is greater than this threshold, the provisioning run will be considered as a monitored run. For example, if you set the threshold to 50, any provisioning run that attempts to update more than 50 users will be treated as a monitored provisioning run.</li>
+</ul>
+</li>
+<li data-list-item-id="e212306ab119ff18bfb21397b43e9dc0c">
+<strong>Enable Monitored Provisioning for Offboarding</strong>: Select this checkbox to monitor all delete operations performed during provisioning. If enabled, monitoring will be triggered whenever a record is deleted.<br/>When enabled, the following field is displayed for further configuration:<ul><li data-list-item-id="e29011bd58f38d03d81d5693807276ddf">
+<strong>Monitored Provisioning Deletion User Threshold</strong>*: Enter the minimum number of users that must be queued for deletion in a provisioning run for the system to consider it as monitored provisioning. If the number of users to be deleted is greater than this threshold, the provisioning run will be considered as a monitored run. For example, if you set the threshold to 50, any provisioning run that attempts to delete more than 50 users will be treated as a monitored provisioning run.</li></ul>
+</li>
+<li data-list-item-id="eb4f0194995d595770e9852046a4199cc">
+<strong>Enable Monitored Provisioning for Email Writebacks</strong>: Select this checkbox to monitor all email writeback requests. If enabled, monitoring will be triggered for each email writeback request.<br/>When enabled, the following field is displayed for further configuration:<ul><li data-list-item-id="e42c84267ca015392cc7615abe80a5972">
+<strong>Monitored Provisioning Email Writeback Threshold</strong>*: Enter the minimum number of users that must be queued with email writeback requests in a provisioning run for the system to consider it as monitored provisioning. If the number of users whose email addresses are to be updated is greater than this threshold, the provisioning run will be considered as a monitored run. For example, if you set the threshold to 50, any provisioning run that attempts to writeback emails for more than 50 users will be treated as a monitored provisioning run.</li></ul>
+</li>
+</ul><h3 id="01K5V7T6T6MJ13XCZYCT1T59VP">Debug Mode</h3><p>This section enables you to customize the debug mode settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Debug Mode</strong> setting in the <strong>Parameters</strong> section.</p><ul>
+<li data-list-item-id="e5a1bea7438f1dc5fbfa8264c24816b06">
+<strong>Workforce Now Filter</strong>*: Select the filter to retrieve data of a specific worker from ADP and run the integration for debugging purposes. The following are the available options:<ul>
+<li data-list-item-id="ebb4260a928d45e81f89d64185c290cb0">
+<strong>None</strong>: Select this to consider all ADP Workforce Now workers without applying any filter.</li>
+<li data-list-item-id="edf46c94a80be2b8d733454fc7b9ec5aa">
+<strong>Associate ID</strong>: Select this to filter a worker by the associate ID specified in the <strong>Associate ID</strong> field.</li>
+<li data-list-item-id="e170149a6b285cb1cd6222112ee56b150">
+<strong>Position ID</strong>: Select this to filter a worker by the position ID specified in the <strong>Position ID</strong> field.</li>
+</ul>
+</li>
+<li data-list-item-id="e62696e21536ef6fff0de3feca6cfe332">
+<strong>Associate ID</strong>*: Enter an associate ID to filter a worker. For example, Q1KZXIK0D.<br/><strong>Note</strong>: This parameter is displayed only if you select <strong>Associate ID</strong> in the <strong>Workforce Now Filter</strong> parameter.</li>
+<li data-list-item-id="e1a0bb506db6b831ab95b392e8b5ffd9b">
+<strong>Position ID</strong>*: Enter a position ID to filter a worker. For example, N321093.<br/><strong>Note</strong>: This parameter is displayed only if you select <strong>Position ID</strong> in the <strong>Workforce Now Filter</strong> parameter.</li>
+<li data-list-item-id="e33d036aad0394fe64bc5d809ead59810">
+<strong>Import Limit</strong>: Enter the maximum number of worker records that should be imported for debugging during each integration run. By default, the value is 100.</li>
+</ul><h3 id="h_01K3JDHSDXSJJHPRZMHT47QV8A">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong data-end="1326" data-start="1308">Enable Logging</strong> setting in the <strong>Parameters</strong> section.</p><ul><li data-list-item-id="e8ac8ad804e5fa49611df667b9d9cf602">
+<strong>Log Detail Level</strong>: Select the log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e8041ef5a0e34b1b8742e77887f460e70">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e0511655087d4fa09633d61bde16e5a31">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e13b08b6312be97e39672ef749b369dec">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="efd16b75cdfc362b10e573b1d37b740a6">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the log. Based on your selection, the following parameters are displayed:</li>
+<li data-list-item-id="eb020d0c5cc3e3eeb6ef3d5d084adf386">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the log. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+<li data-list-item-id="ede45089faa8f90be998dced2067ecbdf">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded in the log. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Report Settings</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Report Generation</strong> setting in the <strong>Parameters</strong> section.</p><ul><li data-list-item-id="ef73c7e6b650f44b5849c4b839298317d">
+<strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e39d6d0151cfecd45947e107861d04915">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ec99ba354d0d4bb3333d9f1605f282ec5">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e92f60e81f5b2ae131da9f7697d102ea0">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the report.</li>
+<li data-list-item-id="edfd0b736c2e13bdd9f0273206dcf5872">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the report. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+<li data-list-item-id="e44645e7ce9af7f1f3c454e405ce814e8">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded in the report. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Notifications</strong> setting in the <strong>Parameters</strong> section.</p><ul>
+<li data-list-item-id="edb284d06101387a141058057fb6c2d54">
+<strong>Send Notifications to</strong>*: Enter the list of email addresses to which notifications on this integration have to be sent. After entering each email, hit enter to save.</li>
+<li data-list-item-id="eb1c330299023a7fb96e70ecd302015f6">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject.</li>
+<li data-list-item-id="e45d87ba156d56a83e4b31749d1e1f504">
+<strong>Email Body</strong>: Enter the content that must be used as the email body for all email notifications.</li>
+<li data-list-item-id="ea7d2ad84b7f6fc10b43e8884aea02fc5">
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for each integration execution. When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="e66628f4f4f9a1390dc6033147e73bff6">
+<strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ecd7d30134a4d95353a2f112d53b0aa0f">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e1b3fe28caac884e478b229f1ae60f298">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e6c288edde3a344b2ab462f6873c8e8e3">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the report.</li>
+<li data-list-item-id="e543abbe54178fbed2f49c92b5607f904">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the report. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+<li data-list-item-id="e1b22563e34b0c74fc72b20d53d9cc34e">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded in the report. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul><h4 id="h_01KEH0NNX6H4M85JXE0FX4J916">Monitored Provisioning Notification</h4><ul>
+<li data-list-item-id="ee5c51796c44de4af75c85255fdc9abcc">
+<strong>Send Notifications to</strong>*: Enter the list of email addresses to which notifications on this integration have to be sent. After entering each email, hit enter to save.</li>
+<li data-list-item-id="e3ba4d5951867611b169a517617b1e799">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject.</li>
+<li data-list-item-id="e928f330250a46304301ae63a4c3f6ac4">
+<strong>Email Body</strong>: Enter the content that must be used as the email body for all email notifications.</li>
+</ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights Settings</h3><p>This section enables you to customize the log insight settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <strong>Parameters</strong> section.</p><p id="01K5B9P929CY5YBAY51DATK62B">It has the following settings:</p><ul><li data-list-item-id="e6dfd163b5948fa67a250b991ef3879f2">
+<strong data-end="185" data-start="147">Log Insights Detail Level</strong>: Select the level of detail from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e8a21795ecafd698087850e9ef9596ad7">
+<strong data-end="337" data-start="320">Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e11801506189ebfb7707a5747f874bd2d">
+<strong data-end="440" data-start="423">Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e2993c3b2c24d69728602dfafb2730979">
+<strong data-end="493" data-start="482">Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e56128521b85f47cdc03da45e75c55853">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the log insights. Based on your selection, the following parameters are displayed:</li>
+<li data-list-item-id="e427d12aaa00c4eeace86faf66c1f2186">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the log insights. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+<li data-list-item-id="e0104e5b7c60f27ce81ebfbaba6d5582b">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded from the log insights. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (*) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h3 id="h_01K7H3FBM0V1D99VEW60RCKMFX">Mapping Custom Attributes</h3><p>Click the <strong>refresh icon</strong> next to the target application name to fetch custom attributes available in Okta under the target application column for mapping.</p><p>Additionally, clicking the <strong>refresh icon</strong> populates the attributes specified in the <strong>Custom Attributes to be Created in Okta</strong> parameter (in the <a href="#01K4ABZPKAE6TPEMRK2JZV9RY7">Okta Attributes</a> section). This allows you to map ADP Workforce Now attributes to the custom attributes that will be created in Okta.</p><p>The new custom attributes will be automatically created in Okta during the next integration run, and their data will be synchronized in subsequent runs.</p><h2 id="h_01KJ53Y3H4BWX0QQW00JSQW5WC">Group Rules</h2><p>The <strong>Group Rules</strong> tab allows you to configure how group assignments are managed through this integration. In this tab, you can define conditions that determine how users are assigned to groups in Okta.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Okta Group Management</strong> checkbox in the <a href="#01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</a> section.</p><p>Perform the following steps to create a group rule:</p><ol>
+<li data-list-item-id="ee87dbd930e869166c5fdda768d12bdad">Click <strong>Add New Rule</strong>. The following fields are displayed:<br/><img alt="2026-02-23_17-03-46.png" height="472" src="./assets/ce06532f45cde56a.bin" width="1430"/>
+</li>
+<li data-list-item-id="e36f5ea69d22aa2171a0add35dd4b65eb">Click <strong>Choose Attribute</strong> to view the list of available attributes that you can use to set conditions.</li>
+<li data-list-item-id="ed107b6b7e84442ac7f48a0ba5dc9aa22">Search and select the attribute you want to use to define a condition. For example, select <em>Title</em>.</li>
+<li data-list-item-id="e64a1efe77e6030bea8be2d8744faf119">Select the attribute value to define the rule. If multiple values are provided, an <strong>OR</strong> condition is applied among them. For example, in the following sample condition, a user's title must be either <em>Consultant</em> or <em>Director</em> to satisfy this assignment rule.<br/><img alt="2026-02-23_17-12-56.png" height="382" src="./assets/81950bdc0961cfd5.bin" width="1362"/>
+</li>
+<li data-list-item-id="e2636b829fdfc13ab484fde7b4caf5c55">In the<strong> Okta Groups</strong> column, select the groups to which users who satisfy the specified condition should be assigned.</li>
+<li data-list-item-id="e28020ea5e12790454cbd19a9cd11eae0">If required to add another condition and assignment for the same selected attribute, click <strong>Add Row</strong>. You can add any number of rows within a rule.</li>
+<li data-list-item-id="e26311106dcb74710739eba029777638c">If required to include another attribute to the group assignment rule, click the <strong>+</strong> icon next to the selected attribute name. If multiple columns are added for a rule, the <strong>AND</strong> logic is applied between different columns. For example, in the following sample condition, a user's <strong>Title</strong> must be either <em>Consultant</em> or <em>Director</em>, and the <strong>UserType</strong> must be <em>Employee</em> to satisfy this assignment rule. You can use multiple attributes and their corresponding values to define the group assignment rule.<br/><img alt="2026-02-23_17-21-49.png" height="382" src="./assets/013acddde47a9d10.bin" width="1362"/>
+</li>
+<li data-list-item-id="e51cb03d9c51f8832b4ce730de327fb06">[Optional] If you want to write a JavaScript expression to set the condition, click <strong>Switch to Expression</strong>.<br/><strong>Note</strong>: When you switch to <strong>Expression</strong> mode or back to <strong>Condition Builder</strong> mode, all configured conditions in the rule will be cleared.<ol>
+<li data-list-item-id="eb0d9cd852b6a7deef5196b98797d0929">Select one of the following based on your requirement:<ul>
+<li data-list-item-id="e0cc90d648a5ecde0e5b86d5c559f7951">
+<strong>For Conditions Only</strong>: Select this if you want to write a JavaScript expression only for the conditions.</li>
+<li data-list-item-id="e9c21df805c7607aa4091faccec5c099d">
+<strong>For Conditions and Assignments</strong>: Select this if you want to write expression for both, conditions and assignments.</li>
+</ul>
+</li>
+<li data-list-item-id="ed13b4a42075d5c610e208503a5598d7f">Click <strong>Continue</strong> to configure the expression.</li>
+<li data-list-item-id="e5f9a72565b0d7f5fdd900a0fcdf58e08">
+<p>Enter the expression based on your selection:</p>
+<ul>
+<li data-list-item-id="eac6ba1125958140e236e32c4ea4c9c69">If <strong>For Conditions Only</strong> is selected, enter the expression for the conditions, and then select the group in the <strong>Group Name</strong> column.</li>
+<li data-list-item-id="e123e8a2614ec6d771760afe72f04ec63">If <strong>For Conditions and Assignments</strong> is selected, enter the expression that defines both the conditions and the group assignment.</li>
+</ul>
+<p><strong>Note</strong>: Expressions can use attributes from both the source and destination applications. The configured expressions must always be evaluated to true or false. The prefix <strong>SOURCE</strong> must be used in an expression to represent an attribute in the source application, and <strong>DEST</strong> must be used to represent an attribute in the destination application. For example, <em>SOURCE.addresses[].locality</em>, <em>SOURCE.addresses[].country</em>, and <em>DEST.group.displayName</em>.</p>
+</li>
+</ol>
+</li>
+<li data-list-item-id="e0255f8d7e451b69190e5c93b3fa16d96">Click <strong>Add New Rule</strong> to add another assignment rule, as explained above.</li>
+</ol><p><strong>Notes</strong>:</p><ul>
+<li data-list-item-id="e4d6bea5b685318a0fd22a30b2d2eb806">You can add any number of assignment rules. However, you can see only 5 rules on a single page. If you add more than 5 rules, navigation options will be available at the bottom of the page to navigate to other pages for configuring or viewing the remaining defined rules.</li>
+<li data-list-item-id="ef5d86ab1700a002d769e8c061cb7821a">You can delete a row by using the delete icon at the right end of the row.<br/><img alt="2026-02-23_17-28-26.png" height="358" src="./assets/253d59f196744f36.bin" width="1354"/>
+</li>
+</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6XRXE25YXJE5CJ0RQRJDEF1">Create Custom Attributes in Okta</h1><p>You can create custom fields in Okta to include additional ADP Workforce Now <em>Worker </em>attributes in the User object of Okta. You must configure all the custom attributes individually. After the configuration, Aquera automatically populates the fields that you have created in Okta from the <em>Worker</em> resource of ADP Workforce Now. </p><p>Perform the following steps to create custom attributes in Okta:</p><ol>
+<li data-list-item-id="eff6f6c9f7b90987b8043eab048bfd193">Sign in to your Okta instance.</li>
+<li data-list-item-id="e0e2b8bdeccab0a70ad757677473093d1">Navigate to <strong>Directory &gt; Profile Editor</strong> and locate the custom identity source integration you've created.<br/><img alt="profile_editor.png" height="1176" src="./assets/9246f259648b3e0e.bin" width="2794"/>
+</li>
+<li data-list-item-id="e2b0f35efe9eba8c2ec07b75799f6569f">Click <strong>Add Attribute</strong> to add a new attribute.<br/><img alt="add_attribute.png" height="1090" src="./assets/cf47bfab5925e562.bin" width="1978"/>
+</li>
+<li data-list-item-id="e2e32a9a34c963f5735ab9327757a656b">Configure the attribute using the same name as ADP Workforce Now in the <strong>Variable name</strong> field and fill in other fields. <br/><img alt="leave_reason_code_custom_attribute.png" height="1858" src="./assets/ab92228e3e1eb82c.bin" width="2624"/><br/><strong>Note</strong>: You must remove special characters in the name and replace periods with underscores.<br/>For example, the equivalent name for the attribute <em>primaryAssignment.baseRemuneration.effectiveDate</em> would be <em>primaryAssignment_baseRemuneration_effectiveDate</em>.<br/><img alt="attribute with underscore.png" height="1564" src="./assets/88a28766aefbc216.bin" width="2256"/>
+</li>
+<li data-list-item-id="e852d1bd8d07398d8ddd4837943bcd6b5">Click <strong>Save </strong>to save the changes or <strong>Save and Add Another</strong> to create another custom attribute. </li>
+</ol><h1 id="h_01J6XV4GBH0QTB86T0TX6YJYWZ">Map Custom Attribute to Okta Profile</h1><p>Perform the following steps to map the custom attributes to the Okta profile:</p><ol>
+<li data-list-item-id="e7f491f253b33e6bbe4aadff15fba69d2">Navigate to <strong>Mappings &gt; Configure User mappings</strong>.<br/><img alt="configure_user_mappings.png" height="1172" src="./assets/44e8c7622809a40e.bin" width="1976"/>
+</li>
+<li data-list-item-id="e884cfc89dca5f65f78b1a87140371a00">Map the custom attribute to an equivalent attribute in the Okta user profile and click <strong>Save Mappings</strong>.<br/><img alt="mapping_screen.png" height="764" src="./assets/c5a6587c30fc563e.bin" width="1994"/>
+</li>
+<li data-list-item-id="e53bf00f783fbc7af8e00c24c794d6d72">If the equivalent attribute is not present in the default Okta user profile, open the default profile from <strong>Directory &gt; Profile Editor.</strong><br/><strong><img alt="default_profile.png" height="972" src="./assets/3c534e599fa2eb58.bin" width="2174"/></strong><br/> </li>
+<li data-list-item-id="e2e4daa25a524a9a75921963bb9d96ee9">Click<strong> Add Attribute </strong>to add a custom attribute to the Okta default user profile.<br/><strong><img alt="add_attribute_default_profile.png" height="930" src="./assets/0e3b34a5490e7b13.bin" width="1978"/></strong>
+</li>
+<li data-list-item-id="e67ac048297c562e0e0892a89b703708c">Fill in the attribute's display name, description, and set the user permission. Click <strong>Save Attribute</strong> to save the changes.<br/><img alt="leave_reason_code.png" height="1858" src="./assets/73c8a8cdbf9c61d9.bin" width="2668"/>
+</li>
+<li data-list-item-id="e81ddb862ce1155608912a75f7b442f6b">Map the custom identity source attribute to the attribute in the Okta default profile and click <strong>Save Mappings</strong>.<br/><img alt="save_mappings.png" height="756" src="./assets/50945a886656a367.bin" width="2010"/>
+</li>
+</ol><p><strong>Note</strong>: You can repeat these steps to add all employee-related attributes in ADP Workforce Now to Okta. </p><h2 id="h_01HXV5081PWKBEKH540JBRRMQM">ADP Workforce Now Worker Attributes</h2><p>Refer to the following table for the ADP Workforce Now attributes you must create in the Okta profile:<br/><br/><strong>Note</strong>: You must replace the array index number based on your use case. For example, person_governmentIDs_{index}_idValue, where {index} is 1, 2, 3, etc.</p><p>To retrieve the first value, you must create the attribute as <em>person_governmentIDs_0_idValue</em>. Similarly, to retrieve the second value, you must create the attribute as <em>person_governmentIDs_1_idValue.</em></p><figure><table><tbody>
+<tr>
+<td><strong>Name to be entered in Okta profile</strong></td>
+<td><strong>Description</strong></td>
+<td><strong>Data Type</strong></td>
+</tr>
+<tr>
+<td>workerID_idValue</td>
+<td>The unique ID value of the worker</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_birthDate</td>
+<td>The birth date of the worker</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_genderCode_codeValue</td>
+<td>The code value representing the person's gender</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_genderCode_shortName</td>
+<td>The shortened name of the person's gender</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_genderCode_longName</td>
+<td>The long name of the person's gender</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_preferredGenderPronounCode_codeValue</td>
+<td>The code value representing the person's preferred gender pronoun</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_preferredGenderPronounCode_shortName</td>
+<td>The shortened name of the person's preferred gender pronoun</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_preferredGenderPronounCode_longName</td>
+<td>The full name of the person's preferred gender pronoun</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_maritalStatusCode_codeValue</td>
+<td>The code value of the person's marital status</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_maritalStatusCode_shortName</td>
+<td>The short name of the person's marital status code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_socialInsurancePrograms_0_nameCode_codeValue</td>
+<td>The code value of the person's social insurance program's name code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_socialInsurancePrograms_0_nameCode_shortName</td>
+<td>The short name of the person's social insurance program's name code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_socialInsurancePrograms_0_coveredIndicator</td>
+<td>The covered indicator of the person's social insurance program</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>person_tobaccoUserIndicator</td>
+<td>The indicator showing whether the person is a tobacco user</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>person_disabledIndicator</td>
+<td>The indicator showing whether the person is disabled</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>person_preferredName_givenName</td>
+<td>The preferred given name of the person</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_preferredName_middleName </td>
+<td>The preferred middle name of the person</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_preferredName_familyName1</td>
+<td>The preferred family name of the person</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_preferredName_formattedName</td>
+<td>The preferred name of the person, formatted for display purpose</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_itemID</td>
+<td>The item ID of the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_typeCode_codeValue</td>
+<td>The code value of the type code for the person's other personal addresses.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_typeCode_shortName</td>
+<td>The short name of the type code for the person's other personal addresses.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_nameCode_codeValue</td>
+<td>The code value of the name code for the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_nameCode_shortName</td>
+<td>The short name of the name code for the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_nameCode_longName</td>
+<td>The long name of the name code for the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_lineOne</td>
+<td>The first line of the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_lineTwo</td>
+<td>The second line of the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_lineThree</td>
+<td>The third line of the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_cityName</td>
+<td>The city name of the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_countrySubdivisionLevel1_subdivisionType</td>
+<td>The subdivision type of the country subdivision level 1 for the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_countrySubdivisionLevel1_codeValue</td>
+<td>The code value of the country subdivision level 1 for the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_countrySubdivisionLevel1_shortName</td>
+<td>The short name of the country subdivision level 1 for the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_countrySubdivisionLevel2_subdivisionType</td>
+<td>The subdivision type of the country subdivision level 1 for the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_countrySubdivisionLevel2_codeValue</td>
+<td>The code value of the country subdivision level 1 for the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_countrySubdivisionLevel2_shortName</td>
+<td>The short name of the country subdivision level 1 for the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_countryCode</td>
+<td>The country code of the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_otherPersonalAddresses_0_postalCode</td>
+<td>The postal code of the person's other personal addresses</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_ethnicityCode_codeValue</td>
+<td>The code value representing the person's ethnicity</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_ethnicityCode_shortName</td>
+<td>The short name representing the person's ethnicity</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_ethnicityCode_longName</td>
+<td>The long name representing the person's ethnicity</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_raceCode_identificationMethodCode_codeValue</td>
+<td>The code value representing the identification method of the person's race</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_raceCode_identificationMethodCode_shortName</td>
+<td>The short name representing the identification method of the person's race</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_raceCode_codeValue</td>
+<td>The code value representing the person's race</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_raceCode_shortName</td>
+<td>The short name representing the person's race</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_raceCode_longName</td>
+<td>The long name representing the person's race</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_militaryClassificationCodes_0_codeValue</td>
+<td>The military classification code value</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_militaryClassificationCodes_0_longName</td>
+<td>The military classification code long name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_militaryClassificationCodes_0_shortName</td>
+<td>The military classification code short name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_amountFields_0_itemID</td>
+<td>The item ID of the amount fields in the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_amountFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in the amount fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_amountFields_0_nameCode_shortName</td>
+<td>The short name of the name code in the amount fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_amountFields_0_nameCode_longName</td>
+<td>The long name of the name code in the amount fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_amountFields_0_amountValue</td>
+<td>The amount field value</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_amountFields_0_currencyCode</td>
+<td>The amount field currency code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_codeFields_0_itemID</td>
+<td>The item ID of the code fields in the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_codeFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in the code fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_codeFields_0_nameCode_shortName</td>
+<td>The short name of the name code in the code fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_codeFields_0_nameCode_longName</td>
+<td>The long name of the name code in the code fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_codeFields_0_codeValue</td>
+<td>The code value in the code fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_codeFields_0_shortName</td>
+<td>The short name in the code fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_codeFields_0_longName</td>
+<td>The long name in the code fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_dateFields_0_itemID</td>
+<td>The item ID of the date fields in the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_dateFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in the date fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_dateFields_0_nameCode_shortName</td>
+<td>The short name of the name code in the date fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_dateFields_0_nameCode_longName</td>
+<td>The long name of the name code in the date fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_dateFields_0_dateValue</td>
+<td>The date value in the date fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_indicatorFields_0_itemID</td>
+<td>The item ID of the indicator fields in the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_indicatorFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in the indicator fields of the person's custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_indicatorFields_0_nameCode_shortName</td>
+<td>The short name code for the custom field group's indicator fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_indicatorFields_0_nameCode_longName</td>
+<td>The long name code for the custom field group's indicator fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_numberFields_0_itemID</td>
+<td>The item ID of the number fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_numberFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in number fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_numberFields_0_nameCode_shortName</td>
+<td>The short name code of the name code in number fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_numberFields_0_nameCode_longName</td>
+<td>The long name code of the name code in number fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_numberFields_0_numberValue</td>
+<td>The numerical value in the number fields</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_percentFields_0_itemID</td>
+<td>The item ID of the percent fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_percentFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in percent fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_percentFields_0_nameCode_shortName</td>
+<td>The short name code of the name code in percent fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_percentFields_0_percentageValue</td>
+<td>The percentage value in the percent fields</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_stringFields_0_itemID</td>
+<td>The item ID of the string fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_stringFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in string fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_stringFields_0_nameCode_shortName</td>
+<td>The short name code of the name code in string fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_stringFields_0_nameCode_longName</td>
+<td>The long name code of the name code in string fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_stringFields_0_stringValue</td>
+<td>The string value in the string fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_telephoneFields_0_itemID</td>
+<td>The item ID for the telephone fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_telephoneFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in telephone fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_telephoneFields_0_nameCode_shortName</td>
+<td>The short name code of the name code in telephone fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_telephoneFields_0_nameCode_longName</td>
+<td>The long name code of the name code in telephone fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_telephoneFields_0_formattedNumber</td>
+<td>The formatted number in the telephone fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_multiCodeFields_0_itemID</td>
+<td>The item ID of the multi code fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_multiCodeFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in multi code fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_multiCodeFields_0_nameCode_shortName</td>
+<td>The short name code of the name code in multi code fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_multiCodeFields_0_nameCode_longName</td>
+<td>The long name code of the name code in multi code fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_multiCodeFields_0_codes_0</td>
+<td>The code strings in the multi code fields </td>
+<td>string array</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_multiCodeFields_0_codeValue</td>
+<td>The code value of the name code in multi code fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_multiCodeFields_0_shortName</td>
+<td>The short name code of the name code in multi code fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_customFieldGroup_multiCodeFields_0_longName</td>
+<td>The long name code of the name code in multi code fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_governmentIDs_0_itemID</td>
+<td>The government item ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_governmentIDs_0_idValue</td>
+<td>The ID values of the person's government IDs</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_governmentIDs_0_countryCode</td>
+<td>The country codes associated with the person's government IDs</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_governmentIDs_0_nameCode_codeValue</td>
+<td>The code values representing the names on the person's government IDs</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_governmentIDs_0_nameCode_longName</td>
+<td>The full names on the person's government IDs</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_governmentIDs_0_statusCode_codeValue</td>
+<td>The status code values representing the person's government IDs</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_governmentIDs_0_statusCode_shortName</td>
+<td>The short name status code on the person's government IDs</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalName_givenName</td>
+<td>The given name of the person's legal name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalName_familyName1</td>
+<td>The first family name in the person's legal name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalName_formattedName</td>
+<td>The formatted version of the person's legal name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_nameCode_codeValue</td>
+<td>The code value of the name code of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_nameCode_shortName</td>
+<td>The short name of the name code of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_nameCode_longName</td>
+<td>The long name of the name code of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_lineOne</td>
+<td>The first line of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_lineTwo</td>
+<td>The second line of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_lineThree</td>
+<td>The third line of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_cityName</td>
+<td>The city name of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_countryCode</td>
+<td>The country code of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_postalCode</td>
+<td>The postal code of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_countrySubdivisionLevel1_subdivisionType</td>
+<td>The subdivision type of the first level country subdivision of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_countrySubdivisionLevel1_codeValue</td>
+<td>The code value of the first level country subdivision of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_countrySubdivisionLevel1_shortName</td>
+<td>The short name of the first level country subdivision of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_countrySubdivisionLevel2_subdivisionType</td>
+<td>The subdivision type of the second level country subdivision of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_countrySubdivisionLevel2_codeValue</td>
+<td>The code value of the second level country subdivision of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_legalAddress_countrySubdivisionLevel2_shortName</td>
+<td>The short name of the second level country subdivision of the person's legal address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_landlines_0_itemID</td>
+<td>The item ID of the landline in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_landlines_0_countryDialing</td>
+<td>The country dialing code of the landline in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_landlines_0_areaDialing</td>
+<td>The area dialing code of the landline in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_landlines_0_dialNumber</td>
+<td>The dial number of the landline in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_landlines_0_access</td>
+<td>The access details of the landline in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_landlines_0_formattedNumber</td>
+<td>The formatted number of the landline in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_landlines_0_nameCode_codeValue</td>
+<td>The code value of the name code of the landline in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_landlines_0_nameCode_shortName</td>
+<td>The short name of the name code of the landline in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_mobiles_0_itemID</td>
+<td>The item ID of the mobile in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_mobiles_0_countryDialing</td>
+<td>The country dialing code of the mobile in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_mobiles_0_areaDialing</td>
+<td>The area dialing code of the person's mobile phone</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_mobiles_0_dialNumber</td>
+<td>The dial number of the person's mobile phone</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_mobiles_0_access</td>
+<td>The access details of the person's mobile phone</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_mobiles_0_formattedNumber</td>
+<td>The formatted number of the person's mobile phone</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_mobiles_0_nameCode_codeValue</td>
+<td>The code value of the name code of the mobile in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_mobiles_0_nameCode_shortName</td>
+<td>The short name of the name code of the mobile in the person's communication details</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_faxes_0_itemID</td>
+<td>The item ID of the person's fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_faxes_0_countryDialing</td>
+<td>The country dialing code of the person's fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_faxes_0_areaDialing</td>
+<td>The area dialing code of the person's fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_faxes_0_dialNumber</td>
+<td>The dial number of the person's fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_faxes_0_access</td>
+<td>The access details of the person's fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_faxes_0_formattedNumber</td>
+<td>The formatted number of the person's fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_faxes_0_nameCode_codeValue</td>
+<td>The code value of the person's fax name code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_faxes_0_nameCode_shortName</td>
+<td>The short name of the person's fax name code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_pagers_0_itemID</td>
+<td>The item ID of the person's pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_pagers_0_countryDialing</td>
+<td>The country dialing code of the person's pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_pagers_0_areaDialing</td>
+<td>The area dialing code of the person's pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_pagers_0_dialNumber</td>
+<td>The dial number of the person's pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_pagers_0_access</td>
+<td>The access details of the person's pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_pagers_0_formattedNumber</td>
+<td>The formatted number of the person's pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_pagers_0_nameCode_codeValue</td>
+<td>The code value of the person's pager name code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_pagers_0_nameCode_shortName</td>
+<td>The short name of the person's pager name code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_emails_0_notificationIndicator</td>
+<td>The notification indicator of the person's email</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>person_communication_emails_0_nameCode_codeValue</td>
+<td>The code value of the person's email name code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person_communication_emails_0_nameCode_shortName</td>
+<td>The short name of the person's email name code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workerDates_originalHireDate</td>
+<td>The original hire date of the worker</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workerStatus_statusCode_codeValue</td>
+<td>The code value of the worker status code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_landlines_0_itemID</td>
+<td>The item ID of the landline in business communication</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_landlines_0_countryDialing</td>
+<td>The country dialing code for the landline</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_landlines_0_areaDialing</td>
+<td>The area dialing code for the landline</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_landlines_0_dialNumber</td>
+<td>The dial number of the landline</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_landlines_0_access</td>
+<td>The access method for the landline</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_landlines_0_formattedNumber</td>
+<td>The formatted number of the landline</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_landlines_0_nameCode_codeValue</td>
+<td>The code value for the name code of the landline</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_landlines_0_nameCode_shortName</td>
+<td>The short name for the name code of the landline</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_mobiles_0_itemID</td>
+<td>The item ID of the mobile in business communication</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_mobiles_0_countryDialing</td>
+<td>The country dialing code for the mobile</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_mobiles_0_areaDialing</td>
+<td>The area dialing code for the mobile</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_mobiles_0_dialNumber</td>
+<td>The dial number of the mobile</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_mobiles_0_access</td>
+<td>The access method for the mobile</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_mobiles_0_formattedNumber</td>
+<td>The formatted number of the mobile</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_mobiles_0_nameCode_codeValue</td>
+<td>The code value for the name code of the mobile</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_mobiles_0_nameCode_shortName</td>
+<td>The short name for the name code of the mobile</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_faxes_0_itemID</td>
+<td>The item ID of the fax in business communication</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_faxes_0_countryDialing</td>
+<td>The country dialing code for the fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_faxes_0_areaDialing</td>
+<td>The area dialing code for the fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_faxes_0_dialNumber</td>
+<td>The dial number of the fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_faxes_0_access</td>
+<td>The access for the fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_faxes_0_formattedNumber</td>
+<td>The formatted number of the fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_faxes_0_nameCode_codeValue</td>
+<td>The code value for the name code of the fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_faxes_0_nameCode_shortName</td>
+<td>The short name for the name code of the fax</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_pagers_0_itemID</td>
+<td>The item ID of the pager in business communication</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_pagers_0_countryDialing</td>
+<td>The country dialing code for the pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_pagers_0_areaDialing</td>
+<td>The area dialing code for the pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_pagers_0_dialNumber</td>
+<td>The dial number of the pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_pagers_0_access</td>
+<td>The access for the pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_pagers_0_formattedNumber</td>
+<td>The formatted number of the pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_pagers_0_nameCode_codeValue</td>
+<td>The code value for the name code of the pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_pagers_0_nameCode_shortName</td>
+<td>The short name for the name code of the pager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_emails_0_itemID</td>
+<td>The item ID of the email in business communication</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_emails_0_nameCode_codeValue</td>
+<td>The code value of the email name in business communication</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_emails_0_nameCode_shortName</td>
+<td>The short name of the email in business communication</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessCommunication_emails_0_notificationIndicator</td>
+<td>The indicator for notification in business communication emails</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>workAssignments_0_itemID</td>
+<td>The item ID of the work assignment</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_primaryIndicator</td>
+<td>The primary indicator of the work assignment</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>workAssignments_0_hireDate</td>
+<td>The hire date of the work assignment</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_actualStartDate</td>
+<td>The actual start date of the work assignment</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignmentStatus_statusCode_codeValue</td>
+<td>The code value of the status code for the assignment</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignmentStatus_statusCode_shortName</td>
+<td>The short name of the status code for the assignment</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignmentStatus_statusCode_longName</td>
+<td>The long name of the status code for the assignment</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignmentStatus_reasonCode_codeValue</td>
+<td>The code value of the reason code for the assignment status</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignmentStatus_reasonCode_shortName</td>
+<td>The short name of the reason code for the assignment status</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignmentStatus_effectiveDate</td>
+<td>The effective date of the assignment status</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_workerTypeCode_codeValue</td>
+<td>The code value for the type of worker</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_workerTypeCode_shortName</td>
+<td>The short name for the type of worker</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_workerGroups_0_nameCode_codeValue</td>
+<td>The code value of the name for worker groups</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_workerGroups_0_nameCode_longName</td>
+<td>The long name of the name for worker groups_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_workerGroups_0_groupCode_codeValue</td>
+<td>The code value for the group of workers_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_workerGroups_0_groupCode_shortName</td>
+<td>The short name for the group of workers_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_jobCode_codeValue</td>
+<td>The code value associated with the worker's job</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_jobCode_longName</td>
+<td>The long name associated with the worker's job</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_jobTitle</td>
+<td>The title of the worker's job_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_occupationalClassifications_0_nameCode.codeValue</td>
+<td>Code value of the occupational classification's name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_occupationalClassifications_0_.nameCode.shortName</td>
+<td>Short name of the occupational classification</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_occupationalClassifications_0_.classificationCode.codeValue</td>
+<td>Code value of the classification</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_occupationalClassifications_0_.classificationCode.shortName</td>
+<td>Short name of the classification</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_wageLawCoverage_wageLawNameCode_codeValue</td>
+<td>The code value for the wage law name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_wageLawCoverage_wageLawNameCode_longName</td>
+<td>The long name for the wage law</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_wageLawCoverage_coverageCode_codeValue</td>
+<td>The code value for wage law coverage</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_wageLawCoverage_coverageCode_shortName</td>
+<td>The short name for wage law coverage</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_positionID</td>
+<td>The ID of the position in work assignments</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_address_lineOne</td>
+<td>The first line of the home work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_address_lineTwo</td>
+<td>The second line of the home work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_address_lineThree</td>
+<td>The third line of the home work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_address_cityName</td>
+<td>The city name of the home work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_address_countrySubdivisionLevel1_subdivisionType</td>
+<td>The subdivision type of the country's first level division</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation.address_countrySubdivisionLevel1_codeValue</td>
+<td>The code value of the country's first level division</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_address_countrySubdivisionLevel1_shortName</td>
+<td>The short name of the country's first level division</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_address_countryCode</td>
+<td>The country code of the home work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_address_postalCode</td>
+<td>The postal code of the home work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_nameCode_codeValue</td>
+<td>The code value of the home work location name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_homeWorkLocation_nameCode_shortName</td>
+<td>The short name of the home work location name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_nameCode_codeValue</td>
+<td>The code value of the assigned work location name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_nameCode_shortName</td>
+<td>The short name of the assigned work location name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_nameCode_longName</td>
+<td>The long name of the home work location name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_lineOne</td>
+<td>The first line of the assigned work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_lineTwo</td>
+<td>The second line of the assigned work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_lineThree</td>
+<td>The third line of the assigned work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_cityName</td>
+<td>The city name of the assigned work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_countrySubdivisionLevel1_subdivisionType</td>
+<td>The subdivision type of the country's first level division</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_countrySubdivisionLevel1_codeValue</td>
+<td>The code value of the country's first level division</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_countrySubdivisionLevel1_shortName</td>
+<td>The short name of the country's first level division</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_countrySubdivisionLevel2_subdivisionType</td>
+<td>The subdivision type of the country's second level division</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_countrySubdivisionLevel2_codeValue</td>
+<td>The code value of the country's second level division</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_countrySubdivisionLevel2_shortName</td>
+<td>The short name of the country's second level division</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_countryCode</td>
+<td>The country code of the assigned work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_assignedWorkLocations_address_postalCode</td>
+<td>The postal code of the assigned work location address</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_workerTimeProfile_timeAndAttendanceIndicator</td>
+<td>The time and attendance indicator</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_payCycleCode_codeValue</td>
+<td>The code value of the pay cycle in work assignments</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_payCycleCode_shortName</td>
+<td>The short name of the pay cycle in work assignments</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_standardPayPeriodHours_hoursQuantity</td>
+<td>The standard pay period hours quantity</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>workAssignments_0_baseRemuneration_annualRateAmount_nameCode_codeValue</td>
+<td>The code value for the name code of the annual rate amount in base remuneration</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_baseRemuneration_annualRateAmount_nameCode_shortName</td>
+<td>The short name for the name code of the annual rate amount in base remuneration</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_baseRemuneration_annualRateAmount_amountValue</td>
+<td>The amount value for the annual rate amount in base remuneration</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>workAssignments_0_baseRemuneration_annualRateAmount_currencyCode</td>
+<td>The currency code for the annual rate amount in base remuneration_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_baseRemuneration_payPeriodRateAmount_nameCode_codeValue</td>
+<td>The code value for the name code of the pay period rate amount in base remuneration_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_baseRemuneration_payPeriodRateAmount_nameCode_shortName</td>
+<td>The short name for the name code of the pay period rate amount in base remuneration_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_baseRemuneration_payPeriodRateAmount_amountValue</td>
+<td>The amount value for the pay period rate amount in base remuneration_</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>workAssignments_0_baseRemuneration_payPeriodRateAmount_currencyCode</td>
+<td>The currency code for the pay period rate amount in base remuneration_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_baseRemuneration_effectiveDate</td>
+<td>The effective date for the base remuneration_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_reportsTo_0_positionID</td>
+<td>The position ID to which the work assignment reports</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_reportsTo_0_associateOID</td>
+<td>The OID of the associate to whom the work assignment reports</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_reportsTo_0_workerID_idValue</td>
+<td>The ID value of the worker to whom the work assignment reports</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_reportsTo_0_workerID_schemeCode_codeValue</td>
+<td>The code value of the scheme code for the worker to whom the work assignment reports</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_reportsTo_0_workerID_schemeCode_shortName</td>
+<td>The short name of the scheme code for the worker to whom the work assignment reports</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_reportsTo_0_reportsToWorkerName_formattedName</td>
+<td>The formatted name of the worker to whom the work assignment reports</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_payrollProcessingStatusCode_shortName</td>
+<td>The short name for the payroll processing status</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_payrollGroupCode</td>
+<td>The code for the payroll group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_payrollScheduleGroupID</td>
+<td>The payroll schedule group ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_payrollFileNumber</td>
+<td>The file number associated with payroll</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_managementPositionIndicator</td>
+<td>The indicator for whether the worker holds a management position</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>workAssignments_0_jobFunctionCode_codeValue</td>
+<td>The job function code value</td>
+<td>string</td>
+</tr>
+<tr>
+<td>workAssignments_0_jobFunctionCode_shortName</td>
+<td>The job function short name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_amountFields_0_itemID</td>
+<td>The item ID for the amount fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_amountFields_0_nameCode_codeValue</td>
+<td>The code value for the name code of the amount fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_amountFields_0_nameCode_shortName</td>
+<td>The short name for the name code of the amount fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_amountFields_0_nameCode_longName</td>
+<td>The long name for the name code of the amount fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_amountFields_0_amountValue</td>
+<td>The amount value for the amount fields in the custom field group_</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>customFieldGroup_amountFields_0_currencyCode</td>
+<td>The currency code for the amount fields in the custom field group_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_codeFields_0_itemID</td>
+<td>The item ID for the code fields in the custom field group_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_codeFields_0_nameCode_codeValue</td>
+<td>The code value for the name code of the code fields in the custom field group_</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_codeFields_0_nameCode_shortName</td>
+<td>The shortened name of the code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_codeFields_0_nameCode_longName</td>
+<td>The full name of the code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_codeFields_0_codeValue</td>
+<td>The value of the code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_codeFields_0_shortName</td>
+<td>The short name of the code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_codeFields_0_longName</td>
+<td>The long name of the code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_dateFields_0_itemID</td>
+<td>The unique identifier of the date field item</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_dateFields_0_nameCode_codeValue</td>
+<td>The value of the name code in the date field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_dateFields_0_nameCode_shortName</td>
+<td>The abbreviated name of the name code in the date field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_dateFields_0_nameCode_longName</td>
+<td>The full name of the name code in the date field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_dateFields_0_dateValue</td>
+<td>The date value of the field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_indicatorFields_0_itemID</td>
+<td>The item ID of the indicator fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_indicatorFields_0_nameCode_codeValue</td>
+<td>The value of the name code in the indicator field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_indicatorFields_0_nameCode_shortName</td>
+<td>The abbreviated name of the name code in the indicator field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_indicatorFields_0_nameCode_longName</td>
+<td>The full name of the name code in the indicator field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_indicatorFields_0_indicatorValue</td>
+<td>The indicator value in the indicator field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_numberFields_0_itemID</td>
+<td>The unique identifier of the number field item</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_numberFields_0_nameCode_codeValue</td>
+<td>The value of the name code in the number field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_numberFields_0_nameCode_shortName</td>
+<td>The short name of the name code in the number field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_numberFields_0_nameCode_longName</td>
+<td>The long name of the name code in the number field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_numberFields_0_numberValue</td>
+<td>The number value of the field</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>customFieldGroup_percentFields_0_itemID</td>
+<td>The item ID of the percent fields in the custom field group</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_percentFields_0_nameCode_codeValue</td>
+<td>The code value of the name code in percent fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_percentFields_0_nameCode_shortName</td>
+<td>The short name code of the name code in percent fields</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_percentFields_0_percentageValue</td>
+<td>The percentage value in the percent fields</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>customFieldGroup_stringFields_0_itemID</td>
+<td>The unique identifier of the string field item</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_stringFields_0_nameCode_codeValue</td>
+<td>The value of the name code in the string field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_stringFields_0_nameCode_shortName</td>
+<td>The short name of the name code in the string field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_stringFields_0_nameCode_longName</td>
+<td>The long name of the name code in the string field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_stringFields_0_stringValue</td>
+<td>The string value of the field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_telephoneFields_0_itemID</td>
+<td>The unique identifier of the telephone field item</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_telephoneFields_0_nameCode_codeValue</td>
+<td>The value of the name code in the telephone field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_telephoneFields_0_nameCode_longName</td>
+<td>The full name of the name code in the telephone field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_telephoneFields_0_nameCode_shortName</td>
+<td>The abbreviated name of the name code in the telephone field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_telephoneFields_0_formattedNumber</td>
+<td>The formatted number of the telephone field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_multiCodeFields_0_itemID</td>
+<td>The unique identifier of the multi code field item</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_multiCodeFields_0_nameCode_codeValue</td>
+<td>The value of the name code in the multi code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_multiCodeFields_0_nameCode_shortName</td>
+<td>The short name of the name code in the multi code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_multiCodeFields_0_nameCode_longName</td>
+<td>The long name of the name code in the multi code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_multiCodeFields_0_codes_0</td>
+<td>The code strings in the multi code fields </td>
+<td>string array</td>
+</tr>
+<tr>
+<td>customFieldGroup_multiCodeFields_0_codeValue</td>
+<td>The value of the name code in the multi code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_multiCodeFields_0_shortName</td>
+<td>The short name of the name code in the multi code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>customFieldGroup_multiCodeFields_0_longName</td>
+<td>The long name of the name code in the multi code field</td>
+<td>string</td>
+</tr>
+<tr>
+<td>_languageCode_codeValue</td>
+<td>The language code value</td>
+<td>string</td>
+</tr>
+<tr>
+<td>_languageCode_shortName</td>
+<td>The language code short name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>_languageCode_longName</td>
+<td>The language code long name</td>
+<td>string</td>
+</tr>
+</tbody></table></figure><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Run Integration</h1><p>You can set event or schedule triggers to run the integration. For more details, refer to the <a href="../User-Actions-on-Integrations/#h_01J0XHHKT5BCASDP2GSQAN3EGG" rel="noopener noreferrer" target="_blank">Executing an Integration</a> section.</p><p>After the integration is successfully executed, Aquera syncs the Workers created in ADP Workforce Now as users in Okta.</p><h1 id="h_01KFFVZ8N3N820WBEPX37HT843">Troubleshooting</h1><p>The following table lists the various errors that you may encounter and the corresponding solutions to resolve those errors:</p><figure><table><tbody>
+<tr>
+<td><strong>Error Description</strong></td>
+<td><strong>Resolution</strong></td>
+</tr>
+<tr>
+<td>Okta import returned an error which could indicate that there is a limit on number of users that can be deleted.</td>
+<td>
+<p>If the <strong>Import Safeguard</strong> setting is enabled in Okta with a deletion % limit, integration will fail if it tries to delete more users than the configured deletion % limit.</p>
+<p>To fix this, you must navigate to <strong>Reports</strong> &gt; <strong>Import Monitoring</strong>, and resolve any such error manually.</p>
+<p>Refer to the <a href="https://help.okta.com/oie/en-us/content/topics/users-groups-profiles/usgp-resolve-import-safeguard.htm" rel="noopener noreferrer" target="_blank">Okta Documentation</a> for more details.</p>
+</td>
+</tr>
+</tbody></table></figure><h1 id="h_01KADNT38N98M887JSH86ZKKVY">FAQs</h1><p><strong>Question 1</strong>: Why is the future termination date of a user not being retrieved or synced correctly from ADP?<br/><strong>Answer</strong>: If a user’s termination date is set to a future date, the effective date must also be set to that same future termination date in order for the future termination date to appear in the response.<br/>Additionally, GEP begins tracking future termination events only from the date it is enabled.<br/>Termination events that occurred before GEP was configured are typically unavailable, except for those within the previous five days.<br/>For example, if GEP is enabled on November 19, 2025, termination events from November 14, 2025 onward will be available. A user terminated on November 14, 2025, with a future termination date will appear. However, a user terminated before November 14, 2025, with a future termination date will not appear, as their future termination date cannot be retrieved.</p><p> </p>
+  </div>
+</body>
+</html>

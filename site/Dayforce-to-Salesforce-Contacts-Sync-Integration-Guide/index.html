@@ -19,7 +19,7 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Dayforce to Salesforce Contacts Sync Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, any contacts created or updated in Dayforce are automatically updated in Salesforce based on the defined schedule.</p><p>To identify user records across both systems, the integration uses the attribute configured in the <span><strong>Jira Service Management Correlation Attribute</strong></span> parameter from <strong>Jira</strong> <strong>Service Management Cloud</strong> and matches it to the <strong>userPrincipalName</strong> in <strong>Active Directory</strong> as a correlation attribute.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The Dayforce to Salesforce Integration performs the following functions:</p><ul>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, employee contact details from Dayforce are synced to the Salesforce Contact resource.</p><p>During the first integration execution, employee records are correlated with Salesforce User records based on the correlation attributes defined in the <a href="#h_01KGM450J1YK3FN478G7X08MGN">Correlation Settings</a> section. After successful correlation, Contact records are created in Salesforce.</p><p>This integration supports incremental sync. If the integration is configured with incremental sync, only newly added employee contact records are created, and existing Contact records in Salesforce are updated if any corresponding employee contact details have been modified.</p><p>To identify user records across both systems, the integration uses the attribute configured in the <span><strong>Jira Service Management Correlation Attribute</strong></span> parameter from <strong>Jira</strong> <strong>Service Management Cloud</strong> and matches it to the <strong>userPrincipalName</strong> in <strong>Active Directory</strong> as a correlation attribute.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The Dayforce to Salesforce Integration performs the following functions:</p><ul>
 <li data-list-item-id="e69a9058d81273388a7286985bc16e489">Synchronizes contact records from Dayforce to Salesforce.</li>
 <li data-list-item-id="e166fd85a189e05ffe71765234bf27682">Creates new Contacts in Salesforce whenever new employees are added in Dayforce.</li>
 <li data-list-item-id="e2ce028fa9ec9edee224f032f6ed7ecc4">Updates existing Salesforce Contacts when their information changes in Dayforce.</li>
@@ -38,7 +38,7 @@
 <strong>Salesforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360009663913" rel="noopener noreferrer" target="_blank">Salesforce Configuration Guide</a> for configuration details.</li>
 </ul>
 </li>
-</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push user-related data from Jira Service Management to Active Directory.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push user-related data from Dayforce to Salesforce.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="e9ad1f7370bd0f2644e9ad6ec622952b5">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="e48a15a161b8852dbaecb25cc33cb428c">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="ef1c17189fb5ddc928af19923a3772bbb">Click<strong> Create Integration</strong>.</li>
@@ -57,24 +57,26 @@
 <li data-list-item-id="e14bb3c641dfa2cad16de717fd45071ca">
 <strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
 <li data-list-item-id="e6251acb4fe82e71ed475255402a06b7a">
-<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Logging</a> section is displayed for further configuration.</li>
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Logging</a> section is displayed for further configuration.</li>
 <li data-list-item-id="ebcf58f7adc77a4a1c97842168fa291d9">
-<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
 <li data-list-item-id="e16b6903343037c56fdd19037e63c6071">
-<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting</a> section is displayed for further configuration.</li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting</a> section is displayed for further configuration.</li>
 <li data-list-item-id="eab72dd2f5dcb3f2238b69f7e0df18ca1">
-<strong>Enable Log Insights</strong>: Select this to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+<strong>Enable Log Insights</strong>: Select this to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
 <li data-list-item-id="eb5af5848b2d1be040f7a8df54ffa03ac">
-<strong>Enable Debug Mode</strong>: Select to generate logs outlining data changes that would occur for debugging.</li>
+<strong>Enable Debug Mode</strong>: Select to generate logs outlining data changes that would occur for debugging. When enabled, the <a href="#h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Mode</a> section is displayed for further configuration.</li>
 </ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Contacts</h3><p>The <strong>Contact</strong> <strong>Management</strong> section enables you to customize the integration settings for contractor management according to your specific use cases.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD"><span>Manage Contact Lifecycle Management</span></h4><p>Configure the following settings:</p><ul>
 <li data-list-item-id="e5f7294816089a1ef412406c556b858b6">
-<strong>Create Contacts</strong>: Select this checkbox if your use case requires creating contacts in Salesforce from Dayforce.</li>
+<strong>Create Contacts</strong>: Select this checkbox if your use case requires creating contacts in Salesforce from Dayforce. Selecting this parameter will display the below <span><strong>Eligible Statuses for Contact Creation </strong>parameter.</span><ul><li data-list-item-id="e9d1937f207221d1cd8d1181fe7c93eae"><span><strong>Eligible Statuses for Contact Creation</strong>: Select one or more employee statuses. Contacts will be created in the Salesforce application only for employees with the selected statuses.</span></li></ul>
+</li>
 <li data-list-item-id="ea2a9ec5d5a42cb9c1fd4d8e5214a1784">
-<strong>Update Contacts</strong>: Select to update the user’s contact details in Salesforce from Dayforce.</li>
+<strong>Update Contacts</strong>: Select to update the user’s contact details in Salesforce from Dayforce. Selecting this parameter will display the below <span><strong>Eligible Statuses for Contact Update </strong>parameter.</span><ul><li data-list-item-id="eb273aa0298075bf6a80ebc7f11b71c1c"><span><strong>Eligible Statuses for Contact Update</strong>: Select one or more employee statuses. Contacts will be updated in the Salesforce application only for employees with the selected statuses.</span></li></ul>
+</li>
 <li data-list-item-id="e9d60962b572cc768b9743d834990960e">
 <strong>Verify user before creating contact</strong>: Select to create a contact only after confirming that the corresponding Salesforce user exists and is active. If the employee is unavailable or inactive, contact creation will be ignored.</li>
 <li data-list-item-id="ef47289a879c6b5dfac4af29f0e385f01">
-<span><strong>Include Manager Contact Details</strong></span>: Select this checkbox to include the employee’s manager’s contact details in the employee contact report from Dayforce to Salesforce. If this checkbox is not selected, the manager’s contact details will not be included.</li>
+<span><strong>Include Manager Contact Details</strong></span>: Select this checkbox to retrieve the employee’s manager from Dayforce, locate the corresponding employee contact record in Salesforce, and populate the manager in the <strong>ReportsToId</strong> field on the user’s Contact record.</li>
 <li data-list-item-id="e88e4dfb2a376bb43b41b27a31f86dc96">
 <strong>Create Contacts Only for New Hires</strong>: If you select this checkbox, only new hires (employees with start date of today or future) will be created as new Contacts. If this checkbox is not selected, all employee's will be considered for contact creation in Salesforce.</li>
 </ul><h4 id="h_01KJ4X2ZT9TWYCPNXF6N24W985">Eligible Statuses for Contact Creation And Update <span>Statuses Settings</span>
@@ -88,88 +90,78 @@
 <strong>Salesforce Correlation Attribute</strong>: Select a Salesforce contact attribute to distinctly find the associated Dayforce user record. For example, if you select <strong>Department</strong> in this field, the <strong>Department</strong> attribute will be used as a correlation attribute.</li>
 </ul><h4 id="h_01KJ52H23RGPH6Y4RD9H8JNQ6Y">User Lookup Configuration</h4><p>Configure the following settings:</p><ul>
 <li data-list-item-id="e18bd181d9d81e1c7208c40e30de31c9e">
-<strong>Salesforce User </strong><span><strong>Field</strong></span>: Select a Salesforce user attribute to distinctly find the associated Salesforce contact record. For example, if you select Username attribute in this field, </li>
+<strong>Salesforce User </strong><span><strong>Field</strong></span>: Select a Salesforce user attribute to distinctly find the associated Salesforce contact record. For example, if you select <strong>Username</strong> attribute in this field, the <strong>Username</strong> attribute will be used as a correlation attribute.</li>
 <li data-list-item-id="e25c8bd45715ae16c4fac08149b7ac7c1">
-<strong>Salesforce Contact Field</strong>: Select a Salesforce contact field to distinctly find the associated Salesforce employee record.</li>
-</ul><h3 id="h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug <span>Settings</span>
-</h3><p>This section enables you to set debug options to help troubleshoot and fix integration issues.</p><p><strong>Note</strong>: The Debug Settings tab appears when you select the Enable debug mode checkbox in the Integration Settings section of the Parameters tab.</p><ul>
-<li data-list-item-id="ee46fe0fcc17ef7685b9461b79f724ee7">
-<strong>Enable for Single-User</strong>: Select to debug the integration for a single employee.</li>
-<li data-list-item-id="e34e922b82d032708b891f866a8859f5a">
-<span><strong>Dayforce</strong></span><strong> User EmployeeNumber</strong>: Enter the employee number of the Dayforce employee to be used for debugging purposes.</li>
-<li data-list-item-id="e69f08e8e7ac5bccebb2e06fe25dd065f">
-<strong>Enable for Multiple-User</strong>: Select to debug the integration for multiple employees.</li>
-<li data-list-item-id="ec2d8d04e61e46fad29649e0c1bf57c2a">
-<strong>Import Limit</strong>: Enter the maximum number of employee contacts to be imported to Salesforce for debugging in a single integration run.</li>
-</ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>The <strong>Notifications</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p><h4 id="h_01KGHF6DZYKTRFQSB4B1QVYWAS">Notification Settings</h4><p>Configure the following notification settings:</p><ul>
-<li data-list-item-id="e31b4ef184f47d7294c49ddd648660d8f">
+<strong>Salesforce Contact Field</strong>: Select a Salesforce contact field to distinctly find the associated Salesforce employee record. For example, if you select <strong>Name</strong> attribute in this field, the <strong>Name</strong> attribute will be used as a correlation attribute.</li>
+</ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Logging</h3><p>The <strong>Logging</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KGHF59DA5EF0WXHK2SMFB9W4">Log Settings</h4><p>Configure the following log settings:</p><ul><li data-list-item-id="eb9ff33924522487d2358cbe8140f6c3a">
+<strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ea4c9d85b7c1f0de38fcd131d13651c55">
+<strong>Summary</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e4a0a1058a7038ecea8fb8a4abd0c6695">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e433742feb5d80420bc3d06c7e17cce4e">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="e6a256ef8b00b2e11ec16a8319a5204f5">
+<strong>Included Attributes</strong>: Enter the attributes to be included in the log. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>parameter.</li>
+<li data-list-item-id="eca1c2e11e6408a7e582c644c271e8f72">
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the log. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li>
+<li data-list-item-id="ef7b58db1bab80f6bcca28faad107cd56">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values for each event when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul>
+</li></ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>The <strong>Notifications</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p><h4 id="h_01KGHF6DZYKTRFQSB4B1QVYWAS">Notification Settings</h4><p>Configure the following notification settings:</p><ul>
+<li data-list-item-id="eaa0e4b11dd65a836861ca7a33bee3a71">
 <strong>Admin's Email Address</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
-<li data-list-item-id="e97f98426497afa434ea8d9810b02edf0">
+<li data-list-item-id="ecefdfec6c7374e544c4e1a1d3cc100c4">
 <strong>Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications.</li>
-<li data-list-item-id="efb5a606751a2217d0bb0adf563000d64">
+<li data-list-item-id="eaaf5f2383162261ca45f4484f418cb53">
 <strong>Email Body</strong>: Enter the content that must be used as the email body for sending email notifications.</li>
-<li data-list-item-id="e2f3fb8de2b2681356e7911e500981632">
+<li data-list-item-id="e216ba44bbe34b856884e4ffd0958d599">
 <strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for each integration execution. When enabled, the <strong>Email Report Settings</strong> section is displayed for further configuration.</li>
-<li data-list-item-id="e0ef623137a67734280a342d399027194">
+<li data-list-item-id="e06bb3dc12b336209ec2be767c8385f20">
 <strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
-<li data-list-item-id="e03584f033432ec64956eac1776d221a0">
-<strong>Summary </strong><span><strong>Only</strong></span>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
-<li data-list-item-id="e0bcbd3fa99f95be1c61beb26c36c4162">
-<strong>Full </strong><span><strong>Details</strong></span>: All attribute details are displayed.</li>
-<li data-list-item-id="e3f1b24e6f816c5706713a0fae07f1e63">
-<strong> Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the  <strong>Attribute Filter</strong><span>*</span> drop-down menu with the following options:<ul>
-<li data-list-item-id="e3332526f48e5455253798b6cffd4481e">
+<li data-list-item-id="e8237665a588809ecfda8711b82192416">
+<strong>Summary</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e6b22811901a8d315804860c19a499639">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ec92b15dbe8b3ea4611a75f755b7c1848">
+<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the  <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
+<li data-list-item-id="ef96139cd9bc19f93f8ccdaf5b48c0acd">
 <strong>Included Attributes</strong>: Enter the attributes to be included in the email report. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
-<li data-list-item-id="e999e849f7f29410e0ca77c1bd4a8d7f5">
+<li data-list-item-id="e4058ca6605ca463f1e8938fd5dd7693a">
 <strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the email report. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
 </ul>
 </li>
 </ul>
 </li>
-<li data-list-item-id="e77f108eaf06c379cb1733a6e5823e972">
+<li data-list-item-id="e026bdaedcd821029bccdac1196956a18">
 <strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values for each event when choosing the Full Details or Custom option.</li>
-</ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Logging</h3><p>The <strong>Logging</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KGHF59DA5EF0WXHK2SMFB9W4">Log Settings</h4><p>Configure the following log settings:</p><ul><li data-list-item-id="ed0867020aa175f65b10a2d598d8300a2">
-<strong>Log Detail Level</strong><span>*</span>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
-<li data-list-item-id="e48e4ea90a743a7662c64c04d85604d7d">
-<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
-<li data-list-item-id="ee6622df6644261a145f7bbf85ec2ed48">
-<strong>Full Details</strong>: All attribute details are displayed.</li>
-<li data-list-item-id="e65795491e72d6a0414252a07144aede5">
-<strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong>* drop-down menu with the following options:<ul>
-<li data-list-item-id="e7ede4c2767e0a39b80865b147a18da4d">
-<strong>Included Attributes</strong>: Enter the attributes to be included in the log. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>parameter.</li>
-<li data-list-item-id="ef400709e5a2166d39ac47a5543b137ac">
-<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the log. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>parameter.</li>
-</ul>
-</li>
-<li data-list-item-id="e04f3889407927981575dfc575d5252e7">
-<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values for each event when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
-</ul>
-</li></ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting</h3><p>The <strong>Reporting</strong> section enables you to customize the integration settings according to your specific use case. This section is used to download the integration report in CSV format from the execution timeline. It has the following settings:</p><h4 id="h_01KGHF9JDXCJXF0HYB7BRZ2P0E">Report Settings</h4><p>Configure the following report settings:</p><ul><li data-list-item-id="e65d8567bcadbcddaa75cc58219c04a25">
-<strong>Report Detail Level</strong><span>*</span>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
-<li data-list-item-id="e3daa5534839a4e546cc75f7791907589">
-<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
-<li data-list-item-id="e94b231325028c14a31f6d70531510cb2">
-<strong>Full Details</strong>: All attribute details are displayed.</li>
-<li data-list-item-id="ec94f7e43365635ade40ff44e58a9301e">
+</ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting</h3><p>The <strong>Reporting</strong> section enables you to customize the integration settings according to your specific use case. This section is used to download the integration report in CSV format from the execution timeline. It has the following settings:</p><h4 id="h_01KGHF9JDXCJXF0HYB7BRZ2P0E">Report Settings</h4><p>Configure the following report settings:</p><ul><li data-list-item-id="e244a0ad386f2827fac9de6631d41e29a">
+<strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ef7dfff107397381d20541efe2e38b99d">
+<strong>Summary</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e91389d618eae4fc6eede241846c22b39">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e92788fc944fc631cfa8402a288631ab4">
 <strong>Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
-<li data-list-item-id="eb6460f7a17056d89b2ee7b4ff28f67d0">
+<li data-list-item-id="ebf8f45f4ceb1305b294f29859ff38ed7">
 <strong>Included Attributes</strong>: Enter the attributes to be included in the report. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
-<li data-list-item-id="e47ab7990ba50d25cbc1d8e711aa67aa9">
+<li data-list-item-id="e2f4af2e23b4de18ef05a2e72668bdae1">
 <strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the report. This parameter is available only if you select <strong>Excluded Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
 </ul>
 </li>
-<li data-list-item-id="e069c874ad5891a870989ea9909a8222b">
+<li data-list-item-id="e5e514390329b56aef37c591fb9c4a1ff">
 <strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
 </ul>
 </li></ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>The <strong>Log Insights</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KGHFA6Y71CG6DK6D0DZ6XTH1">Log Insight Settings</h4><p>Configure the following settings to customize the log insights:</p><p id="01K5B9P929CY5YBAY51DATK62B">It has the following settings:</p><ul><li data-list-item-id="e308f854394f3970d3a3ca4c8c426f0e7">
 <strong data-end="185" data-start="147">Log Insights </strong><span><strong data-end="185" data-start="147">Detail</strong></span><strong data-end="185" data-start="147"> Level:</strong> Select the log insights detail level from the dropdown menu. The following are the available options:<ul>
 <li data-list-item-id="ebfc745e034920423beba6d04d3f281a8">
-<strong data-end="337" data-start="320">Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<strong data-end="337" data-start="320">Summary</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
 <li data-list-item-id="e07cf5f1c11e82f4ff09af1aec9119996">
-<strong data-end="440" data-start="423">Full Details</strong>: All attribute details are displayed.</li>
+<strong data-end="440" data-start="423">Full</strong>: All attribute details are displayed.</li>
 <li data-list-item-id="e0ce3b8abca1937a3b628428c19bc2b69">
-<strong data-end="493" data-start="482">Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong>* drop-down menu with the following options:<ul>
+<strong data-end="493" data-start="482">Custom</strong>: Includes or excludes selected attribute details. Selecting the <strong>Custom</strong> option will display the <strong>Attribute Filter</strong> drop-down menu with the following options:<ul>
 <li data-list-item-id="e0ff3f723a830433919e09d42824af441">
 <strong>Included Attributes</strong>: Enter the attributes that should be included in the log insights. This parameter is available only if you select <strong>Included Attributes</strong> in the <strong>Attribute Filter </strong>section.</li>
 <li data-list-item-id="efdd69125831b333d42b87a1dc65f2749">
@@ -179,7 +171,17 @@
 <li data-list-item-id="e9b392009f73e7a3975e8e1bcc83cfc52">
 <strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the Full Details or Custom option.</li>
 </ul>
-</li></ul><h2 id="h_01KGS7GWR0HGV51CVV377A1WX4">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01KGHMQNFNBCR5J9J93JC1KRMP">Tables</h2><p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the Jira Service Management Cloud application, and you want to update a value for that attribute in Active Directory. Based on your requirement, you can add any number of tables in the integration.</p><p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a> section in the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for details.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+</li></ul><h3 id="h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug <span>Mode</span>
+</h3><p>This section enables you to set debug options to help troubleshoot and fix integration issues.</p><p><strong>Note</strong>: The Debug Settings tab appears when you select the Enable debug mode checkbox in the Integration Settings section of the Parameters tab.</p><ul>
+<li data-list-item-id="e14a42fc8e0da9abe88dc19bf51319ee5">
+<strong>Enable for Single-User</strong>: Select to debug the integration for a single employee. Selecting this parameter will display the below <strong>Dayforce User EmployeeNumber</strong> parameter.<ul><li data-list-item-id="e8954ccee8de468e9f5ad69050333c9ab">
+<span><strong>Dayforce</strong></span><strong> User EmployeeNumber</strong>: Enter the employee number of the Dayforce employee to be used for debugging purposes.</li></ul>
+</li>
+<li data-list-item-id="e42c2fe13f6112a1e9c48272bfc88eed3">
+<strong>Enable for Multiple-User</strong>: Select to debug the integration for multiple employees. Selecting this parameter will display the below <strong>Import Limit</strong> parameter.<ul><li data-list-item-id="eb0cffb84b36e8484f9eae7c026acc408">
+<strong>Import Limit</strong>: Enter the maximum number of employee contacts to be imported to Salesforce for debugging in a single integration run.</li></ul>
+</li>
+</ul><h2 id="h_01KGS7GWR0HGV51CVV377A1WX4">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01KGHMQNFNBCR5J9J93JC1KRMP">Tables</h2><p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the Jira Service Management Cloud application, and you want to update a value for that attribute in Active Directory. Based on your requirement, you can add any number of tables in the integration.</p><p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a> section in the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for details.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
   </div>
 </body>
 </html>

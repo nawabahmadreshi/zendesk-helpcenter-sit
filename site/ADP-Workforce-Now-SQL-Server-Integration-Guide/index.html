@@ -206,7 +206,80 @@
 <strong>Select Schema</strong>: Select the corresponding desired schema from the dropdown menu.</li>
 <li data-list-item-id="e9185d87001266deb286068b8779f13a9">
 <strong>Choose Slowly Changing Dimension (SCD) Type</strong>: Select the SCD type to write the data in the selected database. The integration currently supports only SCD-2. <br/>SCD-2 retains the latest data along with the full history. With SCD-2, a new row is inserted into the SQL database for every change, maintaining unlimited history.</li>
-</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically at your chosen time interval. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically at your chosen time interval. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Examples for Creating a View in Microsoft SQL Server</h1><p>The following scripts create views in MS SQL Server: virtual tables that store saved SELECT queries. Creating a view helps you to present data from one or more tables in a consistent, reusable format.</p><h2 id="h_01KJCJVNSSBAHYMBQZ0MXM3VV6">View: V_Worker</h2><p>This view retrieves consolidated current worker demographic and contact information by combining data from the workers and Personal_Contacts tables. The following is the script to create the view:</p><pre><code>Create View V_Worker as
+WITH CTE_Worker AS (
+  SELECT 
+    a.AssociateOID,
+    a.LegalFirstName, 
+    a.LegalLastName,
+    a.BirthDate,
+    a.Gender,
+    b.AddressLineOne,
+    b.AddressLineTwo,
+    b.MobileCellPhoneFormattedNumber,
+    b.LandlineAlternatePhoneFormattedNumber 
+  FROM dbo.workers a WITH (NOLOCK)
+  LEFT JOIN dbo.Personal_Contacts b WITH (NOLOCK) 
+    ON a.worker_id = b.worker_id 
+    AND b.Is_Current = 1 
+  WHERE a.Is_Current = 1  
+)
+SELECT * FROM CTE_Worker;</code></pre><h2 id="h_01KJCJXG42SG29YYN50ZTKHV1P">View: V_Worker_Assignments</h2><p>This view provides a consolidated dataset of current workers and their active assignment details by combining worker demographic information with assignment records. The following is the script to create the view:</p><pre><code>CREATE VIEW V_Worker_Assignments AS
+WITH Current_Workers AS (
+  SELECT 
+    AssociateOID,
+    LegalFirstName, 
+    LegalLastName,
+    BirthDate,
+    Gender
+  FROM dbo.workers WITH (NOLOCK)
+  WHERE Is_Current = 1
+)
+SELECT 
+  w.AssociateOID,
+  w.LegalFirstName,
+  w.LegalLastName,
+  wa.Assignment_Key,
+  wa.Position_ID,
+  wa.Job_Title,
+  wa.Worker_Type,
+  wa.Reports_To_Name,
+  wa.Assignment_Status
+FROM Current_Workers w
+LEFT OUTER JOIN dbo.Worker_Assignment wa WITH (NOLOCK) 
+  ON w.worker_id = wa.worker_id 
+  AND wa.Is_Current = 1 ;</code></pre><h2 id="h_01KJCK0CV8VPN7W9NEV50M7YV0">View: V_Payroll_Summary</h2><p>This view produces a consolidated payroll run summary by combining current payroll header data with related payment distribution and payment allocation details. The following is the script to create the view:</p><pre><code>CREATE VIEW V_Payroll_Summary AS
+WITH CTE_Current_Payroll AS (
+  SELECT 
+    ItemID,
+    PayrollGroupShortName,
+    PayrollYear,
+    PayrollWeekNumber,
+    PayrollRunNumber,
+    PayrollProcessingJobStatusShortName
+  FROM dbo.Payroll WITH (NOLOCK)
+  WHERE Is_Current = 1
+)
+SELECT 
+  p.ItemID,
+  p.PayrollYear,
+  p.PayrollWeekNumber,
+  p.PayrollRunNumber,
+  p.PayrollGroupShortName,
+  -- Distribution Details
+  pd.AssociateOID,
+  pd.CheckAmount,
+  pd.PaymentDocumentID,
+  -- Allocation Details
+  pa.PaymentAllocationID,
+  pa.PaymentAllocationSchemeCode
+FROM CTE_Current_Payroll p
+LEFT OUTER JOIN dbo.Payment_Distributions pd WITH (NOLOCK) 
+  ON p.ItemID = pd.PayrollItemID 
+  AND pd.Is_Current = 1
+LEFT OUTER JOIN dbo.Payment_Allocations pa WITH (NOLOCK) 
+  ON p.ItemID = pa.PayrollItemID 
+  AND pa.Is_Current = 1;</code></pre><h1 id="h_01KJCK47F7K0E2S5DKA8201FZN">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
 <li data-list-item-id="e4e6f322a3531898716f5545772a4643c">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
 <li data-list-item-id="e39dc211ced8a964946ed5855a7baaf47">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
 <li data-list-item-id="ed4c631359919ee5b98d8a68f61e87a4f">
@@ -224,7 +297,7 @@
 </ul>
 </li>
 <li data-list-item-id="eb29ff107832058cb021a8382afd094cb">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
-</ol>
+</ol><h1 id="h_01KJCCVHRE488AV2FHQJBF1P7G">Entity Relationship Diagrams</h1><p> </p><p> </p><figure><img alt="ADP workforce Now ERD Diagram V2 - Screen Shot 1.png" height="1328" src="./assets/14e86bc1095497e6.bin" width="3947"/></figure><p> </p><figure><img alt="ADP workforce Now ERD Diagram V2 - Screenshot 2.png" height="2535" src="./assets/785aced90a7efbfd.bin" width="4938"/></figure><p> </p><figure><img alt="ADP workforce Now ERD Diagram V2 - Screenshot 3.png" height="2933" src="./assets/84d626dc6ea0ef61.bin" width="4834"/></figure>
   </div>
 </body>
 </html>

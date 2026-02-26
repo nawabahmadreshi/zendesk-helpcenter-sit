@@ -19,272 +19,268 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>ADP Workforce Now to Microsoft Entra ID User Provisioning Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01KJ4NXFR1610K1XQKE38YN99F">Overview</h1><p>The <strong>Aquera platform</strong> allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p data-end="351" data-start="92">The ADP Workforce Now to Microsoft Entra ID User Provisioning integration automates the synchronization of worker data from ADP Workforce Now to Microsoft Entra ID. This integration ensures that user accounts in Entra ID are created, updated, and deactivated automatically based on authoritative HR data from ADP.</p><p data-end="752" data-start="353">The integration reads worker records from ADP Workforce Now, applies configured eligibility rules and matches each worker to an existing Entra ID user using a defined correlation attribute. If no matching user is found, a new account is created. If a user already exists, the integration updates the account when changes are detected, such as job title, department, manager, or contact information.</p><p data-end="1046" data-is-last-node="" data-is-only-node="" data-start="754">When a worker becomes inactive or no longer meets the configured conditions, the integration updates the user’s account status according to the defined lifecycle rules. This helps organizations maintain accurate identity data, enforce access policies, and reduce manual administrative effort.</p><h2 id="h_01KJ4VFN33XPZS3QWAKP8W5K9Q">Key Features </h2><ul>
-<li data-list-item-id="efc4ff87ec2708e845277e119b757b66a">Creates new Microsoft Entra ID user accounts for eligible workers from ADP Workforce Now, including automatic temporary password generation.</li>
-<li data-list-item-id="e675c324a463f2e9ae97c25b4a6d3f9f9">Updates existing Entra ID users by detecting and applying only ADP attribute changes.</li>
-<li data-list-item-id="e0ea466deeae7489233d46001fc921372">Deactivates Entra ID accounts based on configurable lifecycle rules, with deactivation prioritized over updates when both conditions apply.</li>
-<li data-list-item-id="ee1dae4e6786d6c7df266f5b814bfc238">Supports flexible user correlation using configurable attributes such as Associate ID, Position ID, or Work Email.</li>
-<li data-list-item-id="ea78348668175b6c203182b849e2c3077">Applies configurable eligibility rules for create, update, and deactivate actions, including custom filter logic and date-based conditions.</li>
-<li data-list-item-id="e2373ddc06d0e29c27453ceefa9a76b56">Supports date offsets for onboarding and offboarding to defer provisioning or deactivation until the configured effective date.</li>
-<li data-list-item-id="e67830ea5990b9f6d06d78beb2d1e010a">Manages Microsoft Entra ID group memberships based on defined assignment rules.</li>
-<li data-list-item-id="ef255e3192bfb42f7734ca3874fc958b1">Processes only records that have changed since the last successful run using stored last-modified timestamps.</li>
-</ul><h1 id="h_01J46AGRGRQPVRAPETC1V9F4Q4">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
-<li data-list-item-id="ed8fdc212e223d4e02681c1445de02339">
-<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/"><span>https://admin.aquera.io</span></a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank"><span>https://admin.eu.aquera.io/</span></a>
+<h1 id="h_01KJBZQEYXSCQRGE1N2ZDCBAQR">Overview</h1><p>The <strong>Aquera platform</strong> allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>The ADP Workforce Now to Microsoft Entra ID User Provisioning integration automates the synchronization of worker data from ADP Workforce Now to Microsoft Entra ID. This integration ensures that user accounts in Entra ID are created, updated, and deactivated automatically based on authoritative HR data from ADP.</p><p>The integration reads worker records from ADP Workforce Now, applies configured eligibility rules and matches each worker to an existing Entra ID user using a defined correlation attribute. If no matching user is found, a new account is created. If a user already exists, the integration updates the account when changes are detected, such as job title, department, manager, or contact information.</p><p>When a worker becomes inactive or no longer meets the configured conditions, the integration updates the user’s account status according to the defined lifecycle rules. This helps organizations maintain accurate identity data, enforce access policies, and reduce manual administrative effort.</p><h2 id="h_01KJBZQM4GNW8CQ2R32RYCJM6E">Key Features</h2><ul>
+<li data-list-item-id="e0ed384d5f0b7c48743a4a11bb7dad328">Creates new Microsoft Entra ID user accounts for eligible workers from ADP Workforce Now, including automatic temporary password generation.</li>
+<li data-list-item-id="e6bd217b4ee2fc3602075bfa80307e03f">Updates existing Entra ID users by detecting and applying only ADP attribute changes.</li>
+<li data-list-item-id="e8a0bb7b16586775f1ed9436d9bedbb9d">Deactivates Entra ID accounts based on configurable lifecycle rules, with deactivation prioritized over updates when both conditions apply.</li>
+<li data-list-item-id="e39d0aad64d9cc2874fedcd65490ba28e">Supports flexible user correlation using configurable attributes such as Associate ID, Position ID, or Work Email.</li>
+<li data-list-item-id="ea88073b83f4aff686aa0bf28b82db42e">Applies configurable eligibility rules for create, update, and deactivate actions, including custom filter logic and date-based conditions.</li>
+<li data-list-item-id="ec26208b2477b67f2d70c0aaf5e51452d">Supports date offsets for onboarding and offboarding to defer provisioning or deactivation until the configured effective date.</li>
+<li data-list-item-id="e84cfe3635873e1290bc613e4673b9b37">Manages Microsoft Entra ID group memberships based on defined assignment rules.</li>
+<li data-list-item-id="e519992d0c9bad622e56c4685206fe952">Processes only records that have changed since the last successful run using stored last-modified timestamps.</li>
+</ul><h2 id="h_01KJBZQTW7VQA0KBWMA7YP3XGF">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e4fbdca6fa09d7a1e755fb4a1f8c34ba2">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
 </li>
-<li data-list-item-id="ed6a0d5491c20f20ab6d8454b16b49563">
+<li data-list-item-id="eda6d4d2cc371801dfd99323465db889e">
 <strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
-<li data-list-item-id="efdc6ad67d4f890298cdd59810f55ff87">
-<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
-<li data-list-item-id="e86d76a348600e73ac707dab7c8a64318">
-<strong>Microsoft 365</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711-Microsoft-365-Configuration-Guide" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for details.</li>
+<li data-list-item-id="e378fd351c3f8d5498b53e64b647f2364">
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://www.notion.so/hc/en-us/articles/360017945933">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li data-list-item-id="ef5df7fb1611de369d100ef1631956f7e">
+<strong>Microsoft 365</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711-Microsoft-365-Configuration-Guide">Microsoft 365 Configuration Guide</a> for details.</li>
 </ul>
 </li>
-</ul><h1 id="h_01KJ4WHTS4248FWPK88KT3A7BM">Integration Setup</h1><p>This section outlines the configuration required to establish integration between <strong>ADP Workforce Now and Microsoft Entra ID</strong> using the Microsoft 365 connector in the Aquera Admin Portal.</p><h2 id="h_01KJ4WHTS55BASXQA1R2SA1E1Z">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
-<li data-list-item-id="e025d1cb3d05051b679b0e9d2495f6fa9">Log in to the <strong>Aquera Admin Portal</strong>.</li>
-<li data-list-item-id="e99e3b97ba722b8cc6402d2ccea9bf317">In the left navigation panel, select <strong>Integrations</strong>.</li>
-<li data-list-item-id="e8a915b8c31f99de934b826bb7f9d33ed">Click <strong>Create Integration</strong>.</li>
-<li data-list-item-id="e4a2304ba8e7486cb73093869c1b50d97">Select <strong>ADP Workforce Now Workers to Entra ID Users</strong> as the integration template.</li>
-<li data-list-item-id="e8530c6acc01a07378090d631cb6b2bd0">Enter a <strong>name</strong> and <strong>description</strong> for the integration.</li>
-<li data-list-item-id="e43808f7b85e680b0bec8a0dc4aed36e1">Select the connector instances that the integration will use:<ul>
-<li data-list-item-id="e1128afddc00be4e73e59b279708ffef3"><strong>ADP Workforce Now</strong></li>
-<li data-list-item-id="e8a1f05520822732710926e5a8cb70758"><strong>Microsoft 365 (Entra ID)</strong></li>
+</ul><h2 id="h_01KJBZR2N6GDQY737FJ0K7QC43">Integration Setup</h2><p>This section outlines the configuration required to establish integration between <strong>ADP Workforce Now and Microsoft Entra ID</strong> using the Microsoft 365 connector in the Aquera Admin Portal.</p><p><strong>Create Integration</strong></p><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e5b0c7d0735ee4bb77fb7d663674dc9c5">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="e7ee5d36dfe2428928299cd36db4744c4">In the left navigation panel, select <strong>Integrations</strong>.</li>
+<li data-list-item-id="eb38df4fd800518c575ad6ea4f013c3d2">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="eafc5543410262480b08ea823abb2165f">Select <strong>ADP Workforce Now Workers to Entra ID Users</strong> as the integration template.</li>
+<li data-list-item-id="ed40547afafc31b8db44edfe536038697">Enter a <strong>name</strong> and <strong>description</strong> for the integration.</li>
+<li data-list-item-id="e61e164b22d3d3e8d80253164795013be">Select the connector instances that the integration will use:<ul>
+<li data-list-item-id="e34872bbfcc22915877fe13b25c075bc6"><strong>ADP Workforce Now</strong></li>
+<li data-list-item-id="efd1ec63688b708f0a25c2e3424361e5d"><strong>Microsoft 365 (Entra ID)</strong></li>
 </ul>
 </li>
-<li data-list-item-id="e9e224d3d80527305b5d6f3fb6d8d8335">Click <strong>Continue</strong>.</li>
-</ol><p>The <strong>Configuration</strong> page is displayed to complete the integration setup.</p><h1 id="h_01KJ4WKVQZSBDC5G5QC911Z1C5">Configuration</h1><p>The <strong>Configuration</strong> tab is used to review and customize the behavior of the <strong>ADP Workforce Now to Microsoft Entra ID integration</strong>.</p><p>The following sections are available under the Configuration tab:</p><h2 id="h_01KJ4WKVR0EXH6RDEXDBZ3G4HX">Applications</h2><p>The <strong>Applications</strong> section displays the configured source and target connectors for the integration.</p><p>This section allows you to review, search, and update the selected connector instances.</p><h2 data-end="81" data-start="68" id="h_01KJ4WRMEYK72N2SRR8QV6YE5S">Parameters</h2><p data-end="224" data-start="83">The <strong data-end="101" data-start="87">Parameters</strong> section allows you to configure how ADP Workforce Now worker records are processed and synchronized to Microsoft Entra ID.</p><p data-end="445" data-start="226">This section includes settings that control worker eligibility rules, creation and deactivation behavior, incremental synchronization, optional onboarding and offboarding date offsets, and Entra ID group assignment logic.</p><p data-end="595" data-start="447">These settings determine which workers are provisioned, updated, or deactivated in Entra ID and how group memberships are managed based on ADP data.</p><h3 id="h_01KJ4X0ZWSCZBR90HPAWRAJZDQ">Integration Features</h3><ul>
-<li data-list-item-id="e1abbf540bc9be85ec9ee3c41e7f6b8c1">
-<strong>Enable Worker Management:</strong> Enables synchronization of ADP worker records to Microsoft Entra ID. For example, when a new employee is added in ADP, the integration creates the corresponding user in Entra ID.</li>
-<li data-list-item-id="e962d0ecf4c5ba74c7b9676c1732d8569">
-<strong>Enable Date Offset:</strong> Enables processing of workers based on configured hire or termination date offsets. For example, if a hire date offset of -2 days is configured, the user account can be created two days before the official hire date.</li>
-<li data-list-item-id="ecaa5ad7dc7c8a9a87a90810b88e6a321">
-<strong>Enable Entra Group Management:</strong> Enables automatic assignment and removal of users from Microsoft Entra ID groups based on configured rules. For example, if a worker belongs to the Sales department in ADP, the integration can automatically add the user to the Sales-Entra group.</li>
-</ul><h3 id="h_01KJ4XTQZNGBTEEAFST0DTKVZ0">General Settings</h3><div><div><div tabindex="-1"><div><div data-message-author-role="assistant" data-message-id="b3aad576-9c38-4efa-a188-981366dd5607" data-message-model-slug="gpt-5-2" dir="auto"><div><div>
-<ul>
-<li data-list-item-id="eb5c0c9df39b42909b2d1ba829252f221"><p data-end="408" data-start="151"><strong data-end="179" data-start="151">Enable Report-Only Mode:</strong> Select to generate a report detailing the data changes that would happen, but without applying them.</p></li>
-<li data-list-item-id="e91c02df47b0cbb43c8cb7e5f95bfb6fa"><p data-end="588" data-start="410"><strong data-end="429" data-start="410">Enable Logging:</strong> Select to generate logs outlining data changes.</p></li>
-<li data-list-item-id="ee88200b0a20ca91cd6fafafa1c34da2a"><p data-end="786" data-start="590"><strong data-end="615" data-start="590">Enable Notifications:</strong> Select to enable the integration-related notifications.</p></li>
-<li data-list-item-id="ebf8fc19129c5c1bbe530dde939716b16"><p data-end="985" data-start="788"><strong data-end="817" data-start="788">Enable Report Generation:</strong> Select to generate the integration report.</p></li>
-<li data-list-item-id="edf30cbb04e582e6ac86f307011869be0"><p data-end="1191" data-start="987"><strong data-end="1009" data-start="987">Enable Debug Mode:</strong> Select to generate logs outlining data changes that would occur for debugging.</p></li>
-<li data-list-item-id="e3f1e44dd0b6a7a0739c3b92ba58b2680"><p data-end="1390" data-is-last-node="" data-is-only-node="" data-start="1193"><strong data-end="1217" data-start="1193">Enable Log Insights:</strong> Select to visualize the integration-related metrics.</p></li>
-</ul>
-<h3 id="h_01KJ4Y4X3TVTPSCK1WBK8EQN5W">Workforce Now Settings</h3>
-<ul>
-<li data-list-item-id="e6926121ca2725be384d8dda4eea24a7b">
-<strong>Enable Incremental Sync:</strong> Select to process only workers who have been updated since the last successful integration run. For example, if only three employees were updated in ADP, only those three records are synchronized instead of all workers.</li>
-<li data-list-item-id="e441db8de917444e3cc6ae830a746825b">
-<strong>Workers Eligible for Provisioning in Entra:</strong> Select which ADP workers should be created or updated in Microsoft Entra ID from the dropdown. For example, selecting <strong>All Active Workers</strong> ensures only currently employed workers are provisioned.<br/>The following options are available in the dropdown: <ul>
-<li data-list-item-id="e667dad341b7062cc9ea0bdbd9c464f57">
-<strong>All Workers:</strong> Select to provision and update all workers from ADP Workforce Now, regardless of employment status. For example, both active and inactive workers will be synchronized to Entra ID.</li>
-<li data-list-item-id="ed88fc051c1bda9c3dd86d68c30753042">
-<strong>All Active Workers:</strong> Select to provision and update only workers whose employment status is active. For example, terminated or retired workers will not be created or updated.</li>
-<li data-list-item-id="e1ad3adeab74de7874d1b0cb752bf5f1b">
-<strong>All Active Full-Time Workers:</strong> Select to provision and update only workers who are both active and classified as full-time in ADP. For example, part-time or contract workers will be excluded.</li>
-<li data-list-item-id="e87bae4ed2f1acfbf2ef925b8aae69397">
-<span data-token-index="0"><strong>Custom</strong>:</span> Select to define a custom rule to determine which workers should be provisioned. For example, you can configure the integration to provision only workers in a specific department or only those with a valid work email address. <br/>Selecting the <strong>Custom</strong> option from the dropdown makes the following field visible:<ul><li data-list-item-id="ef8f871b787600f724a85e7a3863500a6">
-<strong>Custom Upsert Condition: </strong>Enter a JavaScript rule to decide which workers should be created or updated in Entra ID. For example, you can set it to create or update users only if they have a valid work email address.</li></ul>
+<li data-list-item-id="edee5fe36745be721fa30c557abd30383">Click <strong>Continue</strong>.</li>
+</ol><p>The <strong>Configuration</strong> page is displayed to complete the integration setup.</p><h2 id="h_01KJBZRBX8PFVCXE0XMZN23ZF9">Configuration</h2><p>The <strong>Configuration</strong> tab is used to review and customize the behavior of the <strong>ADP Workforce Now to Microsoft Entra ID integration</strong>.</p><p>The following sections are available under the Configuration tab:</p><h3 id="h_01KJBZRM52QJ26HN0CP93KFXB2">Applications</h3><p>The <strong>Applications</strong> section displays the configured source and target connectors for the integration.</p><p>This section allows you to review, search, and update the selected connector instances.</p><h3 id="h_01KJBZRXFW0SBQGZYTSWP1GPBA">Parameters</h3><p>The <strong>Parameters</strong> section allows you to configure how ADP Workforce Now worker records are processed and synchronized to Microsoft Entra ID.</p><p>This section includes settings that control worker eligibility rules, creation and deactivation behavior, incremental synchronization, optional onboarding and offboarding date offsets, and Entra ID group assignment logic.</p><p>These settings determine which workers are provisioned, updated, or deactivated in Entra ID and how group memberships are managed based on ADP data.</p><h4 id="h_01KJBZS539HEZKQEC2QKG6XJ50">Integration Features</h4><ul>
+<li data-list-item-id="edf492208cca73cd014807f149ea27a9c">
+<strong>Enable worker management:</strong> Enables synchronization of ADP worker records to Microsoft Entra ID. For example, when a new employee is added in ADP, the integration creates the corresponding user in Entra ID.</li>
+<li data-list-item-id="e4b0c2c1466414c88a56a2c49c25715b0">
+<strong>Enable date offset:</strong> Enables processing of workers based on configured hire or termination date offsets. For example, if a hire date offset of -2 days is configured, the user account can be created two days before the official hire date.</li>
+<li data-list-item-id="e1a40836453eec478e731c1929c8f7ba1">
+<strong>Enable Entra group management:</strong> Enables automatic assignment and removal of users from Microsoft Entra ID groups based on configured rules. For example, if a worker belongs to the Sales department in ADP, the integration can automatically add the user to the Sales-Entra group.</li>
+</ul><h4 id="h_01KJBZSD23Z4RZW32GZZZ6BM55">General Settings</h4><ul>
+<li data-list-item-id="ebf1dc9a88c61f01a07e738da546eb98a">
+<strong>Enable report-only mode:</strong> Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="ef4aa3bd9b9ec3c805a1c8b604140a617">
+<strong>Enable logging:</strong> Select to generate logs outlining data changes.</li>
+<li data-list-item-id="e23836c3225eac70700fe60dc3cd7b529">
+<strong>Enable notifications:</strong> Select to enable the integration-related notifications.</li>
+<li data-list-item-id="e33fa2f418a879935157e27beb7541feb">
+<strong>Enable report generation:</strong> Select to generate the integration report.</li>
+<li data-list-item-id="e28ff4c4c1f79c3c91f97f7275603a288">
+<strong>Enable debug mode:</strong> Select to generate logs outlining data changes that would occur for debugging.</li>
+<li data-list-item-id="e6d1019886f963f2be6c50f00b162499d">
+<strong>Enable log insights:</strong> Select to visualize the integration-related metrics.</li>
+</ul><h4 id="h_01KJBZSJJDETBM15H2HE780Y5H">Workforce Now Settings</h4><ul>
+<li data-list-item-id="e08d79cca1df004b399372647e9d46df5">
+<strong>Enable incremental sync:</strong> Select to process only workers who have been updated since the last successful integration run. For example, if only three employees were updated in ADP, only those three records are synchronized instead of all workers.</li>
+<li data-list-item-id="e04ee1ced3a9f4da76e2f356d23186073">
+<strong>Workers eligible for provisioning in Entra:</strong> Select which ADP workers should be created or updated in Microsoft Entra ID from the dropdown. For example, selecting <strong>All Active Workers</strong> ensures only currently employed workers are provisioned.The following options are available in the dropdown:<ul>
+<li data-list-item-id="eb083c9575114b38d647f60e3bc8d6e35">
+<strong>All workers:</strong> Select to provision and update all workers from ADP Workforce Now, regardless of employment status. For example, both active and inactive workers will be synchronized to Entra ID.</li>
+<li data-list-item-id="e06447594d3cc7f2574efa1050a4ead84">
+<strong>All active workers:</strong> Select to provision and update only workers whose employment status is active. For example, terminated or retired workers will not be created or updated.</li>
+<li data-list-item-id="e5e6cc9578fa1453de93f4267521670e4">
+<strong>All active full-time workers:</strong> Select to provision and update only workers who are both active and classified as full-time in ADP. For example, part-time or contract workers will be excluded.</li>
+<li data-list-item-id="e47353bab0ce9d2160165d77bccc15854">
+<strong>Custom</strong>: Select to define a custom rule to determine which workers should be provisioned. For example, you can configure the integration to provision only workers in a specific department or only those with a valid work email address. Selecting the <strong>Custom</strong> option from the dropdown makes the following field visible:<ul><li data-list-item-id="ecc6d5fe48a8e1060f0108e0c696f9dbc">
+<strong>Custom upsert condition:</strong> Enter a JavaScript rule to decide which workers should be created or updated in Entra ID. For example, you can set it to create or update users only if they have a valid work email address.</li></ul>
 </li>
-<li data-list-item-id="e6e1ea92d60200d3d2a29b37eea24829c">
-<span data-token-index="0"><strong>Delete Condition Type</strong>:</span> Select how the integration should decide which workers to delete from Entra ID. For example, choose <span data-token-index="2">Basic</span> to use standard termination rules, or choose <span data-token-index="4">Custom</span> to define your own deletion logic.<br/>The following options are available in the dropdown: <ul>
-<li data-list-item-id="e01de2438c617bed547e47ee7e205708f">
+<li data-list-item-id="e88156b9467c2ddfc456678e590eae461">
+<strong>Delete condition type</strong>: Select how the integration should decide which workers to delete from Entra ID. For example, choose Basic to use standard termination rules, or choose Custom to define your own deletion logic.The following options are available in the dropdown:<ul>
+<li data-list-item-id="eba9fc022b7a69ce7ca8c9fdd955f6762">
 <strong>Basic:</strong> Uses predefined worker status rules to determine who should be deleted. For example, workers marked as terminated or retired in ADP can be automatically removed from Entra ID.</li>
-<li data-list-item-id="eb46e5faba88aa92fb796f70941c0c11e">
-<strong>Custom:</strong> Allows you to define your own rule to decide which workers should be deleted. For example, you can delete users only if their status is terminated and their termination date is in the past.<br/>Selecting the <strong>Custom</strong> option from the dropdown makes the following field visible:<ul><li data-list-item-id="eeb02041a96803f38139d2f3485556cd2">
-<strong>Custom Delete Condition:</strong> Enter a JavaScript rule to decide which workers should be deleted in Entra ID. For example, you can configure the integration to delete users only when their employment status is <strong>Terminated</strong>.</li></ul>
+<li data-list-item-id="e5402609feddbbafd9060a83f55e2a4a1">
+<strong>Custom:</strong> Allows you to define your own rule to decide which workers should be deleted. For example, you can delete users only if their status is terminated and their termination date is in the past.Selecting the <strong>Custom</strong> option from the dropdown makes the following field visible:<ul><li data-list-item-id="e6eb35abb2779ff6b7637ed8831c2aa14">
+<strong>Custom delete condition:</strong> Enter a JavaScript rule to decide which workers should be deleted in Entra ID. For example, you can configure the integration to delete users only when their employment status is <strong>Terminated</strong>.</li></ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li data-list-item-id="eef564cb106f18ceea71ab1f78d0a1a3f">
-<p><strong>Workers Eligible for Deletion in Entra:</strong> Select which ADP worker statuses trigger account deletion in Microsoft Entra ID. For example, selecting <strong>All Terminated Workers</strong> ensures users are removed when their employment ends.</p>
-<p>The following options are available in the dropdown:</p>
-<ul>
-<li data-list-item-id="e0995e3bd494110dbae974e2e585765cb">
-<strong>All Terminated Workers:</strong> Deletes user accounts for workers whose employment status is marked as terminated in ADP. For example, when an employee is officially terminated, their Entra ID account is permanently removed.</li>
-<li data-list-item-id="e11d9f8dadeb7015b1728852ad9553ab9">
-<strong>All Retired Workers:</strong> Deletes user accounts for workers whose status in ADP is marked as retired. For example, when an employee retires, their Entra ID account is removed.</li>
-<li data-list-item-id="e848ba8f17da2e2dff9aae63094df7dac">
-<strong>All Deceased Workers:</strong> Deletes user accounts for workers marked as deceased in ADP. For example, if a worker’s status is updated to deceased, their Entra ID account is permanently deleted.</li>
-<li data-list-item-id="ee1f19c3a25391aa168347cdb9337106f">
-<p><strong>All Workers On Leave:</strong> Deletes user accounts for workers whose ADP status is marked as on leave. For example, if an employee is placed on leave and this option is selected, their account will be deleted.</p>
-<p><strong>Note: </strong>Account deletion permanently removes the user from Entra ID. If temporary access removal is required instead, consider configuring deactivation rather than deletion.</p>
-</li>
+<li data-list-item-id="e3d5ecb6d3f4d34d2e92f5b65635791e7">
+<strong>Workers eligible for deletion in Entra:</strong> Select which ADP worker statuses trigger account deletion in Microsoft Entra ID. For example, selecting <strong>All Terminated Workers</strong> ensures users are removed when their employment ends.<br/><br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="e00fa36c1de712b693760f97d9d6de024">
+<strong>All terminated workers:</strong> Deletes user accounts for workers whose employment status is marked as terminated in ADP. For example, when an employee is officially terminated, their Entra ID account is permanently removed.</li>
+<li data-list-item-id="e2d2cbbbe4fb31aff3b82771e04a7f4cb">
+<strong>All retired workers:</strong> Deletes user accounts for workers whose status in ADP is marked as retired. For example, when an employee retires, their Entra ID account is removed.</li>
+<li data-list-item-id="e96fe04578058e12bcd9f726fb0ba8e34">
+<strong>All deceased workers:</strong> Deletes user accounts for workers marked as deceased in ADP. For example, if a worker’s status is updated to deceased, their Entra ID account is permanently deleted.</li>
+<li data-list-item-id="e7c94444370a2508b43bcb2ee8ae21438">
+<strong>All workers on leave:</strong> Deletes user accounts for workers whose ADP status is marked as on leave. For example, if an employee is placed on leave and this option is selected, their account will be deleted.</li>
 </ul>
 </li>
-</ul>
-<h3 id="h_01KJ4YW0P6RR32Q0TXW5BQD57Y">Correlation Settings</h3>
-<p>The Correlation Settings section defines how worker records from ADP Workforce Now are matched with existing user accounts in Microsoft Entra ID. Proper correlation ensures that users are updated instead of duplicated.</p>
-<ul><li data-list-item-id="e7817e8b2eafb1b924ba9f0a4cc3e32f5">
-<strong>Workforce Now Correlation Attribute:</strong> Select the ADP Workforce Now field that will be used as the matching value when searching for an existing user in Entra ID. For example, if <strong>Work Mail</strong> is selected and the worker’s email in ADP is barbara.jensen@example.com, that value is used during the lookup in Entra ID.<br/>The following are the available options in the dropdown: <ul>
-<li data-list-item-id="efa01da1bd6e6fd25d266e72eb3ac358c">
+</ul><p><strong>Note:</strong> Account deletion permanently removes the user from Entra ID. If temporary access removal is required instead, consider configuring deactivation rather than deletion.</p><h4 id="h_01KJBZTGEW1XXREXCN26ECYRM1">Correlation Settings</h4><p>The Correlation Settings section defines how worker records from ADP Workforce Now are matched with existing user accounts in Microsoft Entra ID. Proper correlation ensures that users are updated instead of duplicated.</p><ul>
+<li data-list-item-id="ecf75e640e10d71113079687b206e2c32">
+<strong>Workforce now correlation attribute:</strong> Select the ADP Workforce Now field that will be used as the matching value when searching for an existing user in Entra ID. For example, if <strong>Work Mail</strong> is selected and the worker’s email in ADP is <a href="mailto:barbara.jensen@example.com">barbara.jensen@example.com</a>, that value is used during the lookup in Entra ID.<br/>The following are the available options in the dropdown:<ul>
+<li data-list-item-id="e07a508ac752b7bd3d3f015cbd0dcef4d">
 <strong>Associate ID:</strong> The worker’s unique Associate ID from ADP is used as the matching value. For example, if the Associate ID in ADP is <strong>A10234</strong>, the integration compares it with the selected Entra correlation attribute to find a matching user.</li>
-<li data-list-item-id="e63c4e7db88ef4e82822d6aab7b46ab52">
+<li data-list-item-id="ee00005542525b533c6dc19b096761e9c">
 <strong>Position ID:</strong> The worker’s ADP Position ID is used as the matching value. For example, if the Position ID is <strong>POS-7788</strong>, that value is compared with the selected Entra attribute during user lookup.</li>
-<li data-list-item-id="e98f683ba0d15362d4ef819154c038650">
-<strong>Work Mail:</strong> The worker’s primary work email address in ADP is used as the matching value. For example, barbara.jensen@example.com is used to search for a user in Entra ID with the same value in the selected attribute.</li>
+<li data-list-item-id="ed4a7def7cef99cdb199c0e504087f4fe">
+<strong>Work Mail:</strong> The worker’s primary work email address in ADP is used as the matching value. For example, <a href="mailto:barbara.jensen@example.com">barbara.jensen@example.com</a> is used to search for a user in Entra ID with the same value in the selected attribute.</li>
 </ul>
-</li></ul>
-</div></div></div></div></div></div></div><ul><li data-list-item-id="ef8780376780aeac4a7b0757c49a56233">
-<strong>Entra Correlation Attribute:</strong> Select the Microsoft Entra ID attribute that will be compared against the selected ADP field. The integration searches Entra ID for a user whose selected attribute matches the ADP value.<br/>The following are the available options in the dropdown: <ul>
-<li data-list-item-id="e744cc4132c2c61fa68729bcb75e7903b">
+</li>
+<li data-list-item-id="e06929d38a52e16bcba7a26996ce9f938">
+<strong>Entra correlation attribute:</strong> Select the Microsoft Entra ID attribute that will be compared against the selected ADP field. The integration searches Entra ID for a user whose selected attribute matches the ADP value.<br/>The following are the available options in the dropdown:<ul>
+<li data-list-item-id="eccbec5d7f79bc764a290e54cb7b898b8">
 <strong>Employee ID:</strong> The Employee ID attribute in Entra ID is used for comparison. For example, if ADP provides Associate ID <strong>A10234</strong> and Employee ID is selected in Entra, the integration looks for a user whose Employee ID is <strong>A10234</strong>.</li>
-<li data-list-item-id="e62c8168cad457973c486386664dab529">
-<strong>UPN:</strong> The User Principal Name (UPN) in Entra ID is used for comparison. For example, if ADP provides barbara.jensen@example.com, the integration searches for a user whose UPN matches that value.</li>
-<li data-list-item-id="e95227c4fbd205c2ca67b0630604968c3">
-<strong>Mail:</strong> The primary email address in Entra ID is used for comparison. For example, if ADP provides barbara.jensen@example.com, the integration searches for a user whose Mail attribute matches that value.</li>
-</ul>
-</li></ul><h3 id="h_01KJ4ZQMWG40CFJSM7D7ZKWKEN">Onboarding and Offboarding Settings</h3><p>The Onboarding and Offboarding Settings allow you to configure when user accounts are created and deactivated in Entra ID based on employee start and termination dates.</p><h3 id="h_01KJ502A8K5BNTCFPJ610JDD85">Onboarding Settings</h3><ul><li data-list-item-id="e2a9f32a8daaa3428c4482651612e7726">
-<strong>Account Provisioning Offset:</strong> Select when a user account should be created in Entra ID relative to the worker’s onboarding (hire) date. For example, if a worker’s start date is <strong>July 10</strong> and you select <strong>Create 3 Days Before Start Date</strong>, the account will be created on <strong>July 7</strong>.<br/>The following are the available options in the dropdown: <ul>
-<li data-list-item-id="ee115a6f284eb476deffcd7625ef05e50">
-<strong>Create On Start Date (No Offset):</strong> The user account is created on the worker’s official start date. For example, if the start date is <strong>July 10</strong>, the account is created on <strong>July 10</strong>.</li>
-<li data-list-item-id="e53bcdfe52a727502413dd8df7de1ca70">
-<strong>Create Before Start Date:</strong> The user account is created a specified number of days before the start date. For example, if set to <strong>5 days before</strong>, a July 10 start date results in account creation on <strong>July 5</strong>.</li>
-<li data-list-item-id="ec5b9d423340dbaa627d20c58f0b8d8f8">
-<strong>Create After Start Date:</strong> The user account is created a specified number of days after the start date. For example, if set to <strong>2 days after</strong>, a July 10 start date results in account creation on <strong>July 12</strong>.</li>
-</ul>
-</li></ul><h3 id="h_01KJ4ZQMWJR5RR7EV1Y243W131">Offboarding Settings</h3><ul><li data-list-item-id="e54f444473cd51ed9486046639ae33536">
-<strong>Account Deprovisioning Offset:</strong> Select when a user account should be deactivated in Entra ID relative to the worker’s termination date. For example, if a worker’s termination date is <strong>August 31</strong> and you select <strong>Deactivate 1 Day After Termination</strong>, the account will be deactivated on <strong>September 1</strong>.<br/>The following are the available options in the dropdown: <ul>
-<li data-list-item-id="ef2e030ea018d1d261c2b3f80c478b733">
-<strong>Deactivate On Termination Date (No Offset):</strong> The account is deactivated on the official termination date. For example, if the termination date is <strong>August 31</strong>, access is removed on <strong>August 31</strong>.</li>
-<li data-list-item-id="e2f020c4ca727363afa2ca894afe7978a">
-<strong>Deactivate After Termination Date:</strong> The account is deactivated a specified number of days after the termination date. For example, if set to <strong>3 days after</strong>, a termination date of <strong>August 31</strong> results in deactivation on <strong>September 3</strong>.</li>
-</ul>
-</li></ul><h3 id="h_01KJ9HTG01DFXT0T0BFF2EE75D">Log Settings</h3><p>The Log settings allow you to configure how integration activity is recorded, including the level of detail and how sensitive information is handled in logs.</p><ul>
-<li data-list-item-id="e01c285971b4da4d5b14e5ff6d321ec40">
-<p><span data-token-index="0"><strong>Log Type</strong>: </span>Select the type of data that should appear in the logs. For example, choosing Employee Number with Non-PII Data logs the employee number, operation performed (create, update, delete), field names, and selected non-sensitive values.</p>
-<p>The following are the options available in the dropdown:</p>
-<ul>
-<li data-list-item-id="ef5ee37de2af88586f27504af04d1e6fe">
-<strong>Operations Only</strong>: Logs only the action performed, such as create, update, or delete. For example, the log shows <strong>User Updated </strong>without listing any fields or identifiers.</li>
-<li data-list-item-id="ee5352de3ff4f8c05aa0bc3eaf7e5a474">
-<strong>Operations and Field Names</strong>: Logs the action performed along with the names of the fields that were changed, but not their values. For example, the log shows Updated Department and Title without displaying the actual values.</li>
-<li data-list-item-id="e0d04f8f30e9c5824bd456e78eeaa5714">
-<strong>Employee Identifier with Non-Sensitive Data</strong>: Logs the employee identifier, the action performed, field names, and selected non-sensitive values. For example, the log shows Employee <strong>10234</strong>, Updated <strong>Department = Sales</strong>, without exposing sensitive information such as date of birth.</li>
+<li data-list-item-id="e177065a479be626dda614b496bbcb368">
+<strong>UPN:</strong> The User Principal Name (UPN) in Entra ID is used for comparison. For example, if ADP provides <a href="mailto:barbara.jensen@example.com">barbara.jensen@example.com</a>, the integration searches for a user whose UPN matches that value.</li>
+<li data-list-item-id="e87d7e3a30ddef3d217da13d2a7c48f67">
+<strong>Mail:</strong> The primary email address in Entra ID is used for comparison. For example, if ADP provides <a href="mailto:barbara.jensen@example.com">barbara.jensen@example.com</a>, the integration searches for a user whose Mail attribute matches that value.</li>
 </ul>
 </li>
-<li data-list-item-id="ef0767e07bd4ba8a28fafa740fa3535d1">
-<p data-end="275" data-start="205"><strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu.<br/>The following are the available options in the dropdown: </p>
-<ul>
-<li data-list-item-id="e197c9562c1ff8c6034af1c714ca69f73"><p data-end="371" data-start="277"><strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</p></li>
-<li data-list-item-id="e944487293416aff779e113252a9bab68">
-<p data-end="423" data-start="373"><strong>Full Details</strong>: All attribute details are displayed.</p>
-<ul>
-<li data-list-item-id="e8e7a4e4595385da6e11c07d7a02b3d37"><p data-end="499" data-start="430"><strong>Custom Inclusion List</strong>: Select attributes to be displayed in the logs. Selecting this option makes the <strong>Custom Inclusion List</strong> field visible. </p></li>
-<li data-list-item-id="ea4d34e9c9989d13a407ad8f1791c1b1a"><p data-end="574" data-start="501"><strong>Custom Exclusion List</strong>: Select the fields to be omitted from the logs display. Selecting this option makes the <strong>Custom Exclusion List</strong> field visible.</p></li>
+</ul><h4 id="h_01KJBZV4H65SE38XQVE77VWWRN">Onboarding and Offboarding Settings</h4><p>The Onboarding and Offboarding Settings allow you to configure when user accounts are created and deactivated in Entra ID based on employee start and termination dates.</p><p><strong>Onboarding Settings</strong></p><ul><li data-list-item-id="ea2ea90764f79f3236d4e21b9b57474b6">
+<strong>Account provisioning offset:</strong> Select when a user account should be created in Entra ID relative to the worker’s onboarding (hire) date. For example, if a worker’s start date is <strong>July 10</strong> and you select <strong>Create 3 Days Before Start Date</strong>, the account will be created on <strong>July 7</strong>.The following are the available options in the dropdown:<ul>
+<li data-list-item-id="e2a8e01ecc6a793bba5cd5397c009effe">
+<strong>Create on start date (no offset):</strong> The user account is created on the worker’s official start date. For example, if the start date is <strong>July 10</strong>, the account is created on <strong>July 10</strong>.</li>
+<li data-list-item-id="eba894bf6c96f25f3d45aa712a4e86eb2">
+<strong>Create before start date:</strong> The user account is created a specified number of days before the start date. For example, if set to <strong>5 days before</strong>, a July 10 start date results in account creation on <strong>July 5</strong>.</li>
+<li data-list-item-id="e29e399754d128b2eb1950f0692addfdd">
+<strong>Create after start date:</strong> The user account is created a specified number of days after the start date. For example, if set to <strong>2 days after</strong>, a July 10 start date results in account creation on <strong>July 12</strong>.</li>
+</ul>
+</li></ul><p><strong>Offboarding Settings</strong></p><ul><li data-list-item-id="ed9655660bc8c26d80e3f5133fa22628f">
+<strong>Account deprovisioning offset:</strong> Select when a user account should be deactivated in Entra ID relative to the worker’s termination date. For example, if a worker’s termination date is <strong>August 31</strong> and you select <strong>Deactivate 1 Day After Termination</strong>, the account will be deactivated on <strong>September 1</strong>.The following are the available options in the dropdown:<ul>
+<li data-list-item-id="e09ecf79e522b4526ab9f842ced8018e4">
+<strong>Deactivate on termination date (no offset):</strong> The account is deactivated on the official termination date. For example, if the termination date is <strong>August 31</strong>, access is removed on <strong>August 31</strong>.</li>
+<li data-list-item-id="efb99e8f532553683247b81cfd8dfd0ac">
+<strong>Deactivate after termination date:</strong> The account is deactivated a specified number of days after the termination date. For example, if set to <strong>3 days after</strong>, a termination date of <strong>August 31</strong> results in deactivation on <strong>September 3</strong>.</li>
+</ul>
+</li></ul><h4 id="h_01KJBZWMHN3CT02DR7CY0TYHS1">Log Settings</h4><p>The Log settings allow you to configure how integration activity is recorded, including the level of detail and how sensitive information is handled in logs.</p><ul>
+<li data-list-item-id="e9ee2b253e774fb891993e567dc260e6b">
+<strong>Log Type</strong>: Select the type of data that should appear in the logs. For example, choosing Employee Number with Non-PII Data logs the employee number, operation performed (create, update, delete), field names, and selected non-sensitive values.<br/>The following are the options available in the dropdown:<ul>
+<li data-list-item-id="e1135cd712f178054c56b152e6d5d14e1">
+<strong>Operations only</strong>: Logs only the action performed, such as create, update, or delete. For example, the log shows <strong>User Updated</strong> without listing any fields or identifiers.</li>
+<li data-list-item-id="e33674f5b5441f14feee55a47689bbe6d">
+<strong>Operations and field names</strong>: Logs the action performed along with the names of the fields that were changed, but not their values. For example, the log shows Updated Department and Title without displaying the actual values.</li>
+<li data-list-item-id="ebfb4c5bb03d5230d133b4f506f458dfa">
+<strong>Employee identifier with non-sensitive data</strong>: Logs the employee identifier, the action performed, field names, and selected non-sensitive values. For example, the log shows Employee <strong>10234</strong>, Updated <strong>Department = Sales</strong>, without exposing sensitive information such as date of birth.</li>
+<li data-list-item-id="e09c604f450c178ed678e785eb6a8860d">
+<strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu.<br/>The following are the available options in the dropdown:<ul>
+<li data-list-item-id="e063afef513e89ab7c1935df74e0f5a30">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e8e3a97a36067483cf2c47bf76982efce">
+<strong>Full details</strong>: All attribute details are displayed.<ul>
+<li data-list-item-id="ef1441c41ade3e073e9ed7b7a72101f69">
+<strong>custom inclusion list</strong>: Select attributes to be displayed in the logs. Selecting this option makes the <strong>Custom Inclusion List</strong> field visible.</li>
+<li data-list-item-id="e40239edcc5e3886756c7dea43d44934e">
+<strong>Custom exclusion list</strong>: Select the fields to be omitted from the logs display. Selecting this option makes the <strong>Custom Exclusion List</strong> field visible.</li>
 </ul>
 </li>
 </ul>
 </li>
-<li data-list-item-id="e818547417c0efbeab40cb2a88b6c15d6">
-<strong>PII Fields to Mask</strong>: Enter which fields contain Personally Identifiable Information (PII) and should be excluded or masked in logs. For example, adding <strong>dateOfBirth</strong> ensures that this sensitive value does not appear in integration logs.</li>
-<li data-list-item-id="efe4b588ed579ea365b1a6e6b38ec825f">
-<strong>GUID Fields</strong>: Enter the fields that store Globally Unique Identifiers (GUIDs) so they are handled correctly in logs. For example, adding <strong>managerId</strong> ensures the integration treats this value as a system-generated identifier.</li>
-<li data-list-item-id="ed668628e860434fe409e63ba35bbad8a">
-<strong>Employee Identifier Fields</strong>: Enter the attributes which represent employee identifiers so they appear consistently in logs. For example, adding <strong>associateOID</strong> ensures the employee number is logged correctly for each operation.</li>
-</ul><h4 id="h_01KJ9MM4XRY2JMEWK806KPJ1GW">Report Settings</h4><p>The Report settings allow you to configure the level of detail and data included in the integration report generated after each run:</p><ul>
-<li data-list-item-id="e1631be25e234cfd2cef0c0ae5196c41a">
-<strong>Report Data Type</strong>: Select the type of information to include in the integration report. For example, choosing Employee Identifier with Non-Sensitive Data includes the employee number, operation performed, field names, and selected non-sensitive values in the report.<br/><br/>The following are the available options in the dropdown:<ul>
-<li data-list-item-id="ea5e3872146c11bb943bf39a766504933">
-<strong>Operations Only:</strong> Includes only the action performed, such as create, update, or delete. For example, the report shows <strong>15 Users Updated </strong>without listing fields.</li>
-<li data-list-item-id="eb0d5c77fe24eb926a9d0106e7123e8b9">
-<strong>Operations and Field Names:</strong> Includes the action performed and the names of fields that changed, but not their values. For example, the report shows <strong>Department Updated</strong> without displaying the department name.</li>
-<li data-list-item-id="e20ddaa8d2bfea10f9ac5721e0320abbf">
-<strong>Employee Identifier with Non-Sensitive Data:</strong> Includes the employee identifier, operation performed, field names, and selected non-sensitive values. For example, the report shows Employee <strong>10234</strong>, Updated <strong>Department = Sales</strong>, without exposing sensitive information.</li>
-<li data-list-item-id="e64cf0ce2d0a12c7686b1223caab30cd4">
-<strong>GUID with Non-Sensitive Data:</strong> Includes the GUID, operation performed, field names, and selected non-sensitive values. For example, the report shows GUID <strong>a12b-45c7-d890</strong>, Updated <strong>Title = Manager</strong>, without exposing sensitive data.</li>
 </ul>
 </li>
-<li data-list-item-id="e75d0c6f8367dceed9d6b3cce149c2723">
-<p><strong>Report Detail Level</strong>: Select the desired report detail level from the dropdown menu.</p>
-<p>The following options are available in the dropdown: </p>
-<ul>
-<li data-list-item-id="e55bd561439abf9dcd37dcb18903632d7">
-<strong>Full Details</strong>: All attribute details are displayed.</li>
-<li data-list-item-id="eced511f72010aa57835934401ae66378">
-<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li>
-<li data-list-item-id="efd292b99dcafdeddecfada05f814b3f9">
-<strong>Custom Exclusion List</strong>: Select the attributes to be omitted from reporting.</li>
+<li data-list-item-id="ecfe5c07dd7e6d347e69b6964f464e72b">
+<strong>PII fields to mask</strong>: Enter which fields contain Personally Identifiable Information (PII) and should be excluded or masked in logs. For example, adding <strong>dateOfBirth</strong> ensures that this sensitive value does not appear in integration logs.</li>
+<li data-list-item-id="eacac06b221f2a227e45f20a7cd37e99f">
+<strong>GUID fields</strong>: Enter the fields that store Globally Unique Identifiers (GUIDs) so they are handled correctly in logs. For example, adding <strong>managerId</strong> ensures the integration treats this value as a system-generated identifier.</li>
+<li data-list-item-id="ebd3484e17ec513ed1883cdc14b41457d">
+<strong>Employee identifier fields</strong>: Enter the attributes which represent employee identifiers so they appear consistently in logs. For example, adding <strong>associateOID</strong> ensures the employee number is logged correctly for each operation.</li>
+</ul><h4 id="h_01KJBZXKQVBA7MT6TF4FN456B4">Report Settings</h4><p>The Report settings allow you to configure the level of detail and data included in the integration report generated after each run:</p><ul>
+<li data-list-item-id="e7385811d5029af8f3ae4dd838436a9ca">
+<strong>Report Data Type</strong>: Select the type of information to include in the integration report. For example, choosing Employee Identifier with Non-Sensitive Data includes the employee number, operation performed, field names, and selected non-sensitive values in the report.The following are the available options in the dropdown:<ul>
+<li data-list-item-id="e9ce27379994730bd7c1a56aab29e2763">
+<strong>Operations only:</strong> Includes only the action performed, such as create, update, or delete. For example, the report shows <strong>15 Users Updated</strong> without listing fields.</li>
+<li data-list-item-id="e379910270bafcf2364dea70b3e0a4379">
+<strong>operations and field names:</strong> Includes the action performed and the names of fields that changed, but not their values. For example, the report shows <strong>Department Updated</strong> without displaying the department name.</li>
+<li data-list-item-id="e53e2898287ff4b435db4f27ba681a7d5">
+<strong>Employee identifier with non-sensitive data:</strong> Includes the employee identifier, operation performed, field names, and selected non-sensitive values. For example, the report shows Employee <strong>10234</strong>, Updated <strong>Department = Sales</strong>, without exposing sensitive information.</li>
+<li data-list-item-id="e1b588b059571c8ff23ab62edb067e6e4">
+<strong>Guid with non-sensitive data:</strong> Includes the GUID, operation performed, field names, and selected non-sensitive values. For example, the report shows GUID <strong>a12b-45c7-d890</strong>, Updated <strong>Title = Manager</strong>, without exposing sensitive data.</li>
 </ul>
 </li>
-<li data-list-item-id="ee909f0fc4d26d4c85b4f953b83295658">
-<strong>PII Fields</strong>: Enter the attributes that contain Personally Identifiable Information (PII) and should be masked or excluded from reports. For example, adding <strong>dateOfBirth</strong> or <strong>personalEmail</strong> ensures these values are not displayed in the generated report.</li>
-<li data-list-item-id="edec0bebe44dcdef3e7bdb2788db65c4d">
-<strong>GUID Fields</strong>: Enter the attributes that contain system-generated unique identifiers so they are handled correctly in reports. For example, adding <strong>objectId</strong> ensures the report recognizes this value as a unique system identifier rather than regular user data.</li>
-<li data-list-item-id="e5cf3aea1c67b632f8a007d59965057de">
-<strong>Employee Identifier Fields</strong>: Enter the attributes that represent employee identification values to be clearly displayed in reports. For example, adding <strong>associateOID</strong> ensures the employee number appears consistently for each processed worker.</li>
-</ul><h4 id="h_01KJ9QM8WFATC3M86GGED4EJK7">Debug Settings </h4><p>This section allows you to run the integration for a specific ADP Workforce Now worker to test and troubleshoot configuration behavior.</p><ul>
-<li data-list-item-id="e101c02b1b84a4d4c7318d2c1f63fc1c9">
+<li data-list-item-id="e4b87e5b70aea712a9ca82e6591deb2fb">
+<strong>Report detail level</strong>: Select the desired report detail level from the dropdown menu.<br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="e30f066af6019e70d314df7c531c9461d">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e17fa0885b270fc32635f6b64d3c92700">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the report.</li>
+<li data-list-item-id="eabdc20140d1e1287c9271f79ee803ace">
+<strong>Custom exclusion list</strong>: Select the attributes to be omitted from reporting.</li>
+</ul>
+</li>
+<li data-list-item-id="e5a60950433867f76e233ca3c825b3be9">
+<strong>PII fields</strong>: Enter the attributes that contain Personally Identifiable Information (PII) and should be masked or excluded from reports. For example, adding <strong>dateOfBirth</strong> or <strong>personalEmail</strong> ensures these values are not displayed in the generated report.</li>
+<li data-list-item-id="e86e979b5b61c124436cd85508d1c676d">
+<strong>GUID fields</strong>: Enter the attributes that contain system-generated unique identifiers so they are handled correctly in reports. For example, adding <strong>objectId</strong> ensures the report recognizes this value as a unique system identifier rather than regular user data.</li>
+<li data-list-item-id="ec6511e636a0e78e0ad1bf38e294d2e32">
+<strong>Employee identifier fields</strong>: Enter the attributes that represent employee identification values to be clearly displayed in reports. For example, adding <strong>associateOID</strong> ensures the employee number appears consistently for each processed worker.</li>
+</ul><h4 id="h_01KJBZY96JKQRDNK0AY2J2A47S">Debug Settings</h4><p>This section allows you to run the integration for a specific ADP Workforce Now worker to test and troubleshoot configuration behavior.</p><ul>
+<li data-list-item-id="e9e63905e05ea3534eae41a2ea32ba53f">
 <strong>Associate ID</strong>: Enter the unique associate identifier from ADP Workforce Now to process a specific worker. For example, entering X7U3FD48V runs the integration only for the worker with that Associate ID.</li>
-<li data-list-item-id="ef8678966f40e3e4bdb2e6652e72a8ec3">
+<li data-list-item-id="e6ad0c08c4ea54fb5884c759bb455a631">
 <strong>Position ID</strong>: Enter the position identifier to retrieve workers associated with a specific position. For example, entering <strong>BOS000853</strong> processes workers assigned to that position.</li>
-<li data-list-item-id="e0e70c49545b1ca3501ffd0975bf5533e">
-<strong>Custom Source Filter Condition</strong>: Enter a JavaScript expression to define advanced filtering logic for debugging. For example, entering <strong>workerStatus === "Active" &amp;&amp; businessCommunication_emails_emailUri &amp;&amp; businessCommunication_emails_emailUri.length &gt; 0 , </strong>processes only workers who are active and have a work email address defined.</li>
-</ul><h4 id="h_01KJ9RF8TAGGXZ3MY0KHEHM58H">Notification Settings </h4><p><strong>Notification Template Settings</strong> </p><ul>
-<li data-list-item-id="eaba6bda64c9e9830137b9559ec1194c8">
-<strong>Send Success Notification</strong>: Select to send an email when the integration completes successfully. For example, when the ADP to Entra sync finishes without errors, a success notification is sent to the configured recipients.</li>
-<li data-list-item-id="ee623c811711ad6cd282072571b246929">
-<strong>Send Failure Notification</strong>: Select to send an email when the integration fails. For example, if the sync encounters an error, a failure notification is sent to the configured recipients.</li>
-<li data-list-item-id="ec57d350b1a9e523d0953eab56c01ad00">
-<strong>Attach Execution Report</strong>: Select to include the integration report as an attachment in notification emails. For example, enabling this option attaches the execution summary to both success and failure notifications.</li>
-</ul><h5 id="h_01KJ9RHTP9GP4NW1AJ53H5PR1Y"><strong>Success Notifications</strong></h5><ul>
-<li data-list-item-id="ef1791443d6dfc753d215b7b54ff92096">
-<strong>Success Notification Recipients</strong>: Enter the email addresses that should receive success notification emails. For example, add admin@company.com to receive confirmation when the integration completes successfully.</li>
-<li data-list-item-id="e4292fe1074ef72a42fee0dbe43a082d6">
-<strong>Success Notification CC</strong>: Enter additional email addresses to receive a copy of success notifications. For example, include teamlead@company.com to keep the team informed.</li>
-<li data-list-item-id="eccce57ddfab9440499111dcfd60d21a9">
-<strong>Success Email Subject</strong>: Enter the subject line used for success notification emails. For example, ADP to Entra Integration Success.</li>
-<li data-list-item-id="ed3e71a45bc12087ab9667b788bcbaca0">
-<strong>Success Email Body</strong>: Enter the message content sent when the integration completes successfully. For example, include a summary of the run, such as the number of users processed and any key updates.</li>
-</ul><h5 id="h_01KJ9RJSEP72NRB3DVT3XPFMPW"><strong>Failure Notifications</strong></h5><ul>
-<li data-list-item-id="ec8b581ef7b21ef04f167a881c221c1f9">
-<strong>Failure Notification Recipients</strong>: Enter the email addresses that should receive failure notification emails. For example, add support@company.com to receive alerts when the integration encounters an error.</li>
-<li data-list-item-id="edd5e82e68f505bf6475a39808f7418da">
-<strong>Failure Notification CC</strong>: Enter additional email addresses to receive a copy of failure notifications. For example, include itadmin@company.com to notify system administrators.</li>
-<li data-list-item-id="e749339844bcdd394f96400c3f216360e">
-<strong>Failure Email Subject</strong>: Enter the subject line used for failure notification emails. For example, ADP to Entra Integration (Failure Alert).</li>
-<li data-list-item-id="e20472602b997a99e723046909d668be0">F<strong>ailure Email Body</strong>: Enter the message content sent when the integration fails. For example, include error details and troubleshooting guidance.</li>
-</ul><h5 id="h_01KJ9RRGG7600CDTXQNXDK94NJ"><strong>Notification Report Settings</strong></h5><ul>
-<li data-list-item-id="ea54ae990102cd76ce7dd4b85a64eb092">
-<strong>Notification Report Type</strong>: Select the type of data to include in notification emails. For example, choosing Employee Identifier with Non-Sensitive Data includes the employee number, operation performed, and selected non-sensitive field values in the email report.</li>
-<li data-list-item-id="e3312f17634cca735e6cd0d0ea7f3d167">
-<strong>Notification Report Detail Level</strong>: Select the level of detail to include in the notification report. For example, selecting Summary Only shows only the counts of create, update, and delete operations, while Full Details shows attribute-level changes.<br/>The following options are available in the dropdown: <ul>
-<li data-list-item-id="e5282818fea362c703b2d51631f16068f">
-<strong>Full Details</strong>: All attribute details are displayed.</li>
-<li data-list-item-id="ee8e9ca4e51b7ba37c3c325f2c8ed24e6">
-<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li>
-<li data-list-item-id="e9c3c9833cdeccd81120f5774c5755588">
-<strong>Custom Exclusion List</strong>: Select the attributes to be omitted from reporting.</li>
+<li data-list-item-id="ebce976d18e94eb4894c013ac54b748e6">
+<strong>Custom source filter condition</strong>: Enter a JavaScript expression to define advanced filtering logic for debugging. For example, entering <strong>workerStatus === "Active" &amp;&amp; businessCommunication_emails_emailUri &amp;&amp; businessCommunication_emails_emailUri.length &gt; 0 ,</strong> processes only workers who are active and have a work email address defined.</li>
+</ul><h4 id="h_01KJBZYQ7STWG3WSMB3GX649KY">Notification Settings</h4><p><strong>Notification Template Settings</strong></p><ul>
+<li data-list-item-id="ef63dfd900666a0bcc74b9af3217883cf">
+<strong>Send success notification</strong>: Select to send an email when the integration completes successfully. For example, when the ADP to Entra sync finishes without errors, a success notification is sent to the configured recipients.</li>
+<li data-list-item-id="e362648d8c41539f1819a27d09b4f47d2">
+<strong>Send failure notification</strong>: Select to send an email when the integration fails. For example, if the sync encounters an error, a failure notification is sent to the configured recipients.</li>
+<li data-list-item-id="ed659bb8fd259232b3d2f1ff1b3a43434">
+<strong>Attach execution report</strong>: Select to include the integration report as an attachment in notification emails. For example, enabling this option attaches the execution summary to both success and failure notifications.</li>
+</ul><p><strong>Success Notifications</strong></p><ul>
+<li data-list-item-id="ef9772fb872f7d51bc025ff3bfac213d1">
+<strong>Success notification recipients</strong>: Enter the email addresses that should receive success notification emails. For example, add <a href="mailto:admin@company.com">admin@company.com</a> to receive confirmation when the integration completes successfully.</li>
+<li data-list-item-id="e1a9f2db5cc8d8b3dccdd5c053a29874b">
+<strong>Success notification CC</strong>: Enter additional email addresses to receive a copy of success notifications. For example, include <a href="mailto:teamlead@company.com">teamlead@company.com</a> to keep the team informed.</li>
+<li data-list-item-id="ec6c97534a5636525ada1adb8638c14d4">
+<strong>Success email subject</strong>: Enter the subject line used for success notification emails. For example, ADP to Entra Integration Success.</li>
+<li data-list-item-id="ee9913a1be6feab2687bf0f502994803c">
+<strong>Success email body</strong>: Enter the message content sent when the integration completes successfully. For example, include a summary of the run, such as the number of users processed and any key updates.</li>
+</ul><p><strong>Failure Notifications</strong></p><ul>
+<li data-list-item-id="eb13a0ff593fefe773b76b64a6c47c856">
+<strong>Failure notification recipients</strong>: Enter the email addresses that should receive failure notification emails. For example, add <a href="mailto:support@company.com">support@company.com</a> to receive alerts when the integration encounters an error.</li>
+<li data-list-item-id="eb707847b65f8a2147db9285c8fff8d14">
+<strong>Failure notification CC</strong>: Enter additional email addresses to receive a copy of failure notifications. For example, include <a href="mailto:itadmin@company.com">itadmin@company.com</a> to notify system administrators.</li>
+<li data-list-item-id="e87913f08e59049bf1b369ac678079b95">
+<strong>Failure email subject</strong>: Enter the subject line used for failure notification emails. For example, ADP to Entra Integration (Failure Alert).</li>
+<li data-list-item-id="ebd282b19cfeb518ba94e20a7f82ec43e">
+<strong>Failure email body</strong>: Enter the message content sent when the integration fails. For example, include error details and troubleshooting guidance.</li>
+</ul><p><strong>Notification Report Settings</strong></p><ul>
+<li data-list-item-id="e9daf092f3c4dd82964329aaa8106395f">
+<strong>Notification report type</strong>: Select the type of data to include in notification emails. For example, choosing Employee Identifier with Non-Sensitive Data includes the employee number, operation performed, and selected non-sensitive field values in the email report.</li>
+<li data-list-item-id="ed17ff1c6081da240ac7b1999b2d02c0e">
+<strong>Notification report detail level</strong>: Select the level of detail to include in the notification report. For example, selecting Summary Only shows only the counts of create, update, and delete operations, while Full Details shows attribute-level changes.The following options are available in the dropdown:<ul>
+<li data-list-item-id="eb0468c761d844415e90c67a8634917b0">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e238291bc8979a4df8d06a1aeba67005c">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the report.</li>
+<li data-list-item-id="ec82d9b9b23205d959390ef39095dc9fb">
+<strong>Custom exclusion list</strong>: Select the attributes to be omitted from reporting.</li>
 </ul>
 </li>
-<li data-list-item-id="ef283afc9c813ef5f32967c4b55466328">
-<strong>PII Fields to Exclude</strong>: Enter the PII fields that contain sensitive personal information to be masked or excluded from notification reports. For example, adding dateOfBirth ensures this value is not included in the email report.</li>
-<li data-list-item-id="e0306452d95636cffb9edb8b73efe27c6">
-<strong>GUID Fields</strong>: Enter the GUID fields that contain system-generated unique identifiers to ensure they are handled correctly in notification reports. For example, adding objectId ensures it is treated as a system identifier.</li>
-<li data-list-item-id="e1ca8e9311c2b54942270c3b8f49624f8">
-<strong>Employee Identifier Fields</strong>: Enter the fields that represent employee identification values so they appear consistently in notification reports. For example, adding associateOID ensures the employee number is included in the report.</li>
-</ul><h4 id="h_01KJ9S3ZCCSJV72TA40YZ02EF6">Log Insights Settings</h4><p>This section allows you to configure analytics and dashboard visibility for integration activity and performance metrics.</p><ul>
-<li data-list-item-id="ef4ab6658c71111ddc1507e1a3aa56635">
-<strong>Insights Dashboard Name</strong>: Enter the dashboard name where integration analytics will be displayed. For example, entering ADP_WORKFORCE_NOW_ENTRA creates or updates a dashboard with that name to track execution metrics.</li>
-<li data-list-item-id="ed7bd795da5e2992bef388f79ef8f4db6">
-<strong>Insights Data Type</strong>: Select the type of data to include in analytics logs. For example, choosing Non-Sensitive Data includes operation details, field names, and selected non-sensitive values without displaying system identifiers.</li>
-<li data-list-item-id="e089b23fbdd953be797e89c6345c0366a">
-<strong>Insights Detail Level</strong>: Select the level of detail to capture in analytics logs. For example, selecting Summary Only displays only the count of create, update, and delete operations, while Full captures attribute-level details.<br/>The following options are available in the dropdown:<ul>
-<li data-list-item-id="e6dd7eace0766b24112e9b9f586b7ee3d">
-<strong>Full Details</strong>: All attribute details are displayed.</li>
-<li data-list-item-id="ea0bf3f384bd0b37f7d1ea1da13ccc7d0">
-<strong>Custom Inclusion List</strong>: Select the attributes to be included in the insights</li>
-<li data-list-item-id="ee4c00d607fbf99c90e21135899574317">
-<strong>Custom Exclusion List</strong>: Select the attributes to be omitted from insights.</li>
+<li data-list-item-id="eec2ef91cf42a6072d251dd8b1c8e6004">
+<strong>PII fields to exclude</strong>: Enter the PII fields that contain sensitive personal information to be masked or excluded from notification reports. For example, adding dateOfBirth ensures this value is not included in the email report.</li>
+<li data-list-item-id="e7da2f8bd2ab4e22e021e532ca79f4649">
+<strong>GUID fields</strong>: Enter the GUID fields that contain system-generated unique identifiers to ensure they are handled correctly in notification reports. For example, adding objectId ensures it is treated as a system identifier.</li>
+<li data-list-item-id="ef6e858004e398f1c772ed851e06cdce7">
+<strong>Employee identifier fields</strong>: Enter the fields that represent employee identification values so they appear consistently in notification reports. For example, adding associateOID ensures the employee number is included in the report.</li>
+</ul><h4 id="h_01KJBZZH5XZG9CGR1VQ8SGBP6R">Log Insights Settings</h4><p>This section allows you to configure analytics and dashboard visibility for integration activity and performance metrics.</p><ul>
+<li data-list-item-id="ef8c635a9589c1d91c6f505f71e404539">
+<strong>Insights dashboard name</strong>: Enter the dashboard name where integration analytics will be displayed. For example, entering ADP_WORKFORCE_NOW_ENTRA creates or updates a dashboard with that name to track execution metrics.</li>
+<li data-list-item-id="ec14f916a8563e6d9eb55d888f053b7f2">
+<strong>Insights data type</strong>: Select the type of data to include in analytics logs. For example, choosing Non-Sensitive Data includes operation details, field names, and selected non-sensitive values without displaying system identifiers.</li>
+<li data-list-item-id="ebdb216887f703041a7ec1dda3c9efc38">
+<strong>Insights detail level</strong>: Select the level of detail to capture in analytics logs. For example, selecting Summary Only displays only the count of create, update, and delete operations, while Full captures attribute-level details.The following options are available in the dropdown:<ul>
+<li data-list-item-id="e24523ba0232ad8a96f06a7dd31cd1c1f">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e2f8210e2a1adc36a05287f8b7be7c565">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the insights</li>
+<li data-list-item-id="e6961b73c97af3949a47806e68927d087">
+<strong>Custom exclusion list</strong>: Select the attributes to be omitted from insights.</li>
 </ul>
 </li>
-<li data-list-item-id="e158f64576edeaafce654b274d4ce8812">
-<strong>PII Fields to Exclude</strong>: Enter the fields that contain sensitive personal information to be excluded from analytics logs. For example, adding dateOfBirth ensures this value is not captured in Log Insights.</li>
-<li data-list-item-id="e0af58812d7ee270e8aac0b732becd7eb">
-<strong>GUID Fields</strong>: Enter the fields that contain globally unique identifiers to ensure they are handled correctly in analytics logs. For example, adding objectId ensures the value is treated as a system identifier.</li>
-<li data-list-item-id="e9ae0c58e74855bf386c60373e6f46451">
-<strong>Employee Identifier Fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in analytics. For example, adding associateOID ensures the employee number is included in analytics reports.</li>
-</ul><h3 id="h_01KJ9SF234ZRXAKS3SXAQAKSV3">Attribute Map</h3><p>The Attribute Map section shows how ADP Workforce Now worker attributes are mapped to the corresponding attributes in Microsoft Entra ID. These mappings determine which ADP fields are used to create or update user attributes in Entra ID.</p><p>Each row represents a source-to-target relationship, where an ADP attribute or expression is mapped to an Entra ID user attribute. For example, the worker’s Work Email can be mapped to the User Principal Name (UPN) and Mail fields in Entra ID, while Legal First Name and Legal Last Name can be combined to populate the Display Name.</p><p>You can review and modify the source and target attribute mappings to meet your business requirements. Any changes made in this section directly affect how worker data flows from ADP Workforce Now to Microsoft Entra ID during user provisioning and ongoing updates.</p><p> </p>
+<li data-list-item-id="e51d7cbe68b383c758c91ecec0125afb7">
+<strong>PII fields to exclude</strong>: Enter the fields that contain sensitive personal information to be excluded from analytics logs. For example, adding dateOfBirth ensures this value is not captured in Log Insights.</li>
+<li data-list-item-id="eee98d7f947e99567d37bb380b585854c">
+<strong>GUID fields</strong>: Enter the fields that contain globally unique identifiers to ensure they are handled correctly in analytics logs. For example, adding objectId ensures the value is treated as a system identifier.</li>
+<li data-list-item-id="ee82be70025344ac0582f2110ab47c212">
+<strong>Employee identifier fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in analytics. For example, adding associateOID ensures the employee number is included in analytics reports.</li>
+</ul><h3 id="h_01KJBZZQGVD2CX5G52BN7Z2W0F">Attribute Map</h3><p>The Attribute Map section shows how ADP Workforce Now worker attributes are mapped to the corresponding attributes in Microsoft Entra ID. These mappings determine which ADP fields are used to create or update user attributes in Entra ID.</p><p>Each row represents a source-to-target relationship, where an ADP attribute or expression is mapped to an Entra ID user attribute. For example, the worker’s Work Email can be mapped to the User Principal Name (UPN) and Mail fields in Entra ID, while Legal First Name and Legal Last Name can be combined to populate the Display Name.</p><p>You can review and modify the source and target attribute mappings to meet your business requirements. Any changes made in this section directly affect how worker data flows from ADP Workforce Now to Microsoft Entra ID during user provisioning and ongoing updates.</p>
   </div>
 </body>
 </html>

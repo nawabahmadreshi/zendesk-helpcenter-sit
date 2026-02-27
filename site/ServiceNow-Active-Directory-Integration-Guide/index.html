@@ -56,16 +56,16 @@
 <li data-list-item-id="e66cca382169c0027a644b936d3b8a43c"> </li>
 </ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Manage Users</h3><p>The <strong>Manage Users</strong> section allows you to configure user integration settings based on your specific use case. This section enables synchronization of user data from ServiceNow to Active Directory. It has the following settings:</p><h4 id="h_01KJCACEEY4B8Q3SJRP2S701X7">Correlation Settings</h4><p>Configure the following correlation field settings:</p><ul>
 <li data-list-item-id="e6d40a1c8144a1f909b7de7623f7527ad">
-<strong>AD correlation attribute</strong>: Select the unique identifier attribute from Active Directory that is used for correlation and user record matching with ServiceNow. For example, select <em>employeeId</em> as the correlation attribute.</li>
+<strong>AD correlation attribute</strong>: Select the unique identifier attribute from Active Directory that will be used for correlation and user record matching with ServiceNow. For example, select <em>employeeId</em> as the correlation attribute in Active Directory.</li>
 <li data-list-item-id="e5444fac0736566ea12acbc1c821d06c2">
-<strong>ServiceNow correlation attribute</strong>: Select the corresponding unique identifier attribute from ServiceNow that is used for correlation and user record matching with Active Directory. For example, select <em>Employee number</em> as the correlation attribute.</li>
+<strong>ServiceNow correlation attribute</strong>: Select the corresponding unique identifier attribute from ServiceNow that will be used for correlation and user record matching with Active Directory. For example, select <em>Employee number</em> as the correlation attribute in ServiceNow.</li>
 </ul><h4 id="h_01K35A8BW0AFVC2DSAZHQQXN72">User Provisioning Settings</h4><p>Configure the following user provisioning settings:</p><ul>
 <li data-list-item-id="e3c41b47d3c8014db6118ce2d01b0a84a">
-<strong>Enable user creation</strong>: Select this checkbox to create new user records in Active Directory based on requests from the ServiceNow catalog. When enabled, the User Creation Settings section will appear for further configuration.</li>
+<strong>Enable user creation</strong>: Select this checkbox to create new user records in Active Directory based on requests submitted through the ServiceNow catalog. When enabled, the User Creation Settings section appears for further configuration.</li>
 <li data-list-item-id="e7abd733308010148be90b81ee3392788">
-<strong>Enable user updation</strong>: Select this checkbox to update existing user records in Active Directory based on changes made in the ServiceNow catalog. When enabled, the User Updation Settings will appear for further configuration.</li>
+<strong>Enable user updation</strong>: Select this checkbox to update existing user records in Active Directory based on requests submitted through the ServiceNow catalog. When enabled, the User Update Settings section appears for further configuration.</li>
 <li data-list-item-id="e8473132420999f881162589d0d4f2f81">
-<strong>Enable user deactivation</strong>: Select this checkbox to deactivate user records in Active Directory based on requests from the ServiceNow catalog. When enabled, the User Deactivation Settings will appear for further configuration.</li>
+<strong>Enable user deactivation</strong>: Select this checkbox to deactivate user records in Active Directory based on requests submitted through the ServiceNow catalog. When enabled, the User Deactivation Settings section appears for further configuration.</li>
 <li data-list-item-id="e6dcc94cf7a6ea56aefd66e8b3a568c4a">
 <strong>Enable manager mapping</strong>: Select this checkbox to map the user's manager. When enabled, the following field will appear for further configuration.<ul><li data-list-item-id="eba80a11f837b4825f21f979e42e9fa08">
 <strong>Select variable for user manager</strong>: Select the ServiceNow catalog variable that stores the user’s manager information.</li></ul>
@@ -73,19 +73,23 @@
 <li data-list-item-id="e4be25ae25d1fc3a59f00cc7da41c19fb">
 <strong>Enable process future hire</strong>: Select this checkbox to enable processing users who have a future hire date. When enabled, such users will be created in Active Directory in a disabled state. These accounts can be automatically activated prior to the user's start date based on your configuration. When this option is enabled, additional fields will appear for further configuration.<ul>
 <li data-list-item-id="ef7a77683be211a3ebf8d2f042a00acb0">
-<strong>Select variable for user activation date</strong>: Select the ServiceNow catalog variable that stores the user’s hire date or start date.</li>
+<strong>Select variable for user activation date</strong>: Select the ServiceNow catalog variable that stores the user’s start date.</li>
 <li data-list-item-id="e9a439b136b998d24e036f0c71d5bc6a4">
-<strong>Activate user before X days from start date</strong>: Specify the number of days prior to the user’s start date when the account should be automatically activated in Active Directory. For example, if you enter <em>3</em>, the integration will activate the user account three days before the configured start date.</li>
+<strong>Activate user before X days from start date</strong>: Enter the number of days prior to the user’s start date when the account should be automatically activated in Active Directory. For example, if you enter <em>3</em>, the integration will activate the user account three days before the configured start date.</li>
 </ul>
 </li>
 <li data-list-item-id="e113783b880840b7b4838fa2b39150c56">
-<strong>Enable inactive user scan</strong>: Select this checkbox to scan for users who have not logged in for a specified number of days. When enabled, the following field will appear for further configuration.<ul><li data-list-item-id="ebf7f8558592e530f5f15caf825ec864a">
-<strong>Scan lookback window</strong>: Specify the number of days to look back from the current date to identify users who have not logged in. For example, if you enter <em>90</em>, the integration will identify users who have not logged in within the last 90 days.</li></ul>
+<strong>Enable inactive user scan</strong>: Select this checkbox to scan Active Directory for users who have not logged in for a specified number of days. When enabled, the following field will appear for further configuration.<ul>
+<li data-list-item-id="ebf7f8558592e530f5f15caf825ec864a">
+<strong>Days since last login</strong>: Enter the number of days to look back from the current date to identify Active Directory users who have not logged in. For example, if you enter <em>90</em>, the integration will identify users who have not logged in within the past 90 days.</li>
+<li data-list-item-id="e9486e92dce8cca26bedb8dc97409b708">
+<strong>Select the service catalog for inactive user ticket creation</strong>: Choose the service catalog that will be used to create ServiceNow tickets for Active Directory inactive users. When inactive accounts are identified, a ticket will be generated under the selected service catalog and assigned to the user’s manager for action. For example, select <em>User Action Requests</em> if you want inactive user tickets to be created in that catalog. <br/><strong>Note</strong>: Tickets will be created when a user exceeds the threshold specified in <strong>Days since last login</strong>.</li>
+</ul>
 </li>
 <li data-list-item-id="e8824f15eefe4360ba49b70ebbcc30373">
 <strong>Enable inactive user processing</strong>: Select this checkbox to create a ticket in ServiceNow for the user’s manager when an inactive user is identified. When enabled, the following fields will appear for further configuration.<ul>
 <li data-list-item-id="e5b687012094ec1e9fd13261e367be943">
-<strong>Select variable for user from inactive catalog</strong>: Select the ServiceNow catalog variable that identifies the inactive user.</li>
+<strong>Select variable for user from inactive catalog</strong>: Select the ServiceNow catalog variable that identifies the inactive user. For example, select <em>Request For</em>, which typically represents the user for whom the ticket is being created.</li>
 <li data-list-item-id="e1fe9300a397ae4ae419db6d2db206bbf">
 <strong>Select variable for action from inactive catalog</strong>: Select the ServiceNow catalog variable that captures the action to be taken for the inactive user.</li>
 <li data-list-item-id="e26a4013497b3f76468ee9b424b06a3a9">

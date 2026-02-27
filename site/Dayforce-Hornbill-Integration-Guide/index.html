@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce / Hornbill Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce / Hornbill Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This guide covers the end-to-end tasks involved in setting up the <strong>ADP Workforce Now / HaloPSA</strong> integration, which creates onboarding and offboarding tickets in HaloPSA based on employee onboarding and offboarding events in ADP Workforce Now.</p><p>To use this integration, you must first create a User Integration in the Aquera Admin portal that retrieves newly onboarded / offboarded employees from ADP Workforce Now and then creates/deletes the corresponding user in a target system (for example, Active Directory). After creating the user integration,  you need to configure the <strong>ADP Workforce Now / HaloPSA</strong> integration by following the steps in this guide. After this integration is setup, you must select this integration in both the <strong>New User Integration Hook</strong> and the <strong>Deprovision User Integration Hook</strong> configuration fields within the user integration. </p><p>When the user integration runs, the <strong>ADP Workforce Now / HaloPSA</strong> integration is triggered for every successful creation or deletion of a user in the target system defined in the user integration.</p><h2 id="h_01KAG54HSP2Q7S6CJSHBK2WNZM">Key Functions</h2><p>The <strong>ADP Workforce Now / HaloPSA</strong> integration performs the following functions:</p><ul>
+<li data-list-item-id="e42a00ded2d8a8e413018ad0408518f48">Reads the details of the onboarded / offboarded employees from the events sent by the user integration.</li>
+<li data-list-item-id="e74eb2bfa3fc85808d78c6518fad87ba2">Creates an onboarding ticket in HaloPSA for a new employee or an offboarding ticket for a terminated employee. The ticket type depends on the configuration in the integration.<br/><strong>Note</strong>: To support the creation of onboarding tickets for inactive users from ADP, you must enable the <strong>Allow Creation of Inactive Users</strong> setting in the User Integration.</li>
+<li data-list-item-id="e63b55fd4756861b7604e1b85b6f51c18">Assigns the ticket to an Agent in HaloPSA based on the integration configuration.</li>
+<li data-list-item-id="e7cccb914c357700ef58d5c89d07e17da">Creates integration reports based on the integration configuration </li>
+<li data-list-item-id="e7e3a06c9a5a5b1b23a65762f00840f6e">Sends email notifications on integration runs along with the integration report based on the integration configuration.</li>
+</ul><h2 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e64affc6b74b791a2d5b3033962d351c3">
+<strong>Tenant Account in the Aquera Admin Portal</strong>: You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e413736fb971022e4f2c8cdfc187c526e">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin portal:<ul>
+<li data-list-item-id="e2ee17d1c5040eebb17ccb970fa4de120">
+<strong>ADP Workforce Now</strong>: Ensure that you configure the ADP Workforce Now connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="eb779e267bfd0a89d2ef3a602a6e986c5">
+<strong>HaloPSA</strong>: Ensure that you configure the HaloPSA connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/38423391654039" rel="noopener noreferrer" target="_blank">HaloPSA Configuration Guide</a> for configuration details. </li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section details the configurations for creating onboarding and offboarding tickets in HaloPSA. It outlines the steps to create the integration and set up the integration preferences.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e23893daba5dcb1270d587b9d2ee82e4c">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e2875e65fd91104e1f2af32a92fae5e3c">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ee1e5e8fb5aa193307ae9cd8e9803444d">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e06f638a39af9da48807d1a01ee4a7333">Select <strong>ADP Workforce Now / HaloPSA</strong>.</li>
+<li data-list-item-id="e8931ad8b87b2fe2975790d1b5d7e11d2">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e2d0545d9cc720d7d860ec3100245b1b3">Select your ADP Workforce Now and HaloPSA connector instances.</li>
+<li data-list-item-id="e0bb0ecb66c816b88ba72da63209ae31d">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01K3TMT9CQB86XXAZ9FY9M1QYW">Configuration</h2><p>On the <strong>Configuration</strong> page, the following sections are displayed:</p><h3 id="h_01K3TMW0YGBNCAV57V69WX0VWV">Applications</h3><p>The <strong>Applications</strong> section displays the ADP Workforce Now and HaloPSA connector instances used by the integration. This section allows you to search for a different instance of the application connectors and select them.</p><h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and global settings according to your specific use case.</p><h4 id="h_01KJ9RSC97232HKQ93FNN8QSB1">Global Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e679b8aedfcd8bae28c4b3a2b1212bcde">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="eea41e60c292f88bd1a98df2507fb8fde">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K3JDHSDXSJJHPRZMHT47QV8A">Logging</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e8ffe3b3ae233fb0c38c3f1128226a8cc">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notification</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e415bbd4ddc63f924ec50cf1b75f94c87">
+<strong>Enable Reporting</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Reporting</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e020f02fc89d1bfe06bf8be768fc2c3dc">
+<strong>Enable Dashboard Generation</strong>: Select this to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+</ul><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4><p>Enable the following features based on your requirements:</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="ea823adc36b745d907cecaff538d5f9a4">
+<strong>Enable Onboarding Ticket Generation</strong>: Select this checkbox for the integration to handle the creation of onboarding tickets in HaloPSA. When this checkbox is selected, the<strong> Onboarding Ticket</strong> section is displayed.</li>
+<li data-list-item-id="e03df3a3c75ddcb0cf793e8175d2dcdfe">
+<strong>Enable Offboarding Ticket Generation</strong>: Select this checkbox for the integration to handle the creation of offboarding tickets in HaloPSA. When this checkbox is selected, the<strong> Offboarding Ticket</strong> section is displayed.</li>
+</ul><h3 id="h_01KJ9TWD6QFKDRCFACREM8AT98">Onboarding Ticket</h3><p>This section details the following settings that are used to configure the creation of onboarding tickets in HaloPSA:</p><ul>
+<li data-list-item-id="ee9edca5f0ea9ee562f280040eb5a9fc1">
+<strong>Assign Agent</strong>: Select this checkbox if you want the integration to add an agent name to the onboarding ticket. When this checkbox is selected, the <strong>Agent</strong> drop-down list is displayed. When this checkbox is not selected, the ticket will not be assigned to an agent; the agent name in the ticket will be shown as <em>Unassigned</em>. </li>
+<li data-list-item-id="e722d49cc9da46571e9ff8f18fe6cac9d">
+<strong>Allow Selection of End User</strong>: Select this checkbox if you want to add the end user details in the ticket. When this checkbox is selected, the <strong>End User</strong> drop-down list is displayed. When this checkbox is not selected, the end user details will not be added to the ticket.</li>
+<li data-list-item-id="eecdd2c4158d2ed3d9b682c612fc56a22">
+<strong>Allow Creation of Tickets for Inactive Users</strong>: Select this checkbox to create onboarding tickets for  new employees in inactive status. This setting will be effective only if the <a href="../User-Integration-Setup-Guide/#h_01H19PR6Y48E2VN9G2HA4HXATZ" rel="noopener noreferrer" target="_blank">Allow Creation of Inactive Users </a>has been enabled in the User Integration that syncs employee data from ADP Workforce Now to the target system for example, <em>Active Directory</em>).</li>
+<li data-list-item-id="edc4bbd53a2468914d0335d65a92ade71">
+<strong>New Joiner Ticket Action</strong>: Select the action to be performed in HaloPSA when the integration receives the details of a newly onboarded user from ADP Workforce Now. <ul><li data-list-item-id="ed148d3e62257be4fcd4a31e10644e762">Select <strong>Create</strong> to create an onboarding ticket in HaloPSA.</li></ul>
+</li>
+<li data-list-item-id="e77e715e61d23577b4a90577960d66273">
+<strong>Onboarding Ticket Type</strong>: Select the HaloPSA ticket type that must be used for creating onboarding tickets. For example, <em>New Hire</em><br/><strong>Note</strong>: All ticket types from your HaloPSA instance are populated in the drop-down list for your selection.</li>
+<li data-list-item-id="e33b0189f3d6aa9f1cef6c12939b7e6bb">
+<strong>Agent</strong>: Select the Agent to whom the onboarding ticket has to be assigned for further action. This field is displayed only if you have selected the <strong>Assign Agent </strong>checkbox.<br/><strong>Note</strong>: All agent names from your HaloPSA instance are populated in the drop-down list for your selection.</li>
+<li data-list-item-id="e4baed12b92d4a63c24cfee64e6b65414">
+<strong>End User</strong>: Select the end user for whom the onboarding ticket has been raised. This field is displayed only if you have selected the <strong>Allow Selection of End User </strong>checkbox.<br/><strong>Note</strong>: All end user names from your HaloPSA instance are populated in the drop-down list for your selection.</li>
+</ul><h3 id="h_01KJ9TWJ5CKMNZY8TXB038K889">Offboarding Ticket</h3><p>This section details the following settings that are used to configure the creation of offboarding tickets in HaloPSA:</p><ul>
+<li data-list-item-id="e8b7a5115c6cd162c23c717a3c5a9198f">
+<strong>Assign Agent</strong>: Select this checkbox if you want the integration to add an agent name to the offboarding ticket. When this checkbox is selected, the <strong>Agent</strong> drop-down list is displayed. When this checkbox is not selected, the ticket will not be assigned to an agent; the agent name in the ticket will be shown as <em>Unassigned</em>. </li>
+<li data-list-item-id="ea81bbc47df6c7783f473a930634d61c1">
+<strong>Allow Selection of End User</strong>: Select this checkbox if you want to add the end user details in the ticket. When this checkbox is selected, the <strong>End User</strong> drop-down list is displayed. When this checkbox is not selected, the end user details will not be added to the ticket.</li>
+<li data-list-item-id="e27959bb0ab4abffeda52c5507daf4d11">
+<strong>Leaver Ticket Action</strong>: Select the action to be performed in HaloPSA when the integration receives the details of an offboarded user from ADP Workforce Now. <ul><li data-list-item-id="eb23bc68d7b6c421138ed2ff50fc69bfd">Select <strong>Create</strong> to create an offboarding ticket in HaloPSA.</li></ul>
+</li>
+<li data-list-item-id="efd004325b6d45a8464653f34bf374d58">
+<strong>Offboarding Ticket Type</strong>: Select the HaloPSA ticket type that must be used for creating offboarding tickets. For example, <em>Leaver Request</em><br/><strong>Note</strong>: All ticket types from your HaloPSA instance are populated in the drop-down list for your selection.</li>
+<li data-list-item-id="eaab263e13ac8d2bd8005ba33c6b0c8c2">
+<strong>Agent</strong>: Select the Agent to whom the offboarding ticket has to be assigned for further action. This field is displayed only if you have selected the <strong>Assign Agent </strong>checkbox.<br/><strong>Note</strong>: All agent names from your HaloPSA instance are populated in the drop-down list for your selection.</li>
+<li data-list-item-id="e435422f7fd35f928af9fa46a31b9c214">
+<strong>End User</strong>: Select the end user for whom the offboarding ticket has been raised. This field is displayed only if you have selected the <strong>Allow Selection of End User </strong>checkbox.<br/><strong>Note</strong>: All end user names from your HaloPSA instance are populated in the drop-down list for your selection.</li>
+</ul><h3 id="h_01K3JDHSDXSJJHPRZMHT47QV8A">Logging</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section is displayed only if you have selected the <strong data-end="1326" data-start="1308">Enable Logging</strong> checkbox in the <strong>Parameters</strong> section.</p><ul><li data-list-item-id="edbaeeac6561d8d20c7c4ff7222c9ce5e">
+<strong>Log Detail Level</strong>: Select the level of details that must be logged for the integration runs from the dropdown list. The following are the available options:<ul>
+<li data-list-item-id="ec033528a2426b449d761dc6741637dc8">
+<strong>Summary Only</strong>: Shows the values set in the ticket fields and a summary of the tickets generated by the integration.</li>
+<li data-list-item-id="e335ae770bddf781e5f02a809ae460a24">
+<strong>Full Details</strong>: Shows the onboarding or offboarding payload received by the integration. It also displays the following details:<ul>
+<li data-list-item-id="e4b806dced8b648a4d49cf565b86b3978">Values that were set in the fields of the onboarding or the offboarding ticket by the integration.</li>
+<li data-list-item-id="eb40cd740a4c1eeb6af0efdc072b660f0">Summary of the tickets generated by the integration</li>
+</ul>
+</li>
+<li data-list-item-id="e52398e7e556dcfa67201c56efc9e4066">
+<strong>Custom</strong>: Enables you to include or exclude selected attributes in the logs. The following parameters are displayed once you select <strong>Custom</strong>:<ul><li data-list-item-id="ec19a81e506194951a04f88487c157182">
+<strong>Custom Log Level</strong>: Select <strong>Inclusion List</strong> or <strong>Exclusion List</strong> based on whether you want to specify the <strong>attributes</strong> to be <strong>included</strong> or excluded in the logs. Based on your selection, one of the following parameters is displayed:<ul>
+<li data-list-item-id="ed267e943b257d2e492d29bcf90a3d66e">
+<strong>Inclusion Log List</strong>: Specify the attributes to be included in the log. The name of the attributes must be the same as the Target Attribute names in the Attribute Mapper.<br/><strong>Note</strong>: This parameter is displayed only if the <strong>Inclusion List</strong> option is selected in the <strong>Custom Log Level </strong>parameter.</li>
+<li data-list-item-id="e0216e918c2e59fbc10c5176d98fa5609">
+<strong>Exclusion Log List</strong>: Specify the attributes to be excluded from the log. The name of the attributes must be the same as the Target Attribute names in the Attribute Mapper.<br/><strong>Note</strong>: This parameter is displayed only if the Ex<strong>clusion List</strong> option is selected in the <strong>Custom Log Level </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e130b24ae8544c0556eb30af2f1adcb14">
+<strong>Allow to Store Data &amp; Populate Values in Logs</strong>: Select this checkbox to enable Aquera to store the employee data for populating them in the logs. If this setting is disabled, the attribute values will not be populated in the logs.</li>
+</ul>
+</li></ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Reporting</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Report Generation</strong> setting in the <strong>Parameters</strong> section.</p><ul><li data-list-item-id="e08bd1407791039ff2c30d0c14a72ef3b">
+<strong>Report Detail Level</strong>: Select the level of details that must be generated in the integration report from the dropdown list. The following are the available options:<ul>
+<li data-list-item-id="ea432e4c5468ebf86b0aaa3cf44242614">
+<strong>Summary Only</strong>: Shows the values set in the ticket fields and a summary of the tickets generated by the integration.</li>
+<li data-list-item-id="e0f4257064d0b52dfd33e17756b4357ec">
+<strong>Full Details</strong>: Shows the onboarding or offboarding payload received by the integration. It also displays the following details:<ul>
+<li data-list-item-id="e015881f32b41442343986c4f453601c6">Values that were set in the fields of the onboarding or the offboarding ticket by the integration</li>
+<li data-list-item-id="eecd7bcddc656e45d43a2c0e90da5a002">Summary of the tickets generated by the integration</li>
+</ul>
+</li>
+<li data-list-item-id="e1a9e5a49498990212799787e8695fbca">
+<strong>Custom</strong>: Enables you to include or exclude selected attributes in the report. The following parameters are displayed once you select <strong>Custom</strong>:<ul><li data-list-item-id="e97e38b07923b94bce6594e39374145ab">
+<strong>Custom Report Level</strong>: Select <strong>Inclusion List</strong> or <strong>Exclusion List</strong> based on whether you want to specify the <strong>attributes</strong> to be <strong>included</strong> or excluded in the logs. Based on your selection, one of the following parameters is displayed:<ul>
+<li data-list-item-id="eac9b1ec2c2e76af0789a4f736215eefb">
+<strong>Inclusion Report List</strong>: Specify the attributes to be included in the report. The name of the attributes must be the same as the Target Attribute names in the Attribute Mapper.<br/><strong>Note</strong>: This parameter is displayed only if the <strong>Inclusion List</strong> option is selected in the <strong>Custom Report Level </strong>parameter.</li>
+<li data-list-item-id="ead9576e03bb663dbce7d093a91485046">
+<strong>Exclusion Report List</strong>: Specify the attributes to be excluded from the report. The name of the attributes must be the same as the Target Attribute names in the Attribute Mapper.<br/><strong>Note</strong>: This parameter is displayed only if the Ex<strong>clusion List</strong> option is selected in the <strong>Custom Report Level </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="ec250adf401d497885510e9abe65a286f">
+<strong>Allow to Store Data &amp; Populate Values in Report</strong>: Select this checkbox to enable Aquera to store the employee data for populating them in the report. If this setting is disabled, the attribute values will not be populated in the report.<br/><strong>Note</strong>: This parameter is displayed only if the <strong>Report Detail Level</strong> is <em>Custom</em> or <em>Full Details</em>.</li>
+</ul>
+</li></ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Notifications</strong> setting in the <strong>Parameters</strong> section.</p><ul>
+<li data-list-item-id="ee58636e72dd982889a1de3072e16267b">
+<strong>Admin Email Addresses</strong>: Enter the list of email addresses to which email notifications on this integration run have to be sent. After entering each email, hit Enter to save.</li>
+<li data-list-item-id="e85f2e98539ea6cd3f3eb6f216e4726b1">
+<strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject.</li>
+<li data-list-item-id="e1db0c2dc770e112b511b669dcc084fdb">
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all email notifications.</li>
+<li data-list-item-id="e5b7c3b045ca040ab87b2ec280c905f7e">
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for each integration execution. When enabled, the <strong>Integration Report Settings</strong> section is displayed with the following parameters:<ul><li data-list-item-id="ee0bd4aefd50f809352248837d854f375">
+<strong>Report Detail Level</strong>: Select the level of details that must be generated in the integration report attached in the email. The following are the available options:<ul>
+<li data-list-item-id="eaf266eed63153093fac5c3d1963f7924">
+<strong>Summary Only</strong>: Shows the values set in the ticket fields and a summary of the tickets generated by the integration.</li>
+<li data-list-item-id="e63e6fee1a700244805d5ed90fa571656">
+<strong>Full Details</strong>: Shows the onboarding or offboarding payload received by the integration. It also displays the following details:<ul>
+<li data-list-item-id="e92ae119ce64a5d373f17e71407d1558b">Values that were set in the fields of the onboarding or the offboarding ticket by the integration</li>
+<li data-list-item-id="e5e5136de62e1eff6a13fb19827396cc2">Summary of the tickets generated by the integration</li>
+</ul>
+</li>
+<li data-list-item-id="e17cd2ed25a825abe9ecff02a145e7c5c">
+<strong>Custom</strong>: Enables you to include or exclude selected attributes in the report. The following parameters are displayed once you select <strong>Custom</strong>:<ul><li data-list-item-id="e231a069a81b9332cfa335dc7f65ae57b">
+<strong>Custom Report Level</strong>: Select <strong>Inclusion List</strong> or <strong>Exclusion List</strong> based on whether you want to specify the <strong>attributes</strong> to be <strong>included</strong> or excluded in the logs. Based on your selection, one of the following parameters is displayed:<ul>
+<li data-list-item-id="e896efcfb4919bb33ad2d6e153b357fb0">
+<strong>Inclusion List</strong>: Specify the attributes to be included in the report. The name of the attributes must be the same as the Target Attribute names in the Attribute Mapper.<br/><strong>Note</strong>: This parameter is displayed only if the <strong>Inclusion List</strong> option is selected in the <strong>Custom Report Level </strong>parameter.</li>
+<li data-list-item-id="e55e73e902c581d7e804206427fb41cad">
+<strong>Exclusion List</strong>: Specify the attributes to be excluded from the report. The name of the attributes must be the same as the Target Attribute names in the Attribute Mapper.<br/><strong>Note</strong>: This parameter is displayed only if the Ex<strong>clusion List</strong> option is selected in the <strong>Custom Report Level </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e31cb9b384153e123b789970478a4a4b5">
+<strong>Allow to Store Data &amp; Populate Values in Report</strong>: Select this checkbox to enable Aquera to store the employee data for populating them in the report. If this setting is disabled, the attribute values will not be populated in the report.<br/><strong>Note</strong>: This parameter is displayed only if the <strong>Report Detail Level</strong> is <em>Custom</em> or <em>Full Details</em>.</li>
+</ul>
+</li></ul>
+</li>
+</ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>This section enables you to customize the log insight settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <strong>Parameters</strong> section.</p><p id="01K5B9P929CY5YBAY51DATK62B">It has the following settings:</p><ul><li data-list-item-id="e42e083d2745060f122ea135cfe7e1b11">
+<strong data-end="185" data-start="147">Log Insights Detail Level</strong>: Select the level of detail from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eb87c8511cad1360afc0766f18a6d7cd9">
+<strong data-end="337" data-start="320">Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="eefeee95dec0df68377f47ae3b272bc33">
+<strong data-end="440" data-start="423">Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e3eac4d77cd89fdb6453014410bfe3631">
+<strong data-end="493" data-start="482">Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e835ff684d0442b88c1bd8afb7032ebd2">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the log insights. Based on your selection, the following parameters are displayed:</li>
+<li data-list-item-id="eafc2b54f318332de7f4797ddd8b6bc24">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the log insights. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+<li data-list-item-id="e73da20c47cac99a315b0f26d9e3d636e">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded from the log insights. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how ADP Workforce Now emplopyee data is mapped to the ticket fields in HaloPSA. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes (ticket fields) are listed on the right side of the page.</p><p>Separate attribute maps are available in the integration template for onboarding and offboarding tickets. You can modify only the source attributes in the attribute maps as needed.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the ticket fields. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>After the attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the mapping changes.</p><h1 id="h_01K7H3FBM0V1D99VEW60RCKMFX">Post-Setup Configuration</h1><p>After the <strong>ADP Workforce Now / HaloPSA</strong> integration is setup, you must select this integration in both the <strong>New User Integration Hook</strong> and the <strong>Deprovision User Integration Hook</strong> configuration fields within the User Integration. </p><p><strong>Note</strong>: You must have already setup a User Integration to retrieve onboarding and offboarding employees from ADP Workforce Now and to create or delete that user in a target system.</p><h1 id="h_01KJ7MRNM94P5VN9TZT086EYRJ">Integration Execution</h1><p>The integration is triggered automatically based on the new user creations and user terminations processed by the user integration.</p><p> </p>
+  </div>
+</body>
+</html>

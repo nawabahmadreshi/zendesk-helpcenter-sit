@@ -1,0 +1,304 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Entra ID / Multiple Applications Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Entra ID / Multiple Applications Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KD7Y3KD9MT7413QHSHAVZCNF">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This integration provides a SCIM-based provisioning system that synchronizes user data between Microsoft Entra ID (formerly Azure AD) and target applications.</p><p>By default, the integration uses the <strong>User Principal Name (UPN)</strong> from Entra ID and matches it with the <strong>Username</strong> in the target application to identify user records, unless custom correlation attributes are configured in the <a href="#h_01KHB1QD4MW5GZ39EJ1K3SQBGM">Provisioning</a> section.</p><h2 id="h_01KD80JD2B42MPX32NQSRYS5EN">Key Functions</h2><p>This integration automates identity lifecycle management with the following primary capabilities:</p><ul>
+<li data-list-item-id="e8c9adf1f984a3d866eac7d7a32ecc330">Synchronizes user data from Entra ID to target applications.</li>
+<li data-list-item-id="e5afdbdc975fb8c5ecf577a9ce045f79a">Manages group memberships.</li>
+<li data-list-item-id="e3bc5c9d85f4a9198027a08e8408867c5">Sends notifications about provisioning events via email and Microsoft Teams.</li>
+<li data-list-item-id="e407295ed2c3649ed4130f0d08258d713">Generates detailed logs and reports.</li>
+</ul><h2 id="h_01KD80KT84CHY25GM05997PQ8Q">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ed04390f8647a401a258bfff5547e168b">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e93c7c20666155db29a4ae5cf705298ff">
+<strong>User Account in Entra ID</strong>: You must have a user account in Entra ID with permission to configure provisioning (for example, Application Administrator, Cloud Application Administrator, Application Owner, or Global Administrator).</li>
+<li data-list-item-id="e6b5caca3c0b4ee9c1087d2a7115565e9">
+<strong>Enterprise Application in Entra ID</strong>: You must have an enterprise application in Entra ID for each target application. Refer to the <a href="#h_01KFNB31Z7EYRJ0C110SHFRBJ2">Creating an Enterprise Application in Entra ID</a> section for further details.</li>
+<li data-list-item-id="e187f860d3cde57b0c1a328bb523d0412">
+<strong>Microsoft 365 Application Connector in the Aquera Admin Portal</strong>: You need to configure the Microsoft 365 application connector in the Aquera Admin Portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="eb88fa09c70c264b8ddd8719f87b8af50">
+<strong>Target Application Connector in the Aquera Admin Portal</strong>: You need to configure a connector in the Aquera Admin Portal for your target application. For example, if Box is your target application, then you must have a Box application connector in the Aquera Admin Portal. Refer to the <a href="https://support.aquera.com/hc/en-us/categories/115000284613-Connectors" rel="noopener noreferrer" target="_blank">configuration guide</a> for your application connector for configuration details.<br/><strong>Note</strong>: If your use case requires multiple target applications, then you must have a connector for each target application.</li>
+</ul><h3 id="h_01KFNB31Z7EYRJ0C110SHFRBJ2">Creating an Enterprise Application in Entra ID</h3><p>You must have an enterprise application in Entra ID for each target application included in the integration. This enterprise application will serve as a source for user records and will be used to provision users to the target applications.</p><p>Perform the following steps to create an enterprise application:</p><ol>
+<li data-list-item-id="e059cb76b96e4a6ee66577ed424793e08">Log in to your <a href="https://portal.azure.com/#home" rel="noopener noreferrer" target="_blank">Microsoft Azure portal</a>.</li>
+<li data-list-item-id="e53a40b322aedc1046936a008d8110f31">Search and select Enterprise Applications.<br/><img alt="2026-01-23_17-51-51.png" height="564" src="./assets/b0f1a24e829c6001.bin" width="1858"/>
+</li>
+<li data-list-item-id="e7b269f0fc1c375ba84bd65e193dc075c">Click <strong>New application</strong>.</li>
+<li data-list-item-id="e9111ae2c5349fed6fc42cd218ab43237">Search for the application for which you want to create an enterprise application, and select it from the search results. For example:<br/><img alt="2026-01-23_18-24-38.png" height="1028" src="./assets/a8245566e47ee08f.bin" width="1556"/>
+</li>
+<li data-list-item-id="e338601b59f6aa099972b6de09a8bb9a4">Enter a name for the application, and click <strong>Create</strong>.<br/><img alt="2026-01-23_18-28-09.png" height="1624" src="./assets/9098b34a67bf5f1b.bin" width="1138"/><br/>The enterprise application is created and available on the <strong>Enterprise applications</strong> page.</li>
+</ol><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section details the configuration and mapping process for integrating Entra ID with target applications. It outlines the steps to create the integration, set up integration preferences, and define how data is mapped.</p><h2 id="h_01KFN5VN33W6V4TKMMX55CFV6R">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e26a76e8969e5dff83876947ec72ae591">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e22277af6bae13c582880477903b964ec">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ec47d42ef5106b02bd769fb41c758cb8d">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ec06d85b922dc8bd5c71093333e777714">Search for <strong>Entra ID / Multiple Applications</strong> in the search box next to the <strong>Explore Templates</strong> section, and then select it to create a new integration.</li>
+<li data-list-item-id="e31f2d2dc3ae9555cf128387836573445">Enter a name and a description for the integration.</li>
+<li data-list-item-id="efd4aa8ec49f7d988a30caa06ef5bfba9">Click <strong>Continue</strong>.</li>
+</ol><p>Once created, the following tabs are displayed:</p><ul>
+<li data-list-item-id="e87bd2757bbb48f2f69457604f1b41bf1"><a href="#h_01K3TMT9CQB86XXAZ9FY9M1QYW">Overview</a></li>
+<li data-list-item-id="eba9a13a668924974d434ff45a3a8982b"><a href="#h_01KFZGBB1GN0RB6E0SP3SYR0BS">Applications</a></li>
+<li data-list-item-id="e0fedb903b33b4926c5750e7c1b326b4a"><a href="#h_01KH0TD0YN440QFMS1M2XSJAHQ">Policy</a></li>
+<li data-list-item-id="e22e1909b8261cf8a3e18ad5da990bf37"><a href="#h_01KHB7QNKW672YBK3HS5MW3MME">Execution</a></li>
+<li data-list-item-id="ed46d6fd9d7e7b7bcddf191876640ad44"><a href="#h_01KEVBSF1NCB75TGKYHG2Q3V98">Notifications</a></li>
+<li data-list-item-id="e6e6b4edb58b200ebeab3c7ec47d4ba82"><a href="#h_01K04J6RRA21B3QX6Q3EPK80JN">Tables</a></li>
+<li data-list-item-id="e0f9a93cc153293fd2b60e68ba0875480"><a href="#h_01KJCP43MS8PMZZMVQPMDWVEEP">Schedule</a></li>
+</ul><h2 id="h_01K3TMT9CQB86XXAZ9FY9M1QYW">Overview</h2><p>On this tab, you can view details about the integration, including its configuration settings.</p><h2 id="h_01KFZGBB1GN0RB6E0SP3SYR0BS">Applications</h2><p>Navigate to the <strong>Applications</strong> tab to configure the provisioning settings for the integration. This tab allows you to select the applications involved in the integration and set up their connection.</p><p>The following sections are displayed on the page:</p><ul>
+<li data-list-item-id="e09c5be595c7850c0de1024148522b3b4"><a href="#h_01KHB1PZ6VJ232MEPB6DDFKTHJ">Source Configuration</a></li>
+<li data-list-item-id="e58a31f00d17d1720021f1cd75f3b5773"><a href="#h_01KJCAT93805J6DK3W3GNEC7VA">PII Attributes</a></li>
+<li data-list-item-id="ecdd364483b32fa75ce34fd8da32d4154"><a href="#h_01KHB1QD4MW5GZ39EJ1K3SQBGM">Provisioning</a></li>
+</ul><h3 id="h_01KHB1PZ6VJ232MEPB6DDFKTHJ">Source Configuration</h3><p>This section enables you to identify the Microsoft Entra ID application connector used for the integration. The following field is displayed in this section:</p><ul><li data-list-item-id="eb4ca5a76a4da125685bb68eaa08ccd46">
+<strong>Entra ID Application</strong>: Select the Entra ID application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul><h3 id="h_01KJCAT93805J6DK3W3GNEC7VA">PII Attributes</h3><p>This section enables you to define the PII attributes for the integration. The following field is displayed for configuration:</p><ul><li data-list-item-id="ecc03686fdc441ce5529b13d983004ff4">
+<strong>Select PII Attributes</strong>: Select the Entra ID attributes that you want to be considered as personally identifiable information.</li></ul><h3 id="h_01KHB1QD4MW5GZ39EJ1K3SQBGM">Provisioning</h3><p>This section enables you to configure application provisioning. In this section, you can define how records from Microsoft Entra ID are provisioned to the target application and how attributes are mapped between the systems.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e2a49623340f64acfc55f1e13c440e2df">
+<strong>Entra ID Enterprise Application Name</strong>: Select the enterprise application that you have created in your Azure portal for this integration. Click the refresh icon next to the field to retrieve all enterprise applications available in your Azure portal.<br/><img alt="2026-01-27_15-55-58.png" height="188" src="./assets/e7d3ec6fc3708bc5.bin" width="1616"/><br/><strong>Notes</strong>:<ul>
+<li data-list-item-id="eeb0603040a35cecadb17fac114f58560">This field identifies the enterprise application created in the Azure portal to drive provisioning for this integration. This is the Entra ID application to which users or groups are assigned.</li>
+<li data-list-item-id="eb638bf1317ef79bff47ad08b64b19acd">The enterprise applications available for selection depend on the Entra ID application connector selected in the <a href="#h_01KHB1PZ6VJ232MEPB6DDFKTHJ">Source Configuration</a> section.</li>
+</ul>
+</li>
+<li data-list-item-id="e3358961d95dbfa0507c0781d530051f2">
+<strong>Select Target Application</strong>: Select the target application connector where records will be provisioned. For example, if your use case is to provision user records from Entra ID to the Box application, select the Box connector that you have created in the Aquera Admin portal for this integration. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available target application connectors.</li>
+<li data-list-item-id="e1a70b28a9619737712895ab607004060">
+<strong>Custom Lookup for User Correlation</strong>: By default, user records are matched using the <strong>User Principal Name (UPN)</strong> from Entra ID and the <strong>Username</strong> in the target application. Select this checkbox to use a different source and target attribute for correlation. When enabled, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="ed6d3980098e532da828a9d825257a45e">
+<strong>Entra ID Attribute Used For Lookup</strong>: Select the correlation attribute in Entra ID that uniquely identifies a user record in your target application. For example, select <em>employeeId</em> if you want to use it to match user records in the target application.</li>
+<li data-list-item-id="ef78009ed21669357e976d135796992a9">
+<strong>Target Application Attribute Used For Lookup</strong>: Select the correlation attribute available in your target application that uniquely identifies a user record in Entra ID. For example, select <em>ENT.employeeNumber</em> if you want to use it to match user records in Entra ID.</li>
+</ul>
+</li>
+<li data-list-item-id="ea876a3541e0895e795cbfba0bb80e854">
+<strong>Generate Password</strong>: Select this checkbox if your use case requires generating a password for new users in the target application. When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="e487c0d2c7309f132a740fddcf5707c08">
+<strong>Password Generation Method</strong>: Select the method to generate passwords. This defines how passwords should be generated. The available options are as follows:<ul>
+<li data-list-item-id="ef15ca5b7fafbbf4549688839545a3dbb">
+<strong>Generate Random Password</strong>: Select this if you want passwords to be generated automatically by the system.</li>
+<li data-list-item-id="e5d53a493fee7d4adc7cedd31f0c47040">
+<strong>Generate Password Using Policy</strong>: Select this if you want passwords to be generated based on a defined password policy. When selected, the following field is displayed for further configuration:<ul><li data-list-item-id="eb81ea1657fccb38536ab76099a6c0274">
+<strong>Select Password Policy</strong>: Select the password policy to be used for this integration. All password policies created in the <a href="#h_01KH0TD0YN440QFMS1M2XSJAHQ">Policy</a> tab will be available for selection.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e5d0565827608ad32b91ec9f35a316650">
+<strong>Attribute Mapper</strong>: This section allows you to control how each attribute is synchronized between Entra ID and the target application.<br/>Source attributes are listed on the left side and the target attributes are listed on the right side of the page. You can modify only the source attributes as needed, to align with your specific use case.<br/>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. You can enter the expression directly in the source attribute field or click the expand icon to write a longer expression.<br/>Attributes marked with a red asterisk (<span>*</span>) are required for successful provisioning.<br/>The <strong>Search Attributes</strong> field allows you to filter the list of available attributes for mapping.<br/>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
+</ul><p>To add another target application in this integration, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button.<br/><img alt="2026-01-28_12-33-04.png" height="150" src="./assets/f0f63c73d349d339.bin" width="1262"/></p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).<br/><img alt="2026-01-28_12-37-49.png" height="150" src="./assets/5334854c9a981eb9.bin" width="1262"/></p><p>To delete a configuration, click the delete icon.<br/><img alt="2026-01-28_12-33-04.png" height="150" src="./assets/e73cd7db8e3c6cd1.bin" width="1262"/></p><p>To view the <strong>Application Provisioning Configuration</strong> section in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.<br/><img alt="2026-01-28_17-09-21.png" height="478" src="./assets/9916bb5266bdd87b.bin" width="2240"/></p><h2 id="h_01KH0TD0YN440QFMS1M2XSJAHQ">Policy</h2><p>Navigate to the <strong>Policy</strong> tab to define policies for the integration. The following sections are displayed on the page:</p><ul>
+<li data-list-item-id="e26973303afa90d573a84f29266f708b7"><a href="#h_01KJFB5PFXSNTX6S024R53HHRN">Configuration</a></li>
+<li data-list-item-id="e4cb859e301a3deea7545bc622b3ab5f1"><a href="#h_01KJFB8K8DV4GRQ616DQRAJPS5">Application Groups</a></li>
+<li data-list-item-id="e8afb7f8631d8b9fee534f095abd5bbb5"><a href="#h_01KJFB909KSYK22Z0F567BKM61">Business Groups</a></li>
+<li data-list-item-id="ed4cb2fb5df63c2c7874944ddada55529"><a href="#h_01KG2E4KGJMSJ2PV6WHEJTWY81">Password Policy</a></li>
+<li data-list-item-id="edd6c0ce7b0d777442645812c3923834e"><a href="#h_01KHBC8P4ZC05SGZV72J835H58">Notification Rule</a></li>
+</ul><h3 id="h_01KJFB5PFXSNTX6S024R53HHRN">Configuration</h3><p>This section allows you to identify the method used to define group assignment policies.</p><p>In the <strong>Group Assignment Policy</strong> field, select one of the following methods to define how users are assigned to application groups.</p><ul>
+<li data-list-item-id="e7b86e9fec45d28d9b2e55c47173ce31d">
+<strong>Direct Group Assignment</strong>: Select this option if you want to assign users directly to groups in the target application based on user attributes, for example, department or job title. When selected, the <a href="#h_01KJFB8K8DV4GRQ616DQRAJPS5">Application Groups</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e23ea2141a06aa5d4d36fdf26274362f5">
+<strong>Business Group Assignment</strong>: Select this option if you want to introduce business facing groups used in your organization. In this assignment, users are first assigned to business groups based on attributes, and then business groups are mapped to the target application groups. When selected, the <a href="#h_01KJFB909KSYK22Z0F567BKM61">Business Groups</a> section is displayed for further configuration.</li>
+</ul><h3 id="h_01KJFB8K8DV4GRQ616DQRAJPS5">Application Groups</h3><p>This section allows you to define group assignment rules that directly map users to target application groups. When a user’s attribute value matches a rule, the user is automatically added to the defined target application group.</p><p><strong>Note</strong>: This section appears only if <strong>Direct Group Assignment</strong> is selected in the <a href="#h_01KJFB5PFXSNTX6S024R53HHRN">Configuration</a> section.</p><p>Perform the following steps to create rules for group assignments:</p><ol>
+<li data-list-item-id="e3025420512eba70f5c781cf09cf6ba1d">In the <strong>Define Rule</strong> section, click the vertical ellipsis next to <strong>Choose Attribute</strong>, and then click <strong>Select Attribute</strong> to view the list of available attributes you can use to set the assignment rule.<br/><img alt="2026-02-27_11-23-22.png" height="486" src="./assets/8063dd6377b903d9.bin" width="1282"/>
+</li>
+<li data-list-item-id="e139bbad136a28d090d0f2413ece4c808">Search and select the attribute you want to use to define a condition. For example, select <em>Department</em>.</li>
+<li data-list-item-id="e2368c1e62638c48ab042786e96b9a7ca">In the next row, double-click and select the attribute value to define the rule. If multiple values are selected, <strong>OR</strong> condition is applied among them. For example, in the following sample condition, a user's department must be either <em>QA</em> or <em>Development</em> to satisfy this assignment rule.<br/><img alt="2026-02-27_11-46-19.png" height="468" src="./assets/39ffb27188a2469e.bin" width="958"/>
+</li>
+<li data-list-item-id="e5c82565ca539fe828dd169a9184c803f">If required to add another condition and assignment for the same selected attribute, click <strong>Add Row</strong>. You can add any number of rows within a rule.</li>
+<li data-list-item-id="e1e80d9a0a02f32f33973f208d7130c81">If required to include another attribute to the group assignment rule, click the vertical ellipsis in the first column, and then click <strong>Add Attribute</strong>.<strong> </strong>If multiple columns are added for a rule, <strong>AND</strong> condition is applied between different columns. For example, in the following sample condition, a user's department must be either <em>QA</em> or <em>Development</em>, and the country must be <em>United States</em> to satisfy this assignment rule. You can use multiple attributes and their corresponding values to define the group assignment rule.<br/><img alt="2026-02-27_12-44-31.png" height="526" src="./assets/54705686f6a49ab8.bin" width="772"/>
+</li>
+<li data-list-item-id="e79372e3d577aa66772ff3fba51a69995">In the<strong> Choose Target </strong>column, select the target application, and then select the target group names to which users who satisfy the specified condition will be assigned.</li>
+<li data-list-item-id="ee52d81f572f1ef81abba3bb485951800">If needed, click the <strong>+</strong> icon at the top right corner to add another rule, as explained above.</li>
+<li data-list-item-id="e738584f623134005c5ae517614de8110">Click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
+</ol><p><strong>Note</strong>: If required to delete a row, click the horizontal ellipsis next to the row and select <strong>Delete Row</strong>.</p><h3 id="h_01KJFB909KSYK22Z0F567BKM61">Business Groups</h3><p>This section allows you to manage group assignments using a business-level grouping layer that maps to the target application groups. With this method, users are first assigned to business groups, which are then mapped to target application groups.</p><p><strong>Note</strong>: This section appears only if <strong>Business Group Assignment</strong> is selected in the <a href="#h_01KJFB5PFXSNTX6S024R53HHRN">Configuration</a> section.</p><p>Perform the following steps to create rules for group assignments:</p><ol>
+<li data-list-item-id="eec4b68e1700b11f1f411ed4c7f0ebc99">In the <strong>Business Groups</strong> field, enter the group names to define business groups used in your organization. Users are assigned to these business groups, which can then be mapped to one or more application groups.</li>
+<li data-list-item-id="e3814c1ecc5786666a73aca21a8ae56d2">In the <strong>User-to-Business Group Rules</strong> section, perform the following steps to create rules that assigns  users to one or more business groups based on user attributes:<ol>
+<li data-list-item-id="eebf60eda9abb57e3b79fdee772854a0f">Click the vertical ellipsis next to <strong>Choose Attribute</strong>, and then click <strong>Select Attribute</strong> to view the list of available attributes you can use to set the assignment rule.</li>
+<li data-list-item-id="e5155803d87539e5d01e7cf5883d42138">Search and select the attribute you want to use to define a condition. For example, select <em>Department</em>.</li>
+<li data-list-item-id="e98fd6b9b427d3cca9ce6f95eb6a28b3b">In the next row, double-click and select the attribute value to define the rule. If multiple values are selected, <strong>OR</strong> condition is applied among them. For example, if you select <em>QA</em> and <em>Development</em> in this field, a user's department must be either <em>QA</em> or <em>Development</em> to satisfy this assignment rule.</li>
+<li data-list-item-id="e0c892c5f7ed226691364859adf9d0142">In the <strong>Business Groups</strong> column, select the business group to which users who meet the specified condition will be mapped.</li>
+<li data-list-item-id="eecf5a91b019162c2e6c0f6561d94aaf9">If required to add another condition and assignment for the same selected attribute, click <strong>Add Row</strong>. You can add any number of rows within a rule.</li>
+<li data-list-item-id="e59a2d1e421b755e1873979228f7244ff">If required to include another attribute to the group assignment rule, click the vertical ellipsis in the first column, and then click <strong>Add Attribute</strong>.<strong> </strong>If multiple columns are added for a rule, <strong>AND</strong> condition is applied between different columns. For example, if you select <em>QA</em> for the <em>Department</em> attribute and <em>United States</em> for the <em>Location</em> attribute, the user must belong to <em>QA</em> and be located in the <em>United States</em> to meet this assignment rule.</li>
+<li data-list-item-id="e88af220893e927613cb6ba132065b765">If needed, click the <strong>+</strong> icon at the top right corner to add another rule, as explained above.</li>
+</ol>
+</li>
+<li data-list-item-id="ecd0f53d179ef4fb38789b6131717b188">In the <strong>Business Group-to-Application Group Mapping</strong> section, perform the following steps to create rules that maps each business group to corresponding groups in the target application:<ol>
+<li data-list-item-id="e5174825581f0e956b89fe134a93373fd">In the first column, select the business group for which you want to define rule.</li>
+<li data-list-item-id="e07d5eae344df7c407cdb9c25ec419c47">In the<strong> Choose Target </strong>column, select the target application, and then select the target group names to which users who satisfy the specified condition will be assigned.</li>
+<li data-list-item-id="edee3e298447a2ead1e859af0d977b076">If needed, click the <strong>+</strong> icon at the top right corner to add another rule, as explained above.</li>
+</ol>
+</li>
+<li data-list-item-id="e2bab3459c9c9c2f14e904e22bdf2cccb">Click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
+</ol><p><strong>Note</strong>: If required to delete a row, click the horizontal ellipsis next to the row and select <strong>Delete Row</strong>.</p><h3 id="h_01KG2E4KGJMSJ2PV6WHEJTWY81">Password Policy</h3><p>Navigate to the <strong>Password Policy</strong> section to define how passwords are generated in the target applications. This section allows you to configure password generation rules, complexity requirements, and length constraints.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e6ebd613ddc38557705735c77e8127e47">
+<strong>Policy Name</strong>: Enter a unique name to identify the password policy.</li>
+<li data-list-item-id="eb8e48e95af24941d958cc13fef5894d4">
+<strong>Maximum Password Length</strong>: Enter the maximum number of characters allowed in a password.</li>
+<li data-list-item-id="ee60aea53154c6ec356e786a7542311b1">
+<strong>Minimum Password Length</strong>: Enter the minimum number of characters required for a password.</li>
+<li data-list-item-id="ee80e5c6f2556c3157ae616be22d5ee75">
+<strong>Password Complexity Requirements</strong>: Select the password complexity requirements. This defines the character types that must be included in the password. The available options are as follows:<ul>
+<li data-list-item-id="e47f2227238cae0e5a94956c8bb07db6e">
+<strong>Require Uppercase Letters</strong>: Select this if you want passwords to include at least one uppercase character (A–Z).</li>
+<li data-list-item-id="e44f40fbdde5d4d330a0a4b9d8504801d">
+<strong>Require Lowercase Letters</strong>: Select this if you want passwords to include at least one lowercase character (a–z).</li>
+<li data-list-item-id="e752d4968aa6233b27ce97ada50e454c1">
+<strong>Require Numbers</strong>: Select this if you want passwords to include at least one numeric character (0–9).</li>
+<li data-list-item-id="e4b754b1aaac0e78aeacd242f92d3628b">
+<strong>Require Special Characters</strong>: Select this if you want passwords to include at least one special character. If you select this option, the following field is displayed for further configuration:<ul><li data-list-item-id="ebbb6a7154af3df2b622cb4d1c25049f0">
+<strong>Allowed Special Characters</strong>: Select the special characters that are allowed to be included in passwords. Only the selected characters can be used when special characters are required.</li></ul>
+</li>
+</ul>
+</li>
+</ul><p>To add another password policy, click the <strong>+</strong> icon.<br/><img alt="2026-01-28_18-44-40.png" height="232" src="./assets/a2e1e59efe0a895b.bin" width="1464"/></p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><p>To delete a configuration, click the delete icon.</p><p>To view the configurations in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h3 id="h_01KHBC8P4ZC05SGZV72J835H58">Notification Rule</h3><p>Navigate to the <strong>Notification Rule</strong> section to define the policy that controls when and how notifications are triggered.</p><p>Perform the following steps to define a notification rule:</p><ol>
+<li data-list-item-id="e5db3c6d682fbd273f1a80630a8f6ca2d">In the <strong>Define Rule</strong> section, click the vertical ellipsis next to <strong>Choose Attribute</strong>, and then click <strong>Select Attribute</strong> to view the list of available attributes you can use to set the rule.<br/><img alt="2026-02-27_11-23-22.png" height="486" src="./assets/8063dd6377b903d9.bin" width="1282"/>
+</li>
+<li data-list-item-id="e628c5f2fb6dd1501ad03d7def4fd165d">Search and select the attribute you want to use to define a condition. For example, select <em>Department</em>.</li>
+<li data-list-item-id="e152174b6d7fdc9113db54066b03343e6">In the next row, double-click and select the attribute value to define the rule. If multiple values are selected, <strong>OR</strong> condition is applied among them. For example, in the following sample condition, a user's department must be either <em>QA</em> or <em>Development</em> to satisfy this rule.<br/><img alt="2026-02-27_11-46-19.png" height="468" src="./assets/39ffb27188a2469e.bin" width="958"/>
+</li>
+<li data-list-item-id="e645373c3c99b33927d61fe989b2fa99e">If required to add another condition for the same selected attribute, click <strong>Add Row</strong>. You can add any number of rows within a rule.</li>
+<li data-list-item-id="e081985749cde673e89b7ff68a9349a81">If required to include another attribute to the group assignment rule, click the vertical ellipsis in the first column, and then click <strong>Add Attribute</strong>.<strong> </strong>If multiple columns are added for a rule, <strong>AND</strong> condition is applied between different columns. For example, in the following sample condition, a user's department must be either <em>QA</em> or <em>Development</em>, and the country must be <em>United States</em> to satisfy this rule. You can use multiple attributes and their corresponding values to define a rule.<br/><img alt="2026-02-27_12-44-31.png" height="526" src="./assets/54705686f6a49ab8.bin" width="772"/>
+</li>
+<li data-list-item-id="e93fd8a8fbbbbdee171c46f5645546433">In the<strong> Choose Target </strong>column, select <strong>Template</strong> and then select all template names that you want to include in the rule.</li>
+<li data-list-item-id="ea017afca2ceb1d94f1eab95849e4997c">If needed, click the <strong>+</strong> icon at the top right corner to add another rule, as explained above.</li>
+<li data-list-item-id="e9f1d7a20095040ef2d2f2ad265463018">Click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
+</ol><p><strong>Note</strong>: If required to delete a row, click the horizontal ellipsis next to the row and select <strong>Delete Row</strong>.</p><h2 id="h_01KHB7QNKW672YBK3HS5MW3MME">Execution</h2><p>The <strong>Execution</strong> tab allows you to configure various settings required for the integration execution. The following section is displayed in this tab:</p><h3 id="h_01KHBC8P4Z96NEQJ87YCV9BW5D">Operational Settings</h3><p>This section enables you to customize the operational settings for the integration.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed for configuration:</p><ul>
+<li data-list-item-id="e9434f6d60e61794d4b8f59f9f5d2036b"><p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Applications</strong>: Select the target application connector for which you want to configure the operational settings. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available target application connectors.</p></li>
+<li data-list-item-id="ee0dbc22fd5fca961a305dfee3907447b">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Log Type</strong>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="ebd8e9025d7f9bdbd203b4ccc2b948151">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ebd5605a3ed1565bc842950baf7786d82">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e8023ec231a50d75a1f91a23b86cc573b">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e8aa328ff88530e2b081d400af2d45b17">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eec5d1cb1796f059bc28df643f25dfbc4">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e46049d3f3d5a9667d07e30d4174bed4b">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e6822b4ab593374821d1c6e13b11e7b0f">
+<strong>Select Log Level</strong>: Select the log level. The following are the available options:<br/><strong>Note</strong>: This field is displayed only when you select <strong>Metadata</strong>, <strong>Non-PII Data</strong>, <strong>GUID with Non-PII Data</strong>, or <strong>Employee Number with Non-PII Data</strong> in the<strong> Log Type</strong><span><strong> </strong></span>parameter.<ul>
+<li data-list-item-id="ea4f99eb7c33cb3a682aa26aa1a8b9396">
+<strong>All</strong>: Select this to include all attribute details in logs.</li>
+<li data-list-item-id="eb22de244d6b2b5b8aaa070de2f6cac94">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="e0ef661db7c0ff3e800fc94b5c75062c3">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e697871114f0e8e74e2c5fe62dd8cacbc">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="e1acf918addcc437c0d736a88698635eb">
+<strong>Custom Exclusion list</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ea561deffa1ec9e8406c88ca680a3812c">
+<strong>Reporting Type</strong>: Select the reporting type. This will decide the level of details to be included in reports.<br/>The following are the available options:<ul>
+<li data-list-item-id="ebbb9e7709e04427dfd24a2b6c36a7692">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ee2b05c14f794307383185cb09d4491e6">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ec2b61c0a15bd0c7db51899e634ecd0e5">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e4ad44e3279146c8a3eda5091efdc87fa">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e6820b3bfdf84b64f51421e37f6f07e20">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e2ba387b6de6d525252c25acaccad909e">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="ec9c69d0a45d5e4c49690faf9019c86ef">
+<strong>Select Reporting Level</strong>: Select the reporting level. The following are the available options:<br/><strong>Note</strong>: This field is displayed only when you select <strong>Metadata</strong>, <strong>Non-PII Data</strong>, <strong>GUID with Non-PII Data</strong>, or <strong>Employee Number with Non-PII Data</strong> in the<strong> Reporting Type</strong><span><strong> </strong></span>parameter.<ul>
+<li data-list-item-id="e87566c3c735afb1765df8fd4f8aea024">
+<strong>All</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="e18affbee0312ffffbcd5efeb9069708a">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="ec3c0911e47fb721961d889da9237b0e7">
+<strong> Custom Inclusion List</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e2a7f0920a68648c7794f54f068bbd67d">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="e40b0dd5b3de812045eb386372877b2b2">
+<strong>Custom Exclusion list</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e014a6271e096ae1e5eeedad304e19db8">
+<strong>Select Report Format</strong>: Select the file format of the report to be generated. The available options are <em>CSV Report</em> and <em>Excel Report</em>.</li>
+<li data-list-item-id="ebd254f6c1b016e8788a2cfe2993f0c31">
+<strong>Select Log Insight Type</strong>: Select the log insight type. This will decide the level of detail to be included for log insight.<br/>The following are the available options:<ul>
+<li data-list-item-id="ede2d068b5777d00e038ddda492696afa">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e19845f422fa7c8c2a525df79bddd4e54">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e7e75c1da981d431c7b5b16d00a94861c">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e9cefe860964f9634043d372f7a5c42e9">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e2f233e2451a3010a29f8e08ab776372e">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e4e05350eae82a2e2eec71dc4e929e1a0">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+</ul><h2 id="h_01KEVBSF1NCB75TGKYHG2Q3V98">Notifications</h2><p>Navigate to the <strong>Notifications</strong> tab to configure notification settings for the integration. The following sections are displayed on the page:</p><ul>
+<li data-list-item-id="e17c67be3e4cdb2c1a9e812266605bf41"><a href="#h_01KJF5TV04837DX6QYCD2B82D1">Channels</a></li>
+<li data-list-item-id="ee594d48e2e636dde0377135a87cff0f3"><a href="#h_01KJF5TM3TZB354J38P2K139A3">Configuration</a></li>
+</ul><h3 id="h_01KJF5TV04837DX6QYCD2B82D1">Channels</h3><p>This section enables you to customize the notification channels to be used for the integration.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="efb137188426e7eff73910e2fe6263e1d">
+<strong>Enable Email</strong>: Select this checkbox to enable integration-related email notifications.</li>
+<li data-list-item-id="e12504803515d6ff0e036c71706fb2ebf">
+<strong>Enable Chat</strong>: Select this checkbox to enable chat for the integration. When enabled, the following field is displayed:<ul><li data-list-item-id="ef6733e61d0e59e92bc19eb78b1486026">
+<strong>Select Application for Chat Notification</strong>: Select the Entra ID application for which you want to enable chat.</li></ul>
+</li>
+</ul><h3 id="h_01KJF5TM3TZB354J38P2K139A3">Configuration</h3><p>This section allows you to define notification settings for provisioning events.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e936b96ecae126fcbbdacc6d96559e855">
+<strong>Template Name</strong>: Enter a name for the notification template.</li>
+<li data-list-item-id="e930f1f70aacc411b416dc90a39506bf3">
+<strong>Select Applications</strong>: Select a target application for which you want to configure the notification settings. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available target application connectors.</li>
+<li data-list-item-id="e7d7a31cf376bc192156af9aaa0395d06">
+<strong>Select Event for Notification</strong>: Select the provisioning event that will trigger a notification. For example, select <strong>Account Provisioned</strong> to get email notifications every time accounts are provisioned to the target application.</li>
+<li data-list-item-id="ec92b570c25c1f542641321d09029f410">
+<strong>Custom Condition to Send Notification</strong>: Enable the toggle button if you want to set a custom condition for notifications. When enabled, the following field is displayed for further configuration:<ul><li data-list-item-id="e6ffb43b6b4c800b7e38cb0eb8d45f2b1">
+<strong>Custom Condition</strong>: Select a value to define the custom condition.</li></ul>
+</li>
+<li data-list-item-id="efb7bd99fb5974b6547f256ae2d079c6d">
+<strong>Notification Delivery Channel</strong>: Select the channel to be used for sending notification. The available options are:<ul>
+<li data-list-item-id="e6d9ba9f29d5a0ee9b80871d49aa0b2d3">
+<strong>Email</strong>: Select this option  if you want to send notification through email. When selected, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="eb4f9ef1d69daa1e139cd7899dd6ddd02">
+<strong>Custom Notification Recipients</strong>: By default, notifications are sent to the user’s work email ID. If you want to send notifications to any other recipients, enable this checkbox.<br/>When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="eb4397c5c86f6fc80b3b841f34bc500a7">
+<strong>Send To</strong>: Select the additional recipients to send email notifications. For example, select <em>Supervisor</em> if you want to send email notifications to the user's supervisor. The following field is displayed when you select <strong>Custom</strong> in this field:<ul><li data-list-item-id="e84fb5bed93daf64cb646c3daea625cdc">
+<strong>Custom Email Address</strong>: Enter the email IDs of the users to whom you want to send email notifications.</li></ul>
+</li></ul>
+</li>
+<li data-list-item-id="e29eb51e3a3cc80d114a4166c99e642a3">
+<strong>Subject</strong>: Enter the content that must be used as the email subject.</li>
+</ul>
+</li>
+<li data-list-item-id="e7b75e4d69db54403e8e184cc7fed399e">
+<strong>Chat</strong>: Select this option if you want to send notification through chat. When selected, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="eee0739ac596ebf498306dfaaef14da0b">
+<strong>Select Team</strong>: Select the team created in Microsoft Teams that will be used to send chat notifications.</li>
+<li data-list-item-id="e5aa9343fe798ed797168b4dba3f9776d">
+<strong>Select Channel</strong>: Select the channel in the selected team where chat notifications will be sent.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e89f962e8493641500c0d5e9a8aa68c3a">
+<strong>Template</strong>: Enter the content that must be used as the email or chat body for notifications. You can use available customization features, such as <em>variables</em> and <em>Improve Description</em> to configure the email body.</li>
+</ul><p>To add another configuration, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button.</p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><p>To delete a configuration, click the delete icon.</p><p>To view the notification settings in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Tables</h2><p>In the <strong>Tables</strong> tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details. Once the tables are defined, tables can be used in the expressions of attribute mapping.</p><h2 id="h_01KJCP43MS8PMZZMVQPMDWVEEP">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your preferred timeframe. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.<br/><br/><br/> </p><p> </p>
+  </div>
+</body>
+</html>

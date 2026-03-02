@@ -45,15 +45,20 @@
 <li data-list-item-id="e2aaae6cdc81d34f693c11c0ce8706a93">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
 </ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KJC556XPVH8J5K1FE38DYNFW">Integration Features</h4><p>Enable the following features based on your requirements:</p><ul>
 <li data-list-item-id="ebc75b944ef60bf42592af3ab85e13029">
-<strong>Enable user lifecycle management</strong>: Select this checkbox to synchronize users' data from Paylocity to Brivo. When enabled, the <a href="#01K593846FCRSW60E8KGDZ0K4A">Manage Users</a> section is displayed to configure further integration settings.</li>
+<strong>Enable user lifecycle management</strong>: Select this checkbox to synchronize users' data from ServiceNow to Brivo. When enabled, the <a href="#01K593846FCRSW60E8KGDZ0K4A">Manage Users</a> section is displayed to configure further integration settings.</li>
 <li data-list-item-id="e791f663c8ce9d1f19ce331c91ab666f3">
 <strong>Enable ServiceNow writeback</strong>: Select this checkbox to enable writeback of user records from Active Directory to ServiceNow. When enabled, the system can create, update, or delete user records in ServiceNow based on changes made in Active Directory. In this configuration, Active Directory acts as the source application, and ServiceNow acts as the target application.</li>
-</ul><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Global Settings</h4><p>Configure the following global settings:</p><ul>
+</ul><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4><p>Configure the following general settings:</p><ul>
 <li data-list-item-id="e355381a82927b6cc359e683b1846ae9f">
-<strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
+<strong>Enable report-only mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e7a923d7f2beea2698b673078ff8897a8">
+<strong>Enable logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the Logging section is displayed for further configuration.</li>
+<li data-list-item-id="ed67f565bfb8fc29228de53419cba50d9">
+<strong>Enable report generation</strong>: Select this checkbox to generate the integration report. When enabled, the Reporting section is displayed for further configuration.</li>
 <li data-list-item-id="e29cec22234b289f15e742a500c7069fa">
-<strong>Enable Notifications</strong>: Select to enable the integration-related notifications.</li>
-<li data-list-item-id="e66cca382169c0027a644b936d3b8a43c"> </li>
+<strong>Enable notifications</strong>: Select this checkbox to enable the integration-related notifications. When enabled, the Notifications section is displayed for further configuration.</li>
+<li data-list-item-id="e66cca382169c0027a644b936d3b8a43c">
+<strong>Enable log insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the Log Insights section is displayed for further configuration.</li>
 </ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Manage Users</h3><p>The <strong>Manage Users</strong> section allows you to configure user integration settings based on your specific use case. This section enables synchronization of user data from ServiceNow to Active Directory. It has the following settings:</p><h4 id="h_01KJCACEEY4B8Q3SJRP2S701X7">Correlation Settings</h4><p>Configure the following correlation field settings:</p><ul>
 <li data-list-item-id="e6d40a1c8144a1f909b7de7623f7527ad">
 <strong>AD correlation attribute</strong>: Select the unique identifier attribute from Active Directory that will be used for correlation and user record matching with ServiceNow. For example, select <em>employeeId</em> as the correlation attribute in Active Directory.</li>
@@ -106,16 +111,18 @@
 <strong>Select the status to delete the user</strong>: Select the status that will be applied to permanently remove the inactive user account from Active Directory.</li>
 </ul>
 </li>
-<li data-list-item-id="ef2ce0bc1e2bc0ec342bf5d5ec8e24547">
-<strong>Enable reactivation through ticket</strong>: Select this checkbox to allow inactive users to be reactivated via a ServiceNow ticket.</li>
+<li data-list-item-id="eceb399c195c8d8bf1e8dac35a368914e">
+<strong>Auto-deactivation grace period</strong>: Enter the number of days to wait for manager approval in ServiceNow before the integration automatically deactivates the user in Active Directory. For example, enter 7 to automatically deactivate the user if the manager does not respond within 7 days.</li>
+<li data-list-item-id="edf95f1ddd6cdaba4de14f7a29ee0072c">
+<strong>Enable reactivation through ticket</strong>: Select this checkbox to allow inactive users to be reactivated via a ServiceNow ticket. For example, if the manager does not respond within the timeline specified in the <strong>Auto-deactivation grace period</strong> field, the user is automatically disabled in Active Directory and moved to the Disabled OU. If <strong>Delete disabled users who have been in the ‘Disabled’ OU for X days</strong> is set to 30 days, the integration will permanently delete user accounts that have been disabled for 30 days or more. If the manager updates the ticket to mark the user as Active before deletion occurs, the user will be reactivated and moved back to the Active Users OU.</li>
 </ul>
 </li>
 <li data-list-item-id="eaad2f191a087626bec6683ef7515fad9">
-<strong>Enable user deletion process</strong>: Select this checkbox to automatically delete users from Active Directory after a specified number of days in the disabled state. If the <strong>Enable ServiceNow writeback</strong> option is enabled, the corresponding user in ServiceNow will also be removed when the deletion occurs.<ul><li data-list-item-id="ef89a90ba413940a835df0936249c35e9">
+<strong>Enable user deletion process</strong>: Select this checkbox to automatically delete users from Active Directory after a specified number of days in the disabled state. If the <strong>Enable ServiceNow writeback</strong> option is enabled, the corresponding user in ServiceNow will also be deactivated when the deletion occurs.<ul><li data-list-item-id="ef89a90ba413940a835df0936249c35e9">
 <strong>Delete disabled users who have been in the 'Disabled' OU for X days</strong>: Specify the number of days a user account must remain in the disabled Organizational Unit (OU) in Active Directory before it is deleted. For example, if you enter <em>30</em>, the integration will delete user accounts that have been disabled in AD for 30 days or more.</li></ul>
 </li>
 </ul><h4 id="h_01KJC5XNEZ1QQWAQ5E4JSNA7A6">User Creation Settings</h4><p>Configure the following settings related to user creation:</p><h5 id="h_01KJC7FTH92XXEX1F34Y4S0ZP9">ServiceNow Catalog Managemnet</h5><p>Configure the following ServiceNow catalog settings:</p><ul><li data-list-item-id="e76f6cc1180f7384107bb277115ab2bc0">
-<strong>Service catalog category</strong>: Select the ServiceNow service catalog category that is used for user creation requests. For example, select <em>Create User Catalog</em> to process only user creation-related requests.</li></ul><h5 id="h_01KJC7ZTQER171YSQ2EMR33WXF">ServiceNow Field Management</h5><p>Configure the following ServiceNow field settings:</p><ul>
+<strong>Service catalog</strong>: Select the ServiceNow service catalog that is used for user creation requests. For example, select <em>Create User Catalog</em> to process only user creation-related requests.</li></ul><h5 id="h_01KJC7ZTQER171YSQ2EMR33WXF">ServiceNow Field Management</h5><p>Configure the following ServiceNow field settings:</p><ul>
 <li data-list-item-id="e5547c7e384c8c301aab30b581135e7c6">
 <strong>Select variable for user's first name</strong>: Select the ServiceNow catalog variable that stores the user's first name.</li>
 <li data-list-item-id="e65fda36a7684c0c05ddfc018840c34bb">
@@ -123,10 +130,27 @@
 <li data-list-item-id="e3c3dc096a42eb303a859dff50ce3cca7">
 <strong>Select variable for user's last name</strong>: Select the ServiceNow catalog variable that stores the user's last name.</li>
 </ul><h4 id="h_01KJCACEEYVYVM0GVWWTAJ1AQ7">User Updation Settings</h4><p>Configure the following settings related to user updation:</p><h5 id="h_01KJCACEEYZCE2SVDX8MAF5K15">ServiceNow Catalog Managemnet</h5><p>Configure the following ServiceNow catalog settings:</p><ul><li data-list-item-id="ea55334098cc8609b1ad0b13bea5ffcfc">
-<strong>Service catalog category</strong>: Select the ServiceNow service catalog category that is used for user updation requests. For example, select <em>Update User Catalog</em> to process only user updation-related requests.</li></ul><h5 id="h_01KJCACEEYAK8T56FB4PEQYH77">ServiceNow Field Management</h5><p>Configure the following ServiceNow field settings:</p><ul><li data-list-item-id="eb3bcc74faec6c5945cae494423061087">
+<strong>Service catalog</strong>: Select the ServiceNow service catalog used for user update requests. For example, select <em>Update User Catalog</em> to process only user updation-related requests.</li></ul><h5 id="h_01KJCACEEYAK8T56FB4PEQYH77">ServiceNow Field Management</h5><p>Configure the following ServiceNow field settings:</p><ul><li data-list-item-id="eb3bcc74faec6c5945cae494423061087">
 <strong>Select variable for user from update catalog</strong>: Select the ServiceNow catalog variable that identifies the user whose record needs to be updated.</li></ul><h4 id="h_01KJCB6WM1RKBRB9K1SK6204X9">User Deactivation Settings</h4><p>Configure the following settings related to user deactivation:</p><h5 id="h_01KJCVV7XK4RGRBA6PRP2ATA2Y">ServiceNow Catalog Managemnet</h5><p>Configure the following ServiceNow catalog settings:</p><ul><li data-list-item-id="ed682fcb29cd380a92f2cd511fbc1f529">
-<strong>Service catalog category</strong>: Select the ServiceNow service catalog category that is used for user deactivation requests. For example, select <em>Deactivation of user</em> to process only user deactivation-related requests.</li></ul><h5 id="h_01KJCVV7XKPCY9JZ81078MD4B8">ServiceNow Field Management</h5><p>Configure the following ServiceNow field settings:</p><ul><li data-list-item-id="ed81ef8334aaa664d1283c8120ab53cfb">
-<strong>Select variable for user from deactivation catalog</strong>: Select the ServiceNow catalog variable that identifies the user whose account needs to be deactivated.</li></ul><h4 id="h_01KJC8AY4E9JBWPM5N5JN34AZ9">Ticket Management</h4><p>Configure the following post-provisioning ticket settings:</p><p><strong>Ticket closer status</strong>: Select the ServiceNow ticket state to which the request should transition after successful user creation, updation, or deactivation in Active Directory. For example, you may select <em>Closed Complete</em> to indicate that the requested operation was completed successfully.</p><h3 id="h_01KJCACEEY59F57BDZB9P806BK">Reporting</h3><p>The <strong>Reporting</strong> section enables you to customize the report generation settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Report Generation</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e88af8f26ff9e9e0a1397f1915323c392">
+<strong>Service catalog</strong>: Select the ServiceNow service catalog that is used for user deactivation requests. For example, select <em>Deactivation of user</em> to process only user deactivation-related requests.</li></ul><h5 id="h_01KJCVV7XKPCY9JZ81078MD4B8">ServiceNow Field Management</h5><p>Configure the following ServiceNow field settings:</p><ul><li data-list-item-id="ed81ef8334aaa664d1283c8120ab53cfb">
+<strong>Select variable for user from deactivation catalog</strong>: Select the ServiceNow catalog variable that identifies the user whose account needs to be deactivated.</li></ul><h4 id="h_01KJC8AY4E9JBWPM5N5JN34AZ9">Ticket Management</h4><p>Configure the following post-provisioning ticket settings:</p><p><strong>Ticket closer status</strong>: Select the ServiceNow ticket state to which the request should transition after successful user creation, updation, or deactivation in Active Directory. For example, you may select <em>Closed Complete</em> to indicate that the requested operation was completed successfully.</p><h3 id="01KFD0RVZ9EM5G97GM5P4XPJHZ">Logging</h3><p>The <strong>Logging</strong> section enables you to customize the log generation settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e936c1619d913109a4cd9229324e82f54">
+<strong>Select the log detail level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e970d920ecc1263a247efc0f28e746be7">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e8a044530e4dc97432c1b902ba950ef28">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="efdba4cf2c47fb2546f485e941b9f97db">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul><li data-list-item-id="e81b1ec651f28c92e3ffa3f802c08b0cd">
+<strong>Attribute filter</strong>: Select the attribute filter to include or exclude attributes in the log. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="eded7d78c450f6548b0a9b57ecfa445d7">
+<strong>Attributes to be included in log</strong>: Configure the attributes to be included in the log. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Attribute filter</strong> parameter.</li>
+<li data-list-item-id="e54aea23ae6f77a37fb2b04e6a09fe3bc">
+<strong>Attributes to be excluded in log</strong>: Configure the attributes to be excluded in the log. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute filter </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KJCACEEY59F57BDZB9P806BK">Reporting</h3><p>The <strong>Reporting</strong> section enables you to customize the report generation settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Report Generation</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e88af8f26ff9e9e0a1397f1915323c392">
 <strong>Select the report detail level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
 <li data-list-item-id="eee77a5ffc3fa02b219c8c6fb4afe280c">
 <strong>Full details</strong>: All attribute details are displayed.</li>
@@ -143,7 +167,7 @@
 </li></ul>
 </li>
 </ul>
-</li></ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insight Settings</h3><p>The <strong>Log Insight Settings</strong> section enables you to customize the log insight settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Log Insights</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e5634af6df5b5dd099221e03a6871b454">
+</li></ul><h3 id="h_01KJPK5XFJJ4APFAYTF6WSS6A2">Notifications</h3><p>Configure the following settings for email notifications:</p><ul><li data-list-item-id="e6a6a69a77e3bcd5fe2d2326eb79481d1"> </li></ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insight Settings</h3><p>The <strong>Log Insight Settings</strong> section enables you to customize the log insight settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Log Insights</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e5634af6df5b5dd099221e03a6871b454">
 <strong>Select the Log Insight Level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
 <li data-list-item-id="e8e92f907dfdb36c3025bb2a0ceb62495">
 <strong>Full details</strong>: All attribute details are displayed.</li>
@@ -160,20 +184,7 @@
 </li></ul>
 </li>
 </ul>
-</li></ul><h4 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h4><p>Configure the following settings for email notifications:</p><ul><li data-list-item-id="ed91e6565512b66ac839830d1db4c9216"> </li></ul><h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2><p>The &lt;source application&gt; to &lt;target application&gt; integration maps the &lt;source application&gt;  and &lt;target application&gt; attributes. Modify the source attributes, if required, based on your use case.</p><p><span>&lt;Insert the following table if the integration doesn't feature the Attribute Mapper&gt;</span></p><p>The following table displays the mapping of the attributes:</p><figure><table><tbody>
-<tr>
-<td><strong>&lt;Source App&gt; Attributes</strong></td>
-<td><strong>&lt;Target App&gt; Attributes</strong></td>
-</tr>
-<tr>
-<td> </td>
-<td> </td>
-</tr>
-<tr>
-<td> </td>
-<td> </td>
-</tr>
-</tbody></table></figure><h2 id="h_01K06FVR3HY5TQCJK1AC2W07CZ">Tables</h2><p id="h_01J7XEGA5M57172Y4JT9508Q9D"><span>Tables enable you to update specific data of a resource in a target application during integration runs when that data is missing in the source application from which the resource data is retrieved. </span></p><p><span>You can add tables in integrations to sync the values in tables to another application. Tables are used to update an attribute value in another application when the application attribute does not provide specific data.</span></p><p><span>The following tables are available:</span></p><ul>
+</li></ul><h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side, and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01K06FVR3HY5TQCJK1AC2W07CZ">Tables</h2><p id="h_01J7XEGA5M57172Y4JT9508Q9D"><span>Tables enable you to update specific data of a resource in a target application during integration runs when that data is missing in the source application from which the resource data is retrieved. </span></p><p><span>You can add tables in integrations to sync the values in tables to another application. Tables are used to update an attribute value in another application when the application attribute does not provide specific data.</span></p><p><span>The following tables are available:</span></p><ul>
 <li>
 <p><span><strong>&lt;Table Name&gt;</strong>: <span>Click the table row to display the <strong>Update Table</strong> pop-up window. </span></span><span>Each row in the table corresponds to a key name and key value pair. You can add rows to the table using one of the following options: <span>&lt;Depending upon the integration use case, you can document accordingly&gt;</span></span></p>
 <ul>

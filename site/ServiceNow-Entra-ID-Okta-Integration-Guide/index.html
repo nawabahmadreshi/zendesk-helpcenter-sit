@@ -19,7 +19,12 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>ServiceNow / Entra ID / Okta Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide describes the ServiceNow to Entra ID and Okta integration, </p><p>fetch RITm from service now and create users in entra and okta</p><p>fetiching RITM from service now anf deactivating user in entra and okta</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <strong>ServiceNow to Entra ID and Okta</strong> integration provides the following functions:</p><ul><li data-list-item-id="e531a144f51151be20597368c27707a3e"> </li></ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide describes the integration between ServiceNow, Microsoft Entra ID, and Okta. The integration synchronizes user data from ServiceNow to Entra ID and Okta to support contractor onboarding and offboarding based on requests raised in ServiceNow. It retrieves Requested Items (RITMs) from ServiceNow and performs the corresponding user provisioning and deprovisioning in Entra ID and Okta.</p><p>To identify user records across both systems, the integration uses the attribute selected in the Offboarding section as the correlation attribute to match user records between the two systems.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <strong>ServiceNow to Entra ID and Okta</strong> integration provides the following functions:</p><ul>
+<li data-list-item-id="ef1fd20e3848d5f818593281077d6a7b6">Fetches RITM records from ServiceNow for contractor creation requests.</li>
+<li data-list-item-id="e3c246c64a485a0e0524b16593d5432bb">Creates user accounts in Entra ID and Okta.</li>
+<li data-list-item-id="ef571f1dc75875fa99311813f13a12719">Fetches RITM records from ServiceNow for contractor termination requests.</li>
+<li data-list-item-id="e9d28314fee3917673bbc324c327b99d8">Deactivates the user accounts in Entra ID and Okta.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="e1d4a3b14c859dfa9594f3a6d2018e47a">
 <strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
 </li>
@@ -95,7 +100,7 @@
 <strong>Unique Username Generation:</strong><ul><li data-list-item-id="e6160b01a9caecd554d7f749555dd6f05"><strong>Enter Your Prompt to Create a Username</strong></li></ul>
 </li>
 <li data-list-item-id="e23efe367898e1d895db9756bef3621aa"><strong>Use Email as Username:</strong></li>
-</ul><h3 id="h_01KJYAJA8C7S34KTD95WP3VDWF">Password Policy</h3><p>The <strong>Password Policy</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul data-end="2881" data-start="2513"><li data-end="2711" data-list-item-id="e3539a5e690c376de85106d00a415e55c" data-start="2513">
+</ul><h3 id="h_01KJYCFGY00P3DCSPHSZ72MP8V">Password Policy</h3><p>The <strong>Password Policy</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul data-end="2881" data-start="2513"><li data-end="2711" data-list-item-id="e3539a5e690c376de85106d00a415e55c" data-start="2513">
 <p data-end="2711" data-start="2515"><strong data-end="2533" data-start="2515">Password Type</strong><span><strong data-end="2533" data-start="2515">*</strong></span><strong data-end="2533" data-start="2515">:</strong> Select the desired password type from the drop-down menu. The following are the available options:</p>
 <ul data-end="2881" data-start="2513">
 <li data-end="2711" data-list-item-id="e10c658836b836a5c5e853dbeaa1ef151" data-start="2513">
@@ -111,7 +116,7 @@
 </ul>
 </li>
 </ul>
-</li></ul><h3 id="h_01KJYAJA8CKVJMV2D2NG3MTMPJ">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if <strong>Enable Logging</strong> is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN"><strong>Parameters</strong></a> section.</p><ul><li data-list-item-id="efb20166689ee0bee81f511c643046a7c">
+</li></ul><h3 id="h_01KJYCFGY05MHFN0SZFPMHCY8Q">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if <strong>Enable Logging</strong> is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN"><strong>Parameters</strong></a> section.</p><ul><li data-list-item-id="efb20166689ee0bee81f511c643046a7c">
 <strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
 <li data-list-item-id="ef06898d6cfeeb8bc74eec8151f820615">
 <strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
@@ -152,14 +157,14 @@
 <strong>Send Email Notification for Offboarding</strong>: Select to enable email notifications for offboarding.</li>
 <li data-list-item-id="e32b64f1d2a3a35bc56d60e323cb5cb05">
 <strong>Send Integration Report via Email</strong>: Select to receive email notification with a CSV report for all integration runs. </li>
-</ul><h4 id="h_01KJYAJA8CW38M9AND8VAX3839">Onboarding Notification Settings</h4><p>Configure the following settings for the onboarding notification:</p><ul>
+</ul><h4 id="h_01KJYCFGY0AG0E1C2SFT0ZEDDK">Onboarding Notification Settings</h4><p>Configure the following settings for the onboarding notification:</p><ul>
 <li data-list-item-id="e2ca59076be2ec5064483b9022a094a11">
 <strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
 <li data-list-item-id="efe9937ae50cba821f21ea4d87feada61">
 <strong>Email Subject for Onboarding</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
 <li data-list-item-id="e1b1a743c846832edfe18b0f6386d7ccf">
 <strong>Email Body for Onboarding</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
-</ul><h4 id="h_01KJYAJA8CR4AP19V87XS8KG1C">Offboarding Notification Settings</h4><p>Configure the following settings for the offboarding notification:</p><ul>
+</ul><h4 id="h_01KJYCFGY02MABCNX128SC7YSA">Offboarding Notification Settings</h4><p>Configure the following settings for the offboarding notification:</p><ul>
 <li data-list-item-id="e56044c6c6aa3556148aef03162ca4a9b">
 <strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
 <li data-list-item-id="e78bb69a5ba3ad695e752f5f1022268fc">

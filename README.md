@@ -96,6 +96,16 @@ python sync_category.py
 uvicorn app.webhook_app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
+## Configuration
+
+All core settings are managed in your local `.env` file. You can adjust these at any time without changing the code.
+
+| Variable | Purpose |
+|---|---|
+| `ZENDESK_CATEGORY_ID` | The ID of the Guide category to sync. To switch categories, simply change this number. The script will automatically pull from the new category on its next run. |
+| `SLACK_WEBHOOK_URL` | (Optional) Paste an Incoming Webhook URL here to receive a Slack message every time the script successfully processes a change. |
+| `ZENDESK_API_TOKEN` | Your Zendesk authentication token. |
+
 ## Zendesk webhook target
 
 Use this endpoint as the webhook destination:

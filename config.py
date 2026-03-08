@@ -20,6 +20,8 @@ class Config:
     ZENDESK_LOCALE: str = field(default_factory=lambda: os.environ.get("ZENDESK_LOCALE", "en-us"))
     ZENDESK_WEBHOOK_SECRET: str = field(default_factory=lambda: os.environ.get("ZENDESK_WEBHOOK_SECRET", ""))
 
+    SLACK_WEBHOOK_URL: str = field(default_factory=lambda: os.environ.get("SLACK_WEBHOOK_URL", ""))
+
     STORAGE_DIR: Path = field(default_factory=lambda: Path(os.environ.get("STORAGE_DIR", "storage")))
 
     # ── derived sub-paths ──────────────────────────────────────────────

@@ -50,6 +50,26 @@ def main() -> None:
     # Save the new state only if the build succeeds
     sync_file.write_text(json.dumps(current_state, indent=2), encoding="utf-8")
 
+    # Send Slack Notification if configured
+    if cfg.SLACK_WEBHOOK_URL:
+        import requests
+        try:
+            message = (
+                f"✅ *Zendesk Sync Completed*\n"
+                f"• Processed {result.get('articles_processed', 0)} integration articles\n"
+                f"• Indexed {result.get('heading_count', 0)} headings\n"
+                f"• Found {result.get('broken_anchor_count', 0)} broken links"
+            )
+            resp = requests.post(
+                cfg.SLACK_WEBHOOK_URL, 
+                json={"text": message}, 
+                headers={"Content-Type": "application/json"}
+            )
+            resp.raise_for_status()
+            print("Successfully sent Slack notification.")
+        except Exception as e:
+            print(f"Failed to send Slack notification: {e}")
+
 
 if __name__ == "__main__":
     main()

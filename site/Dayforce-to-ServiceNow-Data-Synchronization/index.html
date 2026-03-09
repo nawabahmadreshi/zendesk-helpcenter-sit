@@ -19,302 +19,448 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Dayforce to ServiceNow Data Synchronization</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
-<p>The Aquera platform allows your organization to efficiently scale complex data management by automating the integration of diverse resource data across different applications and systems.</p>
-<p>The <em>Dayforce to ServiceNow Data Synchronization</em> integration automates the process of synchronizing user, department, and location data from Dayforce to ServiceNow. It also creates tickets in ServiceNow for the following events in Dayforce:</p>
-<ul>
-<li>Employee onboarding</li>
-<li>Employee role changes</li>
-<li>Employee offboarding</li>
-</ul>
-<p>The integration creates, updates, and deletes records in ServiceNow based on the current state in Dayforce. For example:</p>
-<ul>
-<li>If a department exists in Dayforce but not in ServiceNow, it is created.</li>
-<li>If a department exists in both but with different details, it is updated.</li>
-<li>If a department exists in ServiceNow but not in Dayforce, it is deleted (if enabled)</li>
-</ul>
-<p>This integration is triggered based on the schedule that you set under the <strong>Trigger</strong> tab.</p>
-<p>The <em>Dayforce to ServiceNow Data Synchronization</em> integration performs the following tasks:</p>
-<ul>
-<li>Retrieves the details of the employees who have been hired, whose roles have been changed, and who have been terminated from Dayforce and synchronizes the data with ServiceNow. Incremental retrieval is performed during every integration run within a period of 24 hours.</li>
-<li>Creates tickets in ServiceNow for employee onboarding, employee role changes, and employee offboarding events.
-<ul>
-<li>Creates a ticket if no ticket is already available for the employee event</li>
-<li>Updates the ticket if a ticket is already available and there are some changes to the event from the last integration run, for example, the effective hire date has been modified, the termination date has been modified, and so on.</li>
+<p>The Aquera platform allows your organization to efficiently scale complex data management by automating the integration of diverse resource data across different applications and systems.</p><p>The <strong>Dayforce to ServiceNow Data Synchronization</strong> integration automates the synchronization of employee and organizational data from <strong>Dayforce</strong> to <strong>ServiceNow</strong>. The integration ensures that workforce and organizational information in ServiceNow remains aligned with the source data in Dayforce.</p><p>The integration synchronizes the Users, Departments, Locations,a nd Job Families resources from <strong>Dayforce to ServiceNow.</strong></p><p>In addition to data synchronization, the integration automatically creates and manages <strong>ServiceNow tickets</strong> for employee lifecycle events detected in Dayforce. These events include:</p><ul>
+<li data-list-item-id="e27a89e33e9512c48d92981f658359783">Employee onboarding</li>
+<li data-list-item-id="e7b9aa786e85c6166a29525468b8b942b">Employee role changes</li>
+<li data-list-item-id="e9d09daa5c72660a082a6b9dd36246ba7">Employee offboarding</li>
+</ul><p>During each integration run, the system compares records between Dayforce and ServiceNow and performs the necessary actions to keep the systems aligned. For example:</p><ul>
+<li data-list-item-id="e88d9c65070d009139b6120d34a100c8d">If a record exists in <strong>Dayforce but not in ServiceNow</strong>, the integration creates it in ServiceNow.</li>
+<li data-list-item-id="e3b093e930ee31d1f040afb17c7f4fa18">If a record exists in <strong>both systems but contains different values</strong>, the integration updates the ServiceNow record.</li>
+<li data-list-item-id="ea2e9e0cf94901b5d7dfc11d18200a289">If a record exists in <strong>ServiceNow but no longer exists in Dayforce</strong>, the integration deletes the record when deletion is enabled.</li>
+</ul><p>The integration runs automatically based on the schedule configured in the <strong>Schedule</strong> tab.</p><h2 id="h_01KK95MYJTZ591DNFY0C6J62EB">Key Features</h2><ul>
+<li data-list-item-id="e25760eba77b87b454469635b464a5a02">
+<strong>Automated Ticket Generation:</strong> Automatically creates and updates ServiceNow tickets for employee onboarding, role changes, and offboarding events detected in Dayforce.</li>
+<li data-list-item-id="ebd354d253b979f80546d515af42c9297">
+<strong>Employee and Organizational Data Sync:</strong> Synchronizes <strong>users, departments, locations, and job families</strong> from Dayforce to ServiceNow to keep organizational data aligned.</li>
+<li data-list-item-id="eafefe3276371d8fa8f4e20f5ece5c60a">
+<strong>Incremental Data Processing:</strong> Processes only records that have changed since the last integration run, improving efficiency and reducing processing time.</li>
+<li data-list-item-id="efd4e2eb737b3e4993177604b98b0c1cd">
+<strong>Flexible ServiceNow Request Options:</strong> Supports ticket creation using <strong>standard tickets, Service Catalog items,</strong> or <strong>Order Guides</strong>.</li>
+<li data-list-item-id="e80ade81f92273b28926cc2c517b58930">
+<strong>Pre-Event Ticket Creation:</strong> Allows onboarding and offboarding tickets to be generated <strong>before the event date</strong> to prepare access, equipment, and system updates.</li>
+<li data-list-item-id="e9fff4e96b6c6ac5320a7d197ce906728">
+<strong>Configurable Sync Controls:</strong> Provides filters to control which records are created, updated, or deleted during synchronization.</li>
+<li data-list-item-id="e63156c03042dcdc864e8f46df3c3911f">
+<strong>Record Processing Limits:</strong> Allows administrators to set limits on the number of records processed in each integration run.</li>
+<li data-list-item-id="e16a63660195e8cdcde04cbee5ed4e38d">
+<strong>Debug and Monitoring Tools:</strong> Includes debugging filters, execution logs, and reports to monitor integration activity and troubleshoot issues.</li>
+</ul><h3 id="h_01KK95MYJVTYBM2FV360G1R4DT">Ticket Generation Workflow</h3><p>The integration automatically creates or updates <strong>ServiceNow tickets</strong> when employee lifecycle events occur in Dayforce.</p><p>The system evaluates employee event dates, such as:</p><ul>
+<li data-list-item-id="e6b5111f6857addd5b468b4f0abe370bf"><strong>Hire Date</strong></li>
+<li data-list-item-id="eb8753cafbe7569369e06564989156f84"><strong>Role Change Effective Date</strong></li>
+<li data-list-item-id="eabe5ffd0610306be33bdbac07ee144b1"><strong>Termination Date</strong></li>
+</ul><p>Based on these events, the integration performs the following actions:</p><ul>
+<li data-list-item-id="eaa2d38e6c2192882c00ea230be1e480b">
+<strong>Creates a new ticket</strong> if no ticket currently exists for the event.</li>
+<li data-list-item-id="e12cbe16bcfa6dfda24c7c54dd9c0940e">
+<strong>Updates an existing ticket</strong> if the event details change after the ticket has been created.</li>
+</ul><p>For example, if an employee’s <strong>hire date or termination date is modified in Dayforce</strong>, the integration updates the corresponding ServiceNow ticket to reflect the new information.</p><p>Tickets can be created using different ServiceNow request mechanisms depending on how the integration is configured:</p><ul>
+<li data-list-item-id="eef7b36e97ebdd7e2b398d96939d546e7">
+<strong>Standard ServiceNow tickets</strong> (such as Incident, HR Case, or Change Request)</li>
+<li data-list-item-id="e5a5b042695d0d155f7948d4fd7eab440"><strong>Service Catalog requests</strong></li>
+<li data-list-item-id="e2348dd349b924a584f32af07df14a763">
+<strong>Order Guides</strong> that request multiple items in a single workflow.</li>
+</ul><h1 id="h_01KK95MYJYFA0R5D2HQXS7D76W">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ecd9fa90f5e0a339c45e1129159d27ef7">
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="eae237a02b72769902c74ef6e1079acf2">
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:<ul>
+<li data-list-item-id="ecd5d185c085da651ee531d6bb0a7020a">
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853">Dayforce Configuration Guide</a> for instructions on creating the Dayforce application connector and setting up the authentication.</li>
+<li data-list-item-id="e305a5eb13d25c1a38de0bc1047678479">
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854">ServiceNow Configuration Guide</a> for instructions on creating the ServiceNow application connector and setting up the authentication</li>
 </ul>
 </li>
-<li>Retrieves the data of users, locations, and departments from Dayforce and synchronizes the data with ServiceNow. The number of creations, updates, and deletions in ServiceNow for each type of data can be controlled by configuring the parameters available in the integration setup.</li>
-<li>Creates a CSV report of the changes in ServiceNow and sends the report via email to the email recipients, based on the parameters configured.</li>
-</ul>
-<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
-<p>The following are the prerequisites:</p>
-<ul>
-<li>
-<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
-</li>
-<li>
-<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
-<ul>
-<li>
-<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for instructions on creating the Dayforce application connector and setting up the authentication.</li>
-<li>
-<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for instructions on creating the ServiceNow application connector and setting up the authentication.</li>
-</ul>
-</li>
-</ul>
-<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
-<p>This section details the configuration process for integrating Dayforce with ServiceNow. It covers creating the integration, setting parameters, and establishing automated synchronization of employee records, departments, locations, and tickets from Dayforce into ServiceNow.</p>
-<p>This integration syncs the Dayforce data of all employees, locations, departments, and creates tickets for any events related to employee onboarding, role changes, and offboarding in ServiceNow.</p>
-<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
-<p>Perform the following steps to create the integration:</p>
-<ol>
-<li>Log in to the Aquera Admin portal.</li>
-<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
-<li>Click<strong> Create Integration</strong>.</li>
-<li>Select <strong>Dayforce to ServiceNow</strong>.</li>
-<li>Enter a name and a description for the integration.</li>
-<li>Select your Dayforce and ServiceNow connector instances.</li>
-<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
-</ol>
-<h3 id="01JZSCGEFJCNXA1605VDMS55X8">Parameters</h3>
-<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p>
-<h4 id="h_01K7GW1R7W9N6NFT0NF4WD92RB">Integration Scenarios </h4>
-<ul>
-<li>
-<strong data-end="883" data-start="854">Enable Ticket Management:</strong> Select this checkbox to create and update onboarding and offboarding tickets in ServiceNow based on Dayforce events.</li>
-<li>
-<strong data-end="1027" data-start="994">Enable Department Management:</strong> Select this checkbox to synchronize department records between Dayforce and ServiceNow.</li>
-<li>
-<strong data-end="1139" data-start="1108">Enable Location Management:</strong> Select this checkbox to keep location records in ServiceNow aligned with Dayforce organizational data.</li>
-<li>
-<strong data-end="1262" data-start="1235">Enable User Management:</strong> Select this checkbox to create, update, or deactivate ServiceNow user accounts from Dayforce employee records.</li>
-</ul>
-<h4 id="h_01K7GW1Z46TZ5SC32RNXZNDWBY">Execution Features</h4>
-<p>Configure the following execution related settings:</p>
-<ul>
-<li data-list-item-id="e20652481ccd4cc70b1ed14df137e17e7">
+</ul><h1 id="h_01KK95MYK0BNZ4JWW70Y0RDQ40">Integration Setup</h1><p>This section describes how to configure the <strong>Dayforce to ServiceNow Data Synchronization</strong> in the Aquera Admin portal. It explains how to create the integration, configure parameters, and enable automated synchronization between the two systems.</p><p>The integration synchronizes <strong>employees, departments, locations, and job families</strong> from <strong>Dayforce</strong> to <strong>ServiceNow</strong>. It also generates ServiceNow tickets for employee lifecycle events, including <strong>onboarding, role changes,</strong> and <strong>offboarding</strong>.</p><h2 id="h_01KK95MYK14Z1ZQXW2FNVNHM2N">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ef391977e391710bdaa8c4c7dc60eec5b">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e7a67290c6e279215724b3c2dd41c0145">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e57215d9550231c6326eccebe66e2bcf8">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="ea18e540136b5f1d9c1480a9cf36e35ca">Select <strong>Dayforce to ServiceNow Data Synchronization</strong>.</li>
+<li data-list-item-id="e025218c344f618b5c0b5b3c06d546100">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e449dede95366375dfc7bbdd09b32b20a">Select your Dayforce and ServiceNow connector instances.</li>
+<li data-list-item-id="e0266c10f9a95e7a8185d08008cc74115">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h3 id="h_01KK95MYK31D267KWG7302ZG8E">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p><h3 id="h_01KK95MYK3EA2TX2Q5X95X2994">Integration Scenarios</h3><ul>
+<li data-list-item-id="e356907d8c0285d67b619c315f246a190">
+<strong>Enable Ticket Management:</strong> Select this checkbox to create and update onboarding and offboarding tickets in ServiceNow based on Dayforce events.</li>
+<li data-list-item-id="ec899dca74a720335e2cb71c3c60cac8e">
+<strong>Enable Department Management:</strong> Select this checkbox to synchronize department records between Dayforce and ServiceNow.</li>
+<li data-list-item-id="e6f32f9915ef1356c993a58fdb0ea4c6e">
+<strong>Enable Location Management:</strong> Select this checkbox to keep location records in ServiceNow aligned with Dayforce organizational data.</li>
+<li data-list-item-id="e5f4a49dde104bfc14b84b1f94a8dd8da">
+<strong>Enable User Management:</strong> Select this checkbox to create, update, or deactivate ServiceNow user accounts from Dayforce employee records.</li>
+<li data-list-item-id="ea3fd871a774b373f05cb2190223e573d">
+<strong>Enable Job Family Management:</strong> Select this checkbox to synchronize job family data from Dayforce to ServiceNow. When enabled, the Manage Job Families section is displayed to configure job family management integration settings.</li>
+</ul><h3 id="h_01KK95MYK41BEWB4GT384JQQH1">Operational Settings</h3><p>Configure the following execution related settings:</p><ul>
+<li data-list-item-id="ef37e4cf72b59667f4f5594b38f6e6088">
 <strong>Enable Report-Only Mode</strong>: Select this option to generate a report detailing the data changes that would occur, but without applying them.</li>
-<li data-list-item-id="ef90bc17e2ea881e4a2815cd34cf8d805">
+<li data-list-item-id="ebeb348329bc5b1e9f5997343d645eb24">
 <strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
-<li data-list-item-id="e81238e196035271f6161a673cfae3af7">
+<li data-list-item-id="e5594dfd4883cd3db637381cbf243973f">
 <strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
-<li data-list-item-id="e20fbfb8650b942a9be4bb5dce78a5753">
+<li data-list-item-id="e04ae92a10b2b4bae412e7ec87fccc5e9">
 <strong>Enable Email Notifications</strong>: Select this checkbox to enable the integration-related notifications.</li>
-<li data-list-item-id="e22557df6cce0e1ab9335aa4e531b2aa3">
-<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</li>
-<li data-list-item-id="e22557df6cce0e1ab9335aa4e531b2aa3">
-<strong>Debug Settings</strong>: Select to generate logs outlining data changes that would occur for debugging.</li>
-</ul>
-<h4 data-end="309" data-start="272" id="h_01K7HN40EZC066WVMMQBXW6M3Q">Onboarding Tickets Generation</h4>
-<ul>
-<li data-end="585" data-start="311">
-<strong data-end="351" data-start="311">Enable Onboarding Ticket Generation: </strong>Select to enable onboarding ticket creation in ServiceNow for new hires from Dayforce. For example, when an employee’s status changes to <strong data-end="511" data-start="501">Active</strong> in Dayforce, an onboarding ticket is automatically created in ServiceNow.</li>
-<li data-end="808" data-start="587">
-<strong data-end="628" data-start="587">Statuses to fetch Dayforce Employees: </strong>Select the Dayforce employment statuses to include for onboarding ticket creation. For example, choose statuses like <strong data-end="758" data-start="748">Active</strong> or <strong data-end="771" data-start="762">Hired</strong> to identify employees starting soon.</li>
-<li data-end="983" data-start="810">
-<strong data-end="842" data-start="810">Select Onboarding Date Type: </strong>Select the employee date field (for example, <strong data-end="903" data-start="890">Hire Date</strong> or <strong data-end="921" data-start="907">Start Date</strong>) used to determine when onboarding tickets should be created.</li>
-<li data-end="1217" data-start="985">
-<strong data-end="1018" data-start="985">Enable Ticket Pre-Processing: </strong>Select to create onboarding tickets a few days before the onboarding date. For example, create tickets <strong data-end="1153" data-start="1136">5 days before</strong> an employee’s hire date to prepare access or assets in advance. Refer to the <a href="#h_01JY5VVTJHHVSKTS2X4BEFRJV8">Sample Ticket Description Template</a>.</li>
-<li>
-<strong data-end="1829" data-start="1795">Enable Employee Number Filter: </strong>Select to limit onboarding ticket creation to a specific employee number for testing. For example, use this to test ticket creation for employee number <strong data-end="1994" data-start="1984">100245</strong> before enabling it for all employees. 
-<ul>
-<li data-end="1217" data-start="985">
-<strong data-end="5164" data-start="5118">Create ticket X-days before provided date:</strong> Enter the number of days before the onboarding date to create the ticket. For example, if you choose <em data-end="719" data-start="708">Hire Date</em> and set the workflow to create a ticket 5 days before the date, the ticket will be created 5 days before the employee’s hire date.<br/><strong>Note</strong>: The selected <strong>Onboarding Date Type</strong> determines the <strong>provided date</strong>.</li>
+<li data-list-item-id="e160f9d78b69cdb40b5f10f6e056c0b96">
+<p><strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics.</p>
+<p><strong>Debug Settings</strong>: Select to generate logs outlining data changes that would occur for debugging.</p>
+</li>
+</ul><h3 id="h_01KK95MYK6M2SB1PHC9RTKBFZQ">Manage Tickets</h3><p>This section allows you to configure how the integration creates and manages employee lifecycle tickets in ServiceNow based on events detected in Dayforce.</p><p><strong>Correlation Settings</strong><br/><br/>This section defines the attributes used to match employee records between Dayforce and ServiceNow when processing onboarding and offboarding events.</p><ul>
+<li data-list-item-id="edc92a81dd5b5925147421b48852d15fa">
+<strong>Source Correlation Attribute:</strong> Select the Dayforce employee attribute used to identify and match employee records from the Dayforce. For example, if <strong>EmployeeNumber</strong> is selected, the integration will use the employee’s <strong>EmployeeNumber</strong> value from <strong>Dayforce</strong> to identify the employee when processing onboarding or offboarding events.</li>
+<li data-list-item-id="efba8911d0fa7d8ac46086e0f847e6616">
+<strong>Target Correlation Attribute:</strong> Select the ServiceNow employee attribute used to match the employee record with the value received from Dayforce. For example, if <strong>Employee number</strong> is selected, the integration will match the <strong>EmployeeNumber</strong> received from <strong>Dayforce</strong> with the <strong>Employee number</strong> field in <strong>ServiceNow</strong> to locate the correct employee record.</li>
+</ul><p><strong>Onboarding Tickets Generation</strong> This section allows you to configure how onboarding tickets are created in ServiceNow for new employees detected in Dayforce.</p><ul>
+<li data-list-item-id="e9c7c4f2d9e60f0080b428547d6ff470c">
+<strong>Enable Onboarding Ticket Generation:</strong> Select to enable onboarding ticket creation in ServiceNow for new hires from Dayforce. For example, when an employee’s status changes to <strong>Active</strong> in Dayforce, an onboarding ticket is automatically created in ServiceNow.<ul>
+<li data-list-item-id="eec174c87294d91586911b9940dac300d">
+<strong>Statuses to fetch Dayforce Employees:</strong> Select the Dayforce employment statuses to include for onboarding ticket creation. For example, if the status Active is selected, the system will only evaluate employees whose Dayforce status is Active and will ignore employees marked as Terminated, Inactive, or other statuses.</li>
+<li data-list-item-id="e4d5e323c6d8bb7697c3f9d3be91f522d">
+<strong>Select Onboarding Date Type:</strong> Select which employee date from Dayforce is used to decide when the onboarding ticket should be created in ServiceNow. For example, if <strong>HireDate</strong> is selected and an employee’s hire date is <strong>July 1</strong>, the onboarding ticket will be created based on that <strong>July 1</strong> date.</li>
 </ul>
 </li>
-<li data-end="1511" data-start="1219">
-<strong data-end="1242" data-start="1219">ServiceNow Trigger: </strong>Select the trigger type used to initiate ticket creation in ServiceNow. For example, select <strong data-end="1430" data-start="1406">Service Catalog Item</strong> if onboarding tickets should be generated through ServiceNow’s catalog requests. <br/>The following options are available in the dropdown:<br/>
+<li data-list-item-id="efdd6e97c83c77ec29bd7344b04985b19">
+<strong>Enable Ticket Pre-Processing:</strong> Select to create onboarding tickets a few days before the onboarding date. For example, create tickets <strong>5 days before</strong> an employee’s hire date to prepare access or assets in advance. Refer to the <a href="../Dayforce-to-ServiceNow-Data-Synchronization/#h_01JY5VVTJHHVSKTS2X4BEFRJV8">Sample Ticket Description Template</a>.<ul><li data-list-item-id="effb670944f92249b88ceb97927e79f07">
+<strong>Create ticket X-days before provided date:</strong> Enter the number of days before the selected onboarding date, the system should generate the ServiceNow ticket. For example, if you choose <em>Hire Date</em> and set the workflow to create a ticket 5 days before the date, the ticket will be created 5 days before the employee’s hire date. <strong>Note</strong>: The selected <strong>Onboarding Date Type</strong> determines the <strong>provided date</strong>.</li></ul>
+</li>
+<li data-list-item-id="e9a96da0649d95ce682ee0a186330e45f">
+<strong>Enable Employee Number Filter:</strong> Select to limit onboarding ticket creation to a specific employee number for testing. For example, use this to test ticket creation for employee number <strong>100245</strong> before enabling it for all employees.<ul><li data-list-item-id="e66bcb8e6f22123cafb7aaf8ed753ee31">
+<strong>Set Onboarding Employee Number Value:</strong> Enter the starting employee number that will be assigned to newly onboarded employees when the system automatically generates employee IDs during the onboarding process. This value acts as the base number from which the next employee numbers are incremented. For example, if the value is set to <strong>2200</strong>, the first new employee created through onboarding will receive the employee number <strong>2200</strong>, the next employee will receive <strong>2201</strong>, then <strong>2202</strong>, and so on as additional employees are onboarded.</li></ul>
+</li>
+<li data-list-item-id="e7e11b293c4994d3019dc45699366156c">
+<p><strong>ServiceNow Trigger:</strong> Select the method used to create onboarding requests in ServiceNow. For example, select <strong>Service Catalog Item</strong> if onboarding requests should be generated through ServiceNow catalog requests.</p>
+<p>The following options are available:</p>
 <ul>
-<li data-end="1793" data-start="1513">
-<strong data-end="1529" data-start="1513">Ticket Type: </strong>Select the ServiceNow ticket record type used for onboarding (for example, <strong data-end="1619" data-start="1607">Incident</strong>, <strong data-end="1639" data-start="1621">Change Request</strong>, <strong data-end="1652" data-start="1641">Problem</strong>, <strong data-end="1665" data-start="1654">HR Case</strong>, <strong data-end="1686" data-start="1667">Catalog Request</strong>, or <strong data-end="1713" data-start="1691">Custom Ticket Type</strong>). For example, select <strong data-end="1747" data-start="1736">HR Case</strong> to generate tickets under HR case management.</li>
-<li data-end="3592" data-start="3313">
-<strong>Service Catalog Category</strong>: Select the ServiceNow catalog category (such as Software, Hardware, or Facilities) that contains the catalog item you want to use. For example, if you select <em data-end="502" data-start="492">Software</em>, the <em data-end="541" data-start="508">Service Catalog Service Request</em> field will automatically populate with the related items from that category.<br/>
-<ul>
-<li data-end="3592" data-start="3313">
-<strong>Service Catalog Service Request</strong>: Select the specific ServiceNow catalog item from the chosen category that should trigger this workflow. The list of available items is automatically filtered based on the selected <em data-end="432" data-start="406">Service Catalog Category</em>.</li>
+<li data-list-item-id="e05f359b1f64ec4c51a5d99037eb25a54">
+<strong>Ticket:</strong> Creates a standard ServiceNow ticket for the onboarding request.<ul><li data-list-item-id="e3f0cc8d1ce8cd78544d9c71bf14c7b18">
+<strong>Ticket Type:</strong> Select the ServiceNow ticket record type used for onboarding, such as <strong>Incident</strong>, <strong>Change Request</strong>, <strong>Problem</strong>, <strong>HR Case</strong>, <strong>Catalog Request</strong>, or <strong>Custom Ticket Type</strong>. For example, selecting <strong>HR Case</strong> creates onboarding requests as HR case records in ServiceNow.</li></ul>
+</li>
+<li data-list-item-id="e49a36eaf24a3181b329702b05d37783b">
+<strong>Service Catalog Item:</strong> Creates an onboarding request using a ServiceNow service catalog item.<ul><li data-list-item-id="e969cf53dba45d5fafda203d0e0bdb30b">
+<strong>Service Catalog Service Request:</strong> Select the catalog item that should be requested. Available items are filtered based on the selected <strong>Service Catalog Category</strong>. For example, you may select items such as <strong>New Employee Laptop</strong>, <strong>VPN Access</strong>, or <strong>Email Setup</strong>.</li></ul>
+</li>
+<li data-list-item-id="eb28ff10d6a5b604a98f3e4db7157c8b9">
+<strong>Order Guide:</strong> Creates an onboarding request using a ServiceNow order guide, which groups multiple catalog items into a single request.<ul><li data-list-item-id="ea35a9f38a13ee8289e3178f00671a3cf">
+<strong>Order Guide:</strong> Select one or more order guides that should be triggered during onboarding. For example, an order guide such as <strong>New Employee Setup</strong> may include requests for <strong>Laptop</strong>, <strong>VPN Access</strong>, and <strong>Email Setup</strong>.</li></ul>
+</li>
 </ul>
 </li>
-<li data-end="3592" data-start="3313">
-<strong>Flow Designer API Endpoint</strong>: Enter the REST API endpoint URL generated by the ServiceNow Flow Designer. This endpoint allows ServiceNow to initiate the workflow when the flow is executed.</li>
-<li data-end="3592" data-start="3313">
-<strong data-end="6257" data-start="6234">Order Guides:</strong> Select one or more ServiceNow order guides that should trigger this workflow. An order guide groups multiple related catalog items (such as hardware, software, and access requests) under a single request. The workflow will start whenever a selected order guide is submitted in ServiceNow.</li>
+</ul><p><strong>Offboarding Tickets Generation</strong> This section allows you to configure how offboarding tickets are created in ServiceNow when employees are terminated in Dayforce.</p><ul>
+<li data-list-item-id="e834664c8702702bda1bbceded2e62ebe">
+<strong>Enable Offboarding Ticket Generation:</strong> Select to enable automatic offboarding ticket creation in ServiceNow for employees marked as terminated in Dayforce. For example, when an employee’s termination date is reached, an offboarding ticket is automatically generated in ServiceNow.</li>
+<li data-list-item-id="e4e5e021c1e8de2fe48e2520161164afc">
+<em>Statuses to fetch Dayforce employees:</em>* Select the Dayforce employment statuses to include for offboarding ticket creation. For example, choose statuses like <strong>Terminated</strong> or <strong>Inactive</strong> to capture employees leaving the organization.</li>
+<li data-list-item-id="e9c87808b4b80490f765be92dd41972f3">
+<strong>Select Offboarding Date Type:</strong> Select the employee date field (for example, <strong>Termination Date</strong> or <strong>Last Working Day</strong>) used to determine when offboarding tickets should be created.</li>
+<li data-list-item-id="edf02cd613350398cac9aa373dbc6d237">
+<strong>Enable Ticket Pre-Processing:</strong> Select to create offboarding tickets a few days before the onboarding date. For example, create tickets <strong>3 days before</strong> the termination date to ensure system access removal in time. Refer to the <a href="#h_01KK95VBWTFQ0QRYA46J3FD1HW">Sample Ticket Description Template</a>.<ul><li data-list-item-id="e24c2c234f08b4b2990978b9fe578a7a7">
+<strong>Create ticket X-days before provided date:</strong> Enter the offboarding date type that should be used to calculate when the ticket will be created. For example, if you choose <em>Termination Date</em> and set the workflow to create a ticket 3 days before the date, the ticket will be created 3 days before the employee’s termination date.<strong>Note</strong>: The selected <strong>Offboarding Date Type</strong> determines the <strong>provided date</strong>.</li></ul>
+</li>
+<li data-list-item-id="e5905ee2ccbd1af790ae343ea3b5104c1">
+<strong>Enable Employee Number Filter:</strong> Select to limit offboarding ticket creation to a specific employee number for testing. For example, use this to verify the process for employee number <strong>102198</strong> before running for all terminations.<ul><li data-list-item-id="e8292e8454fd660d98e8e1dba2d778db2">
+<strong>Set Offboarding Employee XRefCode Value:</strong> Specifies the minimum employee reference code used to identify employees for offboarding ticket creation. For example, if the value is set to <strong>200562</strong>, the system will create offboarding tickets only for employees whose <strong>XRefCode</strong> is <strong>200562 or higher.</strong>
+</li></ul>
+</li>
+<li data-list-item-id="ee16f6790a3cb99090173a14135ebdca8">
+<p><strong>ServiceNow Trigger:</strong> Select the method used to create offboarding requests in ServiceNow. For example, select <strong>Flow Designer Trigger</strong> if the offboarding process is handled through automated workflows configured in ServiceNow Flow Designer.</p>
+<p>The following options are available:</p>
+<ul>
+<li data-list-item-id="e8c213d9d0a28e26e09d69a59300068f5">
+<strong>Ticket:</strong> Creates a standard ServiceNow ticket for the offboarding request.<ul><li data-list-item-id="ed179b3892ac3b16472fb6a610ac0968d">
+<strong>Ticket Type:</strong> Select the ServiceNow ticket record type used for offboarding (for example, <strong>Change Request</strong>, <strong>HR Case</strong>, <strong>Problem</strong>, <strong>Catalog Request</strong>, or <strong>Custom Ticket Type</strong>). For example, select <strong>Change Request</strong> to create tickets that track employee deprovisioning tasks.</li></ul>
+</li>
+<li data-list-item-id="e460ca86de3c75e33be2efd2a82c64c97">
+<strong>Service Catalog Item:</strong> Creates an offboarding request using a ServiceNow service catalog item.<ul><li data-list-item-id="e16fd7b95717556b94d9873a7ed8a629d">
+<strong>Service Catalog Service Request:</strong> Select the specific ServiceNow catalog item that should be requested. The available items are automatically filtered based on the selected <strong>Service Catalog Category</strong>.</li></ul>
+</li>
+<li data-list-item-id="e784dfc35886151944d07bdc99169f5ea">
+<strong>Order Guide:</strong> Creates an offboarding request using a ServiceNow order guide.<ul><li data-list-item-id="eda5d644b154ff526b9ec7c9f92cd5629">
+<strong>Order Guide:</strong> Select one or more ServiceNow order guides to trigger this workflow. An order guide groups multiple catalog items (such as hardware return, system access removal, and account deactivation) into a single request.</li></ul>
+</li>
+</ul>
+</li>
+</ul><p><strong>Job Family Settings</strong> This section allows you to configure how job family records from <strong>Dayforce</strong> are synchronized with <strong>ServiceNow</strong>, including creation, update, deletion, and filtering rules for job family data.</p><ul>
+<li data-list-item-id="e4a181e4048b6e46a077803008cfbc5ab">
+<strong>Source Correlation Attribute:</strong> Select the Dayforce attribute used to uniquely identify and match job family records between Dayforce and ServiceNow. For example, if <strong>XRefCode</strong> is selected, the integration will use the <strong>XRefCode value from Dayforce</strong> to identify and match job family records during synchronization.</li>
+<li data-list-item-id="ec32f6ec46867cc9db2ce34498fc5ede7">
+<strong>Target Correlation Attribute:</strong> Select the ServiceNow attribute used to match job family records with the corresponding records from Dayforce. For example, if <strong>Job Family Name</strong> is selected, the integration will match the <strong>Job Family Name from Dayforce</strong> with the <strong>Job Family Name field in ServiceNow</strong> to locate the correct job family record.</li>
+<li data-list-item-id="efaf9492d9232e0ceb8492679aaae9bc5">
+<strong>Fetch Jobs without Departments:</strong> Allows job family records to be created in ServiceNow even if the associated department information is not available. For example, if a job family such as <strong>Data Engineering</strong> exists in Dayforce but does not have a department assigned, enabling this option allows the job family to still be created in <strong>ServiceNow</strong>.</li>
+<li data-list-item-id="e533d4b85cb4c0d8a44122a33cb9ff781">
+<strong>Enable Job Family Creation:</strong> Allows the integration to create new job family records in ServiceNow based on job family data received from Dayforce. For example, if a job family named <strong>Data Science</strong> exists in Dayforce but does not exist in ServiceNow, enabling this option will create the <strong>Data Science job family</strong> in ServiceNow. The following option becomes visible only when <strong>Enable Job Family Creation</strong> is enabled:<ul><li data-list-item-id="e55c00e1732d414071961c3c9fb09fd26">
+<strong>Enable Creation Filter Condition:</strong> Allows you to define a filter that controls when job family records should be created in ServiceNow. For example, when <strong>Enable Job Family Creation</strong> is selected, the <strong>Enable Creation Filter Condition</strong> option appears, allowing you to configure filter rules for creating job families. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e72c52bec190cce861ee39ab863a5719d">
+<strong>ServiceNow Attribute for Filter:</strong> Select the ServiceNow attribute used to filter job family records during creation. For example, if <strong>Job Family Name</strong> is selected, the integration will evaluate the <strong>Job Family Name field in ServiceNow</strong> when determining whether a job family should be created.</li>
+<li data-list-item-id="e8e1cb9b3a67f285ea299ba8704b869a7">
+<strong>Match Condition:</strong> Select the rule used to compare the attribute value when applying the filter. For example, if <strong>Equals To</strong> is selected, the filter will match only job family records whose attribute value exactly matches the specified value.</li>
+<li data-list-item-id="e31de5be59b29f95c8825b030a77dda68">
+<strong>ServiceNow Job Family Value:</strong> Enter the value used by the filter to determine whether the job family should be created. For example, if <strong>Job Family Name</strong>, <strong>Equals To</strong>, and <strong>Developers</strong> are configured, the integration will check whether the <strong>Developers job family</strong> exists in ServiceNow. If it does not exist, the integration will create it.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="ec6d988eef8f8f24f028623e08232c089">
+<strong>Enable Job Family Update:</strong> Allows the integration to update existing job family records in ServiceNow based on changes detected in Dayforce. For example, if the <strong>Engineering job family</strong> is updated in Dayforce, enabling this option allows the integration to update the <strong>Engineering job family record in ServiceNow</strong>. The following option becomes visible only when <strong>Enable Job Family Update</strong> is enabled:<ul><li data-list-item-id="e35464262838b570afb6a2c9cbc1f2e69">
+<strong>Enable Update Filter Condition:</strong> Allows you to define a filter that controls which job family records should be updated in ServiceNow. For example, when <strong>Enable Job Family Update</strong> is selected, the <strong>Enable Update Filter Condition</strong> option appears, allowing you to configure filter rules for updating job families. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e92f050aa0a321f0bc81fab0043624aa4">
+<strong>ServiceNow Attribute for Filter:</strong> Select the ServiceNow attribute used to filter job family records during updates. For example, if <strong>Job Family Name</strong> is selected, the integration will evaluate updates only for job family records matching the specified value.</li>
+<li data-list-item-id="ebd2cd56f5ae59ec08cd95e96f4322cae">
+<strong>Match Condition:</strong> Select the rule used to compare the attribute value during update filtering. For example, if <strong>Equals To</strong> is selected and the value is <strong>Engineering</strong>, only the <strong>Engineering job family</strong> will be updated.</li>
+<li data-list-item-id="e63cd31dd6d10fb6a49d9189e1504876f">
+<strong>ServiceNow Job Family Value:</strong> Enter the value used to determine which job family records should be updated. For example, entering <strong>Engineering</strong> ensures that only the <strong>Engineering job family</strong> is updated during synchronization.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="eb94888a21e1e89085d5d13ae28033951">
+<strong>Enable Job Family Deletion:</strong> Allows the integration to delete job family records in ServiceNow when they no longer exist in Dayforce. For example, if the <strong>Support job family</strong> is removed from Dayforce, enabling this option allows the integration to delete the <strong>Support job family record in ServiceNow</strong>. The following option becomes visible only when <strong>Enable Job Family Deletion</strong> is enabled:<ul><li data-list-item-id="e4382f9ac4dd22559974ff29581c82094">
+<strong>Enable Delete Filter Condition:</strong> Allows you to define a filter that controls which job family records should be deleted in ServiceNow. For example, when <strong>Enable Job Family Deletion</strong> is selected, the <strong>Enable Delete Filter Condition</strong> option appears, allowing you to configure filter rules for deleting job families. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e87260f4186878c611d12ab64408b895d">
+<strong>ServiceNow Attribute for Filter:</strong> Select the ServiceNow attribute used to filter job family records during deletion. For example, if <strong>Job Family Name</strong> is selected, the integration will evaluate deletion conditions based on the <strong>Job Family Name field in ServiceNow</strong>.</li>
+<li data-list-item-id="e1cb37c4bfbc789d3008b3ff2ba90460a">
+<strong>Match Condition:</strong> Select the rule used to compare attribute values when evaluating deletion filters. For example, if <strong>Equals To</strong> is selected and the value is <strong>Contractors</strong>, the filter will apply only to the <strong>Contractors job family</strong>.</li>
+<li data-list-item-id="e16adeaa7461c7f921c5f0586c626e8bf">
+<strong>ServiceNow Job Family Value:</strong> Enter the job family value used to determine which job family records should be deleted. For example, if <strong>Contractors</strong> is specified and the <strong>Contractors job family exists in ServiceNow but not in Dayforce</strong>, the integration will delete the <strong>Contractors job family record</strong> from ServiceNow.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e4edd131bc5ce8d9668bbf14f901c4257">
+<strong>Enable Sync Record Limits:</strong> Allows you to limit the number of job family records processed during each integration run. For example, enabling this option allows administrators to control how many job family records can be created, updated, or deleted in a single synchronization cycle. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="ea6fbc2ced5f41968664730e10f875694">
+<strong>Creation Record Limit:</strong> Specify the maximum number of job family records that can be created during a single integration run.For example, if <strong>100</strong> is entered, the integration will create no more than <strong>100 job family records</strong> during a single run.</li>
+<li data-list-item-id="e9942bea633265fd18304eaa8baa6766f">
+<strong>Update Record Limit:</strong> Specify the maximum number of job family records that can be updated during a single integration run. For example, if <strong>100</strong> is entered, only <strong>100 job family records will be updated</strong> in that run.</li>
+<li data-list-item-id="ee112e4a61cbe883fee26e69d782f7456">
+<strong>Deletion Record Limit:</strong> Specify the maximum number of job family records that can be deleted during a single integration run. For example, if <strong>10</strong> is entered, the integration will delete no more than <strong>10 job family records</strong> in that run.</li>
+</ul>
+</li>
+<li data-list-item-id="e8eed17437d55c601bc3f7b02cce97d76">
+<strong>ServiceNow Table Name:</strong> Enter the ServiceNow table where job family records will be synchronized. For example, if <strong>u_job_families</strong> is entered, the integration will create, update, and delete job family records in the <strong>u_job_families table in ServiceNow</strong>.</li>
+</ul><h3 id="h_01KK95PP363NBECF8RKE9JF657">Manage Departments</h3><p>This section allows you to configure how department records from Dayforce are synchronized with ServiceNow, including rules for creating, updating, deleting, and filtering department data during synchronization.</p><ul>
+<li data-list-item-id="ed03f00604197697097b8f5f1e929c22d">
+<strong>Source Correlation Attribute:</strong> Select the Dayforce attribute used to uniquely identify and match department records between Dayforce and ServiceNow. For example, if <strong>XRefCode</strong> is selected, the integration will use the <strong>XRefCode value from Dayforce</strong> to identify and match department records during synchronization.</li>
+<li data-list-item-id="ee4a39dfdf19406c5ada484f048b8c8da">
+<strong>Target Correlation Attribute:</strong> Select the ServiceNow attribute used to match department records with the corresponding records from Dayforce. For example, if <strong>ID</strong> is selected, the integration will match the <strong>department ID from Dayforce</strong> with the <strong>ID field in ServiceNow</strong> to locate the correct department record.</li>
+<li data-list-item-id="e7a6bc0a83e26d8b550ab455e99f5aab5">
+<strong>Enable Department Creation:</strong> Allows the integration to create new department records in ServiceNow based on department data received from Dayforce. For example, if a department named <strong>Finance Operations</strong> exists in Dayforce but does not exist in ServiceNow, enabling this option will create the <strong>Finance Operations department</strong> in ServiceNow. The following option becomes visible only when <strong>Enable Department Creation</strong> is enabled:<ul><li data-list-item-id="e2030f2ab0a9c77a2d535daf3eb542cf7">
+<strong>Enable Creation Filter Condition:</strong> Allows you to define a filter that controls when department records should be created in ServiceNow. For example, when <strong>Enable Department Creation</strong> is selected, the <strong>Enable Creation Filter Condition</strong> option appears, allowing you to configure filter rules for creating departments. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e1458b03bbc642952fc895db7d588fe1b">
+<strong>ServiceNow Attribute for Filter:</strong> Select the ServiceNow attribute used to filter department records during creation. For example, if <strong>name</strong> is selected, the integration will evaluate the <strong>department name field in ServiceNow</strong> when determining whether the department should be created.</li>
+<li data-list-item-id="e286776249d6aa83009d96146c0f2d08e">
+<strong>Match Condition:</strong> Select the rule used to compare attribute values when applying the filter. For example, if <strong>Equals To</strong> is selected, the filter will match only department records whose attribute value exactly matches the specified value.</li>
+<li data-list-item-id="e78ce7408dc4b723e77190d97c0e02745">
+<strong>ServiceNow Department Value:</strong> Enter the value used by the filter to determine whether a department should be created. For example, if <strong>name</strong>, <strong>Equals To</strong>, and <strong>Finance</strong> are configured, the integration will evaluate whether the <strong>Finance department</strong> exists in ServiceNow. If it does not exist, the department will be created.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e7ed96b842a42a7e4ecbd1edc1ff39969">
+<strong>Enable Department Update:</strong> Allows the integration to update existing department records in ServiceNow based on changes detected in Dayforce. For example, if the <strong>Support department</strong> in Dayforce is renamed to <strong>Customer Support</strong>, enabling this option allows the integration to update the <strong>Customer Support department record in ServiceNow</strong>. The following option becomes visible only when <strong>Enable Department Update</strong> is enabled:<ul><li data-list-item-id="e2f439ed3c24aa72f24b8755001b3ee84">
+<strong>Enable Update Filter Condition:</strong> Allows you to define a filter that controls which department records should be updated in ServiceNow. For example, when <strong>Enable Department Update</strong> is selected, the <strong>Enable Update Filter Condition</strong> option appears, allowing you to configure filter rules for updating departments. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e50f70bdb82f0b23896c5874ff119f6b9">
+<strong>ServiceNow Attribute for Filter:</strong> Select the ServiceNow attribute used to filter department records during updates. For example, if <strong>name</strong> is selected, the integration will evaluate updates based on the <strong>department name field in ServiceNow</strong>.</li>
+<li data-list-item-id="e0c6da1ded46d966ce1cbe6fa7b730e37">
+<strong>Match Condition:</strong> Select the rule used to compare attribute values when applying the update filter. For example, if <strong>Equals To</strong> is selected and the value is <strong>Engineering</strong>, only the <strong>Engineering department</strong> will be updated.</li>
+<li data-list-item-id="e059f2b0086a1e93fc24d0fe8f5261b43">
+<strong>ServiceNow Department Value:</strong> Enter the department value used to determine which department records should be updated. For example, entering <strong>Engineering</strong> ensures that only the <strong>Engineering department</strong> will be updated during synchronization.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e267a741d0a4d7a67f16587768ba892fc">
+<strong>Enable Department Deletion:</strong> Allows the integration to delete department records in ServiceNow when they no longer exist in Dayforce. For example, if the <strong>Legacy IT department</strong> is removed from Dayforce, enabling this option allows the integration to delete the <strong>Legacy IT department record from ServiceNow</strong>. The following option becomes visible only when <strong>Enable Department Deletion</strong> is enabled:<ul><li data-list-item-id="ec2f1dd012f2351ccc3a23a5f802887a8">
+<strong>Enable Delete Filter Condition:</strong> Allows you to define a filter that controls which department records should be deleted in ServiceNow. For example, when <strong>Enable Department Deletion</strong> is selected, the <strong>Enable Delete Filter Condition</strong> option appears, allowing you to configure filter rules for deleting departments. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e468bc4879ecdc3c7e407ed9712d17e87">
+<strong>ServiceNow Attribute for Filter:</strong> Select the ServiceNow attribute used to filter department records during deletion. For example, if <strong>name</strong> is selected, the integration will evaluate deletion conditions based on the <strong>department name field in ServiceNow</strong>.</li>
+<li data-list-item-id="e4108cf7303f6ee3bcd32cc961a003954">
+<strong>Match Condition:</strong> Select the rule used to compare attribute values when evaluating deletion filters. For example, if <strong>Equals To</strong> is selected and the value is <strong>Temporary</strong>, the filter will apply only to the <strong>Temporary department</strong>.</li>
+<li data-list-item-id="e3e3ddb2a0c7fe0c312231b216eead36f">
+<strong>ServiceNow Department Value:</strong> Enter the department value used to determine which department records should be deleted. For example, if <strong>Temporary</strong> is specified and the <strong>Temporary department exists in ServiceNow but not in Dayforce</strong>, the integration will delete the <strong>Temporary department record</strong> from ServiceNow.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e640ca5c7039f50bb566e05540d74ee21">
+<strong>Enable Sync Record Limits:</strong> Allows you to limit the number of department records processed during each integration run. For example, enabling this option allows administrators to control how many department records can be created, updated, or deleted during a single synchronization cycle. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e811e4e578ae3b809d46b1b238fad6403">
+<strong>Creation Record Limit:</strong> Specify the maximum number of department records that can be created during a single integration run. For example, if <strong>100</strong> is entered, the integration will create no more than <strong>100 department records</strong> during one run.</li>
+<li data-list-item-id="e76065e3211fe0377698281338dc42f50">
+<strong>Update Record Limit:</strong> Specify the maximum number of department records that can be updated during a single integration run. For example, if <strong>100</strong> is entered, only <strong>100 department records will be updated</strong> during that run.</li>
+<li data-list-item-id="e83ea52a24f2f459b9330260c2e911411">
+<strong>Deletion Record Limit:</strong> Specify the maximum number of department records that can be deleted during a single integration run. For example, if <strong>10</strong> is entered, the integration will delete no more than <strong>10 department records</strong> in tha</li>
+</ul>
+</li>
+</ul><h3 id="h_01KK95MYKWA6EMK05VTBG6XZA7">Manage Locations</h3><p>This section allows you to configure how <strong data-end="98" data-start="64">location records from Dayforce</strong> are synchronized with <strong data-end="135" data-start="121">ServiceNow</strong>, including rules for creating, updating, deleting, and filtering location data during synchronization.</p><ul>
+<li data-list-item-id="e998895cc6cf2f8fe472f717782d4ba65">
+<strong>Source Correlation Attribute:</strong> Select the Dayforce attribute used to uniquely identify and match location records between Dayforce and ServiceNow. For example, if <strong>XRefCode</strong> is selected, the integration will use the <strong>XRefCode value from Dayforce</strong> to identify and match location records during synchronization.</li>
+<li data-list-item-id="e8c09ad8bef8776694439d25af12598eb">
+<strong>Target Correlation Attribute:</strong> Select the ServiceNow attribute used to match location records with the corresponding records from Dayforce. For example, if <strong>Full name</strong> is selected, the integration will match the <strong>location name from Dayforce</strong> with the <strong>Full name field in ServiceNow</strong> to locate the correct location record.</li>
+<li data-list-item-id="eb1d11210c83b55d5d490eb693c8f3549">
+<strong>Enable Location Creation:</strong> Allows the integration to create new location records in ServiceNow based on location data received from Dayforce. For example, if a location named <strong>New York Headquarters</strong> exists in Dayforce but does not exist in ServiceNow, enabling this option will create the <strong>New York Headquarters location</strong> in ServiceNow. The following option becomes visible only when <strong>Enable Location Creation</strong> is enabled:<ul><li data-list-item-id="e21143300715aa6f028f6598fe090cb8a">
+<strong>Enable Creation Filter Condition:</strong> Allows you to define a filter that controls when location records should be created in ServiceNow. For example, when <strong>Enable Location Creation</strong> is selected, the <strong>Enable Creation Filter Condition</strong> option appears, allowing you to configure filter rules for creating locations. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="ea7fadfe1c3eac73baa94814bddf9a707">
+<strong>ServiceNow Attribute for Filter:</strong> Select the ServiceNow attribute used to filter location records during creation. For example, if <strong>full_name</strong> is selected, the integration will evaluate the <strong>location full name field in ServiceNow</strong> when determining whether the location should be created.</li>
+<li data-list-item-id="eeec73901c38a34b10888c0e62ca17dc0">
+<strong>Match Condition:</strong> Select the rule used to compare attribute values when applying the filter. For example, if <strong>Equals To</strong> is selected, the filter will match only location records whose attribute value exactly matches the specified value.</li>
+<li data-list-item-id="ef16145ff3031a740295c833e7fcf5bf6">
+<strong>ServiceNow Location Value:</strong> Enter the value used by the filter to determine whether the location should be created. For example, if <strong>full_name</strong>, <strong>Equals To</strong>, and <strong>London Office</strong> are configured, the integration will evaluate whether the <strong>London Office location</strong> exists in ServiceNow. If it does not exist, the location will be created.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e5ed59b397c528d813f1fcdf3a3d472e2">
+<strong>Enable Location Update:</strong> Allows the integration to update existing location records in ServiceNow based on changes detected in Dayforce. For example, if the <strong>San Francisco Office</strong> location name or details change in Dayforce, enabling this option allows the integration to update the <strong>San Francisco Office location record in ServiceNow</strong>. The following option becomes visible only when <strong>Enable Location Update</strong> is enabled:<ul><li data-list-item-id="e6e036cb8fb87ebf6a676e10bae5df64b">
+<strong>Enable Update Filter Condition:</strong> Allows you to define a filter that controls which location records should be updated in ServiceNow. For example, when <strong>Enable Location Update</strong> is selected, the <strong>Enable Update Filter Condition</strong> option appears, allowing you to configure filter rules for updating locations. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="ebc5e86d38e7d4d5633cbfa9218bd63ae">
+<strong>ServiceNow Attribute for Filter:</strong> Select the ServiceNow attribute used to filter location records during updates. For example, if <strong>name</strong> is selected, the integration will evaluate updates based on the <strong>location name field in ServiceNow</strong>.</li>
+<li data-list-item-id="e77e14be465635c8b3c9e251021007219">
+<strong>Match Condition:</strong> Select the rule used to compare attribute values when applying the update filter. For example, if <strong>Equals To</strong> is selected and the value is <strong>London Office</strong>, only the <strong>London Office location</strong> will be updated.</li>
+<li data-list-item-id="e9152854b48e7e617a17a15f07bfac46f">
+<strong>ServiceNow Location Value:</strong> Enter the location value used to determine which location records should be updated. For example, entering <strong>London Office</strong> ensures that only the <strong>London Office location</strong> will be updated during synchronization.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e623b0192160bf516936f1ced98caa27e">
+<strong>Enable Location Deletion:</strong> Allows the integration to delete location records in ServiceNow when they no longer exist in Dayforce. For example, if the <strong>Temporary Office</strong> location is removed from Dayforce, enabling this option allows the integration to delete the <strong>Temporary Office location record from ServiceNow</strong>. The following option becomes visible only when <strong>Enable Location Deletion</strong> is enabled:<ul><li data-list-item-id="ed3e3524354a79afa628d93904bf435f2">
+<strong>Enable Delete Filter Condition:</strong> Allows you to define a filter that controls which location records should be deleted in ServiceNow. For example, when <strong>Enable Location Deletion</strong> is selected, the <strong>Enable Delete Filter Condition</strong> option appears, allowing you to configure filter rules for deleting locations. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="eab29eb4d5debf6676209bc6077be8cc0">
+<strong>ServiceNow Attribute for Filter:</strong> Select the ServiceNow attribute used to filter location records during deletion. For example, if <strong>full_name</strong> is selected, the integration will evaluate deletion conditions based on the <strong>location full name field in ServiceNow</strong>.</li>
+<li data-list-item-id="e320127fc964ceee78e6619aa1ec5efa4">
+<strong>Match Condition:</strong> Select the rule used to compare attribute values when evaluating deletion filters. For example, if <strong>Contains</strong> is selected and the value <strong>Temporary</strong> is specified, the filter will apply to any location whose name contains <strong>Temporary</strong>.</li>
+<li data-list-item-id="eab0e4ccccc65a963a53ee671ec6bc28d">
+<strong>ServiceNow Location Value:</strong> Enter the location value used to determine which location records should be deleted. For example, if <strong>Temporary</strong> is specified and a location containing <strong>Temporary</strong> exists in ServiceNow but not in Dayforce, the integration will delete that location record.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="ef307fbe5461abc656cfe2b7c0f58c020">
+<strong>Enable Sync Record Limits:</strong> Allows you to limit the number of location records processed during each integration run. For example, enabling this option allows administrators to control how many location records can be created, updated, or deleted during a single synchronization cycle. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e6982feba5e8c3486315b391c5745dde7">
+<strong>Creation Record Limit:</strong> Specify the maximum number of location records that can be created during a single integration run. For example, if <strong>2</strong> is entered, the integration will create no more than <strong>2 location records</strong> during one run.</li>
+<li data-list-item-id="e903b10323b7ec1a0868416e1dc882c3c">
+<strong>Update Record Limit:</strong> Specify the maximum number of location records that can be updated during a single integration run. For example, if <strong>2</strong> is entered, only <strong>2 location records will be updated</strong> during that run.</li>
+</ul>
+</li>
+<li data-list-item-id="e07677036e7d7ed60f2a1eaf146d08f74">
+<strong>Deletion Record Limit:</strong> Specify the maximum number of location records that can be deleted during a single integration run. For example, if <strong>1</strong> is entered, the integration will delete at most <strong>1 location record</strong> during that run.</li>
+</ul><h3 id="h_01KK95MYM1V0CR47JP90R8Y3QE">Manage Users</h3><p>This section allows you to configure how <strong data-end="90" data-start="60">user records from Dayforce</strong> are synchronized with <strong data-end="127" data-start="113">ServiceNow</strong>, including rules for creating, updating, deleting, and filtering user data during synchronization.</p><ul>
+<li data-list-item-id="e329acb0f05983e4c9c379269eb61095f">
+<strong>Table Correlation Key</strong>: Select the attribute used to uniquely match user records between Dayforce and ServiceNow during synchronization. For example, if <strong>Employee Number</strong> is selected, the integration matches the <strong>employee number from Dayforce</strong> with the <strong>Employee Number field in ServiceNow</strong> to identify the correct user record.</li>
+<li data-list-item-id="e42206a90ef1c40b90705f5be0b59d4c2">
+<strong>Enable User Creation</strong>: Allows the integration to create new user records in ServiceNow based on employee data received from Dayforce. For example, if an employee named <strong>John Smith</strong> exists in Dayforce but does not exist in ServiceNow, enabling this option creates a <strong>new user record for John Smith</strong> in ServiceNow. The following option becomes visible only when <strong>Enable User Creation</strong> is enabled:<ul><li data-list-item-id="e8969f9f70909f7da4e068c7edbaa107c">
+<strong>Enable Creation Filter Condition</strong>: Allows you to define a filter that controls when user records should be created in ServiceNow. For example, when <strong>Enable User Creation</strong> is selected, the <strong>Enable Creation Filter Condition</strong> option appears, allowing you to configure rules that determine which users should be created in ServiceNow. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e69ff0e17739869729bba81e8b16a8823">
+<strong>ServiceNow Attribute for Creation Filter</strong>: Select the ServiceNow attribute used to filter user records before creation. For example, if <strong>Full Name</strong> is selected, the integration evaluates the <strong>Full Name field</strong> when determining whether the user record should be created.</li>
+<li data-list-item-id="e7f38bf31ca46f30394f6d9fee70c22f7">
+<strong>Creation Match Condition</strong>: Select the rule used to compare attribute values when applying the creation filter. For example, if <strong>Equals To</strong> is selected, the filter matches only records whose attribute value exactly matches the specified value.</li>
+<li data-list-item-id="e610f1249b811f0c9bbdda7c2b82102c9">
+<strong>ServiceNow User Value for Creation Filter</strong>: Enter the value used to determine whether the user record should be created. For example, if <strong>Full Name</strong>, <strong>Equals To</strong>, and <strong>John Smith</strong> are configured, the integration checks whether a user named <strong>John Smith</strong> exists in ServiceNow before creating the record.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e8735c0054328225dc1c28d365d24cf89">
+<strong>Enable User Update</strong>: Allows the integration to update existing user records in ServiceNow when changes are detected in Dayforce. For example, if an employee <strong>Jane Adams</strong> changes departments or job title in Dayforce, enabling this option updates the <strong>Jane Adams user record</strong> in ServiceNow. The following option becomes visible only when <strong>Enable User Update</strong> is enabled:<ul><li data-list-item-id="eff6e3e9a551c52401b5c6944c1301b04">
+<strong>Enable Update Filter Condition</strong>: Allows you to define a filter that controls which user records should be updated in ServiceNow. For example, when <strong>Enable User Update</strong> is selected, the <strong>Enable Update Filter Condition</strong> option appears, allowing you to configure rules for updating users. When this option is enabled, the following fields become visible:<ul>
+<li data-list-item-id="e12024863a37c87435ee5dfccdc0b7d7a">
+<strong>ServiceNow Attribute for Update Filter</strong>: Select the ServiceNow attribute used to filter user records during updates. For example, if <strong>City</strong> is selected, the integration evaluates updates based on the <strong>City field</strong> of the ServiceNow user record.</li>
+<li data-list-item-id="e650bc45ac3fbd4e49d36c987bb160509">
+<strong>Update Match Condition</strong>: Select the rule used to compare attribute values when applying the update filter. For example, if <strong>Contains</strong> is selected and the value <strong>New York</strong> is specified, the filter applies to users whose <strong>City field contains New York</strong>.</li>
+<li data-list-item-id="e1a1772bac31f97e84886ff9dbba538a5">
+<strong>ServiceNow User Value for Update Filter</strong>: Enter the value used to determine which user records should be updated. For example, entering <strong>New York</strong> ensures that only users located in <strong>New York</strong> are updated.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e0f7e5c98ba35bf069845d777112052b3">
+<strong>Enable User Deletion</strong>: Allows the integration to delete user records in ServiceNow when they no longer exist in Dayforce. For example, if an employee <strong>Michael Brown</strong> is removed from Dayforce, enabling this option deletes the <strong>Michael Brown user record</strong> in ServiceNow. The following option becomes visible only when <strong>Enable User Deletion</strong> is enabled:<ul>
+<li data-list-item-id="ecc6d2b04fcac37df52f7317d7fd16d83">
+<strong>Enable Deletion Filter Condition</strong>: Allows you to define a filter that controls which user records should be deleted in ServiceNow. For example, when <strong>Enable User Deletion</strong> is selected, the <strong>Enable Deletion Filter Condition</strong> option appears, allowing you to configure rules for deleting users. When this option is enabled, the following fields become visible:</li>
+<li data-list-item-id="edce6e0584f29e6d4dfa1587ba77a1a52">
+<strong>ServiceNow Attribute for Deletion Filter</strong>: Select the ServiceNow attribute used to filter user records before deletion. For example, if <strong>Name</strong> is selected, the integration evaluates deletion conditions based on the <strong>Name field</strong> in ServiceNow.</li>
+<li data-list-item-id="e7323e88afa5b05e9142a654ebb784856">
+<strong>Deletion Match Condition</strong>: Select the rule used to compare attribute values when applying the deletion filter. For example, if <strong>Contains</strong> is selected and the value <strong>Contractor</strong> is specified, the filter applies to users whose <strong>Name field contains Contractor</strong>.</li>
+<li data-list-item-id="ebd5ebc5be27bfaa1b145dad74f87979b">
+<strong>ServiceNow User Value for Deletion Filter</strong>: Enter the value used to determine which user records should be deleted. For example, if <strong>Contractor</strong> is specified, the integration deletes user records containing <strong>Contractor</strong> if they no longer exist in Dayforce.</li>
+</ul>
+</li>
+<li data-list-item-id="e8e557b75d64c2954c41570074d85e9d0">
+<strong>Enable Data Change Limits</strong>: Allows you to limit the number of user records that can be created, updated, or deleted during each integration run. For example, enabling this option allows administrators to control the number of changes processed in a single sync cycle to prevent unintended bulk modifications. The following options become visible only when <strong>Enable Data Change Limits</strong> is enabled:<ul>
+<li data-list-item-id="ed616442893af351c92bfeafa9b04be6b">
+<strong>User Creation Record Limit</strong>: Specify the maximum number of user records that can be created during one integration run. For example, if <strong>50</strong> is entered, the integration creates no more than <strong>50 user records</strong> during a single run.</li>
+<li data-list-item-id="e914e0f50200ddc5c8e2910094816ec61">
+<strong>User Update Record Limit</strong>: Specify the maximum number of user records that can be updated during one integration run. For example, if <strong>100</strong> is entered, the integration updates no more than <strong>100 user records</strong> during that run.</li>
+<li data-list-item-id="e2164ee53fc5a99a8a9b16837eace2cdb">
+<strong>User Deletion Record Limit</strong>: Specify the maximum number of user records that can be deleted during one integration run. For example, if <strong>10</strong> is entered, the integration deletes no more than <strong>10 user records</strong> during that run.</li>
+</ul>
+</li>
+<li data-list-item-id="e1b050f3b38f5ba078c0fcd1491ce58f1">
+<strong>Enable Incremental User Sync</strong>: Allows the integration to synchronize only user records that have been created, updated, or deleted since the last successful integration run. For example, if only <strong>three employee records were modified in Dayforce</strong>, enabling this option ensures that only those <strong>three users are processed during synchronization</strong> instead of processing all user records.</li>
+</ul><h3 id="h_01KK95MYM5XGH9ZAWPWV432X0Q">Debug Mode</h3><p>This section enables you to customize the debug mode settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Debug Mode</strong> setting in the <strong>Parameters</strong> section.</p><h3 id="h_01KK95MYM68YZAMJ07Z39SPJTJ">Dayforce Department Debug Settings</h3><p>The <strong>Dayforce Department Debug Settings</strong> has the following settings:</p><ul>
+<li data-list-item-id="ecaf99c1442d22409ca86fac5a32c78b1">
+<strong>Dayforce Department Filter</strong>: Select a filter from the dropdown menu to retrieve data of a specific department from Dayforce and run the integration for debugging purposes. The following are the available options:<ul>
+<li data-list-item-id="e27cc20fabb4e8da1342fef1cb57de268">
+<strong>None</strong>: Select this to retrieve all department records from Dayforce without applying any filter.</li>
+<li data-list-item-id="e3a17d7ca0333ba56c64a9e8373aabc7f">
+<strong>XRefCode</strong>: Select this to retrieve a specific department using its XRefCode.</li>
+</ul>
+</li>
+<li data-list-item-id="ebe11915abaa4e1da0df205a9de94b064">
+<strong>Dayforce Department XRefCode</strong>: Enter the XRefCode value used to filter a department record from Dayforce. For example, <strong>Accessories</strong>. <strong>Note</strong>: This parameter is displayed only if you select <strong>XRefCode</strong> in the <strong>Dayforce Department Filter</strong> parameter.</li>
+<li data-list-item-id="ec5f0dcc6d3c024ff024ce84008c9d8d9">
+<strong>Dayforce Department Import Limit</strong>: Enter the maximum number of department records that should be imported from Dayforce for debugging during each integration run. For example, entering <strong>1</strong> will import only one department record during the debug run.</li>
+</ul><h3 id="h_01KK95MYM658C9916EQP9AXREF">Dayforce Location Debug Settings</h3><p>The <strong>Dayforce Location Debug Settings</strong> has the following settings:</p><ul>
+<li data-list-item-id="ebba8950da44bf74e4541fd9574b8c4a9">
+<strong>Dayforce Location Filter</strong>: Select a filter from the dropdown menu to retrieve data for a specific location from Dayforce, then run the integration for debugging purposes. The following are the available options:<ul>
+<li data-list-item-id="e1f00718449b2655cb932dfcbb2584274">
+<strong>None</strong>: Select this to retrieve all location records from Dayforce without applying any filter.</li>
+<li data-list-item-id="eda3b509453ee5872805120b671904909">
+<strong>XRefCode</strong>: Select this to retrieve a specific location using its XRefCode.</li>
+</ul>
+</li>
+<li data-list-item-id="eafcd7e2ea7d30a38b26a8d2c926b99a4">
+<strong>Dayforce Location XRefCode</strong>: Enter the XRefCode value used to filter a location record from Dayforce. For example, <strong>7</strong>. <strong>Note</strong>: This parameter is displayed only if you select <strong>XRefCode</strong> in the <strong>Dayforce Location Filter</strong> parameter.</li>
+<li data-list-item-id="e65c707c0c00369cec78171e11a42408b">
+<strong>Dayforce Location Import Limit</strong>: Enter the maximum number of location records that should be imported from Dayforce for debugging during each integration run.</li>
+</ul><h3 id="h_01KK95MYM7JYTSPAA0JAXE74F0">Dayforce Job Family Debug Settings</h3><p>The <strong>Dayforce Job Family Debug Settings</strong> has the following settings:</p><ul>
+<li data-list-item-id="e8c8ebc10d1e8cd0b357152d24a0ee45f">
+<strong>Dayforce Job Family Filter</strong>: Select a filter from the dropdown menu to retrieve data for a specific job family from Dayforce, then run the integration for debugging purposes. The following are the available options:<ul>
+<li data-list-item-id="e63edf85bbc3530a2caa2ffd9f6c15db2">
+<strong>None</strong>: Select this to retrieve all job family records from Dayforce without applying any filter.</li>
+<li data-list-item-id="ef6f056b7690da245c24e628e18b2f521">
+<strong>XRefCode</strong>: Select this to retrieve a specific job family using its XRefCode.</li>
+</ul>
+</li>
+<li data-list-item-id="e089c0a88a4499c4ca156cdec4a19ef1e">
+<strong>Dayforce Job Family XRefCode</strong>: Enter the XRefCode value used to filter a job family record from Dayforce. For example, <strong>JF001</strong>. <strong>Note</strong>: This parameter is displayed only if you select <strong>XRefCode</strong> in the <strong>Dayforce Job Family Filter</strong> parameter.</li>
+<li data-list-item-id="e080d5e1768774da051574ed89b19260c">
+<strong>Dayforce Job Family Import Limit</strong>: Enter the maximum number of job family records that should be imported from Dayforce for debugging during each integration run.</li>
+</ul><h3 id="h_01KK95MYM831WSX2H7B7J1A7EX">Log Insights Settings</h3><p>This section enables you to customize the log insight settings.</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <strong>Parameters</strong> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e333dd1043a080c260b26db726b4de890">
+<strong>Log Insights Detail Level</strong>: Select the level of detail from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e62e8119024c915c7717f08cff6167f73">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e0ef4a94e10f47d779c587045844d7ddc">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="edabbc60dfaa946ce2292cfe8cb0d43d5">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e6f0719df3810dd699e45e28fa9499d9a">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the log insights.</li>
+<li data-list-item-id="e6489065f0ca8e3592edf8bf1d88a3335">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the log insights.</li>
+<li data-list-item-id="e42aac45b901906814be2b2a883870493">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded from the log insights.</li>
 </ul>
 </li>
 </ul>
-<h4 data-end="2074" data-start="2036" id="h_01K7HN40EZZSAGG32F6RBK41ET">Offboarding Tickets Generation</h4>
-<ul>
-<li data-end="2361" data-start="2076">
-<strong data-end="2117" data-start="2076">Enable Offboarding Ticket Generation: </strong>Select to enable automatic offboarding ticket creation in ServiceNow for employees marked as terminated in Dayforce. For example, when an employee’s termination date is reached, an offboarding ticket is automatically generated in ServiceNow.</li>
-<li data-end="2602" data-start="2363">
-<strong data-end="2404" data-start="2363">Statuses to fetch Dayforce employees: </strong>Select the Dayforce employment statuses to include for offboarding ticket creation. For example, choose statuses like <strong data-end="2539" data-start="2525">Terminated</strong> or <strong data-end="2555" data-start="2543">Inactive</strong> to capture employees leaving the organization.</li>
-<li data-end="2792" data-start="2604">
-<strong data-end="2637" data-start="2604">Select Offboarding Date Type: </strong>Select the employee date field (for example, <strong data-end="2705" data-start="2685">Termination Date</strong> or <strong data-end="2729" data-start="2709">Last Working Day</strong>) used to determine when offboarding tickets should be created.</li>
-<li data-end="3026" data-start="2794">
-<strong data-end="2827" data-start="2794">Enable Ticket Pre-Processing: </strong>Select to create offboarding tickets a few days before the onboarding date. For example, create tickets <strong data-end="2964" data-start="2947">3 days before</strong> the termination date to ensure system access removal in time. Refer to the <a href="#h_01JY5VVTJHHVSKTS2X4BEFRJV8">Sample Ticket Description Template</a>.
-<ul>
-<li data-end="3026" data-start="2794">
-<strong data-end="8017" data-start="7971">Create ticket X-days before provided date: </strong> Enter the offboarding date type that should be used to calculate when the ticket will be created. For example, if you choose <em data-end="566" data-start="548">Termination Date</em> and set the workflow to create a ticket 3 days before the date, the ticket will be created 3 days before the employee’s termination date.<br/><strong>Note</strong>: The selected <strong>Offboarding Date Type</strong> determines the <strong>provided date</strong>.</li>
+</li></ul><h3 id="h_01KK95MYM9CH849QAYDSBA3R26">Report Settings</h3><p>This section enables you to customize the report generation settings.</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Report Generation</strong> setting in the <strong>Parameters</strong> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="ecb8dbcc335cb5d59c8dbcef64cd16f8a">
+<strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eed9ee58b0f40aabc0e2353e686326e8b">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e80203f84d88056d1134f32463b88cd8b">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e6c06acf4f245ccf7e92ea09a7d402c6f">
+<strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the report.</li>
+<li data-list-item-id="e7047f8a2fb1991e0844a78f0f5064154">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the report.</li>
+<li data-list-item-id="e7dca7e26bfdbbb74a0f303c2d071f90a">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded in the report.</li>
 </ul>
 </li>
-<li>
-<strong data-end="3628" data-start="3594">Enable Employee Number Filter: </strong>Select to limit offboarding ticket creation to a specific employee number for testing. For example, use this to verify the process for employee number <strong data-end="3792" data-start="3782">102198</strong> before running for all terminations.</li>
-<li data-end="3311" data-start="3028">
-<strong data-end="3051" data-start="3028">ServiceNow Trigger: </strong>Select the trigger type used to initiate ticket creation in ServiceNow. For example, select <strong data-end="3240" data-start="3215">Flow Designer Trigger</strong> if offboarding workflows are automated using ServiceNow Flow Designer. <br/>The following are the options: <br/>
-<ul>
-<li data-end="3592" data-start="3313">
-<strong data-end="3329" data-start="3313">Ticket Type: </strong>Select the ServiceNow ticket record type used for offboarding (for example, <strong data-end="3426" data-start="3408">Change Request</strong>, <strong data-end="3439" data-start="3428">HR Case</strong>, <strong data-end="3452" data-start="3441">Problem</strong>, <strong data-end="3473" data-start="3454">Catalog Request</strong>, or <strong data-end="3500" data-start="3478">Custom Ticket Type</strong>). For example, select <strong data-end="3541" data-start="3523">Change Request</strong> to create tickets that track deprovisioning tasks.</li>
-<li data-end="3592" data-start="3313">
-<strong>Service Catalog Category</strong>: Select the ServiceNow catalog category (such as Software, Hardware, or Facilities) that contains the catalog item you want to use. For example, if you select <em data-end="502" data-start="492">Software</em>, the <em data-end="541" data-start="508">Service Catalog Service Request</em> field will automatically populate with the related items from that category.<br/>
-<ul>
-<li data-end="3592" data-start="3313">
-<strong>Service Catalog Service Request</strong>: Select the specific ServiceNow catalog item from the chosen category that should trigger this workflow. The list of available items is automatically filtered based on the selected <em data-end="432" data-start="406">Service Catalog Category</em>.</li>
 </ul>
-</li>
-<li data-end="3592" data-start="3313">
-<strong>Flow Designer API Endpoint</strong>: Enter the REST API endpoint URL generated by the ServiceNow Flow Designer. This endpoint allows ServiceNow to initiate the workflow when the flow is executed.</li>
-<li data-end="3592" data-start="3313">
-<strong data-end="6257" data-start="6234">Order Guides:</strong> Select one or more ServiceNow order guides that should trigger this workflow. An order guide groups multiple related catalog items (such as hardware, software, and access requests) under a single request. The workflow will start whenever a selected order guide is submitted in ServiceNow.</li>
-</ul>
-</li>
-<li data-end="3592" data-start="3313">
-<strong data-end="9603" data-start="9561">Set Offboarding Employee Number Value:</strong> Enter the employee number to test the offboarding workflow.</li>
-</ul>
-<h4 data-end="310" data-start="286" id="h_01K7HMJDHFEX4XYSWC0BBW6XXT">Departments Sync</h4>
-<ul>
-<li data-end="498" data-start="245">
-<strong data-end="271" data-start="245">Record Matching Field:</strong> Select the field used to match department records between Dayforce and ServiceNow. For example, select <strong data-end="383" data-start="375">Name</strong> if both systems use the department name as the unique identifier, or <strong data-end="459" data-start="453">ID</strong> if both use a numeric department ID.</li>
-<li data-end="732" data-start="500">
-<strong data-end="531" data-start="500">Enable Department Creation:</strong> Select to allow new departments from Dayforce to be created in ServiceNow. For example, when a new department <strong data-end="664" data-start="642">Finance Operations</strong> is added in Dayforce, it will automatically appear in ServiceNow.</li>
-<li data-end="929" data-start="734">
-<strong data-end="771" data-start="734">Enable Creation Filter Condition:</strong> Select to apply a condition that filters which new departments should be created. For example, create only departments belonging to <strong data-end="926" data-start="904">Corporate Division</strong>.</li>
-<li data-end="1177" data-start="931">
-<strong data-end="960" data-start="931">Enable Department Update:</strong> Select to allow existing department records in ServiceNow to update automatically when details change in Dayforce. For example, if <strong data-end="1103" data-start="1092">Support</strong> is renamed to <strong data-end="1138" data-start="1118">Customer Support</strong>, the change will sync to ServiceNow.</li>
-<li data-end="1361" data-start="1179">
-<strong data-end="1214" data-start="1179">Enable Update Filter Condition:</strong> Select to apply a condition that filters which departments should be updated. For example, update only departments located in <strong data-end="1358" data-start="1341">North America</strong>.</li>
-<li data-end="1569" data-start="1363">
-<strong data-end="1393" data-start="1363">Enable Department Removal:</strong> Select to allow departments removed from Dayforce to be deleted in ServiceNow. For example, if <strong data-end="1502" data-start="1489">Legacy IT</strong> is deleted in Dayforce, it will also be removed from ServiceNow.</li>
-<li data-end="1758" data-start="1571">
-<strong data-end="1608" data-start="1571">Enable Deletion Filter Condition:</strong> Select to apply a condition that filters which departments can be deleted. For example, delete only departments marked as <strong data-end="1743" data-start="1731">Inactive</strong> in Dayforce.</li>
-<li data-end="1993" data-start="1760">
-<strong data-end="1790" data-start="1760">Enable Sync Record Limits:</strong> Select to limit the number of department records that can be created, updated, or deleted in each sync run. For example, restrict updates to <strong data-end="1947" data-start="1932">100 records</strong> per run to prevent accidental bulk changes.</li>
-<li data-end="2151" data-start="1995">
-<strong data-end="2025" data-start="1995">Set Creation Record Limit:</strong> Specify the maximum number of department records to create per sync run. For example, set <strong data-end="2123" data-start="2116">100</strong> to limit bulk insertions.</li>
-<li data-end="2327" data-start="2153">
-<strong data-end="2181" data-start="2153">Set Update Record Limit:</strong> Specify the maximum number of department records to update per sync run. For example, set <strong data-end="2279" data-start="2272">100</strong> to control how many updates occur in one run.</li>
-<li data-end="2496" data-start="2329">
-<strong data-end="2359" data-start="2329">Set Deletion Record Limit:</strong> Specify the maximum number of department records to delete per sync run. For example, set <strong data-end="2456" data-start="2450">10</strong> to prevent unintended mass deletions.</li>
-</ul>
-<h4 data-end="303" data-start="281" id="h_01K7HP6V385SYANKC21JV3XYZW">Locations Sync</h4>
-<ul>
-<li data-end="551" data-start="305">
-<strong data-end="331" data-start="305">Record Matching Field: </strong>Select the field used to match location records between Dayforce and ServiceNow. For example, select <strong data-end="443" data-start="435">Name</strong> if both systems use the same location name, or <strong data-end="511" data-start="491">Primary location</strong> if both reference a common location ID.</li>
-<li data-end="768" data-start="553">
-<strong data-end="582" data-start="553">Enable Location Creation: </strong>Select to allow new locations from Dayforce to be created in ServiceNow. For example, when a new office <strong data-end="702" data-start="689">Berlin HQ</strong> is added in Dayforce, it will automatically appear in ServiceNow.</li>
-<li data-end="994" data-start="770">
-<strong data-end="813" data-start="770">Enable Filter Condition for Insertions: </strong>Select to apply a filter condition that controls which new locations are created in ServiceNow. For example, create only locations where the <strong data-end="968" data-start="957">country</strong> equals <strong data-end="993" data-start="976">United States</strong>.</li>
-<li data-end="1211" data-start="996">
-<strong data-end="1071" data-start="996">Select attribute to filter insertion records in ServiceNow’s Locations: </strong>Select the attribute used to apply the insertion filter. For example, select <strong data-end="1162" data-start="1151">country</strong> to create locations based on a specific country.</li>
-<li data-end="1446" data-start="1213">
-<strong data-end="1294" data-start="1213">Select match condition to filter insertion records in ServiceNow’s Locations: </strong>Select how the system matches the chosen attribute to its value. For example, select <strong data-end="1395" data-start="1382">Equals To</strong> to match locations where the country equals “USA.”</li>
-<li data-end="1636" data-start="1448">
-<strong data-end="1520" data-start="1448">Provide value to filter insertion records in ServiceNow’s Locations: </strong>Select or enter the value used for the match condition. For example, enter <strong data-end="1605" data-start="1598">USA</strong> to create only U.S. locations.</li>
-<li data-end="1883" data-start="1638">
-<strong data-end="1666" data-start="1638">Enable Location Updates: </strong>Select to allow existing location records in ServiceNow to update automatically when details change in Dayforce. For example, if <strong data-end="1817" data-start="1798">New York Office</strong> is renamed to <strong data-end="1846" data-start="1832">NYC Office</strong>, the change will sync automatically.</li>
-<li data-end="2085" data-start="1885">
-<strong data-end="1925" data-start="1885">Enable Filter Condition for Updates: </strong>Select to apply a condition that limits which locations are updated in ServiceNow. For example, update only locations where the <strong data-end="2066" data-start="2056">region</strong> equals <strong data-end="2084" data-start="2074">Europe</strong>.</li>
-<li data-end="2288" data-start="2087">
-<strong data-end="2161" data-start="2087">Attribute to filter updation records in ServiceNow’s Locations: </strong>Select the attribute used to apply the update filter. For example, select a <strong data-end="2248" data-start="2238">region</strong> to update records by geographic region.</li>
-<li data-end="2516" data-start="2290">
-<strong data-end="2370" data-start="2290">Match condition to filter updation records in ServiceNow’s Locations: </strong>Select how to compare the chosen attribute for updates. For example, select <strong data-end="2461" data-start="2449">Contains</strong> to update records with region names containing “APAC.”</li>
-<li data-end="2735" data-start="2518">
-<strong data-end="2593" data-start="2518">Value for filtering updation records in ServiceNow’s Locations: </strong>Select or enter the value that determines which locations should be updated. For example, enter <strong data-end="2702" data-start="2692">Europe</strong> to update only European offices.</li>
-<li data-end="2943" data-start="2737">
-<strong data-end="2766" data-start="2737">Enable Location Deletion: </strong>Select to allow locations removed from Dayforce to be deleted in ServiceNow. For example, if the <strong data-end="2880" data-start="2862">Toronto Branch</strong> is deleted in Dayforce, it will also be removed in ServiceNow.</li>
-<li data-end="3148" data-start="2945">
-<strong data-end="2986" data-start="2945">Enable Filter Condition for Deletion: </strong>Select to apply a condition that controls which locations are deleted from ServiceNow. For example, delete only locations where the <strong data-end="3129" data-start="3121">city</strong> equals <strong data-end="3147" data-start="3137">Closed</strong>.</li>
-<li data-end="3374" data-start="3150">
-<strong data-end="3228" data-start="3150">Attribute to filter for deletion records in ServiceNow’s Locations: </strong>Select the attribute used to apply the deletion filter. For example, select the <strong data-end="3315" data-start="3307">city</strong> if deletions should apply to locations in a specific city.</li>
-<li data-end="3623" data-start="3376">
-<strong data-end="3457" data-start="3376">Match condition to filter deletion records in ServiceNow’s Locations: </strong>Select the match condition used for deletion filtering. For example, select <strong data-end="3549" data-start="3536">Equals To</strong> if you want to delete only locations that exactly match the chosen value.</li>
-<li data-end="3856" data-start="3625">
-<strong data-end="3696" data-start="3625">Value to filter deletion records in ServiceNow’s Locations: </strong>Select or enter the value that defines which locations should be deleted. For example, enter <strong data-end="3802" data-start="3792">Closed</strong> to remove all locations marked as closed in Dayforce.</li>
-<li data-end="4080" data-start="3858">
-<strong data-end="3890" data-start="3858">Organization Levels to Sync: </strong>Select the organizational levels from Dayforce to include in the location sync. For example, include <strong data-end="4007" data-start="3994">Corporate</strong>, <strong data-end="4019" data-start="4009">Region</strong>, and <strong data-end="4033" data-start="4025">Site</strong> to map locations at multiple hierarchy levels.</li>
-<li data-end="4275" data-start="4082">
-<strong data-end="4105" data-start="4082">Limit Data Changes: </strong>Select to limit how many location records are created, updated, or deleted per sync run. For example, set limits to avoid bulk changes during testing or initial syncs.</li>
-<li data-end="4457" data-start="4277">
-<strong data-end="4300" data-start="4277">Set Creation Limit: </strong>Select to specify the maximum number of location records to create per sync run. For example, set <strong data-end="4408" data-start="4401">100</strong> to limit the new locations created in one execution.</li>
-<li data-end="4614" data-start="4459">
-<strong data-end="4480" data-start="4459">Set Update Limit: </strong>Select to specify the maximum number of location records to update per sync run. For example, set <strong data-end="4588" data-start="4581">100</strong> to control update volume.</li>
-<li data-end="4787" data-start="4616">
-<strong data-end="4639" data-start="4616">Set Deletion Limit: </strong>Select to specify the maximum number of location records to delete per sync run. For example, set <strong data-end="4746" data-start="4740">10</strong> to prevent unintentional bulk deletions.</li>
-</ul>
-<h4 data-end="296" data-start="278" id="h_01K7HRB286245R12W0DCCHAWTP">Users Sync</h4>
-<ul>
-<li data-end="511" data-start="298">
-<strong data-end="324" data-start="298">Record Matching Field: </strong>Select the field used to match user records between Dayforce and ServiceNow. For example, select the <strong data-end="443" data-start="424">Employee number</strong> if both systems use a unique employee ID to identify the same user.</li>
-<li data-end="736" data-start="513">
-<strong data-end="539" data-start="513">Enable User Insertion: </strong>Select to allow new users from Dayforce to be created in ServiceNow. For example, when a new hire, <strong data-end="654" data-start="640">John Smith,</strong> is added in Dayforce, their ServiceNow user record will be created automatically.</li>
-<li data-end="945" data-start="738">
-<strong data-end="780" data-start="738">Enable Filter Condition for Insertion: </strong>Select to apply a filter condition that controls which new users are created in ServiceNow. For example, create only users where the <strong data-end="924" data-start="916">city</strong> equals <strong data-end="944" data-start="932">New York</strong>.</li>
-<li data-end="1156" data-start="947">
-<strong data-end="1022" data-start="947">Attribute to filter for records to insert in ServiceNow’s Users: </strong>Select the attribute used to apply the insertion filter. For example, select <strong data-end="1110" data-start="1102">city</strong> to create users based on a specific location.</li>
-<li data-end="1391" data-start="1158">
-<strong data-end="1235" data-start="1158">Match condition to filter insertion records in ServiceNow’s Users: </strong>Select how the chosen attribute is matched to its value. For example, select <strong data-end="1328" data-start="1315">Equals To</strong> to create users only when the city exactly matches “New York.”</li>
-<li data-end="1603" data-start="1393">
-<strong data-end="1461" data-start="1393">Value to filter insertion records in ServiceNow’s Users: </strong>Select or enter the value to compare against the chosen attribute. For example, enter <strong data-end="1562" data-start="1550">New York</strong> to create only users based in that city.</li>
-<li data-end="1869" data-start="1605">
-<strong data-end="1629" data-start="1605">Enable User Updates: </strong>Select to allow existing user records in ServiceNow to update automatically when details change in Dayforce. For example, if a user’s job title changes from <strong data-end="1800" data-start="1789">Analyst</strong> to <strong data-end="1822" data-start="1804">Senior Analyst</strong> in Dayforce, it will be updated in ServiceNow.</li>
-<li data-end="2078" data-start="1871">
-<strong data-end="1912" data-start="1871">Enable Filter Condition for Updation: </strong>Select to apply a filter condition that controls which users are updated in ServiceNow. For example, update only users belonging to the <strong data-end="2066" data-start="2051">Engineering</strong> department.</li>
-<li data-end="2287" data-start="2080">
-<strong data-end="2150" data-start="2080">Select attribute to filter updation records in ServiceNow’s Users: </strong>Select the attribute used to apply the update filter. For example, select <strong data-end="2241" data-start="2227">department</strong> to update users by their assigned department.</li>
-<li data-end="2519" data-start="2289">
-<strong data-end="2365" data-start="2289">Match condition to filter updation records in ServiceNow’s Users: </strong>Select how to compare the chosen attribute for updates. For example, select <strong data-end="2456" data-start="2444">Contains</strong> to update all users where the department name contains “Tech.”</li>
-<li data-end="2726" data-start="2521">
-<strong data-end="2588" data-start="2521">Value to filter updation records in ServiceNow’s Users: </strong>Select or enter the value used for matching during updates. For example, enter <strong data-end="2685" data-start="2670">Engineering</strong> to update only users in that department.</li>
-<li data-end="2948" data-start="2728">
-<strong data-end="2753" data-start="2728">Enable User Deletion: </strong>Select to allow users removed or terminated in Dayforce to be deleted from ServiceNow. For example, when an employee leaves the company, their ServiceNow account will be removed automatically.</li>
-<li data-end="3154" data-start="2950">
-<strong data-end="2991" data-start="2950">Enable Filter Condition for Deletion: </strong>Select to apply a condition that limits which user records are deleted from ServiceNow. For example, delete only users where the <strong data-end="3133" data-start="3123">status</strong> equals <strong data-end="3153" data-start="3141">Inactive</strong>.</li>
-<li data-end="3377" data-start="3156">
-<strong data-end="3230" data-start="3156">Select attribute to filter for deletion records in ServiceNow’s Users: </strong>Select the attribute used to apply the deletion filter. For example, select <strong data-end="3319" data-start="3309">status</strong> if deletions should apply only to inactive user accounts.</li>
-<li data-end="3610" data-start="3379">
-<strong data-end="3456" data-start="3379">Provide match condition to filter deletion records in ServiceNow’s Users: </strong>Select the match condition used for deletion filtering. For example, select <strong data-end="3548" data-start="3535">Equals To</strong> to delete only users whose status exactly matches “Inactive.”</li>
-<li data-end="3841" data-start="3612">
-<strong data-end="3679" data-start="3612">Provide value to filter deletion records in ServiceNow’s Users: </strong>Select or enter the value that defines which users should be deleted. For example, enter <strong data-end="3783" data-start="3771">Inactive</strong> to remove all users whose status is inactive in Dayforce.</li>
-<li data-end="4056" data-start="3843">
-<strong data-end="3866" data-start="3843">Limit Data Changes: </strong>Select to restrict how many user records can be created, updated, or deleted per sync run. For example, limit updates to <strong data-end="4005" data-start="3990">100 records</strong> per run to prevent large-scale unintended changes.</li>
-<li data-end="4238" data-start="4058">
-<strong data-end="4081" data-start="4058">Set Creation Limit: </strong>Select to specify the maximum number of user records created per sync run. For example, set <strong data-end="4183" data-start="4176">100</strong> to control how many new users are created in each run.</li>
-<li data-end="4386" data-start="4240">
-<strong data-end="4261" data-start="4240">Set Update Limit: </strong>Select to specify the maximum number of user records updated per sync run. For example, set <strong data-end="4363" data-start="4356">100</strong> to limit bulk updates.</li>
-<li data-end="4550" data-start="4388">
-<strong data-end="4411" data-start="4388">Set Deletion Limit: </strong>Select to specify the maximum number of user records deleted per sync run. For example, set <strong data-end="4512" data-start="4506">10</strong> to prevent accidental mass deletions.</li>
-<li data-end="4837" data-start="4552">
-<strong data-end="4585" data-start="4552">Enable Incremental User Sync: </strong>Select to process and sync only those user records that were created, updated, or deleted since the last successful integration run. For example, when enabled, only new or changed records since the last sync will be processed, improving performance.</li>
-</ul>
-<h3 id="h_01JY5VVTJHHVSKTS2X4BEFRJV8">Sample Ticket Description Template</h3>
-<p>You can customize the offboarding, onboarding, and role change ticket descriptions using dynamic placeholders to insert employee details when the ticket is created. </p>
-<p>The following is the ticket description template:</p>
-<p><em>[ticketType] Employee ticketType process required for employeeName (employeeNumber) | Effective: date </em></p>
-<p><strong>Note</strong>: During ticket creation, these placeholders will be replaced with the actual ticket type (Onboarding, Offboarding, Role Change) and the employee’s details, as follows: </p>
-<ul>
-<li>[Onboarding] Employee Offboarding process required for John Doe (Emp.No. 441) | Effective: June 19, 2025.</li>
-<li>[Offboarding] Employee Offboarding process required for John Doe (Emp.No. 441) | Effective: June 19, 2025.</li>
-<li>[Role Change] Employee Role Change process required for John Doe (Emp.No. 441) | Effective: June 19, 2025.</li>
-</ul>
-<h2 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Attribute Mapping</h2>
-<p>The Attribute Mapping tab allows you to define how each field in Dayforce corresponds to a specific field in ServiceNow. This configuration ensures that, during every integration cycle, data is accurately translated and aligned between the two systems, maintaining consistency and data integrity across all entities. You can refer to the Attribute Mapping tab while setting up your integration to visualize and verify the field-level mappings.</p>
-<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
-<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
-<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
-<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
-<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
-<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
-<p> </p>
-<div></div>
-<p> </p>
+</li></ul><h3 data-end="98" data-section-id="av2i2a" data-start="60" id="h_01KK95VBWTFQ0QRYA46J3FD1HW">Sample Ticket Description Template</h3><p data-end="268" data-start="100">You can customize the <strong data-end="166" data-start="122">onboarding, offboarding, and role change</strong> ticket descriptions using dynamic placeholders to insert employee details when the ticket is created.</p><p data-end="319" data-start="270">The following is the ticket description template:</p><p data-end="422" data-start="321">[ticketType] Employee ticketType process required for employeeName (employeeNumber) | Effective: date</p><p data-end="613" data-start="424"><strong data-end="433" data-start="424">Note:</strong> During ticket creation, these placeholders are replaced with the actual ticket type (<strong data-end="533" data-start="519">Onboarding</strong>, <strong data-end="550" data-start="535">Offboarding</strong>, or <strong data-end="570" data-start="555">Role Change</strong>) and the employee details, as shown below:</p><ul>
+<li data-list-item-id="eed814c0421860396188a802016b8cd3f"><p data-end="730" data-start="615">[Onboarding] Employee Onboarding process required for <strong data-end="687" data-start="669">Barbara Jensen</strong> (Emp. No. 441) | Effective: June 19, 2025.</p></li>
+<li data-list-item-id="e7c4eefb4fcbc96f4ae11e26e3251bff8"><p data-end="849" data-start="732">[Offboarding] Employee Offboarding process required for <strong data-end="806" data-start="788">Barbara Jensen</strong> (Emp. No. 441) | Effective: June 19, 2025.</p></li>
+<li data-list-item-id="eb024e0069b63e5a5d7216feb2241d401"><p data-end="968" data-is-last-node="" data-is-only-node="" data-start="851">[Role Change] Employee Role Change process required for <strong data-end="925" data-start="907">Barbara Jensen</strong> (Emp. No. 441) | Effective: June 19, 2025.</p></li>
+</ul><h2 id="h_01KK95SA2QRFTDZDNVE7TBMK5P">Attribute Mapping</h2><p>The Attribute Mapping tab allows you to define how each field in Dayforce corresponds to a specific field in ServiceNow. This configuration ensures that, during every integration cycle, data is accurately translated and aligned between the two systems, maintaining consistency and data integrity across all entities. You can refer to the Attribute Mapping tab while setting up your integration to visualize and verify the field-level mappings.</p><h2 id="h_01KK95MYMABMK6JZ9Q03EE68E7">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01KK95MYMASAB0J2T6V8G6HY01">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/">User Action on Integrations</a> guide.</p><h1 id="h_01KK95MYMA06SGMX801HXHX4H7">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/">User Actions on Integrations</a> for further details.</p>
   </div>
 </body>
 </html>

@@ -1,0 +1,1026 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce Employees to Okta Users Integration Guide (V-1.0.0)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce Employees to Okta Users Integration Guide (V-1.0.0)</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform enables your organization to scale complex data management by automating the integration between various applications.</p>
+<p>Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide covers the end-to-end tasks in setting up an integration to sync the Dayforce <em>Employees</em> resource to the Okta <em>Users</em> resource.</p>
+<p>This integration automates the creation, modification, and deletion of employee data from Dayforce to Okta.</p>
+<p>This integration also helps write back the <strong>SSO Login</strong>, <strong>Business Email</strong>, <strong>Business Phone</strong>, and <strong>Okta ID</strong> to the Dayforce system.</p>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Admin Access to Okta</strong>: You must have admin access to your Okta instance. You can visit the Okta portal to get access to an Okta instance.</li>
+<li>
+<strong>Admin Access to Dayforce</strong>: You must have admin access to your Dayforce instance.</li>
+<li>
+<strong>Dayforce Field-Level Access</strong>: The specific field-level permissions must be enabled for the service account to manage user information in Dayforce. For more details, refer to the <a href="#h_01K18HC0G1GS49W9ZK7M37PRZY">Configuring Field-Level Access in Dayforce</a> section.</li>
+<li>
+<strong>Enable XaaS access</strong>: You must <a href="https://support.okta.com/help/s/?language=en_US" rel="noopener noreferrer" target="_blank">open a support case</a> with Okta to enable XaaS in your Okta instance.</li>
+<li>
+<strong>Source Priority for Username and Email Update</strong>: In case of username and email update for Okta profile, ensure that the username and email attributes in Okta are mastered by the correct system. Refer to the <a href="#h_01K4YTVY5CAS3BF8527S86Z7QQ">Source Priority</a> section for more details.</li>
+<li>
+<strong>Tenant Account in the Aquera Admin Portal</strong>: You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You must configure the following application connectors in the Aquera Admin portal to integrate with Okta:
+<ul>
+<li>
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853">Dayforce Configuration Guide</a> for details.</li>
+<li>
+<strong>Okta</strong>: Ensure that you configure the Okta (version 11) or Okta XaaS (Anything-as-a-Source) connector in the Aquera Admin portal.</li>
+</ul>
+</li>
+</ul>
+<p>For details on the limitations of Okta's Anything-as-Source (XaaS) solution, refer to the <a href="https://help.okta.com/oie/en-us/content/topics/users-groups-profiles/usgp-anything-as-a-source.htm" rel="noopener noreferrer" target="_blank">Okta documentation</a>.</p>
+<p><strong>Note</strong>: The inactive and terminated users will not be integrated from Dayforce to Okta.</p>
+<h2 id="h_01K4YTVY5CAS3BF8527S86Z7QQ">Source Priority</h2>
+<p>If your use case requires updating username and email for Okta profile, ensure that these attributes in Okta are mastered by the correct system. Perform the following steps to configure the source priority:</p>
+<ol>
+<li>In Okta Admin Console, navigate to <strong>Directory</strong> &gt; <strong>Profile Editor</strong> and select the <strong>User Profile</strong>.</li>
+<li>On the <strong>Profile Editor</strong> page, scroll down to the <strong>Attributes</strong> section.</li>
+<li>Find <strong>username</strong> attribute and click the info (<strong>i</strong>) icon.</li>
+<li>Set the <strong>Source Priority</strong> as follows:
+<ul>
+<li>Select <strong>Inherit from Profile Source</strong> if you want Dayforce to be the source of truth to provide and maintain the attribute value.</li>
+<li>Select <strong>Inherit from Okta</strong> if the attribute must be managed in Okta and then pushed to Dayforce. In this case, Okta becomes the source of truth.</li>
+</ul>
+</li>
+<li>Repeat the same steps for the <strong>email</strong> attribute and set the appropriate source priority based on your requirements.</li>
+</ol>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details how the integration must be configured to push data from Dayforce to Okta.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Dayforce Employees to Okta Users</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your Dayforce and Okta connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>On the <strong>Configuration</strong> page, the following sections are displayed:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p>
+<ul>
+<li>
+<strong>Report Only</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li>
+<strong>Full Sync Configuration</strong>: Select a schedule for full sync from Dayforce to Okta. The following options are available:
+<ul>
+<li>
+<strong>Standard Schedule</strong>: Select this to perform a one-time full sync from Dayforce to Okta, followed by incremental data syncing.</li>
+<li>
+<strong>Custom Schedule</strong>: Select this to set the full sync frequency as per your requirement. When selected, the following fields are displayed for further configuration:
+<ul>
+<li>
+<strong>Full Sync Frequency</strong>: Select the frequency of full sync from Dayforce to Okta.<span><br/></span>The following options are available:<br/>
+<ul>
+<li>
+<strong>Every Sync (Full)</strong>: Select this if you want every sync to be a full sync.</li>
+<li>
+<strong>Every 6 hours</strong>: Select this to execute a full sync after every 6 hours.</li>
+<li>
+<strong>Every day</strong>: Select this to execute a full sync once every day.</li>
+<li>
+<strong>Every week</strong>: Select this to execute a full sync once every week.</li>
+<li>
+<strong>Custom Frequency</strong>: Select this to customize the frequency. When selected, the following field is displayed for further configuration:
+<ul>
+<li>
+<strong>Days between Full Syncs</strong>: Enter the number of days between each full sync.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Onboarding and Offboarding Configuration</strong>: Select the Onboarding and Offboarding Configuration method. The following options are available:
+<ul>
+<li>
+<strong>Standard</strong>: Select this for standard Onboarding and Offboarding configuration. If selected, the <strong>Onboarding Configuration</strong> and <strong>Offboarding Configuration</strong> sections will be displayed with the related parameters. When selected, the following fields are displayed for further configuration:
+<ul>
+<li>
+<ul>
+<li>
+<strong>Employees to be Provisioned in Okta</strong>: Select the employees to be provisioned in Okta. The following options are available:
+<ul>
+<li>
+<strong>All Employees</strong>: Select this if you want all employees to be provisioned in Okta.</li>
+<li>
+<strong>All Full Time Employees</strong>: Select this if you want all full-time employees to be provisioned in Okta.<br/><strong>Note</strong>: The integration checks the <strong>PayClass</strong> attribute of employees to identify a full-time employee. </li>
+<li>
+<strong>Custom</strong>: Select this to configure an expression to identify employees to be provisioned in Okta. When selected, the following field is displayed for further configuration:
+<ul>
+<li>
+<strong>Custom Expression</strong>: Provide an expression to identify employees to be provisioned in Okta.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Onboarding Configuration</strong>: This section allows you to configure the Onboarding settings. The following fields are available for configuration:<br/>
+<ul>
+<li>
+<strong>Dayforce Attribute to be Considered for Onboarding Date</strong>: Select a Dayforce attribute that must be considered to determine the onboarding date. The available options are <strong>StartDate</strong> and <strong>HireDate</strong>.</li>
+<li>
+<strong>Onboarding Date Offset</strong>: Select the Onboarding date offset. The following options are available:
+<ul>
+<li>
+<strong>No Offset</strong>: Select this if you do not want to apply any offset to the onboarding date.</li>
+<li>
+<strong>Offset Before Onboarding Date</strong>: Select this to set the onboarding date earlier by a specified number of days.</li>
+<li>
+<strong>Offset After Onboarding Date</strong>: Select this to delay the onboarding date by a specified number of days.</li>
+</ul>
+</li>
+<li>
+<strong>Days of Offset</strong>: Enter the number of days for offset. This field is available only if you select <strong>Offset Before Onboarding Date</strong> or <strong>Offset After Onboarding Date</strong> in the <strong>Onboarding Date Offset</strong> field.</li>
+<li>
+<strong>Timezone for Onboarding</strong>: Select the timezone to onboard employees. The following options are available:
+<ul>
+<li>
+<strong>UTC</strong>: Select this to onboard employees using Coordinated Universal Time (UTC), regardless of the employee’s local time.</li>
+<li>
+<strong>Based on Work Location</strong>: Select this to onboard employees based on their work location’s timezone.</li>
+</ul>
+</li>
+<li>
+<strong>Onboarding Time</strong>: Enter the time for the onboarding in 24-hour format (HH:MM). For example, <em>03:40</em>
+</li>
+</ul>
+</li>
+<li>
+<strong>Offboarding Configuration</strong>: This section allows you to configure the Offboarding settings. The following fields are available for configuration:
+<ul>
+<li>
+<strong>Employment Statuses to Trigger Offboarding</strong>: Select one or more employment statuses that must trigger offboarding. The following options are available:
+<ul>
+<li>
+<strong>Terminated</strong>: Select this to trigger offboarding when employment status changes to Terminated.</li>
+<li>
+<strong>Inactive</strong>: Select this to trigger offboarding when employment status changes to Inactive.</li>
+<li>
+<strong>Leave</strong>: Select this to trigger offboarding when employment status changes to Leave.</li>
+<li>
+<strong>Maternity</strong>: Select this to trigger offboarding when employment status changes to Maternity.</li>
+<li>
+<strong>Paternity</strong>: Select this to trigger offboarding when employment status changes to Paternity.</li>
+</ul>
+</li>
+<li>
+<strong>Offboarding Date Offset</strong>: Select the Offboarding date offset. The following options are available:
+<ul>
+<li>
+<strong>No Offset</strong>: Select this if you do not want to apply any offset to the offboarding date.</li>
+<li>
+<strong>Offset Before Offboarding Date</strong>: Select this to set the offboarding date earlier by a specified number of days.</li>
+<li>
+<strong>Offset After Offboarding Date</strong>: Select this to delay the offboarding date by a specified number of days.</li>
+</ul>
+<p><strong>Note</strong>: Currently, the Date Offset works only for the <strong>Terminated</strong> employment status.</p>
+</li>
+<li>
+<strong>Days of Offset</strong>: Enter the number of days for offset. This field is available only if you select <strong>Offset Before Offboarding Date</strong> or <strong>Offset After Offboarding Date</strong> in the <strong>Offboarding Date Offset</strong> field.</li>
+<li>
+<strong>Timezone for Offboarding</strong>: Select the timezone to offboard employees. The following options are available:
+<ul>
+<li>
+<strong>UTC</strong>: Select this to offboard employees using Coordinated Universal Time (UTC), regardless of the employee’s local time.</li>
+<li>
+<strong>Based on Work Location</strong>: Select this to offboard employees based on their work location’s timezone.</li>
+</ul>
+</li>
+<li>
+<strong>Offboarding Time</strong>: Enter the time for the offboarding in 24-hour format (HH:MM). For example, <em>04:40</em>
+</li>
+<li>
+<strong>Enable Custom Offboarding</strong>: Select this checkbox to enable the custom offboarding configuration.<br/>When enabled, the following parameters are displayed:
+<ul>
+<li>
+<strong>Dayforce Attribute for Offboarding Date</strong>: Select a Dayforce attribute to determine the offboarding date.</li>
+<li>
+<strong>Dayforce Attribute for Offboarding Time</strong>: Select a Dayforce attribute to determine the offboarding time.</li>
+<li>
+<strong>Dayforce Attribute for Offboarding Timezone</strong>: Select a Dayforce attribute to determine the timezone for offboarding.</li>
+</ul>
+<p><strong>Note</strong>: If Custom Offboarding is enabled and configured along with other Offboarding configurations, the priority is given to the Custom Offboarding configurations.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Custom</strong>: Select this for custom Onboarding and Offboarding Configuration that allows you to configure the upsert and delete conditions. When selected, the following fields are displayed for further configuration:
+<ul>
+<li>
+<ul>
+<li>
+<strong>Upsert Condition</strong>: Enter all current employment statuses of employees that should trigger an upsert in Okta. For example, if you enter <strong>Active</strong> and <strong>Pre-start</strong>, all Dayforce employees with the <strong>Active</strong> or <strong>Pre-start</strong> status will be upserted in Okta.</li>
+<li>
+<strong>Number of Days Before Effective Employment Status to Upsert</strong>: Enter the number of days before the employment statuses configured in the <strong>Upsert Condition</strong> become effective to trigger an upsert in Okta.<br/><strong>Note</strong>: This field is available only if you select <strong>Custom</strong> in the <strong>Onboarding and Offboarding Configuration </strong>field.</li>
+<li>
+<strong>Delete Condition</strong>: Enter all current employment statuses of employees that should trigger a deletion in Okta. For example, if you enter <strong>Inactive</strong> and <strong>Terminated</strong>, all Dayforce employees with the <strong>Inactive</strong> or <strong>Terminated </strong>status will be deleted in Okta.<br/><strong>Note</strong>: When both <strong>Upsert Condition</strong> and <strong>Delete Condition</strong> are configured, the integration gives priority to the <strong>Delete Condition</strong> first, followed by the <strong>Upsert condition</strong>. If neither condition is met, no action will be performed.</li>
+<li>
+<strong>Number of Days Before Effective Employment Status to Delete</strong>: Enter the number of days before the employment statuses configured in the <strong>Delete Condition</strong> become effective to trigger a deletion in Okta.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Admin Emails</strong>: Enter the email address to which notifications for this integration will be sent, then press Enter. You can add multiple email addresses in this field. For example, ops@example.com, itadmin@example.com.</li>
+<li>
+<strong>Admin Name</strong>: Provide the name to display as the recipient on outgoing emails.</li>
+<li>
+<strong>Source Employee Number Filter</strong>: Enter an employee number to use as a filter. For example, 100078.</li>
+<li>
+<strong>Save Execution Report to Aquera Console</strong>: Select this checkbox to save Integration execution CSV Report to the Aquera Dashboard.</li>
+<li>
+<strong>Enable Writeback</strong>: Select this checkbox to enable writeback of attributes from Okta to Dayforce. When enabled, the following fields are displayed for further configuration:
+<ul>
+<li>
+<ul>
+<li>
+<strong>Dayforce Attributes to be Updated</strong>: Select the Dayforce attributes that need to be updated. The available options are <strong>SSO Login</strong>, <strong>Business Email</strong>, <strong>Business Phone</strong>, and <strong>Okta ID</strong>.<br/><strong>Notes</strong>:
+<ul>
+<li>If a user has an invalid phone number in Okta, the writeback for that specific user will fail with the following error message:<br/><em>Invalid phoneNumber / invalid format</em>
+</li>
+<li>In Dayforce, if a future effective end date is set for a Business Phone, and the user does not have a Primary Phone in Okta, the integration attempts to update the Business Phone by converting the future effective end date to the current date. Once the effective end date is reached, the Business Phone number value will be removed from Dayforce.</li>
+<li>If you have selected <strong>Okta ID</strong> to be updated, you must provide a valid XRefCode value in the <strong>XRefCode of Dayforce Custom Attribute for Okta ID</strong> field.</li>
+</ul>
+</li>
+<li>
+<strong>Source Employee Number Filter for Writeback</strong>: Enter an employee number to use as a filter during writeback. For example, 100078.</li>
+<li>
+<strong>XRefCode of Dayforce Custom Attribute for Okta ID</strong>: Enter the unique XRefCode of the custom attribute created in Dayforce to store the Okta ID. For example, <em>EmployeePropertyXrefCode1812</em>.<br/><strong>Note</strong>: This field is available only if you select <strong>Okta ID </strong>in the <strong>Dayforce Attributes to be Updated</strong> field.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Upsert Limit</strong>: Specify the maximum number of records that can be <strong>created</strong> or <strong>updated</strong> in each integration run. Once this limit is reached, no additional records will be processed.</li>
+</ul>
+<h2 id="01JVC7QW1983644JGH2WGK8FWX">Tables</h2>
+<p>In the Tables tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener" target="_blank">Using Tables in Integrations</a> guide for more details.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p><span></span>You can specify when the integration should run automatically. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h1>
+<p>The<strong> Dayforce Employees to Okta Users </strong>template script maps the commonly used Dayforce and Okta attributes. You can customize it based on your use case.<br/>The following basic attributes are mapped by default:</p>
+<table border="1" width="799">
+<tbody>
+<tr>
+<td><strong>Dayforce Employees Attribute</strong></td>
+<td>
+<p><strong>Okta Users Attribute</strong></p>
+</td>
+</tr>
+<tr>
+<td>EmployeeNumber</td>
+<td>externalId</td>
+</tr>
+<tr>
+<td>EmployeeNumber</td>
+<td>Username</td>
+</tr>
+<tr>
+<td>FirstName</td>
+<td>firstName</td>
+</tr>
+<tr>
+<td>LastName</td>
+<td>lastName</td>
+</tr>
+<tr>
+<td>
+<p>BusinessEmail</p>
+</td>
+<td>primaryEmail</td>
+</tr>
+<tr>
+<td>
+<p>PersonalEmail</p>
+</td>
+<td>secondEmail</td>
+</tr>
+<tr>
+<td>
+<p>HomePhone</p>
+</td>
+<td>mobilePhone</td>
+</tr>
+<tr>
+<td>
+<p>BusinessPhone</p>
+</td>
+<td>primaryPhone</td>
+</tr>
+<tr>
+<td>
+<p>LoginName</p>
+</td>
+<td>Username</td>
+</tr>
+</tbody>
+</table>
+<h1 id="h_01J6XRXE25YXJE5CJ0RQRJDEF1">Create Custom Attributes in Okta</h1>
+<p>You can add custom attributes to the App-specific user profile in Okta to include additional Dayforce <em>Employee </em>attributes. You must configure all the custom attributes individually. After the configuration, Aquera automatically populates the fields that you have created in Okta from the <em>Employee</em> resource of Dayforce.</p>
+<p><strong>Note</strong>: To view Dayforce employee attributes, go to the <strong>Data</strong> tab of your Dayforce application connector configured in the Aquera Admin Portal. Then navigate to <strong>Resources</strong> &gt; <strong>Employees</strong> and click <strong>Fetch Records</strong>.</p>
+<p>Perform the following steps to create custom attributes in Okta:</p>
+<ol>
+<li>Sign in to your Okta instance.</li>
+<li>Navigate to <strong>Directory </strong>&gt;<strong> Profile Editor</strong> and select the App-specific user profile that you've created.<br/><img alt="profile_editor.png" src="./assets/7471eafde05b6dec.bin"/>
+</li>
+<li>Click <strong>Add Attribute</strong> to add a new attribute.<br/><img alt="add_attribute.png" src="./assets/c46b9d1b0178c21a.bin"/>
+</li>
+<li>Configure the attribute using the same name as Dayforce in the <strong>Variable name</strong> field and fill in other fields.<br/><img alt="image (7).png" height="570" src="./assets/3a5f67b86cbf3c76.bin" width="567"/><br/><strong>Note</strong>: Refer to the <a href="#h_01JXFDDH1SDBJ27MGT5Q0QQ5H2">Variable Name for Custom Attributes in Okta</a> section for details on the variable name.</li>
+<li>Click <strong>Save </strong>to save the changes or <strong>Save and Add Another</strong> to create another custom attribute.</li>
+</ol>
+<h2 id="h_01JXFDDH1SDBJ27MGT5Q0QQ5H2">Variable Name for Custom Attributes in Okta</h2>
+<p>While creating custom attributes in the App-specific user profile to include additional Dayforce employee attributes, you must provide a valid variable name in the <strong>Variable name</strong> field.<br/>The following table lists the most commonly used Dayforce Employee attributes for which you must create a custom attribute with the mentioned variable names:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Dayforce UI Attribute</strong></td>
+<td><strong>Required Variable Name in Okta</strong></td>
+<td><strong>Description</strong></td>
+<td><strong>Data Type</strong></td>
+</tr>
+<tr>
+<td>Biometric Verification</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> BioExempt </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Indicates if the employee is exempt from biometric verification<br/></font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> boolean </font> </span></td>
+</tr>
+<tr>
+<td>BirthDate</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> BirthDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The date of birth of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td>Checksum Timestamp</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> ChecksumTimestamp </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The checksum timestamp of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td>Federated Id</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> FederatedId </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The federated ID of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">Gender</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Gender </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The gender of the employee  </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td>Most Recent Hire Date</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> HireDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The hire date of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td>Eligible for On-Demand Pay</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> EligibleForOnDemandPay </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Indicates if the employee is eligible for on-demand pay  </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> boolean </font> </span></td>
+</tr>
+<tr>
+<td>Connected to Dayforce Wallet</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> EligibleForDFWalletPayCard </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Indicates if the employee is eligible for the Dayforce wallet pay card  </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> boolean </font> </span></td>
+</tr>
+<tr>
+<td>Employee Latest Updated Timestamp</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> EmployeeLatestUpdatedTimestamp </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The employee's last updated timestamp </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td>Last Payroll New Hire Export Date</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> LastPayrollNewHireExportDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The last payroll new hire export date  </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td>New Hire Approval Date</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> NewHireApprovalDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The new hire approval date </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td>New Hire Approved</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> NewHireApproved </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  Indicates if the new hire is approved </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> boolean </font> </span></td>
+</tr>
+<tr>
+<td>New Hire Approved By</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> NewHireApprovedBy </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  Indicates the ID of the user who approved the new hire </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td>Original Hire Date</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> OriginalHireDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The original hire date of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td>Photo Exempt</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> PhotoExempt </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  Indicates if the photo is exempt for the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> boolean </font> </span></td>
+</tr>
+<tr>
+<td>Requires Exit Interview</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> RequiresExitInterview </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Indicates if the employee requires an exit interview  </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> boolean </font> </span></td>
+</tr>
+<tr>
+<td>Seniority Date</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> SeniorityDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The seniority date of the employee  </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td>Social Security Number</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> SocialSecurityNumber </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The social security number of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td>First Date Worked</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> StartDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The start date of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string</font> </span></td>
+</tr>
+<tr>
+<td>First Time Access Email Sent Count</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> FirstTimeAccessEmailSentCount </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The first-time access email sent count of the employee  </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> integer </font> </span></td>
+</tr>
+<tr>
+<td>First Time Access Verification Attempts</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> FirstTimeAccessVerificationAttempts </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The first-time access verification attempts of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> integer </font> </span></td>
+</tr>
+<tr>
+<td>Send First Time Access Email</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> SendFirstTimeAccessEmail </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Indicates if the first-time access email is sent to the employee  </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> boolean </font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Login Name</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> LoginId </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> The login ID of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Employee Number</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> EmployeeNumber </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">  The employee number of the employee </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Unknown Birth Date</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> UnknownBirthDate </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">Indicates if the date of birth is unknown</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> boolean </font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> Display Name</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> DisplayName </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">The display name of the employee</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> LastModifiedTimestamp</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> LastModifiedTimestamp </font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">The last modified timestamp</font> </span></td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif"> string </font> </span></td>
+</tr>
+<tr>
+<td>City</td>
+<td>Addresses__City</td>
+<td>City of the <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">employee</font> </span>
+</td>
+<td><span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">string</font> </span></td>
+</tr>
+<tr>
+<td>Country Code</td>
+<td>Addresses__Country__XRefCode</td>
+<td>Country code of the <span> <font face="-apple-system, system-ui, Segoe UI, Helvetica, Arial, sans-serif">employee</font> </span>
+</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Department</td>
+<td>WorkAssignments__Position__Department__ShortName</td>
+<td>Department of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Suffix</td>
+<td>Suffix</td>
+<td>Suffix of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>manager</td>
+<td>EmployeeManagers__ManagerFirstName</td>
+<td>Manager of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>managerId</td>
+<td>EmployeeManagers__ManagerXRefCode</td>
+<td>Manager ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's Business Email</td>
+<td>EmployeeManagers__Contacts__BusinessEmail__ElectronicAddress</td>
+<td>Business email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's Personal Email</td>
+<td>EmployeeManagers__Contacts__PersonalEmail__ElectronicAddress</td>
+<td>Personal email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's OrgUnit-Site Email</td>
+<td>EmployeeManagers__Contacts__OrgUnitSiteEmail__ElectronicAddress</td>
+<td>OrgUnit-Site email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's OrgUnit-OnSiteDepartment Email</td>
+<td>EmployeeManagers__Contacts__OrgUnitOnSiteDepartmentEmail__ElectronicAddress</td>
+<td>OrgUnit-OnSiteDepartment email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's OrgUnit-Region Email</td>
+<td>EmployeeManagers__Contacts__OrgUnitRegionEmail__ElectronicAddress</td>
+<td>OrgUnit-Region email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's Custom Email</td>
+<td>EmployeeManagers__Contacts__CustomEmail__ElectronicAddress</td>
+<td>Custom email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Common Name</td>
+<td>CommonName</td>
+<td>Common name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Organization</td>
+<td>WorkAssignments__Location__LegalEntity__ShortName</td>
+<td>Organization of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Culture XRefCode</td>
+<td>Culture__XRefCode</td>
+<td>The culture XRef code of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Contact Number</td>
+<td>Contacts__ContactNumber</td>
+<td>The contact number of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>State Name</td>
+<td>Addresses__State__Name</td>
+<td>The state of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Postal Code</td>
+<td>Addresses__PostalCode</td>
+<td>The postal code of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>First Name</td>
+<td>firstName</td>
+<td>The first name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Last Name</td>
+<td>lastName</td>
+<td>The last name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Middle Name</td>
+<td>MiddleName</td>
+<td>The middle name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Email Address</td>
+<td>email</td>
+<td>The email ID of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Country LongName</td>
+<td>Contacts__Country__LongName</td>
+<td>The country long name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Pay Policy XRefCode</td>
+<td>EmploymentStatuses__PayPolicy__XRefCode</td>
+<td>The pay policy xref code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>timezone</td>
+<td>OrgUnitInfos__Site__OrgUnitDetail__Timezone</td>
+<td>The timezone of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>termination date</td>
+<td>TerminationDate</td>
+<td>The termination date</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p>While specifying a variable name, you must consider the following points:</p>
+<ul>
+<li>For non-complex attributes, the variable name must be the same as the Dayforce attribute name. For example, the variable name for NewHireApprovalDate must be <em>NewHireApprovalDate</em>.</li>
+<li>For complex attributes, the variable name must include a double underscore (__) between each sub-level attribute. For example, the variable name for the attribute <em>country</em>, which is a sub-attribute of <em>EmployeeManagers.contacts</em> must be <em><em>EmployeeManagers__Contacts__Country.</em></em>
+</li>
+<li>The following table outlines the correct variable naming conventions for handling complex attributes with multiple values:<br/>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Attribute</strong></td>
+<td><strong>Format and Example</strong></td>
+</tr>
+<tr>
+<td>EmployeeManagers</td>
+<td>
+<p>Format: EmployeeManagers__{attribute name}</p>
+<p>Example: EmployeeManagers__ManagerFirstName</p>
+</td>
+</tr>
+<tr>
+<td>Contacts</td>
+<td>
+<p>Format: Contacts__{attribute name}</p>
+<p>Example: Contacts__ContactNumber</p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the Contacts__{XRefCode value}__{attribute name} format. For example, Contacts__BusinessPhone__ContactNumber.</p>
+</td>
+</tr>
+<tr>
+<td>EmploymentStatuses</td>
+<td>
+<p>Format: EmploymentStatuses<em>__</em><em>{attribute name}</em></p>
+<p>Example: EmploymentStatuses<em>__PayPolicy</em></p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the EmploymentStatuses<em>__{XRefCode value}__</em><em>{attribute name}</em> format.</p>
+</td>
+</tr>
+<tr>
+<td>Addresses</td>
+<td>
+<p>Format: Addresses<em>__</em><em>{attribute name}</em></p>
+<p>Example: Addresses<em>__Address1</em></p>
+<p><strong>Note</strong>: Only the PrimaryResidence value will be considered. To consider a value other than the PrimaryResidence one, the variable name must be in the Addresses<em>__{XRefCode value}__</em><em>{attribute name}</em> format. For example, Addresses<em>__Mailing__Address1.</em></p>
+</td>
+</tr>
+<tr>
+<td>WorkAssignments</td>
+<td>
+<p>Format: WorkAssignments<em>__</em><em>{attribute name}</em></p>
+<p>Example: WorkAssignments__Position</p>
+</td>
+</tr>
+<tr>
+<td>Roles</td>
+<td>
+<p>Format: Roles<em>__</em><em>{attribute name}</em></p>
+<p>Example: Roles__EffectiveStart</p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the Roles<em>__{XRefCode value}__</em><em>{attribute name}</em> format. </p>
+</td>
+</tr>
+<tr>
+<td>EmployeeProperties</td>
+<td>
+<p>Format: EmployeeProperty__{attribute name}</p>
+<p>Example: EmployeeProperty__ShortName</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the EmployeeProperty<em>__{XRefCode value}__</em><em>{attribute name}</em> format.</li>
+<li>While specifying variable name for EmployeeProperties, ensure that you consider the <em>XRefCode value</em> of <strong>EmployeeProperty &gt; XRefCode</strong>.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>OrgUnitInfos</td>
+<td>
+<p>Format: OrgUnitInfos__{attribute name}</p>
+<p>Example: OrgUnitInfos__OrgUnitDetail</p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the OrgUnitInfos<em>__{XRefCode value}__</em><em>{attribute name}</em> format.</p>
+</td>
+</tr>
+<tr>
+<td>SSOAccounts</td>
+<td>
+<p>Format: SSOAccounts__{attribute name}</p>
+<p>Example: SSOAccounts__LoginName</p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the SSOAccounts<em>__{XRefCode value}__</em><em>{attribute name}</em> format.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h1 id="h_01K18HC0G1GS49W9ZK7M37PRZY">Configuring Field-Level Access in Dayforce</h1>
+<p>Perform the following steps to configure the Field-Level access in Dayforce:</p>
+<ol>
+<li>Log in to your Dayforce instance with the admin credentials.</li>
+<li>Select the relevant role. For example,<em> Identity API Integration</em>.</li>
+<li>Click the <strong>Web Services Field-Level Access</strong> tab. <br/><span>The <em><strong>Web Services Field-Level Access</strong> </em>tab provides a hierarchical view of the web services response types separated by the type of service (<strong>RESTful Services</strong> and <strong>SOAP Services</strong>) and the data entities and elements available within each.<br/><img alt="DF_Restful.png" src="./assets/8e90535f3ac063a1.bin"/></span>
+</li>
+<li>To retrieve the organization unit's location details, such as address and contact information, e<span>xpand<strong> </strong><strong>Human Resources<span> </span></strong>under the<span> </span><strong>RESTful Services</strong>.</span>
+</li>
+<li>
+<span>Enable the data elements you need for each organization unit from <strong>System Admin</strong> &gt; <strong>Roles</strong> &gt; <strong>Web Services Field-Level Access</strong> &gt; <strong>RESTful Services</strong> &gt; <strong>Human Resources</strong> &gt; <strong>Employee</strong>. <br/></span>The following table outlines the permissions that must be enabled in the <span><strong>RESTful Services </strong></span>for each attribute:<br/>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>Attribute</strong></td>
+<td><strong>Field-Level Access</strong></td>
+</tr>
+<tr>
+<td>EmployeeManagers</td>
+<td>
+<p><img alt="7.png" height="225" src="./assets/a503cbae9dfae7c1.bin" width="165"/></p>
+</td>
+</tr>
+<tr>
+<td>Contacts</td>
+<td>
+<p><img alt="1.png" height="219" src="./assets/54bdaefaec5e2090.bin" width="193"/></p>
+</td>
+</tr>
+<tr>
+<td>EmploymentStatuses</td>
+<td>
+<p><img alt="2.png" height="407" src="./assets/3b92a4da91543c3c.bin" width="175"/></p>
+</td>
+</tr>
+<tr>
+<td>Addresses</td>
+<td>
+<p><img alt="3.png" height="436" src="./assets/da6ffcf1b1f8c27c.bin" width="225"/></p>
+</td>
+</tr>
+<tr>
+<td>WorkAssignments</td>
+<td>
+<p><img alt="2025-07-28_16-08-00.png" height="275" src="./assets/8a603c93f854b691.bin" width="227"/></p>
+</td>
+</tr>
+<tr>
+<td>Roles</td>
+<td>
+<p><img alt="4.png" height="240" src="./assets/0db010e7282e92b3.bin" width="232"/> </p>
+</td>
+</tr>
+<tr>
+<td>EmployeeProperties</td>
+<td>
+<p><img alt="5.png" height="334" src="./assets/15f97f9cd219b535.bin" width="206"/></p>
+</td>
+</tr>
+<tr>
+<td>OrgUnitInfos</td>
+<td>
+<p><img alt="6.png" height="423" src="./assets/27ca9894e53e104c.bin" width="211"/></p>
+</td>
+</tr>
+<tr>
+<td>SSOAccounts</td>
+<td>
+<p><img alt="8.png" height="80" src="./assets/f16b0434eba6cdbe.bin" width="216"/></p>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<p><strong>Note</strong>: To enable writeback of attributes from Okta to Dayforce, in addition to the above field-level access, you must also enable the following permissions:</p>
+<ul>
+<li>EmployeeExportParameters<br/><img alt="9.png" height="632" src="./assets/6da4edc95273850b.bin" width="215"/>
+</li>
+<li>EmployeeExportBulkResponse<br/><img alt="10.png" height="81" src="./assets/6e022a795b376e90.bin" width="244"/>
+</li>
+<li>EmployeeExportBackgroundJobStatus<br/><img alt="11.png" height="95" src="./assets/3de5b9f42f87a873.bin" width="330"/>
+</li>
+</ul>
+<h1 id="01JXFENZA09KJX45XBJ4WBF90C">Map Custom Attribute to Okta Profile</h1>
+<p>Perform the following steps to map the custom attributes to the Okta profile:</p>
+<ol>
+<li>Navigate to <strong>Directory </strong>&gt;<strong> Profile Editor</strong> and select the App-specific user profile that you've created.</li>
+<li>Click <strong>Mappings </strong>and select<strong> Configure User mappings</strong>.<br/><img alt="configure_user_mappings.png" src="./assets/c45032c4635cec04.bin"/>
+</li>
+<li>Map the custom attribute in the App-specific user profile to an equivalent attribute in the Okta user profile and click <strong>Save Mappings</strong>.<br/><img alt="Screenshot 2024-10-09 at 1.07.35 PM.png" src="./assets/2086c911f2c24ebd.bin"/><br/><strong>Note</strong>: If an equivalent attribute is not present in the Okta user profile, refer to the following section and add custom attributes to the Okta user profile.</li>
+</ol>
+<h2 id="h_01JYRSEMA6GYADZ5TAP9NFXYN6">Add Custom Attribute to Okta User Profile</h2>
+<p>Perform the following steps to add a custom attribute to the Okta user profile:<strong><br/></strong></p>
+<ol>
+<li>
+<ol>
+<li>Navigate to <strong>Directory </strong>&gt;<strong> Profile Editor</strong> and select the Okta user profile (User default).<strong><br/><img alt="default_profile.png" src="./assets/bc7121fa2486ff6b.bin"/><br/></strong>
+</li>
+<li>Click<strong> Add Attribute </strong>to add a custom attribute to the Okta default user profile.<strong><br/><img alt="add_attribute_default_profile.png" src="./assets/abe75e09bac5c4af.bin"/></strong>
+</li>
+<li>Fill in the attribute's display name, description, data type, and set the user permission.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+</li>
+</ol>
+<p>The following table lists the most commonly used Okta user profile attributes and their equivalent App-specific user profile attributes for mapping:</p>
+<table border="1">
+<tbody>
+<tr>
+<td><strong>App-specific user profile Attribute<br/></strong></td>
+<td><strong>Okta User Profile Attribute</strong></td>
+</tr>
+<tr>
+<td>Addresses__City</td>
+<td>city</td>
+</tr>
+<tr>
+<td>Addresses__Country__XRefCode</td>
+<td>countryCode</td>
+</tr>
+<tr>
+<td>WorkAssignments__Position__Department__ShortName</td>
+<td>department</td>
+</tr>
+<tr>
+<td>DisplayName</td>
+<td>displayName</td>
+</tr>
+<tr>
+<td>EmployeeNumber</td>
+<td>employeeNumber</td>
+</tr>
+<tr>
+<td>Title</td>
+<td>honorificPrefix</td>
+</tr>
+<tr>
+<td>Suffix</td>
+<td>honorificSuffix</td>
+</tr>
+<tr>
+<td>EmployeeManagers__ManagerFirstName</td>
+<td>manager</td>
+</tr>
+<tr>
+<td>EmployeeManagers__ManagerXRefCode</td>
+<td>managerId</td>
+</tr>
+<tr>
+<td>CommonName</td>
+<td>nickName</td>
+</tr>
+<tr>
+<td>WorkAssignments__Location__LegalEntity__ShortName</td>
+<td>organization</td>
+</tr>
+<tr>
+<td>Culture__XRefCode</td>
+<td>preferredLanguage</td>
+</tr>
+<tr>
+<td>Contacts__ContactNumber</td>
+<td>primaryPhone</td>
+</tr>
+<tr>
+<td>Addresses__State__Name</td>
+<td>state</td>
+</tr>
+<tr>
+<td>Addresses__Address1</td>
+<td>streetAddress</td>
+</tr>
+<tr>
+<td>WorkAssignments__Position__ShortName</td>
+<td>title</td>
+</tr>
+<tr>
+<td>Addresses__PostalCode</td>
+<td>zipCode</td>
+</tr>
+<tr>
+<td>Addresses__Address1</td>
+<td>postalAddress</td>
+</tr>
+<tr>
+<td>Timezone__XRefCode</td>
+<td>timezone</td>
+</tr>
+<tr>
+<td>firstName</td>
+<td>firstName</td>
+</tr>
+<tr>
+<td>lastName</td>
+<td>lastName</td>
+</tr>
+<tr>
+<td>MiddleName</td>
+<td>middleName</td>
+</tr>
+<tr>
+<td>email</td>
+<td>email</td>
+</tr>
+<tr>
+<td>secondEmail</td>
+<td>secondEmail</td>
+</tr>
+<tr>
+<td>Contacts__ContactNumber</td>
+<td>mobilePhone</td>
+</tr>
+<tr>
+<td>Contacts__Country__LongName</td>
+<td>region</td>
+</tr>
+<tr>
+<td>Gender</td>
+<td>gender</td>
+</tr>
+<tr>
+<td>EmploymentStatuses__PayPolicy__XRefCode</td>
+<td>paySchedule</td>
+</tr>
+</tbody>
+</table>
+<p id="01JYNY9EYVTQY340D1E6XZTGWA">Similarly, you can map all custom attributes created in Okta to include additional Dayforce Employee attributes with Okta User Profile attributes.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations</a> for further details.</p>
+<p> </p>
+  </div>
+</body>
+</html>

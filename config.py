@@ -22,6 +22,9 @@ class Config:
 
     SLACK_WEBHOOK_URL: str = field(default_factory=lambda: os.environ.get("SLACK_WEBHOOK_URL", ""))
 
+    # ── AI Help System (Gemini) ──────────────────────────────────────────────
+    GEMINI_API_KEY: str = field(default_factory=lambda: os.environ.get("GEMINI_API_KEY", ""))
+
     STORAGE_DIR: Path = field(default_factory=lambda: Path(os.environ.get("STORAGE_DIR", "storage")))
 
     # ── derived sub-paths ──────────────────────────────────────────────
@@ -44,6 +47,10 @@ class Config:
     @property
     def logs_dir(self) -> Path:
         return self.STORAGE_DIR / "logs"
+
+    @property
+    def vectordb_dir(self) -> Path:
+        return self.STORAGE_DIR / "vectordb"
 
     def ensure_dirs(self) -> None:
         """Create all storage sub-directories if they don't exist."""

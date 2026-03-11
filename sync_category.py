@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 
 from config import Config
-from rebuild_outputs import build_category_outputs
+from app.processor import build_category_outputs
 
 
 def main() -> None:
@@ -13,7 +13,8 @@ def main() -> None:
     cfg.ensure_dirs()
 
     client = cfg.get_zendesk_client()
-    articles = client.list_articles_in_category(cfg.ZENDESK_CATEGORY_ID)
+    print("Fetching all articles for processing...")
+    articles = client.list_articles()
 
     sync_file = cfg.metadata_dir / ".last_sync.json"
     last_sync: dict[str, str] = {}
@@ -49,6 +50,23 @@ def main() -> None:
 
     # Save the new state only if the build succeeds
     sync_file.write_text(json.dumps(current_state, indent=2), encoding="utf-8")
+
+    # Embed articles into vector store for AI Help (if Gemini key is configured)
+    if cfg.GEMINI_API_KEY:
+        try:
+            from app.embedding import embed_articles
+
+            articles_dir = cfg.processed_dir / "articles"
+            embed_result = embed_articles(
+                articles_dir=articles_dir,
+                persist_dir=str(cfg.vectordb_dir),
+                api_key=cfg.GEMINI_API_KEY,
+            )
+            print(f"✨ AI embeddings updated: {embed_result}")
+        except Exception as e:
+            print(f"⚠️  Failed to update AI embeddings: {e}")
+    else:
+        print("ℹ️  Skipping AI embeddings (GEMINI_API_KEY not set)")
 
     # Send Slack Notification if configured
     if cfg.SLACK_WEBHOOK_URL:

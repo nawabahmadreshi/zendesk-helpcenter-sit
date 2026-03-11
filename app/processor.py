@@ -251,14 +251,27 @@ def build_category_outputs(articles: Iterable[dict], output_dir: Path) -> dict:
     all_rows: List[HeadingRow] = []
     all_broken: List[BrokenAnchor] = []
     combined_articles: List[str] = []
+    skipped_count = 0
 
     for article in articles:
+        labels = article.get("label_names", []) or article.get("labels", [])
+        integration_id_label = next((l for l in labels if l.startswith("integration_id_")), None)
+        
+        # STRICT POLICY: Skip articles without an integration_id label
+        if not integration_id_label:
+            skipped_count += 1
+            continue
+
         raw_html = extract_body_html(article)
         soup = clean_article_html(raw_html)
         old_to_new, rows = assign_heading_ids(soup, article)
         broken = rewrite_links(soup, old_to_new, article)
+        
         cleaned_article_html = render_clean_article_html(article, soup)
-        filename = f"article-{article['id']}.cleaned.html"
+        
+        # PREDICTABLE NAMING: Name the file using the integration_id label
+        filename = f"{integration_id_label}_{article['id']}.html"
+            
         (articles_dir / filename).write_text(cleaned_article_html, encoding="utf-8")
         combined_articles.append(cleaned_article_html)
         all_rows.extend(rows)
@@ -271,6 +284,7 @@ def build_category_outputs(articles: Iterable[dict], output_dir: Path) -> dict:
 
     return {
         "articles_processed": len(combined_articles),
+        "articles_skipped": skipped_count,
         "heading_count": len(all_rows),
         "broken_anchor_count": len(all_broken),
         "output_dir": str(output_dir),

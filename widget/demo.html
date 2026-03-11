@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workday to Active Directory Integration Configuration - Aquera</title>
+  <meta name="integration-id" content="integration_id_6c6a442f-3797-456e-29e6-a23da164c87f">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f111a;
+      color: #e1e4e8;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 220px;
+      background: #0d0f17;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 20px 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 20px 24px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #8b5cf6;
+      letter-spacing: -0.5px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      color: #6b7280;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover, .sidebar-nav a.active {
+      color: #e1e4e8;
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    .sidebar-nav a.active {
+      border-right: 2px solid #8b5cf6;
+    }
+
+    /* Main Content */
+    .main {
+      margin-left: 220px;
+      padding: 32px 40px;
+    }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+
+    .breadcrumb span { color: #8b5cf6; }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #f0f0f0;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 28px;
+    }
+
+    .tabs a {
+      padding: 12px 20px;
+      color: #6b7280;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tabs a:hover { color: #c9cdd3; }
+
+    .tabs a.active {
+      color: #8b5cf6;
+      border-bottom-color: #8b5cf6;
+    }
+
+    /* Card */
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #e1e4e8;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: #e1e4e8;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    .form-group select option { background: #1a1d2e; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #c9cdd3;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-draft {
+      background: rgba(251, 191, 36, 0.1);
+      color: #fbbf24;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">Aquera</div>
+    <nav class="sidebar-nav">
+      <a href="#">Dashboard</a>
+      <a href="#">Applications</a>
+      <a href="#" class="active">Orchestrations</a>
+      <a href="#">Script Orchestration</a>
+      <a href="#">Workflows</a>
+      <a href="#">Task Management</a>
+      <a href="#">Users</a>
+      <a href="#">Profile</a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="breadcrumb">
+      Orchestrations / <span>ADP Workforce Now to Okta</span>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+      <h1>ADP Workforce Now to Okta</h1>
+      <span class="status-badge status-draft">
+        <span class="status-dot"></span>
+        Draft
+      </span>
+    </div>
+
+    <p class="subtitle">Synchronize employee data from ADP Workforce Now to Okta user profiles</p>
+
+    <!-- Tabs (mimicking Angular Material tabs) -->
+    <div class="tabs" role="tablist">
+      <a href="#" class="active" role="tab">Configuration</a>
+      <a href="#" role="tab">Connections</a>
+      <a href="#" role="tab">Mapping and Assignments</a>
+      <a href="#" role="tab">Group Management</a>
+      <a href="#" role="tab">Tables</a>
+      <a href="#" role="tab">Schedule</a>
+    </div>
+
+    <!-- Configuration Form -->
+    <div class="card">
+      <h2>Connection Settings</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Source Application</label>
+          <select>
+            <option>ADP Workforce Now</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Target Application</label>
+          <select>
+            <option>Okta</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>ADP API URL</label>
+          <input type="text" placeholder="https://api.adp.com/hr/v2/workers">
+        </div>
+        <div class="form-group">
+          <label>Okta Domain</label>
+          <input type="text" placeholder="your-org.okta.com">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Synchronization Options</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Sync Direction</label>
+          <select>
+            <option>Source → Target (One-way)</option>
+            <option>Bidirectional</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Sync Frequency</label>
+          <select>
+            <option>Every 15 minutes</option>
+            <option>Every hour</option>
+            <option>Daily</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Error Handling</label>
+        <select>
+          <option>Skip failed records and continue</option>
+          <option>Stop on first error</option>
+          <option>Retry failed records (3 attempts)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary">Save Changes</button>
+      <button class="btn btn-outline">Test Connection</button>
+      <button class="btn btn-outline">Execute</button>
+    </div>
+  </div>
+
+  <!-- AI Help Widget -->
+  <script src="widget.js" data-api-url="http://localhost:8000"></script>
+
+</body>
+</html>

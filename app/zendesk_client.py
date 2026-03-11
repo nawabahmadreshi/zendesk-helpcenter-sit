@@ -26,6 +26,23 @@ class ZendeskClient:
         data = self._get(f"/api/v2/help_center/sections/{section_id}")
         return data["section"]
 
+    def list_articles(self) -> List[dict]:
+        items: List[dict] = []
+        url_path = "/api/v2/help_center/articles"
+        params = {"per_page": 100}
+        while True:
+            data = self._get(url_path, params=params)
+            items.extend(data.get("articles", []))
+            next_page = data.get("next_page")
+            if not next_page:
+                break
+            if next_page.startswith(self.base):
+                url_path = next_page[len(self.base):]
+            else:
+                break
+            params = None
+        return items
+
     def list_articles_in_category(self, category_id: int) -> List[dict]:
         items: List[dict] = []
         url_path = f"/api/v2/help_center/categories/{category_id}/articles"
@@ -39,7 +56,7 @@ class ZendeskClient:
             if next_page.startswith(self.base):
                 url_path = next_page[len(self.base):]
             else:
-                raise ValueError(f"Unexpected next_page value: {next_page}")
+                break
             params = None
         return items
 

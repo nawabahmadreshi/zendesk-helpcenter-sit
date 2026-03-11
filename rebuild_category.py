@@ -1,7 +1,8 @@
 from __future__ import annotations
-
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
 
 from app.processor import build_category_outputs
 from app.zendesk_client import ZendeskClient

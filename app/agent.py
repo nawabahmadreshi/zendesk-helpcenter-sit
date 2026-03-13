@@ -241,8 +241,8 @@ def contextual_help_agent(
             if results and len(results) > 0:
                 top_hit = results[0]
                 score = top_hit.get("score", 1.0)
-                # Only attach if the semantic score is decent (not a totally irrelevant result)
-                if score < 1.5:  # ChromaDB distance — lower is better; 1.5 is a useful threshold
+                # Only attach if the semantic score is very high (strict matching)
+                if score < 1.1:  # Lowered from 1.5 to 1.1 for higher precision
                     article = {
                         "title": top_hit["metadata"]["title"],
                         "text": top_hit["text"],

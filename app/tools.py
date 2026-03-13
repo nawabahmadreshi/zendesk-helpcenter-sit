@@ -24,9 +24,20 @@ def extract_integration_signals(page_context: Dict) -> str:
     """
     signals = []
 
-    title = page_context.get("page_title", "")
-    if title:
-        signals.append(title)
+    title = page_context.get("page_title", "").lower()
+    
+    # DETECT GALLERY/LIST PAGES: 
+    # If we are in "Create Integration" or "Explore Templates", we are looking at a gallery.
+    # In a gallery, matching a specific integration article is usually a mistake because
+    # multiple different integration names (ADP, UKG, etc) appear as tiles.
+    is_gallery = any(k in title for k in ["create integration", "explore templates", "gallery", "directory"])
+    
+    if is_gallery:
+        return "Aquera create integration gallery guide"
+
+    signals = []
+    if page_context.get("page_title"):
+        signals.append(page_context["page_title"])
 
     url_path = page_context.get("url_path", "")
     if url_path:

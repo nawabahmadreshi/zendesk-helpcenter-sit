@@ -349,6 +349,7 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
             <path d="M2 12l10 5 10-5"></path>
           </svg>
           <span>Aquera AI Help</span>
+          <div class="aq-server-status" id="aq-server-status" title="Checking server status..."></div>
         </div>
         <button class="aq-help-close" aria-label="Close">&times;</button>
       </div>
@@ -754,10 +755,39 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
     });
     observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
 
+    // --- Server Health Monitor ---
+    function checkServerHealth() {
+        const statusDot = shadow.getElementById('aq-server-status');
+        if (!statusDot) return;
+        
+        const apiUrl = window.__AQUERA_EXT_API_URL__ || 'http://localhost:8000';
+        fetch(apiUrl + '/health')
+            .then(r => r.json())
+            .then(data => {
+                const isOk = (data.ok === true || data.status === 'ok');
+                if (isOk) {
+                    statusDot.className = 'aq-server-status online';
+                    statusDot.title = 'AI Server Online';
+                } else {
+                    statusDot.className = 'aq-server-status offline';
+                    statusDot.title = 'AI Server Unexpected Response';
+                }
+            })
+            .catch(() => {
+                statusDot.className = 'aq-server-status offline';
+                statusDot.title = 'AI Server Offline';
+            });
+    }
+
+    // Initial check and periodic refresh
+    checkServerHealth();
+    setInterval(checkServerHealth, 30000); // Every 30 seconds
+
     // Expose for manual triggering/debugging
     window.AqueraAI = {
       refresh: function() { fetchContextualHelp(true); },
-      getContext: function() { return scanPageContext(); }
+      getContext: function() { return scanPageContext(); },
+      checkHealth: checkServerHealth
     };
   }
 
@@ -958,6 +988,25 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
       }
       .aq-status-dot-green { background-color: #10b981; color: #10b981; }
       .aq-status-dot-red { background-color: #ef4444; color: #ef4444; }
+
+      /* Server Status Indicator */
+      .aq-server-status {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #6b7280; /* Gray (unknown) */
+        margin-left: 4px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        transition: background-color 0.3s, box-shadow 0.3s;
+      }
+      .aq-server-status.online {
+        background-color: #10b981;
+        box-shadow: 0 0 8px #10b981;
+      }
+      .aq-server-status.offline {
+        background-color: #ef4444;
+        box-shadow: 0 0 8px #ef4444;
+      }
 
       /* Body */
       .aq-help-panel-body {

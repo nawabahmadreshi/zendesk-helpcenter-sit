@@ -586,9 +586,10 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
           // Attach event listeners to the new action buttons
           _attachActionListeners(contextContent);
         })
-        .catch(function () {
+        .catch(function (err) {
           isFetchingContext = false;
-          contextContent.innerHTML = '<p class="aq-help-error">Unable to load contextual help. Is the AI server running?</p>';
+          console.error(`Aquera AI: Context fetch failed for URL ${API_URL}/api/help/context`, err);
+          contextContent.innerHTML = `<p class="aq-help-error">Unable to load contextual help. Is the AI server running at <strong>${API_URL}</strong>?</p>`;
           contextContent.classList.add('loaded');
         });
     }

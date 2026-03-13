@@ -32,7 +32,7 @@ async def background_sync_loop():
             # Re-load config if .env changed (rudimentary hot-reload check)
             if cfg.AUTO_SYNC_ENABLED:
                 print(f"BACKGROUND: Starting auto-sync (interval: {cfg.AUTO_SYNC_INTERVAL_MINS}m)...")
-                run_sync_logic(cfg, sync_mode="full")
+                await asyncio.to_thread(run_sync_logic, cfg, "full")
                 print("BACKGROUND: Auto-sync completed.")
         except Exception as e:
             print(f"BACKGROUND ERROR: {e}")

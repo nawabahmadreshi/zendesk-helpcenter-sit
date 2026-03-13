@@ -243,6 +243,90 @@ def write_excel(path: Path, rows: List[HeadingRow], broken_links: List[BrokenAnc
 
 
 
+def process_single_article_html(article: dict, output_dir: Path) -> dict:
+    """Processes a single article into HTML, routing to either integration/ or general/ folders."""
+    labels = article.get("label_names", []) or article.get("labels", [])
+    integration_id_label = next((l for l in labels if l.startswith("integration_id_")), None)
+
+    is_integration = bool(integration_id_label)
+    folder_name = "integration" if is_integration else "general"
+    
+    target_dir = output_dir / "articles" / folder_name
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    # Use integration label if present, otherwise just prefix with 'general_kb_'
+    file_prefix = integration_id_label if is_integration else "general_kb"
+
+    raw_html = extract_body_html(article)
+    soup = clean_article_html(raw_html)
+    old_to_new, rows = assign_heading_ids(soup, article)
+    broken = rewrite_links(soup, old_to_new, article)
+
+    cleaned_article_html = render_clean_article_html(article, soup)
+    filename = f"{file_prefix}_{article['id']}.html"
+    filepath = target_dir / filename
+    filepath.write_text(cleaned_article_html, encoding="utf-8")
+
+    return {
+        "status": "processed", 
+        "is_integration": is_integration,
+        "html": cleaned_article_html, 
+        "rows": rows if is_integration else [], # Don't index general KB rows
+        "broken": broken if is_integration else [],
+        "filepath": filepath,
+        "integration_id": integration_id_label or "global"
+    }
+
+
+def compile_local_indices(output_dir: Path) -> dict:
+    """Rapidly rebuilds headings.json, excel, and global HTML guide from cached INTEGRATION HTML files.
+    This safely protects the index from generic KB articles."""
+    integration_dir = output_dir / "articles" / "integration"
+    if not integration_dir.exists():
+        return {"error": "Integration articles dir not found"}
+
+    all_rows: List[HeadingRow] = []
+    all_broken: List[BrokenAnchor] = []
+    combined_articles: List[str] = []
+    
+    # We rebuild headings and anchors ONLY from the integration HTML files on disk
+    for html_file in integration_dir.glob("*.html"):
+        html_content = html_file.read_text(encoding="utf-8")
+        combined_articles.append(html_content)
+        
+        soup = BeautifulSoup(html_content, "lxml")
+        article_elem = soup.find("article")
+        if not article_elem:
+            continue
+            
+        article_id = article_elem.get("data-article-id", "")
+        article_slug = article_elem.get("data-article-slug", "")
+        
+        article_mock = {
+            "id": article_id, 
+            "slug": article_slug, 
+            "title": soup.find("h1").get_text(strip=True) if soup.find("h1") else "",
+            "html_url": ""  
+        }
+        
+        heading_ids, rows = assign_heading_ids(soup, article_mock)
+        broken = rewrite_links(soup, heading_ids, article_mock)
+        
+        all_rows.extend(rows)
+        all_broken.extend(broken)
+
+    combined_html = "\n\n".join(combined_articles)
+    (output_dir / "guide.cleaned.html").write_text(combined_html, encoding="utf-8")
+    write_json(output_dir / "headings.json", all_rows)
+    write_excel(output_dir / "headings.xlsx", all_rows, all_broken)
+
+    return {
+        "integration_articles_processed": len(combined_articles),
+        "heading_count": len(all_rows),
+        "broken_anchor_count": len(all_broken),
+    }
+
+
 def build_category_outputs(articles: Iterable[dict], output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
     articles_dir = output_dir / "articles"

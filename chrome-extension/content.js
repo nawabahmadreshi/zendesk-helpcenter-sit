@@ -33,7 +33,9 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
       buttons: [],         // from main content area
       tabs: [],            // from main content area
       form_labels: [],     // from main content area
+      descriptions: [],    // New: to capture paragraph/help text
       nav_items: [],       // from sidebar/nav (secondary)
+      active_nav: '',      // New: to capture the currently selected/active nav item
       integration_id: '',
     };
 
@@ -49,43 +51,25 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
     );
 
     if (activeModal) {
-      console.log('Context Priority: Modal/Card detected');
+      console.group('AI Help Context Scanner: Modal detected');
       const modalTitle = activeModal.querySelector('h1, h2, h3, .modal-title, .mat-dialog-title, .dialog-title, .offcanvas-title, [mat-dialog-title]');
       context.page_title = (modalTitle ? modalTitle.textContent.trim() : 'Active Card') + ' (Modal/Card)';
-      _extractFromRoot(activeModal, context);
+      _extractFromRoot(activeModal, context, false, '[MODAL] ');
+      
+      // Also scan background but flag it so AI knows it's out of focus
+      const mainContent = document.querySelector('main, [role="main"], #main-content, .app-content, .main-container') || document.body;
+      _extractFromRoot(mainContent, context, true, '[BACKGROUND] ');
+
       _extractIntegrationId(context);
       _deduplicate(context);
-      console.log('Scan Complete (Modal Mode):', context);
+      console.log('Context Priority: Scanned Modal and Background');
       console.groupEnd();
       return context;
     }
 
-    // ── STEP 2: Find the main content area ─────────────────────────────
-    const mainRoot = (
-      document.querySelector('main') ||
-      document.querySelector('[role="main"]') ||
-      document.querySelector('.main-content') ||
-      document.querySelector('.content-area') ||
-      document.querySelector('.page-content') ||
-      document.querySelector('.body-content') ||
-      document.querySelector('.central-content') ||
-      document.querySelector('.router-outlet + *') ||
-      document.querySelector('router-outlet + *') ||
-      document.querySelector('.mat-sidenav-content') ||
-      document.querySelector('#main-content') ||
-      document.querySelector('#content') ||
-      document.querySelector('.app-view') ||
-      document.querySelector('.layout-content') ||
-      null
-    );
-
-    if (mainRoot) {
-      console.log('Context Priority: Primary content container found');
-      _extractFromRoot(mainRoot, context);
-    } else {
-      console.log('Context Priority: No clear main container, using broad fallback');
-      _extractFromRoot(document.body, context, false); // No exclusion on fallback
-    }
+    // ── STEP 2: Find the main content area (No Modal) ─────────────────────────────
+    // Scan the entire body, but rely on `_isNavElement` and `_isVisible` to filter out generic layout fluff
+    _extractFromRoot(document.body, context, true, '');
 
     // ── STEP 3: Separately capture navigation/sidebar items ─────────────
     const navRoots = document.querySelectorAll('nav, [role="navigation"], aside, .sidebar, .sidenav, mat-sidenav, .mat-sidenav, .nav-menu, .left-nav, .app-sidebar');
@@ -93,7 +77,15 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
       nav.querySelectorAll('a, button, [role="menuitem"], .nav-item, .menu-item, .mat-list-item').forEach(function(el) {
         if (el.closest('#aquera-ai-help-host')) return;
         const text = (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ');
-        if (text && text.length < 60 && text.length > 1) context.nav_items.push(text);
+        if (text && text.length < 60 && text.length > 1) {
+          context.nav_items.push(text);
+          // Detect if this nav item is active/selected
+          if (el.classList.contains('active') || el.classList.contains('selected') || 
+              el.classList.contains('current') || el.getAttribute('aria-selected') === 'true' ||
+              el.getAttribute('aria-current') === 'page' || el.closest('.active, .selected, .current')) {
+            context.active_nav = text;
+          }
+        }
       });
     });
 
@@ -105,41 +97,85 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
   }
 
   // helper: extract elements from a given root into the context object
-  function _extractFromRoot(root, context, excludeNav = false) {
+  function _extractFromRoot(root, context, excludeNav = false, prefix = '') {
     // 1. Headings
     root.querySelectorAll('h1, h2, h3, h4, [class*="header"], [class*="title"]').forEach(function(el) {
       if (excludeNav && _isNavElement(el)) return;
+      if (!_isVisible(el)) return;
       const text = el.textContent.trim().replace(/\s+/g, ' ');
-      if (text && text.length < 150 && text.length > 2) context.headings.push(text);
+      if (text && text.length < 150 && text.length > 2) context.headings.push(prefix + text);
     });
 
     // 2. Buttons / Clickables
-    root.querySelectorAll('button, [role="button"], a.btn, .mat-button, .mat-raised-button, [class*="button"], [class*="btn"]').forEach(function(el) {
+    root.querySelectorAll('button, [role="button"], a[role="button"], a.btn, .btn, .button, .mat-button, .mat-raised-button, .mat-flat-button, [class*="button"], [class*="btn"], input[type="button"], input[type="submit"]').forEach(function(el) {
       if (el.closest('#aquera-ai-help-host')) return;
       if (excludeNav && _isNavElement(el)) return;
+      if (!_isVisible(el)) return;
       const text = (el.textContent || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim().replace(/\s+/g, ' ');
-      if (text && text.length < 80 && text.length > 1) context.buttons.push(text);
+      if (text && text.length < 80 && text.length > 1) context.buttons.push(prefix + text);
     });
 
     // 3. Tabs
     root.querySelectorAll('[role="tab"], .mat-tab-label, .nav-link, [mat-tab-link], .tab-item').forEach(function(el) {
       if (el.closest('#aquera-ai-help-host')) return;
+      if (!_isVisible(el)) return;
       const text = el.textContent.trim();
-      if (text && text.length < 80) context.tabs.push(text);
+      if (text && text.length < 80) context.tabs.push(prefix + text);
     });
 
-    // 4. Form Fields / Labels
-    root.querySelectorAll('label, .mat-form-field-label, .mat-label, input[placeholder], select, [placeholder]').forEach(function(el) {
+    // 5. Broad Text Scanner (Greedy)
+    root.querySelectorAll('p, span, div, li, .help-block, .description, .hint, .text-muted, .info-text').forEach(function(el) {
       if (el.closest('#aquera-ai-help-host')) return;
       if (excludeNav && _isNavElement(el)) return;
-      const text = el.textContent.trim() || el.getAttribute('placeholder') || el.name || '';
-      if (text && text.length < 100 && text.length > 1) context.form_labels.push(text);
+      
+      // Don't capture text from common container wrappers that have child text already captured
+      if (el.children.length > 5 && (el.tagName === 'DIV' || el.tagName === 'UL')) return;
+      
+      if (!_isVisible(el)) return;
+      
+      const text = el.textContent.trim().replace(/\s+/g, ' ');
+      // Filter for meaningful content length (avoid icons/one-word labels)
+      if (text && text.length > 15 && text.length < 1000) {
+          // Check if it's already a heading or button to avoid duplication
+          if (context.headings.indexOf(prefix + text) === -1 && context.buttons.indexOf(prefix + text) === -1) {
+              context.descriptions.push(prefix + text);
+          }
+      }
+    });
+
+    // 4. Form Labels / Inputs
+    root.querySelectorAll('label, .mat-form-field-label, .form-label, .aq-label, .field-label').forEach(function(el) {
+      if (el.closest('#aquera-ai-help-host')) return;
+      if (!_isVisible(el)) return;
+      const text = el.textContent.trim().replace(/\s+/g, ' ');
+      if (text && text.length < 150 && text.length > 1) context.form_labels.push(prefix + text);
     });
   }
 
-  // helper: check if element is inside a nav/header/footer/aside
+  function _isVisible(el) {
+    if (!el) return false;
+    const style = window.getComputedStyle(el);
+    if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
+    
+    // Quick check for dimensions
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return false;
+
+    // Check ancestors (up to 4 levels for performance/reliability)
+    let parent = el.parentElement;
+    let depth = 0;
+    while (parent && depth < 4) {
+        const pStyle = window.getComputedStyle(parent);
+        if (pStyle.display === 'none' || pStyle.visibility === 'hidden') return false;
+        parent = parent.parentElement;
+        depth++;
+    }
+    return true;
+  }
+
+  // helper: check if element is inside a nav/aside (headers removed as they contain primary actions)
   function _isNavElement(el) {
-    return !!(el.closest('nav') || el.closest('header') || el.closest('footer') || el.closest('aside') ||
+    return !!(el.closest('nav') || el.closest('aside') ||
               el.closest('[role="navigation"]') || el.closest('.sidebar') || el.closest('.sidenav') ||
               el.closest('.left-nav') || el.closest('.app-sidebar'));
   }
@@ -154,22 +190,34 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
     const meta = document.querySelector('meta[name="integration-id"]');
     if (meta) { context.integration_id = meta.getAttribute('content') || ''; return; }
     
-    // 3. Match from URL (various patterns)
-    const url = window.location.pathname;
-    // Standard: /integrations/ID or /script-orchestration/ID
-    const standardMatch = url.match(/\/(?:integrations|script-orchestration)\/([a-zA-Z0-9_-]{10,})/i);
-    if (standardMatch) { context.integration_id = 'integration_id_' + standardMatch[1].replace('integration_id_', ''); return; }
-    
-    // Deep URL: /securehome/script-orchestration/UUID1/UUID2
-    const deepMatch = url.match(/\/securehome\/script-orchestration\/[a-zA-Z0-9_-]+\/([a-zA-Z0-9_-]{10,})/i);
-    if (deepMatch) { context.integration_id = 'integration_id_' + deepMatch[1].replace('integration_id_', ''); return; }
+    // 4. Match from FULL URL (more aggressive)
+    const fullUrl = window.location.href;
+    const anyIdMatch = fullUrl.match(/integration_id_([a-zA-Z0-9_-]{10,80})/i) || 
+                       fullUrl.match(/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i);
+    if (anyIdMatch) { 
+        context.integration_id = (anyIdMatch[0].startsWith('integration_id_') ? '' : 'integration_id_') + anyIdMatch[0];
+        console.log('Context Priority: Extracted ID from Full URL:', context.integration_id);
+    }
 
-    // Fallback: search page source for anything looking like an integration_id
-    const bodyText = document.body.innerText || '';
-    const textMatch = bodyText.match(/integration_id_([a-zA-Z0-9_-]{10,80})/i);
-    if (textMatch) { 
-        context.integration_id = 'integration_id_' + textMatch[1]; 
-        console.log('Context Priority: Extracted ID from page text:', context.integration_id);
+    // 5. Fallback: search page source for anything looking like an integration_id
+    if (!context.integration_id) {
+        const bodyText = document.body.innerText || '';
+        const textMatch = bodyText.match(/integration_id_([a-zA-Z0-9_-]{10,80})/i);
+        if (textMatch) { 
+            context.integration_id = 'integration_id_' + textMatch[1].replace('integration_id_', ''); 
+            console.log('Context Priority: Extracted ID from page text:', context.integration_id);
+        }
+    }
+
+    // 6. Final Fallback: Check headings for UUIDs
+    if (!context.integration_id) {
+        context.headings.forEach(h => {
+          const uuidMatch = h.match(/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i);
+          if (uuidMatch && !context.integration_id) {
+            context.integration_id = 'integration_id_' + uuidMatch[1];
+            console.log('Context Priority: Extracted ID from heading UUID:', context.integration_id);
+          }
+        });
     }
   }
 
@@ -179,6 +227,7 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
     context.buttons     = [...new Set(context.buttons)].slice(0, 30);
     context.tabs        = [...new Set(context.tabs)].slice(0, 15);
     context.form_labels = [...new Set(context.form_labels)].slice(0, 30);
+    context.descriptions = [...new Set(context.descriptions)].slice(0, 50);
     context.nav_items   = [...new Set(context.nav_items)].slice(0, 20);
   }
 
@@ -357,7 +406,8 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
         .then(function (data) {
           removeChatMessage(loadingId);
           const answer = data.response || 'Sorry, I could not find an answer.';
-          addChatMessage('assistant', answer);
+          const articleId = data.article_id;
+          addChatMessage('assistant', answer, false, articleId);
           chatHistory.push({ role: 'assistant', content: answer });
         })
         .catch(function (err) {
@@ -372,7 +422,7 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
       if (e.key === 'Enter') sendQuestion();
     });
 
-    function addChatMessage(role, content, isLoading) {
+    function addChatMessage(role, content, isLoading, articleId) {
       const msg = document.createElement('div');
       msg.className = 'aq-help-msg aq-help-msg-' + role;
       const msgId = 'msg-' + Date.now();
@@ -381,7 +431,23 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
       if (isLoading) {
         msg.innerHTML = '<div class="aq-help-loading"><div class="aq-help-dot"></div><div class="aq-help-dot"></div><div class="aq-help-dot"></div></div>';
       } else {
-        msg.innerHTML = role === 'user' ? '<span>' + escapeHtml(content) + '</span>' : renderMarkdown(content);
+        let html = role === 'user' ? '<span>' + escapeHtml(content) + '</span>' : renderMarkdown(content);
+        
+        // Add status dot for assistant messages
+        if (role === 'assistant') {
+          const statusClass = articleId ? 'aq-status-dot-green' : 'aq-status-dot-red';
+          const statusTitle = articleId ? 'Backed by Knowledge Base' : 'General AI Response (No KB match)';
+          // Add the dot as a child element later to avoid layout issues with innerHTML
+          const dot = document.createElement('div');
+          dot.className = `aq-status-dot ${statusClass}`;
+          dot.setAttribute('title', statusTitle);
+          msg.appendChild(dot);
+        }
+        
+        const contentEl = document.createElement('div');
+        contentEl.className = 'aq-help-msg-content';
+        contentEl.innerHTML = html;
+        msg.appendChild(contentEl);
       }
       chatMessages.appendChild(msg);
       chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -415,7 +481,10 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
       fetch(API_URL + '/api/help/context', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ page_context: pageContext }),
+        body: JSON.stringify({ 
+          page_context: pageContext,
+          chat_history: chatHistory
+        }),
       })
         .then(function (r) { 
           console.log('Aquera AI: Server response status:', r.status);
@@ -424,7 +493,19 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
         .then(function (data) {
           isFetchingContext = false;
           console.log('Aquera AI: Received response:', data);
-          contextContent.innerHTML = renderMarkdown(data.response || 'No contextual help available.');
+          
+          let contentHtml = renderMarkdown(data.response || 'No contextual help available.');
+          
+          if (data.article_title) {
+            contentHtml += `
+              <div class="aq-help-source-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                VERIFIED: ${escapeHtml(data.article_title)}
+              </div>
+            `;
+          }
+          
+          contextContent.innerHTML = contentHtml;
           contextContent.classList.add('loaded');
         })
         .catch(function () {
@@ -650,6 +731,42 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
         color: #8b5cf6;
       }
 
+      /* Verified Source Badge */
+      .aq-help-source-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        margin-top: 12px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 6px;
+        color: #10b981;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        animation: aq-fade-in 0.5s ease-out;
+      }
+
+      .aq-help-source-link {
+        color: #10b981;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: opacity 0.2s;
+      }
+
+      .aq-help-source-link:hover {
+        opacity: 0.8;
+      }
+
+      @keyframes aq-fade-in {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
       .aq-help-close {
         background: none;
         border: none;
@@ -667,6 +784,20 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
         background: rgba(255, 255, 255, 0.06);
         color: #e1e4e8;
       }
+
+      /* Status Dot */
+      .aq-status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-top: 5px;
+        flex-shrink: 0;
+        box-shadow: 0 0 8px currentcolor;
+        border: 1px solid rgba(255,255,255,0.2);
+      }
+      .aq-status-dot-green { background-color: #10b981; color: #10b981; }
+      .aq-status-dot-red { background-color: #ef4444; color: #ef4444; }
 
       /* Body */
       .aq-help-panel-body {
@@ -751,12 +882,20 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
       }
 
       .aq-help-msg {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
         padding: 10px 14px;
         border-radius: 12px;
         font-size: 13px;
         line-height: 1.6;
         max-width: 92%;
         animation: slideUp 0.25s ease;
+      }
+
+      .aq-help-msg-content {
+        flex: 1;
+        min-width: 0;
       }
 
       .aq-help-msg p { margin-bottom: 6px; }

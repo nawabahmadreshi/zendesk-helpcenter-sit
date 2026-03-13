@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  # ── Main application ──────────────────────────────────────────────────
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./storage:/app/storage
+      - ./.env:/app/.env
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      - ollama
+    command: uvicorn app.ai_server:app --host 0.0.0.0 --port 8000
+
+  # ── Ollama local AI sidecar ───────────────────────────────────────────
+  # This runs Ollama as a sidecar container — fully embedded in the stack.
+  # The app connects to it via http://ollama:11434 automatically.
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # Pull a small fast model on startup
+    # Change "phi3:mini" to any model from https://ollama.ai/library
+    # entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull phi3:mini && wait"]
+
+volumes:
+  ollama_data:

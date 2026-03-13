@@ -12,6 +12,13 @@
  */
 (function () {
   'use strict';
+  
+  // Inject Puter.js SDK if not present
+  if (typeof puter === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'https://js.puter.com/v2/';
+    document.head.appendChild(s);
+  }
 
   // ── Configuration ─────────────────────────────────────────────────
   const scriptTag = document.currentScript;
@@ -48,41 +55,25 @@
     );
 
     if (activeModal) {
-      console.log('Context Priority: Modal/Card detected');
+      console.group('AI Help Context Scanner: Modal detected');
       const modalTitle = activeModal.querySelector('h1, h2, h3, .modal-title, .mat-dialog-title, .dialog-title, .offcanvas-title, [mat-dialog-title]');
       context.page_title = (modalTitle ? modalTitle.textContent.trim() : 'Active Card') + ' (Modal/Card)';
-      _extractFromRoot(activeModal, context);
+      _extractFromRoot(activeModal, context, false, '[MODAL] ');
+      
+      // Also scan background but flag it so AI knows it's out of focus
+      const mainContent = document.querySelector('main, [role="main"], #main-content, .app-content, .main-container') || document.body;
+      _extractFromRoot(mainContent, context, true, '[BACKGROUND] ');
+
       _extractIntegrationId(context);
       _deduplicate(context);
-      console.log('Context Priority: Scanned Modal/Card. Proceeding to background...');
+      console.log('Context Priority: Scanned Modal and Background');
+      console.groupEnd();
+      return context;
     }
 
-    // ── STEP 2: Find the main content area ─────────────────────────────
-    const mainRoot = (
-      document.querySelector('main') ||
-      document.querySelector('[role="main"]') ||
-      document.querySelector('.main-content') ||
-      document.querySelector('.content-area') ||
-      document.querySelector('.page-content') ||
-      document.querySelector('.body-content') ||
-      document.querySelector('.central-content') ||
-      document.querySelector('.router-outlet + *') ||
-      document.querySelector('router-outlet + *') ||
-      document.querySelector('.mat-sidenav-content') ||
-      document.querySelector('#main-content') ||
-      document.querySelector('#content') ||
-      document.querySelector('.app-view') ||
-      document.querySelector('.layout-content') ||
-      null
-    );
-
-    if (mainRoot) {
-      console.log('Context Priority: Primary content container found');
-      _extractFromRoot(mainRoot, context);
-    } else {
-      console.log('Context Priority: No clear main container, using broad fallback');
-      _extractFromRoot(document.body, context, false); // No exclusion on fallback
-    }
+    // ── STEP 2: Find the main content area (No Modal) ─────────────────────────────
+    // Scan the entire body, but rely on `_isNavElement` and `_isVisible` to filter out generic layout fluff
+    _extractFromRoot(document.body, context, true, '');
 
     // ── STEP 3: Separately capture navigation/sidebar items ─────────────
     const navRoots = document.querySelectorAll('nav, [role="navigation"], aside, .sidebar, .sidenav, mat-sidenav, .mat-sidenav, .nav-menu, .left-nav, .app-sidebar');
@@ -110,22 +101,22 @@
   }
 
   // helper: extract elements from a given root into the context object
-  function _extractFromRoot(root, context, excludeNav = false) {
+  function _extractFromRoot(root, context, excludeNav = false, prefix = '') {
     // 1. Headings
     root.querySelectorAll('h1, h2, h3, h4, [class*="header"], [class*="title"]').forEach(function(el) {
       if (excludeNav && _isNavElement(el)) return;
       if (!_isVisible(el)) return;
       const text = el.textContent.trim().replace(/\s+/g, ' ');
-      if (text && text.length < 150 && text.length > 2) context.headings.push(text);
+      if (text && text.length < 150 && text.length > 2) context.headings.push(prefix + text);
     });
 
     // 2. Buttons / Clickables
-    root.querySelectorAll('button, [role="button"], a.btn, .mat-button, .mat-raised-button, [class*="button"], [class*="btn"]').forEach(function(el) {
+    root.querySelectorAll('button, [role="button"], a[role="button"], a.btn, .btn, .button, .mat-button, .mat-raised-button, .mat-flat-button, [class*="button"], [class*="btn"], input[type="button"], input[type="submit"]').forEach(function(el) {
       if (el.closest('#aquera-ai-help-host')) return;
       if (excludeNav && _isNavElement(el)) return;
       if (!_isVisible(el)) return;
       const text = (el.textContent || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim().replace(/\s+/g, ' ');
-      if (text && text.length < 80 && text.length > 1) context.buttons.push(text);
+      if (text && text.length < 80 && text.length > 1) context.buttons.push(prefix + text);
     });
 
     // 3. Tabs
@@ -133,7 +124,7 @@
       if (el.closest('#aquera-ai-help-host')) return;
       if (!_isVisible(el)) return;
       const text = el.textContent.trim();
-      if (text && text.length < 80) context.tabs.push(text);
+      if (text && text.length < 80) context.tabs.push(prefix + text);
     });
 
     // 5. Broad Text Scanner (Greedy)
@@ -150,8 +141,8 @@
       // Filter for meaningful content length (avoid icons/one-word labels)
       if (text && text.length > 15 && text.length < 1000) {
           // Check if it's already a heading or button to avoid duplication
-          if (context.headings.indexOf(text) === -1 && context.buttons.indexOf(text) === -1) {
-              context.descriptions.push(text);
+          if (context.headings.indexOf(prefix + text) === -1 && context.buttons.indexOf(prefix + text) === -1) {
+              context.descriptions.push(prefix + text);
           }
       }
     });
@@ -161,7 +152,7 @@
       if (el.closest('#aquera-ai-help-host')) return;
       if (!_isVisible(el)) return;
       const text = el.textContent.trim().replace(/\s+/g, ' ');
-      if (text && text.length < 150 && text.length > 1) context.form_labels.push(text);
+      if (text && text.length < 150 && text.length > 1) context.form_labels.push(prefix + text);
     });
   }
 
@@ -186,9 +177,9 @@
     return true;
   }
 
-  // helper: check if element is inside a nav/header/footer/aside
+  // helper: check if element is inside a nav/aside (headers removed as they contain primary actions)
   function _isNavElement(el) {
-    return !!(el.closest('nav') || el.closest('header') || el.closest('footer') || el.closest('aside') ||
+    return !!(el.closest('nav') || el.closest('aside') ||
               el.closest('[role="navigation"]') || el.closest('.sidebar') || el.closest('.sidenav') ||
               el.closest('.left-nav') || el.closest('.app-sidebar'));
   }
@@ -424,9 +415,25 @@
           chatHistory.push({ role: 'assistant', content: answer });
         })
         .catch(function (err) {
-          removeChatMessage(loadingId);
-          addChatMessage('assistant', 'Unable to connect to the AI service. Please try again.');
-          console.error('AI Help error:', err);
+          console.error('AI Help backend failed, attempting Puter.js fallback...', err);
+          
+          if (typeof puter !== 'undefined') {
+            puter.ai.chat(question)
+              .then(function(res) {
+                removeChatMessage(loadingId);
+                const answer = res.toString() || 'Sorry, I could not find an answer.';
+                addChatMessage('assistant', answer + '\n\n*(Answer via Puter AI Fallback)*', false);
+                chatHistory.push({ role: 'assistant', content: answer });
+              })
+              .catch(function(pErr) {
+                removeChatMessage(loadingId);
+                addChatMessage('assistant', 'Unable to connect to AI services. Please check your connection.');
+                console.error('Puter.js fallback failed:', pErr);
+              });
+          } else {
+            removeChatMessage(loadingId);
+            addChatMessage('assistant', 'Unable to connect to the AI service. Please try again.');
+          }
         });
     }
 

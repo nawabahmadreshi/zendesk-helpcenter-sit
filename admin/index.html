@@ -1,0 +1,2719 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aquera AI — Admin Configuration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0a0c14;
+      --surface: rgba(18, 22, 38, 0.85);
+      --surface2: rgba(25, 30, 55, 0.6);
+      --border: rgba(99, 102, 241, 0.18);
+      --border2: rgba(255, 255, 255, 0.06);
+      --accent: #6366f1;
+      --accent2: #8b5cf6;
+      --green: #10b981;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --text: #e2e8f0;
+      --text2: #94a3b8;
+      --text3: #64748b;
+      --input-bg: rgba(10, 12, 22, 0.6);
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ── Animated background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%);
+    }
+
+    /* ── Layout ── */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .sidebar-logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+    }
+
+    .sidebar-logo-icon svg {
+      color: white;
+    }
+
+    .sidebar-logo-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .sidebar-logo-sub {
+      font-size: 11px;
+      color: var(--text3);
+      font-weight: 400;
+    }
+
+    .sidebar-nav {
+      margin-top: 16px;
+      flex: 1;
+    }
+
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 20px 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      color: var(--text2);
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: rgba(99, 102, 241, 0.06);
+    }
+
+    .nav-item.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .nav-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border2);
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    .sidebar-server-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* ── Main content ── */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text2);
+      margin-top: 4px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent);
+    }
+
+    /* ── Form elements ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-grid.single {
+      grid-template-columns: 1fr;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .label-badge {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .label-badge.secret {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--yellow);
+    }
+
+    input[type=text],
+    input[type=email],
+    input[type=password],
+    input[type=number],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    }
+
+    input::placeholder {
+      color: var(--text3);
+    }
+
+    select option {
+      background: #1a1e30;
+      color: var(--text);
+    }
+
+    .input-with-btn {
+      display: flex;
+      gap: 8px;
+    }
+
+    .input-with-btn input {
+      flex: 1;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text2);
+      border: 1px solid var(--border2);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-green {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-green:hover {
+      background: rgba(16, 185, 129, 0.2);
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border2);
+    }
+
+    /* ── Alerts ── */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-top: 14px;
+      animation: fade-in 0.25s ease;
+    }
+
+    .alert svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .alert.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+    }
+
+    /* ── Setup Wizard ──────────────────────────────────── */
+    .wizard-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .wizard-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      opacity: 0.5;
+      transition: opacity 0.3s;
+    }
+
+    .wizard-step.done {
+      opacity: 1;
+    }
+
+    .wizard-step.active {
+      opacity: 1;
+    }
+
+    .step-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--surface3);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      transition: all 0.3s;
+    }
+
+    .wizard-step.done .step-dot {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .wizard-step.done .step-dot::after {
+      content: '✓';
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .wizard-step.active .step-dot {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, .15);
+      animation: pulse-dot 1.5s infinite;
+    }
+
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, .4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(99, 102, 241, 0);
+      }
+    }
+
+    .step-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text1);
+    }
+
+    .step-desc {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    /* Wizard chat bubbles */
+    .wiz-bubble {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .wiz-bubble.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .wiz-bubble.ai {
+      align-self: flex-start;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .wiz-bubble code {
+      background: rgba(0, 0, 0, .3);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .wiz-bubble pre {
+      background: rgba(0, 0, 0, .3);
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    .wiz-typing {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: 10px 14px;
+    }
+
+    .wiz-typing span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text3);
+      animation: blink 1.2s infinite;
+    }
+
+    .wiz-typing span:nth-child(2) {
+      animation-delay: .2s;
+    }
+
+    .wiz-typing span:nth-child(3) {
+      animation-delay: .4s;
+    }
+
+    @keyframes blink {
+
+      0%,
+      80%,
+      100% {
+        opacity: .3
+      }
+
+      40% {
+        opacity: 1
+      }
+    }
+
+    .alert.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+
+    .alert.info {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── Sync log ── */
+    .sync-log {
+      background: #05070e;
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+      font-size: 12px;
+      color: #7dd3fc;
+      line-height: 1.6;
+      height: 320px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .sync-log .log-done {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .sync-log .log-error {
+      color: var(--red);
+    }
+
+    .sync-log .log-info {
+      color: var(--text2);
+    }
+
+    .sync-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-size: 13px;
+    }
+
+    .sync-status-bar .stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sync-status-bar .stat-label {
+      font-size: 10px;
+      color: var(--text3);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sync-status-bar .stat-val {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .sync-running-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(99, 102, 241, 0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--border2);
+      margin: 20px 0;
+    }
+
+    /* ── Info box ── */
+    .info-box {
+      background: rgba(99, 102, 241, 0.07);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      border-radius: 8px;
+      padding: 12px 15px;
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .info-box strong {
+      color: var(--text);
+    }
+
+    /* ── Code snippet ── */
+    .code-block {
+      background: #05070e;
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #7dd3fc;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.7;
+    }
+
+    /* ── Toggle ── */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      background: var(--border2);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .toggle.on {
+      background: var(--accent);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: white;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .toggle.on::after {
+      transform: translateX(16px);
+    }
+
+    /* ── Mode cards ── */
+    .mode-card {
+      flex: 1;
+      min-width: 180px;
+      background: var(--surface2);
+      border: 1.5px solid var(--border2);
+      border-radius: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mode-card:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .mode-card.active {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.1);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .mode-icon {
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .mode-card.active .mode-icon {
+      color: var(--accent);
+    }
+
+    .mode-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .mode-desc {
+      font-size: 11px;
+      color: var(--text3);
+      line-height: 1.5;
+    }
+
+    .mode-desc code {
+      color: var(--accent);
+      background: rgba(99, 102, 241, 0.1);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+  <div class="layout">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+        </div>
+        <div>
+          <div class="sidebar-logo-text">Aquera AI</div>
+          <div class="sidebar-logo-sub">Admin Panel</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Configuration</div>
+        <div class="nav-item active" data-page="zendesk" onclick="switchPage('zendesk', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Zendesk
+        </div>
+        <div class="nav-item" data-page="ai" onclick="switchPage('ai', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M22 12h-2M4 12H2M18.66 18.66l-1.41-1.41M6.34 6.34L4.93 4.93M12 2v2M12 20v2" />
+          </svg>
+          AI Provider
+        </div>
+        <div class="nav-item" data-page="slack" onclick="switchPage('slack', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z" />
+            <path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+            <path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z" />
+            <path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z" />
+            <path
+              d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z" />
+            <path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z" />
+            <path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z" />
+            <path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z" />
+          </svg>
+          Slack
+        </div>
+        <div class="nav-item" data-page="storage" onclick="switchPage('storage', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <ellipse cx="12" cy="5" rx="9" ry="3" />
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+          </svg>
+          Storage
+        </div>
+
+        <div class="nav-section-label" style="margin-top:16px">Operations</div>
+        <div class="nav-item" data-page="wizard" onclick="switchPage('wizard', this)" style="position:relative">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 006 8c0 1 .2 2.1 1.2 3" />
+            <path d="M9 18h6M10 22h4" />
+            <line x1="12" y1="2" x2="12" y2="8" />
+            <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
+            <line x1="19.07" y1="4.93" x2="17.66" y2="6.34" />
+          </svg>
+          Setup Wizard
+          <span id="wizard-nav-badge"
+            style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);"></span>
+        </div>
+        <div class="nav-item" data-page="analytics" onclick="switchPage('analytics', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+          Analytics
+        </div>
+        <div class="nav-item" data-page="sync" onclick="switchPage('sync', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 .49-3.36" />
+          </svg>
+          Sync Control
+        </div>
+        <div class="nav-item" data-page="widget" onclick="switchPage('widget', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M3 9h18M9 21V9" />
+          </svg>
+          Widget Setup
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-server-status">
+          <div class="status-dot" id="server-status-dot"></div>
+          <span id="server-status-text">Server Online</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <main class="main">
+
+      <!-- ── Setup Wizard Page ── -->
+      <div class="page" id="page-wizard">
+        <div class="page-header" style="padding-bottom:0">
+          <div class="page-title">Setup Wizard</div>
+          <div class="page-subtitle">Your AI assistant will guide you through the complete setup until you're live.
+          </div>
+        </div>
+
+        <div style="display:flex;gap:18px;margin-top:18px;height:calc(100vh - 200px);min-height:500px">
+
+          <!-- Status Checklist -->
+          <div style="width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:10px">
+            <div class="card" style="flex:1;padding:18px">
+              <div
+                style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--text3);text-transform:uppercase;margin-bottom:16px">
+                Setup Progress</div>
+              <div class="wizard-steps" id="wizard-steps">
+                <div class="wizard-step" id="wstep-zendesk">
+                  <div class="step-dot"></div>
+                  <div>
+                    <div class="step-label">Zendesk Credentials</div>
+                    <div class="step-desc">Connect to your Zendesk instance</div>
+                  </div>
+                </div>
+                <div class="wizard-step" id="wstep-sync">
+                  <div class="step-dot"></div>
+                  <div>
+                    <div class="step-label">Knowledge Base Sync</div>
+                    <div class="step-desc">Import articles from Zendesk</div>
+                  </div>
+                </div>
+                <div class="wizard-step" id="wstep-ai">
+                  <div class="step-dot"></div>
+                  <div>
+                    <div class="step-label">AI Provider</div>
+                    <div class="step-desc">Configure Gemini / OpenRouter / Local</div>
+                  </div>
+                </div>
+                <div class="wizard-step" id="wstep-widget">
+                  <div class="step-dot"></div>
+                  <div>
+                    <div class="step-label">Widget Setup</div>
+                    <div class="step-desc">Get the embed snippet</div>
+                  </div>
+                </div>
+                <div class="wizard-step" id="wstep-health">
+                  <div class="step-dot"></div>
+                  <div>
+                    <div class="step-label">Health Check</div>
+                    <div class="step-desc">Verify both agents respond</div>
+                  </div>
+                </div>
+              </div>
+              <div id="wizard-live-banner"
+                style="display:none;margin-top:16px;padding:12px;border-radius:10px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);text-align:center;font-size:13px;font-weight:600;color:var(--green)">
+                🎉 System is Live!
+              </div>
+            </div>
+            <button class="btn btn-ghost" style="width:100%" onclick="wizardReset()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:13px;height:13px">
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 .49-3.36" />
+              </svg>
+              Start Over
+            </button>
+          </div>
+
+          <!-- Chat Panel -->
+          <div style="flex:1;display:flex;flex-direction:column" class="card" style="padding:0;overflow:hidden">
+            <div
+              style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+              <div
+                style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:16px;height:16px">
+                  <path d="M12 2a10 10 0 010 20A10 10 0 0112 2z" />
+                  <path d="M12 8v4l3 3" />
+                </svg>
+              </div>
+              <div>
+                <div style="font-weight:600;font-size:14px">Aquera Setup AI</div>
+                <div style="font-size:11px;color:var(--text3)">Agent 3 — Setup Wizard</div>
+              </div>
+              <div style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green)">
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--green)"></div>
+                Online
+              </div>
+            </div>
+
+            <div id="wizard-messages"
+              style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px">
+              <!-- Messages injected by JS -->
+            </div>
+
+            <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px">
+              <input type="text" id="wizard-input" placeholder="Type a message or press Enter to start…" style="flex:1"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();wizardSend();}" />
+              <button class="btn btn-primary" onclick="wizardSend()" id="wizard-send-btn" style="padding:0 18px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  style="width:14px;height:14px">
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Zendesk Page ── -->
+      <div class="page active" id="page-zendesk">
+        <div class="page-header">
+          <div class="page-title">Zendesk Configuration</div>
+          <div class="page-subtitle">Connect to your Zendesk Help Center and configure sync behavior.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            API Credentials
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Subdomain <span class="label-badge">Required</span></label>
+              <input type="text" id="ZENDESK_SUBDOMAIN" placeholder="e.g. aquera" />
+            </div>
+            <div class="form-group">
+              <label>Admin Email <span class="label-badge">Required</span></label>
+              <input type="email" id="ZENDESK_EMAIL" placeholder="admin@company.com" />
+            </div>
+            <div class="form-group full">
+              <label>API Token <span class="label-badge secret">Secret</span></label>
+              <div class="input-with-btn">
+                <input type="password" id="ZENDESK_API_TOKEN" placeholder="Enter token or leave to keep existing" />
+                <button class="btn btn-ghost" onclick="toggleVisibility('ZENDESK_API_TOKEN')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Show
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Category ID <span class="label-badge">Required</span></label>
+              <input type="text" id="ZENDESK_CATEGORY_ID" placeholder="e.g. 360002644953" />
+            </div>
+            <div class="form-group">
+              <label>Content Locale</label>
+              <select id="ZENDESK_LOCALE">
+                <option value="en-us">English (en-us)</option>
+                <option value="en-gb">English UK (en-gb)</option>
+                <option value="fr">French (fr)</option>
+                <option value="de">German (de)</option>
+                <option value="es">Spanish (es)</option>
+                <option value="pt-br">Portuguese/BR (pt-br)</option>
+                <option value="ja">Japanese (ja)</option>
+                <option value="zh-cn">Chinese Simplified (zh-cn)</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Webhook Secret <span class="label-badge secret">Secret</span></label>
+              <input type="password" id="ZENDESK_WEBHOOK_SECRET" placeholder="Optional — for signature validation" />
+            </div>
+          </div>
+          <div id="zendesk-alert"></div>
+          <div class="form-actions">
+            <button class="btn btn-ghost" id="test-zendesk-btn" onclick="testZendesk()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Test Connection
+            </button>
+            <button class="btn btn-primary" onclick="saveSection('zendesk')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                <polyline points="17 21 17 13 7 13 7 21" />
+                <polyline points="7 3 7 8 15 8" />
+              </svg>
+              Save Zendesk Settings
+            </button>
+          </div>
+          <!-- Webhook Management -->
+          <div class="card" id="webhook-management">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 11-7.6-11.7" />
+                <polyline points="22 2 12 12" />
+                <polyline points="15 22 22 22 22 15" />
+              </svg>
+              Webhook Management
+            </div>
+            <div class="info-box" style="margin-bottom:14px;">
+              Real-time synchronization requires a Zendesk Webhook. This app listens for article events and updates the
+              vector database immediately.
+            </div>
+
+            <div class="form-group full" style="margin-bottom:16px;">
+              <label>Public Webhook URL</label>
+              <div class="input-with-btn">
+                <input type="text" id="webhook-endpoint-url" readonly />
+                <button class="btn btn-ghost" onclick="copyWebhookUrl()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                  </svg>
+                  Copy
+                </button>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:4px;">
+                Point your Zendesk Trigger to this URL.
+              </div>
+            </div>
+
+            <div class="info-box" style="background:rgba(0,0,0,0.2); border-color:var(--border2); color:var(--text2);">
+              <strong>Zendesk Setup Guide:</strong><br>
+              1. Go to <strong>Admin Center u2192 Apps and integrations u2192 Webhooks</strong>.<br>
+              2. Create a webhook for <strong>Guide u2192 Articles</strong> with <strong>POST</strong> method.<br>
+              3. Use the URL above and <strong>JSON</strong> format.<br>
+              4. Create a <strong>Trigger</strong> in Guide to notify this webhook on article publish/update.
+            </div>
+
+            <div id="webhook-test-alert" style="margin-top:14px;"></div>
+
+            <div class="form-actions">
+              <div></div>
+              <button class="btn btn-primary" onclick="testWebhookConnectivity()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+                Test Local Connection
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── AI Page ── -->
+      <div class="page" id="page-ai">
+        <div class="page-header">
+          <div class="page-title">AI Provider</div>
+          <div class="page-subtitle">Configure AI providers and smart fallback to reduce cost.</div>
+        </div>
+
+        <!-- Smart Fallback Mode -->
+        <div class="card" style="margin-bottom:14px;border:1px solid rgba(99,102,241,0.3);">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            Smart AI Mode
+          </div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Active Mode <span class="label-badge"
+                  style="background:rgba(99,102,241,0.2);color:var(--accent);">Controls both agents</span></label>
+              <select id="AI_FALLBACK_MODE" onchange="onFallbackModeChange()">
+                <option value="gemini">Gemini Only (Cloud — default)</option>
+                <option value="openrouter">OpenRouter Only (Cheap Cloud)</option>
+                <option value="ollama">Ollama Only (Local daemon)</option>
+                <option value="local">Embedded Local AI (llama-cpp-python)</option>
+                <option value="auto">Auto Fallback: Gemini → OpenRouter → Local</option>
+              </select>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px;">
+                <strong>Auto</strong>: tries each provider in order, falls back on failure. Best for cost+reliability.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gemini -->
+        <div class="card" style="margin-bottom:14px;" id="provider-gemini">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
+            </svg>
+            Google Gemini <span class="label-badge"
+              style="margin-left:6px;background:rgba(16,185,129,0.15);color:var(--green);">Cloud</span>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Model</label>
+              <select id="GEMINI_MODEL">
+                <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (Fast · Cheap)</option>
+                <option value="gemini-2.0-flash">gemini-2.0-flash (Balanced)</option>
+                <option value="gemini-2.5-pro">gemini-2.5-pro (Powerful)</option>
+                <option value="gemini-1.5-flash">gemini-1.5-flash (Legacy)</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>API Key <span class="label-badge secret">Secret</span></label>
+              <div class="input-with-btn">
+                <input type="password" id="GEMINI_API_KEY" placeholder="AIza..." />
+                <button class="btn btn-ghost" onclick="toggleVisibility('GEMINI_API_KEY')">Show</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions" style="padding-top:0;">
+            <button class="btn btn-ghost" onclick="testGemini()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Test Key
+            </button>
+          </div>
+        </div>
+
+        <!-- OpenRouter -->
+        <div class="card" style="margin-bottom:14px;" id="provider-openrouter">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M18 3a3 3 0 00-3 3v12a3 3 0 003 3 3 3 0 003-3 3 3 0 00-3-3H6a3 3 0 00-3 3 3 3 0 003 3 3 3 0 003-3V6a3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3h12a3 3 0 003-3 3 3 0 00-3-3z" />
+            </svg>
+            OpenRouter <span class="label-badge"
+              style="margin-left:6px;background:rgba(167,139,250,0.15);color:#a78bfa;">Cheap Cloud</span>
+          </div>
+          <div class="info-box" style="margin-bottom:14px;">
+            Access 100+ models with one key. Many are <strong>free</strong>. Connects to Mistral, Llama-3, Phi-3,
+            Claude, GPT-4 and more via a single OpenAI-compatible API.
+            <a href="https://openrouter.ai" target="_blank" style="color:var(--accent);">openrouter.ai →</a>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Model</label>
+              <select id="OPENROUTER_MODEL">
+                <option value="mistralai/mistral-7b-instruct:free">Mistral 7B Instruct (FREE)</option>
+                <option value="meta-llama/llama-3-8b-instruct:free">Llama-3 8B Instruct (FREE)</option>
+                <option value="microsoft/phi-3-mini-128k-instruct:free">Phi-3 Mini 128K (FREE)</option>
+                <option value="google/gemma-3-1b-it:free">Gemma 3 1B (FREE)</option>
+                <option value="mistralai/mixtral-8x7b-instruct">Mixtral 8x7B (Paid)</option>
+                <option value="openai/gpt-4o-mini">GPT-4o Mini (Paid)</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>OpenRouter API Key <span class="label-badge secret">Secret</span></label>
+              <div class="input-with-btn">
+                <input type="password" id="OPENROUTER_API_KEY" placeholder="sk-or-v1-..." />
+                <button class="btn btn-ghost" onclick="toggleVisibility('OPENROUTER_API_KEY')">Show</button>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>Site URL (for OpenRouter headers)</label>
+              <input type="text" id="OPENROUTER_SITE_URL" placeholder="http://localhost:8000" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Ollama -->
+        <div class="card" style="margin-bottom:14px;" id="provider-ollama">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+            Ollama <span class="label-badge"
+              style="margin-left:6px;background:rgba(16,185,129,0.15);color:var(--green);">Local daemon</span>
+          </div>
+          <div class="info-box" style="margin-bottom:14px;">
+            Ollama runs locally as a separate service. Install it once, then run any open-source model.
+            <strong>Mac:</strong> <code>brew install ollama</code> or download from <a href="https://ollama.ai/download"
+              target="_blank" style="color:var(--accent);">ollama.ai</a>.<br>
+            <strong>Linux:</strong> <code>curl -fsSL https://ollama.ai/install.sh | sh</code><br>
+            <strong>Docker (sidecar):</strong> See the <code>docker-compose.yml</code> in the project root — Ollama runs
+            as a container alongside the app.
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Ollama Base URL</label>
+              <input type="text" id="OLLAMA_BASE_URL" placeholder="http://localhost:11434" />
+            </div>
+            <div class="form-group">
+              <label>Model</label>
+              <input type="text" id="OLLAMA_MODEL" placeholder="phi3:mini" />
+              <div style="font-size:11px;color:var(--text3);margin-top:4px;">
+                Pull a model first: <code style="color:var(--accent);">ollama pull phi3:mini</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Embedded Local AI -->
+        <div class="card" style="margin-bottom:14px;" id="provider-local">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="8" rx="2" />
+              <rect x="2" y="14" width="20" height="8" rx="2" />
+              <line x1="6" y1="6" x2="6.01" y2="6" />
+              <line x1="6" y1="18" x2="6.01" y2="18" />
+            </svg>
+            Embedded Local AI <span class="label-badge"
+              style="margin-left:6px;background:rgba(16,185,129,0.15);color:var(--green);">Zero cost</span>
+          </div>
+          <div class="info-box" style="margin-bottom:14px;">
+            Uses <strong>llama-cpp-python</strong> — runs a GGUF model <strong>entirely inside this Python
+              process</strong>. No external service needed. Requires ~2.5 GB disk, uses GPU (Metal/CUDA) if available.
+          </div>
+          <div id="local-ai-status" style="margin-bottom:14px;font-size:12px;color:var(--text3);">Checking status...
+          </div>
+          <div class="form-actions" style="padding-top:0;flex-wrap:wrap;gap:8px;">
+            <button class="btn btn-ghost" onclick="checkLocalAI()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:13px;height:13px;">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              Check Status
+            </button>
+            <button class="btn btn-ghost" onclick="installLocalAI()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:13px;height:13px;">
+                <polyline points="16 16 12 12 8 16" />
+                <line x1="12" y1="12" x2="12" y2="21" />
+                <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" />
+              </svg>
+              Install llama-cpp-python
+            </button>
+            <button class="btn btn-primary" onclick="downloadLocalModel()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:13px;height:13px;">
+                <polyline points="8 17 12 21 16 17" />
+                <line x1="12" y1="12" x2="12" y2="21" />
+                <path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.3" />
+              </svg>
+              Download Phi-3-mini (~2.2 GB)
+            </button>
+          </div>
+        </div>
+
+        <div id="ai-alert"></div>
+        <div class="form-actions">
+          <div></div>
+          <button class="btn btn-primary" onclick="saveSection('ai')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            Save AI Settings
+          </button>
+        </div>
+
+        <div class="info-box">
+          <strong>Cost comparison:</strong>
+          Gemini Flash (~$0.15/1M tok) → OpenRouter free models ($0) → Ollama/Local ($0, self-hosted CPU/GPU).<br>
+          <strong>Auto mode</strong> tries Gemini first (fast + smart), falls back to OpenRouter or local if it fails —
+          best of both worlds.
+        </div>
+      </div>
+
+      <!-- ── Slack Page ── -->
+      <div class="page" id="page-slack">
+        <div class="page-header">
+          <div class="page-title">Slack Integration</div>
+          <div class="page-subtitle">Get notified in Slack when a sync completes.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 7.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.41-1.42a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+            </svg>
+            Slack Webhook
+          </div>
+          <div class="form-grid single">
+            <div class="form-group">
+              <label>Incoming Webhook URL <span class="label-badge secret">Secret</span></label>
+              <input type="password" id="SLACK_WEBHOOK_URL" placeholder="https://hooks.slack.com/services/..." />
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:16px">
+            Create an Incoming Webhook in your Slack workspace: <strong>Apps → Incoming WebHooks → Add New Webhook to
+              Workspace</strong>. Notifications are sent after every successful sync run.
+          </div>
+          <div id="slack-alert"></div>
+          <div class="form-actions">
+            <div></div>
+            <button class="btn btn-primary" onclick="saveSection('slack')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+              </svg>
+              Save Slack Settings
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Storage Page ── -->
+      <div class="page" id="page-storage">
+        <div class="page-header">
+          <div class="page-title">Storage</div>
+          <div class="page-subtitle">Configure where processed articles and vector embeddings are stored.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3" />
+            </svg>
+            Storage Paths
+          </div>
+          <div class="form-grid single">
+            <div class="form-group">
+              <label>Storage Root Directory</label>
+              <input type="text" id="STORAGE_DIR" placeholder="storage" />
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:16px">
+            <strong>Sub-directories (auto-created):</strong><br />
+            <code>storage/processed/articles/integration/</code> — Integration KB articles<br />
+            <code>storage/processed/articles/general/</code> — General KB articles<br />
+            <code>storage/vectordb/</code> — ChromaDB collections (<code>integration_kb_v2</code>,
+            <code>general_kb</code>)<br />
+            <code>storage/metadata/</code> — Sync state tracking
+          </div>
+          <div id="storage-alert"></div>
+          <div class="form-actions">
+            <div></div>
+            <button class="btn btn-primary" onclick="saveSection('storage')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+              </svg>
+              Save Storage Settings
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Analytics Page ── -->
+      <div class="page" id="page-analytics">
+        <div class="page-header">
+          <div class="page-title">Analytics</div>
+          <div class="page-subtitle">Usage metrics, token spend, and knowledge base coverage.</div>
+        </div>
+
+        <!-- ── Knowledge Base Stats ───────────────────────────────────── -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3" />
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+            </svg>
+            Knowledge Base Coverage
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;">
+            <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;">
+              <div
+                style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;">
+                Total Articles</div>
+              <div style="font-size:26px;font-weight:700;color:var(--text);margin-top:4px;" id="kb-total">—</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;">
+              <div
+                style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;">
+                Integration</div>
+              <div style="font-size:26px;font-weight:700;color:var(--accent);margin-top:4px;" id="kb-integration">—
+              </div>
+            </div>
+            <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;">
+              <div
+                style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;">
+                General KB</div>
+              <div style="font-size:26px;font-weight:700;color:var(--green);margin-top:4px;" id="kb-general">—</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;">
+              <div
+                style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;">
+                With integration_id</div>
+              <div style="font-size:26px;font-weight:700;color:var(--green);margin-top:4px;" id="kb-with-id">—</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;">
+              <div
+                style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;">
+                Without integration_id</div>
+              <div style="font-size:26px;font-weight:700;color:var(--red,#f87171);margin-top:4px;" id="kb-without-id">—
+              </div>
+            </div>
+          </div>
+
+          <!-- Articles without integration_id (expandable list) -->
+          <div id="kb-without-id-list" style="display:none;">
+            <div
+              style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">
+              Integration Articles Missing integration_id Tag</div>
+            <div id="kb-without-id-table"></div>
+          </div>
+
+          <!-- Articles with integration_id (condensed table) -->
+          <div id="kb-with-id-list" style="display:none;margin-top:16px;">
+            <div
+              style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">
+              Integration ID Mapping</div>
+            <div id="kb-with-id-table"></div>
+          </div>
+        </div>
+
+        <!-- ── AI Query KPIs ────────────────────────────────────────── -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;">
+          <div class="card" style="padding:18px 20px;margin:0;">
+            <div
+              style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;">
+              Total Queries</div>
+            <div style="font-size:32px;font-weight:700;color:var(--text);margin-top:6px;" id="stat-total">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Last 30 days</div>
+          </div>
+          <div class="card" style="padding:18px 20px;margin:0;">
+            <div
+              style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;">
+              Avg Latency</div>
+            <div style="font-size:32px;font-weight:700;color:var(--accent);margin-top:6px;" id="stat-latency">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">milliseconds</div>
+          </div>
+          <div class="card" style="padding:18px 20px;margin:0;">
+            <div
+              style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;">
+              Contextual (Agent 1)</div>
+            <div style="font-size:32px;font-weight:700;color:var(--green);margin-top:6px;" id="stat-contextual">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Queries</div>
+          </div>
+          <div class="card" style="padding:18px 20px;margin:0;">
+            <div
+              style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;">
+              Q&amp;A Chat (Agent 2)</div>
+            <div style="font-size:32px;font-weight:700;color:var(--accent2,#a78bfa);margin-top:6px;" id="stat-qa">—
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Queries</div>
+          </div>
+        </div>
+
+        <!-- ── Token KPIs ──────────────────────────────────────────── -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;">
+          <div class="card" style="padding:18px 20px;margin:0;border:1px solid rgba(99,102,241,0.3);">
+            <div
+              style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;">
+              Total Tokens Used</div>
+            <div style="font-size:32px;font-weight:700;color:var(--accent);margin-top:6px;" id="stat-tokens-total">—
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">prompt + completion</div>
+          </div>
+          <div class="card" style="padding:18px 20px;margin:0;">
+            <div
+              style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;">
+              Input Tokens (Prompt)</div>
+            <div style="font-size:32px;font-weight:700;color:var(--text);margin-top:6px;" id="stat-tokens-in">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">sent to AI</div>
+          </div>
+          <div class="card" style="padding:18px 20px;margin:0;">
+            <div
+              style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;">
+              Output Tokens (Completion)</div>
+            <div style="font-size:32px;font-weight:700;color:var(--green);margin-top:6px;" id="stat-tokens-out">—</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">generated by AI</div>
+          </div>
+        </div>
+
+        <!-- ── Charts ──────────────────────────────────────────────── -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div class="card" style="margin:0;">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+              Queries Per Day (Last 30 Days)
+            </div>
+            <canvas id="chart-daily" height="120"></canvas>
+          </div>
+          <div class="card" style="margin:0;">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v4l3 3" />
+              </svg>
+              Token Usage Per Day (Last 30 Days)
+            </div>
+            <canvas id="chart-tokens" height="120"></canvas>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px;">
+          <div class="card" style="margin:0;">
+            <div class="card-title">Top Articles by Query Count</div>
+            <div id="top-articles-table"></div>
+          </div>
+          <div class="card" style="margin:0;">
+            <div class="card-title">Today by Hour</div>
+            <canvas id="chart-hourly" height="220"></canvas>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div class="card" style="margin:0;">
+            <div class="card-title">Top Integration IDs</div>
+            <div id="top-integrations-table"></div>
+          </div>
+          <div class="card" style="margin:0;">
+            <div class="card-title">Token Spend by Agent</div>
+            <div id="agent-token-breakdown"></div>
+          </div>
+        </div>
+
+        <!-- Recent events -->
+        <div class="card">
+          <div class="card-title" style="justify-content:space-between;">
+            <span style="display:flex;align-items:center;gap:8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:14px;height:14px;color:var(--accent)">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              Recent Events
+            </span>
+            <button class="btn btn-danger" style="padding:5px 10px;font-size:11px;" onclick="clearAnalytics()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:12px;height:12px;">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14H6L5 6" />
+              </svg>
+              Clear All Data
+            </button>
+          </div>
+          <div id="recent-events-table"></div>
+        </div>
+      </div>
+
+      <!-- ── Sync Page ── -->
+      <div class="page" id="page-sync">
+        <div class="page-header">
+          <div class="page-title">Sync Control</div>
+          <div class="page-subtitle">Trigger a Zendesk sync with fine-grained mode control. All output streams live
+            below.</div>
+        </div>
+
+        <!-- Mode selector -->
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M22 12h-2M4 12H2M18.66 18.66l-1.41-1.41M6.34 6.34L4.93 4.93" />
+            </svg>
+            Sync Mode
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+            <label class="mode-card active" id="mode-full" onclick="selectMode('full')">
+              <input type="radio" name="sync-mode" value="full" checked style="display:none">
+              <div class="mode-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <ellipse cx="12" cy="5" rx="9" ry="3" />
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                </svg>
+              </div>
+              <div class="mode-label">Full Knowledge Base</div>
+              <div class="mode-desc">Sync all articles — integration guides + general KB</div>
+            </label>
+
+            <label class="mode-card" id="mode-integration_only" onclick="selectMode('integration_only')">
+              <input type="radio" name="sync-mode" value="integration_only" style="display:none">
+              <div class="mode-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <div class="mode-label">Integration Articles Only</div>
+              <div class="mode-desc">Only embed articles tagged with <code>integration_id_</code> labels</div>
+            </label>
+
+            <label class="mode-card" id="mode-category" onclick="selectMode('category')">
+              <input type="radio" name="sync-mode" value="category" style="display:none">
+              <div class="mode-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
+              </div>
+              <div class="mode-label">Specific Category</div>
+              <div class="mode-desc">Sync only articles from a specific Zendesk category ID</div>
+            </label>
+          </div>
+
+          <!-- Category picker (only shown in category mode) -->
+          <div id="category-picker" style="display:none; margin-bottom:16px;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Category</label>
+                <div class="input-with-btn">
+                  <select id="sync-category-select">
+                    <option value="">Loading categories…</option>
+                  </select>
+                  <button class="btn btn-ghost" onclick="loadCategories()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                      <polyline points="1 4 1 10 7 10" />
+                      <path d="M3.51 15a9 9 0 1 0 .49-3.36" />
+                    </svg>
+                    Refresh
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Or enter Category ID manually</label>
+                <input type="text" id="sync-category-manual" placeholder="e.g. 360002644953" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Force rebuild toggle -->
+          <div style="display:flex; align-items:center; gap:14px; padding:14px 0; border-top:1px solid var(--border2);">
+            <div class="toggle" id="force-rebuild-toggle" onclick="toggleForceRebuild()"></div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text)">Force Full Rebuild</div>
+              <div style="font-size:12px;color:var(--text3)">Wipe all vector DB collections and reprocess everything
+                from scratch</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Auto-sync config -->
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            </svg>
+            Background Sync (Auto-Poll)
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Enable Auto-Polling</label>
+              <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+                <div class="toggle" id="AUTO_SYNC_ENABLED_TOGGLE" onclick="toggleAutoSync()"></div>
+                <span id="auto-sync-label" style="font-size:12px;color:var(--text2)">Disabled</span>
+                <input type="hidden" id="AUTO_SYNC_ENABLED" value="0">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Sync Interval (Minutes)</label>
+              <input type="number" id="AUTO_SYNC_INTERVAL_MINS" min="5" placeholder="30" />
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:16px">
+            Fallback mechanism: Check for Zendesk updates every X minutes even without webhooks.
+          </div>
+          <div id="background_sync-alert"></div>
+          <div class="form-actions">
+            <div></div>
+            <button class="btn btn-primary" onclick="saveSection('background_sync')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+              </svg>
+              Save Sync Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Status + log -->
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 1 0 .49-3.36" />
+            </svg>
+            Live Output
+          </div>
+          <div class="sync-status-bar">
+            <div class="stat">
+              <div class="stat-label">Status</div>
+              <div class="stat-val" id="sync-status-val">Idle</div>
+            </div>
+            <div style="width:1px;background:var(--border2);height:32px;margin:0 12px;"></div>
+            <div class="stat">
+              <div class="stat-label">Last Run</div>
+              <div class="stat-val" id="sync-last-run">Never</div>
+            </div>
+            <div class="stat" style="margin-left:12px;">
+              <div class="stat-label">Mode</div>
+              <div class="stat-val" id="sync-last-mode">—</div>
+            </div>
+            <div style="margin-left:auto">
+              <div id="sync-running-indicator" class="sync-running-indicator" style="display:none">
+                <div class="spinner"></div> Syncing…
+              </div>
+            </div>
+          </div>
+
+          <div class="sync-log" id="sync-log">Select a mode above and click Run Sync to start.</div>
+
+          <div class="form-actions">
+            <button class="btn btn-ghost" onclick="clearSyncLog()">Clear Log</button>
+            <button class="btn btn-primary" id="sync-btn" onclick="runSync()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 .49-3.36" />
+              </svg>
+              Run Sync Now
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Widget Page ── -->
+      <div class="page" id="page-widget">
+        <div class="page-header">
+          <div class="page-title">Widget Setup</div>
+          <div class="page-subtitle">Embed the AI Help Widget into your product with this snippet.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+            </svg>
+            Embed Snippet
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>API Server URL</label>
+              <input type="text" id="widget-api-url" value="http://localhost:8000" oninput="updateSnippet()" />
+            </div>
+            <div class="form-group">
+              <label>Position</label>
+              <select id="widget-position" onchange="updateSnippet()">
+                <option value="bottom-right">Bottom Right</option>
+                <option value="bottom-left">Bottom Left</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:16px">
+            <label style="margin-bottom:8px;display:block">Generated Script Tag</label>
+            <div class="code-block" id="snippet-output"></div>
+          </div>
+          <div class="form-actions">
+            <div></div>
+            <button class="btn btn-ghost" onclick="copySnippet()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+              Copy to Clipboard
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Integration Points</div>
+          <div class="info-box">
+            <strong>Agent 1 — Contextual Help:</strong> Triggered automatically on every page, scanning the DOM for UI
+            context and querying the <code>integration_kb_v2</code> vector collection.<br /><br />
+            <strong>Agent 2 — Q&amp;A Chat:</strong> Activated when users type in the widget's chat bar. Queries the
+            <code>general_kb</code> collection for broad product answers.
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const API = ''; // relative to this page's origin
+
+    // ── Page navigation ────────────────────────────────────────────────
+    function switchPage(name, el) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      el.classList.add('active');
+      if (name === 'analytics') loadAnalytics();
+    }
+
+    // ── Load settings ────────────────────────────────────────────────
+    async function loadSettings() {
+      try {
+        const res = await fetch(API + '/api/config');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Zendesk
+        const z = data.zendesk || {};
+        setVal('ZENDESK_SUBDOMAIN', z.ZENDESK_SUBDOMAIN);
+        setVal('ZENDESK_EMAIL', z.ZENDESK_EMAIL);
+        setVal('ZENDESK_API_TOKEN', z.ZENDESK_API_TOKEN);
+        setVal('ZENDESK_CATEGORY_ID', z.ZENDESK_CATEGORY_ID);
+        setVal('ZENDESK_LOCALE', z.ZENDESK_LOCALE);
+        setVal('ZENDESK_WEBHOOK_SECRET', z.ZENDESK_WEBHOOK_SECRET);
+
+        // AI
+        const ai = data.ai || {};
+        setVal('AI_FALLBACK_MODE', ai.AI_FALLBACK_MODE);
+        setVal('GEMINI_API_KEY', ai.GEMINI_API_KEY);
+        setVal('GEMINI_MODEL', ai.GEMINI_MODEL);
+        setVal('OPENROUTER_API_KEY', ai.OPENROUTER_API_KEY);
+        setVal('OPENROUTER_MODEL', ai.OPENROUTER_MODEL);
+        setVal('OPENROUTER_SITE_URL', ai.OPENROUTER_SITE_URL);
+        setVal('OLLAMA_BASE_URL', ai.OLLAMA_BASE_URL);
+        setVal('OLLAMA_MODEL', ai.OLLAMA_MODEL);
+        checkLocalAI();
+
+        // Slack
+        const sl = data.slack || {};
+        setVal('SLACK_WEBHOOK_URL', sl.SLACK_WEBHOOK_URL);
+
+        // Storage
+        const st = data.storage || {};
+        setVal('STORAGE_DIR', st.STORAGE_DIR);
+
+        // Background Sync
+        const bs = data.background_sync || {};
+        const isAutoSync = bs.AUTO_SYNC_ENABLED === '1' || bs.AUTO_SYNC_ENABLED === 1;
+        document.getElementById('AUTO_SYNC_ENABLED').value = isAutoSync ? '1' : '0';
+        document.getElementById('AUTO_SYNC_ENABLED_TOGGLE').classList.toggle('on', isAutoSync);
+        document.getElementById('auto-sync-label').textContent = isAutoSync ? 'Enabled' : 'Disabled';
+        setVal('AUTO_SYNC_INTERVAL_MINS', bs.AUTO_SYNC_INTERVAL_MINS);
+
+      } catch (e) {
+        console.warn('Could not load settings:', e);
+      }
+      updateSnippet();
+      loadSyncStatus();
+      updateWebhookUI();
+    }
+
+    function updateWebhookUI() {
+      const origin = window.location.origin;
+      const endpoint = document.getElementById('webhook-endpoint-url');
+      if (endpoint) endpoint.value = origin + '/zendesk/webhook';
+    }
+
+    function copyWebhookUrl() {
+      const url = document.getElementById('webhook-endpoint-url').value;
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = event.target.closest('button');
+        const orig = btn.innerHTML;
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+        setTimeout(() => btn.innerHTML = orig, 2000);
+      });
+    }
+
+    async function testWebhookConnectivity() {
+      const alertEl = document.getElementById('webhook-test-alert');
+      alertEl.innerHTML = alert('info', 'Sending test payload to /zendesk/webhook…');
+      try {
+        const res = await fetch(API + '/api/webhook/test-connection', { method: 'POST' });
+        const d = await res.json();
+        alertEl.innerHTML = d.ok
+          ? alert('success', '✓ Connectivity OK: ' + d.message)
+          : alert('error', '✗ Connectivity Error: ' + d.message);
+      } catch (e) {
+        alertEl.innerHTML = alert('error', 'Network error: ' + e.message);
+      }
+    }
+
+    function setVal(id, val) {
+      const el = document.getElementById(id);
+      if (!el || val === undefined || val === null) return;
+      if (el.tagName === 'SELECT') {
+        const opt = [...el.options].find(o => o.value === val);
+        if (opt) el.value = val;
+      } else {
+        el.value = val;
+      }
+    }
+
+    function getVal(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    }
+
+    // ── Save sections ────────────────────────────────────────────────
+    const SECTION_FIELDS = {
+      zendesk: ['ZENDESK_SUBDOMAIN', 'ZENDESK_EMAIL', 'ZENDESK_API_TOKEN', 'ZENDESK_CATEGORY_ID', 'ZENDESK_LOCALE', 'ZENDESK_WEBHOOK_SECRET'],
+      ai: ['AI_FALLBACK_MODE', 'GEMINI_API_KEY', 'GEMINI_MODEL',
+        'OPENROUTER_API_KEY', 'OPENROUTER_MODEL', 'OPENROUTER_SITE_URL',
+        'OLLAMA_BASE_URL', 'OLLAMA_MODEL'],
+      slack: ['SLACK_WEBHOOK_URL'],
+      storage: ['STORAGE_DIR'],
+      background_sync: ['AUTO_SYNC_ENABLED', 'AUTO_SYNC_INTERVAL_MINS'],
+    };
+
+    async function saveSection(section) {
+      const fields = SECTION_FIELDS[section];
+      const updates = {};
+      fields.forEach(f => {
+        const v = getVal(f);
+        // Skip masked placeholder values
+        if (v && !v.includes('••')) updates[f] = v;
+      });
+
+      const alertEl = document.getElementById(section + '-alert');
+      alertEl.innerHTML = '';
+
+      try {
+        const res = await fetch(API + '/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates)
+        });
+        const data = await res.json();
+        if (res.ok && data.ok) {
+          alertEl.innerHTML = alert('success', '✓ Settings saved successfully.');
+          setTimeout(() => loadSettings(), 500);
+        } else {
+          alertEl.innerHTML = alert('error', data.detail || data.message || 'Save failed.');
+        }
+      } catch (e) {
+        alertEl.innerHTML = alert('error', 'Network error: ' + e.message);
+      }
+    }
+
+    function alert(type, msg) {
+      const icons = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
+        error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+      };
+      return `<div class="alert ${type}">${icons[type]}<span>${msg}</span></div>`;
+    }
+
+    // ── Test connections ────────────────────────────────────────────────
+    async function testZendesk() {
+      const btn = document.getElementById('test-zendesk-btn');
+      const alertEl = document.getElementById('zendesk-alert');
+      btn.disabled = true; btn.textContent = 'Testing…';
+      alertEl.innerHTML = '';
+      try {
+        const res = await fetch(API + '/api/config/test-zendesk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ZENDESK_SUBDOMAIN: getVal('ZENDESK_SUBDOMAIN'),
+            ZENDESK_EMAIL: getVal('ZENDESK_EMAIL'),
+            ZENDESK_API_TOKEN: getVal('ZENDESK_API_TOKEN'),
+          })
+        });
+        const data = await res.json();
+        alertEl.innerHTML = data.ok
+          ? alert('success', `✓ Connected as <strong>${data.user}</strong> (${data.role})`)
+          : alert('error', '✗ ' + (data.error || 'Connection failed'));
+      } catch (e) {
+        alertEl.innerHTML = alert('error', 'Network error: ' + e.message);
+      }
+      btn.disabled = false; btn.textContent = 'Test Connection';
+    }
+
+    async function testGemini() {
+      const alertEl = document.getElementById('ai-alert');
+      alertEl.innerHTML = alert('info', 'Testing API key…');
+      try {
+        const res = await fetch(API + '/api/config/test-gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ GEMINI_API_KEY: getVal('GEMINI_API_KEY') })
+        });
+        const data = await res.json();
+        alertEl.innerHTML = data.ok
+          ? alert('success', '✓ ' + data.message)
+          : alert('error', '✗ ' + (data.error || 'Invalid API key'));
+      } catch (e) {
+        alertEl.innerHTML = alert('error', 'Network error: ' + e.message);
+      }
+    }
+
+    // ── Provider toggle (no-op: all cards always visible) ─────────────────
+    function onFallbackModeChange() { /* all provider cards are always shown */ }
+    function onProviderChange() { onFallbackModeChange(); }
+
+    // ── Local AI status / install / download ───────────────────────────────
+    async function checkLocalAI() {
+      const el = document.getElementById('local-ai-status');
+      if (!el) return;
+      try {
+        const res = await fetch(API + '/api/local-ai/status');
+        if (!res.ok) { el.textContent = 'Status endpoint not available.'; return; }
+        const d = await res.json();
+        const libOk = d.llama_cpp_installed;
+        const modOk = d.model_exists;
+        const libTag = libOk
+          ? '<span style="color:var(--green);">✓ llama-cpp-python installed</span>'
+          : '<span style="color:#f87171;">✗ llama-cpp-python not installed</span>';
+        const modTag = modOk
+          ? `<span style="color:var(--green);">✓ Model ready (${d.model_size_mb} MB)</span>`
+          : '<span style="color:#f87171;">✗ Model not downloaded</span>';
+        el.innerHTML = `${libTag} &nbsp;·&nbsp; ${modTag}<br>
+          <span style="color:var(--text3);font-size:10px;">${d.model_file}</span>`;
+      } catch (e) {
+        el.textContent = 'Could not reach local AI status endpoint.';
+      }
+    }
+
+    async function installLocalAI() {
+      const alertEl = document.getElementById('ai-alert');
+      alertEl.innerHTML = alert('info', 'Installing llama-cpp-python via pip… this may take 1-2 minutes.');
+      try {
+        const res = await fetch(API + '/api/local-ai/install', { method: 'POST' });
+        const d = await res.json();
+        alertEl.innerHTML = d.ok
+          ? alert('success', '✓ ' + d.message)
+          : alert('error', '✗ ' + d.message);
+        checkLocalAI();
+      } catch (e) {
+        alertEl.innerHTML = alert('error', 'Install failed: ' + e.message);
+      }
+    }
+
+    async function downloadLocalModel() {
+      const alertEl = document.getElementById('ai-alert');
+      alertEl.innerHTML = alert('info', 'Downloading Phi-3-mini GGUF (~2.2 GB). This may take several minutes…');
+      try {
+        const res = await fetch(API + '/api/local-ai/download', { method: 'POST' });
+        const d = await res.json();
+        alertEl.innerHTML = d.ok
+          ? alert('success', '✓ ' + d.message + ' — ' + d.path)
+          : alert('error', '✗ ' + d.message);
+        checkLocalAI();
+      } catch (e) {
+        alertEl.innerHTML = alert('error', 'Download failed: ' + e.message);
+      }
+    }
+
+    // ── Sync mode ────────────────────────────────────────────────────────
+    let currentMode = 'full';
+    let forceRebuild = false;
+
+    function selectMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+      document.getElementById('mode-' + mode).classList.add('active');
+      document.getElementById('category-picker').style.display = mode === 'category' ? 'block' : 'none';
+      if (mode === 'category') loadCategories();
+    }
+
+    function toggleForceRebuild() {
+      forceRebuild = !forceRebuild;
+      const el = document.getElementById('force-rebuild-toggle');
+      el.classList.toggle('on', forceRebuild);
+    }
+
+    function toggleAutoSync() {
+      const input = document.getElementById('AUTO_SYNC_ENABLED');
+      const toggle = document.getElementById('AUTO_SYNC_ENABLED_TOGGLE');
+      const label = document.getElementById('auto-sync-label');
+      const isOn = input.value === '1';
+      const newVal = isOn ? '0' : '1';
+      input.value = newVal;
+      toggle.classList.toggle('on', !isOn);
+      label.textContent = !isOn ? 'Enabled' : 'Disabled';
+    }
+
+    async function loadCategories() {
+      const sel = document.getElementById('sync-category-select');
+      sel.innerHTML = '<option value="">Loading…</option>';
+      try {
+        const res = await fetch(API + '/api/config/zendesk-categories');
+        const data = await res.json();
+        if (data.ok && data.categories) {
+          sel.innerHTML = data.categories.map(c =>
+            `<option value="${c.id}">${c.name} (${c.id})</option>`
+          ).join('');
+        } else {
+          sel.innerHTML = '<option value="">Failed to load — enter ID manually</option>';
+        }
+      } catch {
+        sel.innerHTML = '<option value="">Network error — enter ID manually</option>';
+      }
+    }
+
+    // ── Sync ────────────────────────────────────────────────────────────
+    let syncRunning = false;
+
+    async function runSync() {
+      if (syncRunning) return;
+      syncRunning = true;
+      const btn = document.getElementById('sync-btn');
+      const log = document.getElementById('sync-log');
+      const ind = document.getElementById('sync-running-indicator');
+      btn.disabled = true;
+      ind.style.display = 'flex';
+      log.textContent = `▶ Starting sync [mode: ${currentMode}${forceRebuild ? ', FORCE REBUILD' : ''}]…\n`;
+
+      // Build category_id
+      let category_id = null;
+      if (currentMode === 'category') {
+        category_id = getVal('sync-category-manual') ||
+          document.getElementById('sync-category-select').value || null;
+      }
+
+      const payload = { mode: currentMode, force_rebuild: forceRebuild, category_id };
+
+      try {
+        const res = await fetch(API + '/api/sync/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          log.textContent += `✗ Error: ${err.detail || res.statusText}\n`;
+          return;
+        }
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value);
+          chunk.split('\n').forEach(line => {
+            if (!line.startsWith('data: ')) return;
+            const text = line.slice(6);
+            const span = document.createElement('span');
+            if (text.startsWith('[DONE]')) span.className = 'log-done';
+            else if (text.startsWith('[ERROR]') || text.startsWith('✗')) span.className = 'log-error';
+            span.textContent = text + '\n';
+            log.appendChild(span);
+            log.scrollTop = log.scrollHeight;
+          });
+        }
+      } catch (e) {
+        log.textContent += `✗ Error: ${e.message}\n`;
+      } finally {
+        syncRunning = false;
+        btn.disabled = false;
+        ind.style.display = 'none';
+        loadSyncStatus();
+      }
+    }
+
+    async function loadSyncStatus() {
+      try {
+        const res = await fetch(API + '/api/sync/status');
+        const data = await res.json();
+        document.getElementById('sync-status-val').textContent = data.running ? 'Running' : 'Idle';
+        document.getElementById('sync-last-run').textContent = data.last_run || 'Never';
+        const modeEl = document.getElementById('sync-last-mode');
+        if (modeEl) modeEl.textContent = data.mode || '—';
+      } catch { }
+    }
+
+    function clearSyncLog() {
+      document.getElementById('sync-log').textContent = '';
+    }
+
+    // ── Analytics dashboard ──────────────────────────────────────────────
+    let _dailyChart = null, _hourlyChart = null;
+
+    const CHART_DEFAULTS = {
+      color: '#6366f1',
+      gridColor: 'rgba(255,255,255,0.06)',
+      textColor: '#94a3b8',
+      font: { family: 'Inter, sans-serif', size: 11 },
+    };
+
+    async function loadAnalytics() {
+      try {
+        // Fetch both analytics summary and KB stats in parallel
+        const [summaryRes, kbRes] = await Promise.all([
+          fetch(API + '/api/analytics/summary?days=30'),
+          fetch(API + '/api/analytics/kb-stats'),
+        ]);
+        const d = summaryRes.ok ? await summaryRes.json() : null;
+        const kb = kbRes.ok ? await kbRes.json() : null;
+
+        // ── KB Stats ──────────────────────────────────────
+        if (kb) {
+          document.getElementById('kb-total').textContent = kb.total_articles ?? 0;
+          document.getElementById('kb-integration').textContent = kb.integration_articles ?? 0;
+          document.getElementById('kb-general').textContent = kb.general_articles ?? 0;
+          document.getElementById('kb-with-id').textContent = kb.integration_with_id ?? 0;
+          document.getElementById('kb-without-id').textContent = kb.integration_without_id ?? 0;
+
+          // Without-id list
+          const withoutEl = document.getElementById('kb-without-id-list');
+          const withoutTable = document.getElementById('kb-without-id-table');
+          if ((kb.articles_without_id || []).length > 0) {
+            withoutEl.style.display = '';
+            withoutTable.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:11px;">
+              <thead><tr style="color:var(--text3);border-bottom:1px solid var(--border2);">
+                <th style="text-align:left;padding:5px 0;">Article ID</th>
+                <th style="text-align:left;padding:5px 8px;">Title</th>
+              </tr></thead><tbody>${kb.articles_without_id.map(a => `<tr style="border-bottom:1px solid var(--border2);">
+                <td style="padding:5px 0;font-size:10px;color:var(--text3);">${a.article_id}</td>
+                <td style="padding:5px 8px;color:var(--text);">${a.title}</td>
+              </tr>`).join('')
+              }</tbody></table>`;
+          }
+
+          // With-id mapping table
+          const withEl = document.getElementById('kb-with-id-list');
+          const withTable = document.getElementById('kb-with-id-table');
+          if ((kb.articles_with_id || []).length > 0) {
+            withEl.style.display = '';
+            withTable.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:11px;">
+              <thead><tr style="color:var(--text3);border-bottom:1px solid var(--border2);">
+                <th style="text-align:left;padding:5px 0;">integration_id</th>
+                <th style="text-align:left;padding:5px 8px;">Article</th>
+              </tr></thead><tbody>${kb.articles_with_id.map(a => `<tr style="border-bottom:1px solid var(--border2);">
+                <td style="padding:5px 0;"><code style="font-size:10px;color:var(--accent);">${a.integration_id}</code></td>
+                <td style="padding:5px 8px;font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px;">${a.title}</td>
+              </tr>`).join('')
+              }</tbody></table>`;
+          }
+        }
+
+        if (!d) return;
+
+        // ── Query KPIs ───────────────────────────────────
+        document.getElementById('stat-total').textContent = d.total_queries ?? 0;
+        document.getElementById('stat-latency').textContent = d.avg_latency_ms ?? 0;
+        document.getElementById('stat-contextual').textContent = d.by_agent?.contextual?.count ?? 0;
+        document.getElementById('stat-qa').textContent = d.by_agent?.qa?.count ?? 0;
+
+        // ── Token KPIs ───────────────────────────────────
+        document.getElementById('stat-tokens-total').textContent = (d.tokens_grand_total ?? 0).toLocaleString();
+        document.getElementById('stat-tokens-in').textContent = (d.tokens_in_total ?? 0).toLocaleString();
+        document.getElementById('stat-tokens-out').textContent = (d.tokens_out_total ?? 0).toLocaleString();
+
+        // ── Daily queries chart ───────────────────────────
+        const dailyLabels = d.queries_per_day.map(r => r.day.slice(5));
+        const dailyCounts = d.queries_per_day.map(r => r.count);
+        const dailyCtx = document.getElementById('chart-daily').getContext('2d');
+        if (_dailyChart) _dailyChart.destroy();
+        _dailyChart = new Chart(dailyCtx, {
+          type: 'line',
+          data: {
+            labels: dailyLabels,
+            datasets: [{
+              label: 'Queries', data: dailyCounts,
+              borderColor: CHART_DEFAULTS.color, backgroundColor: 'rgba(99,102,241,0.08)',
+              fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: CHART_DEFAULTS.color
+            }]
+          },
+          options: {
+            responsive: true, plugins: { legend: { display: false } },
+            scales: {
+              x: { ticks: { color: CHART_DEFAULTS.textColor, font: CHART_DEFAULTS.font }, grid: { color: CHART_DEFAULTS.gridColor } },
+              y: { ticks: { color: CHART_DEFAULTS.textColor, font: CHART_DEFAULTS.font, stepSize: 1 }, grid: { color: CHART_DEFAULTS.gridColor }, beginAtZero: true }
+            }
+          }
+        });
+
+        // ── Token usage per day chart ─────────────────────
+        const tokenLabels = d.queries_per_day.map(r => r.day.slice(5));
+        const tokenCounts = d.queries_per_day.map(r => r.tokens || 0);
+        const tokenCtx = document.getElementById('chart-tokens').getContext('2d');
+        if (window._tokenChart) window._tokenChart.destroy();
+        window._tokenChart = new Chart(tokenCtx, {
+          type: 'line',
+          data: {
+            labels: tokenLabels,
+            datasets: [{
+              label: 'Tokens', data: tokenCounts,
+              borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,0.08)',
+              fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#a78bfa'
+            }]
+          },
+          options: {
+            responsive: true, plugins: { legend: { display: false } },
+            scales: {
+              x: { ticks: { color: CHART_DEFAULTS.textColor, font: CHART_DEFAULTS.font }, grid: { color: CHART_DEFAULTS.gridColor } },
+              y: { ticks: { color: CHART_DEFAULTS.textColor, font: CHART_DEFAULTS.font }, grid: { color: CHART_DEFAULTS.gridColor }, beginAtZero: true }
+            }
+          }
+        });
+
+        // ── Hourly bar chart ──────────────────────────────
+        const hourlyLabels = d.queries_per_hour.map(r => r.hour);
+        const hourlyCounts = d.queries_per_hour.map(r => r.count);
+        const hourlyCtx = document.getElementById('chart-hourly').getContext('2d');
+        if (_hourlyChart) _hourlyChart.destroy();
+        _hourlyChart = new Chart(hourlyCtx, {
+          type: 'bar',
+          data: {
+            labels: hourlyLabels,
+            datasets: [{
+              label: 'Queries', data: hourlyCounts,
+              backgroundColor: 'rgba(99,102,241,0.5)', borderColor: CHART_DEFAULTS.color,
+              borderWidth: 1, borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true, plugins: { legend: { display: false } },
+            scales: {
+              x: { ticks: { color: CHART_DEFAULTS.textColor, font: CHART_DEFAULTS.font }, grid: { color: CHART_DEFAULTS.gridColor } },
+              y: { ticks: { color: CHART_DEFAULTS.textColor, font: CHART_DEFAULTS.font, stepSize: 1 }, grid: { color: CHART_DEFAULTS.gridColor }, beginAtZero: true }
+            }
+          }
+        });
+
+        // ── Top articles ──────────────────────────────────
+        const artEl = document.getElementById('top-articles-table');
+        if (!d.top_articles.length) {
+          artEl.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px 0;">No data yet.</div>';
+        } else {
+          const max = Math.max(...d.top_articles.map(a => a.count));
+          artEl.innerHTML = d.top_articles.map(a => `
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text);margin-bottom:3px;">
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70%;">${a.title || a.article_id || 'Unknown'}</span>
+                <span style="color:var(--text3);font-size:11px;margin-left:8px;">${a.count} q</span>
+              </div>
+              <div style="height:4px;background:var(--border2);border-radius:2px;">
+                <div style="height:100%;width:${Math.round(a.count / max * 100)}%;background:var(--accent);border-radius:2px;"></div>
+              </div>
+            </div>`).join('');
+        }
+
+        // ── Top integrations ──────────────────────────────
+        const intEl = document.getElementById('top-integrations-table');
+        if (!d.top_integrations.length) {
+          intEl.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px 0;">No integration queries yet.</div>';
+        } else {
+          const max2 = Math.max(...d.top_integrations.map(i => i.count));
+          intEl.innerHTML = d.top_integrations.map(i => `
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text);margin-bottom:3px;">
+                <code style="font-size:10px;color:var(--accent);">${i.integration_id}</code>
+                <span style="color:var(--text3);font-size:11px;">${i.count} q · ${(i.tokens_total || 0).toLocaleString()} tok</span>
+              </div>
+              <div style="height:4px;background:var(--border2);border-radius:2px;">
+                <div style="height:100%;width:${Math.round(i.count / max2 * 100)}%;background:var(--green);border-radius:2px;"></div>
+              </div>
+            </div>`).join('');
+        }
+
+        // ── Agent token breakdown ─────────────────────────
+        const agentEl = document.getElementById('agent-token-breakdown');
+        const agents = Object.entries(d.by_agent || {});
+        if (!agents.length) {
+          agentEl.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px 0;">No data yet.</div>';
+        } else {
+          agentEl.innerHTML = agents.map(([name, info]) => {
+            const label = name === 'contextual' ? 'Agent 1 – Contextual' : 'Agent 2 – Q&A';
+            const color = name === 'contextual' ? 'var(--accent)' : 'var(--green)';
+            return `<div style="margin-bottom:16px;padding:14px;background:var(--bg3);border-radius:8px;">
+              <div style="font-size:12px;font-weight:600;color:${color};margin-bottom:10px;">${label}</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+                <div><div style="font-size:10px;color:var(--text3);">Queries</div><div style="font-size:18px;font-weight:700;color:var(--text);">${info.count || 0}</div></div>
+                <div><div style="font-size:10px;color:var(--text3);">Input Tokens</div><div style="font-size:18px;font-weight:700;color:var(--text);">${(info.tokens_in || 0).toLocaleString()}</div></div>
+                <div><div style="font-size:10px;color:var(--text3);">Output Tokens</div><div style="font-size:18px;font-weight:700;color:var(--text);">${(info.tokens_out || 0).toLocaleString()}</div></div>
+              </div>
+            </div>`;
+          }).join('');
+        }
+
+        // ── Recent events ─────────────────────────────────
+        const evEl = document.getElementById('recent-events-table');
+        if (!d.recent_events.length) {
+          evEl.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px 0;">No events yet. Interact with the widget to generate data.</div>';
+        } else {
+          evEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:11px;">
+            <thead><tr style="color:var(--text3);border-bottom:1px solid var(--border2);">
+              <th style="text-align:left;padding:6px 0;">Time</th>
+              <th style="text-align:left;padding:6px 8px;">Agent</th>
+              <th style="text-align:left;padding:6px 8px;">Page / Question</th>
+              <th style="text-align:left;padding:6px 8px;">Article</th>
+              <th style="text-align:right;padding:6px 4px;">Tokens</th>
+              <th style="text-align:right;padding:6px 0;">Latency</th>
+              <th style="text-align:right;padding:6px 0;">Status</th>
+            </tr></thead><tbody>${d.recent_events.map(e => {
+            const t = new Date(e.ts * 1000).toLocaleTimeString();
+            const badge = e.agent === 'contextual'
+              ? `<span style="background:rgba(99,102,241,0.2);color:var(--accent);padding:2px 6px;border-radius:10px;">Ctx</span>`
+              : `<span style="background:rgba(34,197,94,0.15);color:var(--green);padding:2px 6px;border-radius:10px;">Q&A</span>`;
+            const status = e.status === 'ok'
+              ? `<span style="color:var(--green);">✓</span>`
+              : `<span style="color:#f87171;">✗</span>`;
+            const tok = e.tokens_total ? `<span style="color:var(--accent);">${e.tokens_total.toLocaleString()}</span>` : '—';
+            return `<tr style="border-bottom:1px solid var(--border2);">
+                <td style="padding:6px 0;color:var(--text3);white-space:nowrap;">${t}</td>
+                <td style="padding:6px 8px;">${badge}</td>
+                <td style="padding:6px 8px;color:var(--text);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.question || e.page_title || '—'}</td>
+                <td style="padding:6px 8px;color:var(--text3);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.article_title || '—'}</td>
+                <td style="padding:6px 4px;text-align:right;">${tok}</td>
+                <td style="padding:6px 0;color:var(--text3);text-align:right;white-space:nowrap;">${e.latency_ms ? Math.round(e.latency_ms) + 'ms' : '—'}</td>
+                <td style="padding:6px 0;text-align:right;">${status}</td>
+              </tr>`;
+          }).join('')
+            }</tbody></table>`;
+        }
+
+      } catch (e) {
+        console.warn('Analytics load error:', e);
+      }
+    }
+
+    async function clearAnalytics() {
+      if (!confirm('Clear all analytics data? This cannot be undone.')) return;
+      await fetch(API + '/api/analytics/events', { method: 'DELETE' });
+      loadAnalytics();
+    }
+
+    // ── Widget snippet ─────────────────────────────────────────────────
+    function updateSnippet() {
+      const url = getVal('widget-api-url') || 'http://localhost:8000';
+      const pos = getVal('widget-position') || 'bottom-right';
+      document.getElementById('snippet-output').textContent =
+        `<script src="${url}/widget/widget.js"\n  data-api-url="${url}"\n  data-position="${pos}">\n<\/script>`;
+    }
+
+    function copySnippet() {
+      const txt = document.getElementById('snippet-output').textContent;
+      navigator.clipboard.writeText(txt).then(() => {
+        const btn = event.target.closest('button');
+        const orig = btn.innerHTML;
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+        setTimeout(() => btn.innerHTML = orig, 2000);
+      });
+    }
+
+    // ── Toggle password visibility ─────────────────────────────────────
+    function toggleVisibility(id) {
+      const el = document.getElementById(id);
+      el.type = el.type === 'password' ? 'text' : 'password';
+    }
+
+    // ── Server health ─────────────────────────────────────────────────
+    async function checkHealth() {
+      try {
+        const res = await fetch(API + '/health');
+        const ok = res.ok;
+        document.getElementById('server-status-dot').style.background = ok ? 'var(--green)' : 'var(--red)';
+        document.getElementById('server-status-text').textContent = ok ? 'Server Online' : 'Server Offline';
+      } catch {
+        document.getElementById('server-status-dot').style.background = 'var(--red)';
+        document.getElementById('server-status-text').textContent = 'Server Offline';
+      }
+    }
+
+    // ── Boot ────────────────────────────────────────────────────────────
+
+    // ── Setup Wizard ──────────────────────────────────────────────────
+    let wizardHistory = [];
+    let wizardActive = false;
+
+    async function wizardInit() {
+      if (wizardActive) return;
+      wizardActive = true;
+      // Load status immediately
+      await wizardRefreshStatus();
+      // Auto-greet
+      wizardAddMessage('ai', 'Hello! I\'m your Aquera Setup AI. Let me check your current setup status…', false);
+      await wizardSendRaw('Please greet me and give a brief overview of my current setup progress based on what you see.');
+    }
+
+    async function wizardSend() {
+      const input = document.getElementById('wizard-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+      wizardAddMessage('user', msg, true);
+      await wizardSendRaw(msg);
+    }
+
+    async function wizardSendRaw(msg) {
+      const btn = document.getElementById('wizard-send-btn');
+      if (btn) btn.disabled = true;
+
+      // Show typing indicator
+      const typingId = 'wiz-typing-' + Date.now();
+      const container = document.getElementById('wizard-messages');
+      const typingEl = document.createElement('div');
+      typingEl.id = typingId;
+      typingEl.className = 'wiz-bubble ai wiz-typing';
+      typingEl.innerHTML = '<span></span><span></span><span></span>';
+      container.appendChild(typingEl);
+      container.scrollTop = container.scrollHeight;
+
+      try {
+        const res = await fetch(API + '/api/setup/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg, chat_history: wizardHistory }),
+        });
+        const data = await res.json();
+        typingEl.remove();
+
+        const reply = data.response || 'Sorry, I had trouble responding.';
+        wizardAddMessage('ai', reply, false);
+
+        // Update checklist from wizard_status
+        if (data._wizard_status) wizardUpdateStatus(data._wizard_status);
+        else await wizardRefreshStatus();
+
+      } catch (e) {
+        typingEl.remove();
+        wizardAddMessage('ai', 'Network error: ' + e.message, false);
+      }
+      if (btn) btn.disabled = false;
+    }
+
+    function wizardAddMessage(role, text, isUser) {
+      const container = document.getElementById('wizard-messages');
+      const el = document.createElement('div');
+      el.className = 'wiz-bubble ' + (isUser ? 'user' : 'ai');
+      // Basic markdown: code blocks and inline code
+      let html = text
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+      el.innerHTML = html;
+      container.appendChild(el);
+      container.scrollTop = container.scrollHeight;
+
+      // Keep history for context
+      wizardHistory.push({ role: isUser ? 'user' : 'assistant', content: text });
+      // Max 20 turns
+      if (wizardHistory.length > 20) wizardHistory = wizardHistory.slice(-20);
+    }
+
+    async function wizardRefreshStatus() {
+      try {
+        const res = await fetch(API + '/api/setup/status');
+        const d = await res.json();
+        wizardUpdateStatus(d);
+      } catch (e) { console.warn('Wizard status check failed:', e); }
+    }
+
+    function wizardUpdateStatus(s) {
+      const stepMap = [
+        { id: 'wstep-zendesk', key: 'zendesk_configured' },
+        { id: 'wstep-sync', key: 'sync_done' },
+        { id: 'wstep-ai', key: 'ai_configured' },
+        { id: 'wstep-widget', key: 'widget_ready' },
+        { id: 'wstep-health', key: 'server_healthy' },
+      ];
+
+      let firstPending = -1;
+      stepMap.forEach((step, i) => {
+        const el = document.getElementById(step.id);
+        if (!el) return;
+        const ok = s[step.key];
+        el.classList.remove('done', 'active');
+        if (ok) {
+          el.classList.add('done');
+        } else if (firstPending < 0) {
+          firstPending = i;
+          el.classList.add('active');
+        }
+      });
+
+      // Show/hide live banner and nav badge
+      const allDone = s.all_done;
+      document.getElementById('wizard-live-banner').style.display = allDone ? 'block' : 'none';
+      document.getElementById('wizard-nav-badge').style.display = allDone ? 'none' : 'block';
+    }
+
+    function wizardReset() {
+      wizardHistory = [];
+      wizardActive = false;
+      document.getElementById('wizard-messages').innerHTML = '';
+      wizardInit();
+    }
+
+    // Auto-init wizard when switching to wizard page
+    const _origSwitchPage = switchPage;
+    switchPage = function (page, el) {
+      _origSwitchPage(page, el);
+      if (page === 'wizard') wizardInit();
+    };
+
+    loadSettings();
+    checkHealth();
+    setInterval(checkHealth, 30000);
+    setInterval(loadSyncStatus, 10000);
+  </script>
+</body>
+
+</html>

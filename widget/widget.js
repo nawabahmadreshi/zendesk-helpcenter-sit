@@ -37,6 +37,7 @@
       buttons: [],         // from main content area
       tabs: [],            // from main content area
       form_labels: [],     // from main content area
+      form_fields: [],     // NEW: detailed input metadata for auto-fill mapping
       descriptions: [],    // New: to capture paragraph/help text
       nav_items: [],       // from sidebar/nav (secondary)
       active_nav: '',      // New: to capture the currently selected/active nav item
@@ -153,6 +154,38 @@
       if (!_isVisible(el)) return;
       const text = el.textContent.trim().replace(/\s+/g, ' ');
       if (text && text.length < 150 && text.length > 1) context.form_labels.push(prefix + text);
+    });
+
+    // 6. Form Fields (detailed metadata for AI auto-fill)
+    root.querySelectorAll('input:not([type="hidden"]):not([type="button"]):not([type="submit"]), textarea, select').forEach(function(el) {
+      if (el.closest('#aquera-ai-help-host')) return;
+      if (excludeNav && _isNavElement(el)) return;
+      if (!_isVisible(el)) return;
+      
+      const fieldData = {
+        tag: el.tagName.toLowerCase(),
+        type: el.type || '',
+        name: el.name || '',
+        id: el.id || '',
+        placeholder: el.placeholder || '',
+        value: el.value || '',
+      };
+      // Only add if it has some identifiable trait
+      if (fieldData.name || fieldData.id || fieldData.placeholder) {
+          // find associated label if possible
+          let labelText = '';
+          if (fieldData.id) {
+              const labelEl = document.querySelector(`label[for="${fieldData.id}"]`);
+              if (labelEl) labelText = labelEl.textContent.trim();
+          }
+          if (!labelText && el.closest('label')) {
+              labelText = el.closest('label').textContent.trim();
+          }
+          if (labelText) {
+              fieldData.label = labelText.replace(/\s+/g, ' ');
+          }
+          context.form_fields.push(fieldData);
+      }
     });
   }
 
@@ -524,15 +557,117 @@
               </div>
             `;
           }
+
+          // ** NEW: Render Proactive Action Suggestions **
+          if (data.action_suggestions && Array.isArray(data.action_suggestions) && data.action_suggestions.length > 0) {
+              contentHtml += '<div class="aq-action-suggestions-container">';
+              contentHtml += '<div class="aq-action-header">Suggested Actions:</div>';
+              
+              data.action_suggestions.forEach((action, index) => {
+                  // We encode the structured action object into the button's dataset
+                  const encodedAction = escapeHtml(JSON.stringify(action));
+                  contentHtml += `
+                    <button class="aq-action-btn" data-action='${encodedAction}'>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                      ${escapeHtml(action.label || 'Execute Action')}
+                    </button>
+                  `;
+              });
+              contentHtml += '</div>';
+          }
           
           contextContent.innerHTML = contentHtml;
           contextContent.classList.add('loaded');
+          
+          // Attach event listeners to the new action buttons
+          _attachActionListeners(contextContent);
         })
         .catch(function () {
           isFetchingContext = false;
           contextContent.innerHTML = '<p class="aq-help-error">Unable to load contextual help. Is the AI server running?</p>';
           contextContent.classList.add('loaded');
         });
+    }
+
+    // --- NEW: Action Execution Engine ---
+    function _attachActionListeners(container) {
+        container.querySelectorAll('.aq-action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const actionStr = this.getAttribute('data-action');
+                if (!actionStr) return;
+                
+                try {
+                    const actionGroup = JSON.parse(actionStr);
+                    this.innerHTML = '<div class="aq-help-dot"></div> Executing...';
+                    this.style.opacity = '0.7';
+                    this.style.pointerEvents = 'none';
+                    
+                    // The AI might return a single action or an array of steps
+                    const steps = Array.isArray(actionGroup.steps) ? actionGroup.steps : [actionGroup];
+                    
+                    let successCount = 0;
+                    steps.forEach(step => {
+                        if (executeDOMAction(step)) successCount++;
+                    });
+                    
+                    setTimeout(() => {
+                        if (successCount === steps.length) {
+                             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Complete';
+                             this.style.backgroundColor = '#10b981'; // Green success
+                             this.style.color = '#fff';
+                        } else {
+                             this.innerHTML = '⚠️ Partial Success';
+                        }
+                    }, 500);
+
+                } catch (err) {
+                    console.error('Aquera AI: Failed to parse or execute action', err);
+                    this.innerHTML = 'Action Failed';
+                }
+            });
+        });
+    }
+
+    function executeDOMAction(step) {
+        console.log("Aquera AI: Executing step", step);
+        const targetSelector = step.target;
+        if (!targetSelector) return false;
+        
+        // Escape specific confusing characters if the AI suggests weird CSS selectors,
+        // though it's safer to rely on IDs or name attributes.
+        const el = document.querySelector(targetSelector);
+        if (!el) {
+            console.warn(`Aquera AI: Target element not found for selector: ${targetSelector}`);
+            return false;
+        }
+
+        try {
+            switch(step.action) {
+                case 'fill_form':
+                case 'fill_field':
+                    el.value = step.value;
+                    // Dispatch events so React/Angular/Vue recognize the change
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                    // Try to trigger nice visuals
+                    el.style.transition = 'box-shadow 0.3s ease, background-color 0.3s ease';
+                    el.style.backgroundColor = '#ecfdf5'; // light green highlight
+                    setTimeout(() => { el.style.backgroundColor = ''; }, 1500);
+                    break;
+                case 'click_button':
+                case 'click':
+                    el.click();
+                    break;
+                default:
+                    console.warn(`Aquera AI: Unknown action type ${step.action}`);
+                    return false;
+            }
+            return true;
+        } catch (e) {
+            console.error("Aquera AI: Action execution error", e);
+            return false;
+        }
     }
 
     // Auto-fetch on page load (background)

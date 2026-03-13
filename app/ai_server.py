@@ -72,6 +72,7 @@ class PageContext(BaseModel):
     tabs: List[str] = []
     integration_id: str = ""
     form_labels: List[str] = []
+    form_fields: List[Dict[str, Any]] = [] # NEW: detailed input metadata for auto-fill mapping
     descriptions: List[str] = []
     nav_items: List[str] = []
     active_nav: str = ""
@@ -93,6 +94,7 @@ class HelpResponse(BaseModel):
     source: str = "ai"
     article_title: Optional[str] = None
     article_id: Optional[str] = None
+    action_suggestions: Optional[List[Dict[str, Any]]] = None # NEW: Proactive UI commands
 
 
 class SyncRequest(BaseModel):
@@ -166,6 +168,7 @@ async def contextual_help(req: ContextRequest) -> HelpResponse:
                 response=resp_text,
                 article_title=agent_result.get("article_title"),
                 article_id=agent_result.get("article_id"),
+                action_suggestions=agent_result.get("action_suggestions"),
             )
         return HelpResponse(response=str(agent_result))
     except Exception as e:

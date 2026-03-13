@@ -19,30 +19,40 @@ from config import Config
 
 # ── System prompts ─────────────────────────────────────────────────────
 
-CONTEXTUAL_SYSTEM_PROMPT = """You are a Contextual System UI Analyzer. 
+CONTEXTUAL_SYSTEM_PROMPT = """You are a Proactive Action Co-Pilot for the Aquera platform.
 
-Your reasoning is governed by a strict TWO-PHASE mechanism. You must deduce the user's objective strictly based on the VISUAL HIERARCHY TEMPLATE provided to you.
+Your goal is to explain the UI to the user AND identify tasks you can do for them automatically (like filling out forms) based entirely on the provided `VISUAL HIERARCHY TEMPLATE` and `INTEGRATION GUIDE`.
 
-### PHASE 1: UI INGESTION (Primary Source)
-- You must read the `VISUAL HIERARCHY TEMPLATE`.
-- **CRITICAL**: If you see items prefixed with `[MODAL]`, it means a modal dialog is currently open. You MUST prioritize explaining the `[MODAL]` elements and you SHOULD IGNORE elements marked `[BACKGROUND]`.
-- Identify the most critical elements based on `[AVAILABLE ACTIONS]` and `[DATA INPUTS]`. 
-- **CRITICAL FOCUS**: You MUST prioritize explaining PRIMARY ACTION BUTTONS (e.g., "Create...", "Add...", "Execute", "Save") and core input forms.
-- **CRITICAL IGNORE**: Do NOT waste your limited bullet points explaining standard table columns (like Name, State, History, Author, Date Created) or standard user profile links (like Sign Out, Manage Account, Help).
-- Describe the purpose of the main screen AND allocate bullet points to explain the available `Navigation Menus` and `Tabs` ONLY IF THEY ARE PRESENT IN THE TEMPLATE and not just generic layout items.
+### PHASE 1: UI INGESTION & EXPLANATION
+- Read the `VISUAL HIERARCHY TEMPLATE` and the optional `INTEGRATION GUIDE`.
+- Explain the current screen state concisely. Focus on critical actions and required data inputs.
+- Do NOT hallucinate elements that are not in the Visual Hierarchy.
+- If you use the Integration Guide to explain an element, append `Source: [Article Title]` to your explanation.
 
-### PHASE 2: KNOWLEDGE FALLBACK (Secondary Source)
-- An `INTEGRATION GUIDE` may be appended at the end of the prompt for technical grounding. 
-- **STRICT ANTI-HALLUCINATION RULE**: You may ONLY use the guide to explain the *purpose* of an element that you ALREADY found in the Visual Hierarchy Template. 
-- You MUST NEVER invent or list a button, tab, or field in your bullet points (like "Save", "Delete", or "Enter Name") just because it is mentioned in the Integration Guide. If it is not in the Visual Hierarchy Template, IT IS NOT ON THE SCREEN.
+### PHASE 2: PROACTIVE ACTION SUGGESTION (CRITICAL)
+- Review the `[DATA INPUTS]` and `[FORM FIELDS]` in the Visual Hierarchy.
+- If the Integration Guide provides clear instructions on what values to put into these fields (e.g., standard mapping names, default URLs, required flags), you MUST suggest an action to fill them out automatically.
+- To suggest actions, you must append a STRICT JSON block at the very end of your response, wrapped exactly in `---ACTION_SUGGESTIONS_START---` and `---ACTION_SUGGESTIONS_END---`.
 
-### RESPONSE FORMAT:
-- Provide a concise summary of the CURRENT screen state (under 50 words).
-- Provide 5 to 8 detailed bullet points.
-- Format: **[Specific Element from UI]**: [Smart explanation of its role]. (e.g., instead of summarizing "Tabs", list the specific tabs if they are important).
-- Ensure you explicitly cite critical actions/buttons present (e.g., "Create Integration", "Save Changes", "Execute") and describe their impact.
-- Avoid grouping everything broadly, but DO NOT list out grid/table column names. 
-- At the end, include exactly: `Source: [Article Title]` ONLY if you actively used the attached guide to explain an element visible on screen.
+**JSON Format Rules:**
+Your JSON must be an array of "Action Suggestion" objects. 
+Each object has a `label` (what the button will say) and a `steps` array.
+Each step must have `action` (e.g., "fill_form") and `target` (the CSS selector, preferably the #id or name attribute from the Form Fields data).
+
+EXAMPLE JSON:
+---ACTION_SUGGESTIONS_START---
+[
+  {
+    "label": "Auto-fill Standard Mapping Fields",
+    "steps": [
+      { "action": "fill_form", "target": "#employee-id", "value": "workerID" },
+      { "action": "fill_form", "target": "input[name='status']", "value": "Active" }
+    ]
+  }
+]
+---ACTION_SUGGESTIONS_END---
+
+WARNING: ONLY suggest actions if you are highly confident based on the provided Integration Guide. Ensure the JSON is valid.
 """
 
 QA_SYSTEM_PROMPT = """You are an expert Aquera platform assistant. 
@@ -400,7 +410,7 @@ def _route_agent_loop(
                 result = _run_openrouter_agent_loop(system_prompt, user_message, or_key, or_model, or_site, persist_dir, articles_dir, initial_article_meta)
             
             elif prov == "ollama":
-                ollama_model = extra.get("ollama_model", "phi3:mini")
+                ollama_model = extra.get("ollama_model", "qwen2.5-coder:7b")
                 result = _run_ollama_agent_loop(system_prompt, user_message, ollama_model, persist_dir, articles_dir, initial_article_meta)
             
             # CRITICAL: Validate result for error strings that didn't raise exceptions
@@ -411,6 +421,28 @@ def _route_agent_loop(
                     errors.append(f"{prov}: {result['response']}")
                     continue
                 
+                # --- NEW: PARSE PROACTIVE ACTION SUGGESTIONS OUT OF THE RESPONSE ---
+                text = result["response"]
+                if "---ACTION_SUGGESTIONS_START---" in text:
+                    import re
+                    import json
+                    action_pattern = r"---ACTION_SUGGESTIONS_START---\s*(.*?)\s*---ACTION_SUGGESTIONS_END---"
+                    match = re.search(action_pattern, text, re.DOTALL)
+                    if match:
+                        json_str = match.group(1).strip()
+                        if not json_str:
+                            json_str = "[]" # Handle empty block securely
+                        try:
+                            actions = json.loads(json_str)
+                            if isinstance(actions, list):
+                                result["action_suggestions"] = actions
+                                # Remove the raw JSON block from the text shown to the user
+                                result["response"] = re.sub(action_pattern, "", text, flags=re.DOTALL).strip()
+                                print(f"DEBUG: Successfully extracted {len(actions)} action suggestions.")
+                        except json.JSONDecodeError as e:
+                            print(f"WARNING: LLM output invalid format for ACTION_SUGGESTIONS JSON: {e}")
+                            print(f"DEBUG Invalid JSON String: '{json_str}'")
+
                 print(f"DEBUG: Provider {prov.upper()} succeeded.")
                 return result
 

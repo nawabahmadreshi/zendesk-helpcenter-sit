@@ -25,10 +25,11 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
 
   // ── Configuration ─────────────────────────────────────────────────
   const scriptTag = document.currentScript;
-  const API_URL = (scriptTag && scriptTag.getAttribute('data-api-url')) || 'http://localhost:8000';
+  // USE THE EXTENSION CONFIGURED URL IF AVAILABLE
+  const API_URL = window.__AQUERA_EXT_API_URL__ || (scriptTag && scriptTag.getAttribute('data-api-url')) || 'http://localhost:8000';
   const POSITION = (scriptTag && scriptTag.getAttribute('data-position')) || 'bottom-right';
   
-  console.log('🚀 Aquera AI Widget: Script started');
+  console.log('🚀 Aquera AI Widget: Script started with API_URL=', API_URL);
 
   // ── DOM Scanner ───────────────────────────────────────────────────
 

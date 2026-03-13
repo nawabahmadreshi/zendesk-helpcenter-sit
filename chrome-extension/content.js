@@ -223,9 +223,23 @@ chrome.storage.sync.get({ apiUrl: 'http://localhost:8000' }, function(items) {
 
   // helper: extract integration_id from multiple sources
   function _extractIntegrationId(context) {
-    // 1. Check data attribute
-    const integrationEl = document.querySelector('[data-integration-id]');
-    if (integrationEl) { context.integration_id = integrationEl.getAttribute('data-integration-id'); return; }
+    // 1. Check data attribute (but ONLY if it's unique — multiple means it's a gallery)
+    const allIntegrationIds = [...document.querySelectorAll('[data-integration-id]')].map(el => el.getAttribute('data-integration-id')).filter(Boolean);
+    const uniqueIds = [...new Set(allIntegrationIds)];
+    
+    // If we have exactly one unique integration ID, use it.
+    // If we have multiple, it's a gallery, so we shouldn't pick a "random" one.
+    if (uniqueIds.length === 1) { 
+        context.integration_id = uniqueIds[0]; 
+        return; 
+    }
+    
+    // Explicitly clear it if multiple exist (avoid picking the first one in a gallery)
+    if (uniqueIds.length > 1) {
+        console.log('Context (Ext): Detected multiple integration IDs (Gallery Mode). Skipping specific ID extraction.');
+        context.integration_id = '';
+        return;
+    }
     
     // 2. Check meta tag
     const meta = document.querySelector('meta[name="integration-id"]');

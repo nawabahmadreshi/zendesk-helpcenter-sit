@@ -224,33 +224,40 @@ def contextual_help_agent(
         from app.tools import search_integration_kb, extract_integration_signals
         import json
 
-        # Build a rich composite query from ALL available context signals
-        composite_query = extract_integration_signals(page_context)
-        print(f"DEBUG: Auto-matching integration guide via composite query: '{composite_query[:100]}...'")
-        
-        # Search with higher top_k to improve recall
-        search_results_json = search_integration_kb(
-            query=composite_query,
-            api_key=api_key,
-            persist_dir=persist_dir,
-            integration_id=None,  # Don't filter by ID — we want the best semantic match
-            top_k=3
-        )
         try:
-            results = json.loads(search_results_json) if isinstance(search_results_json, str) else search_results_json
-            if results and len(results) > 0:
-                top_hit = results[0]
-                score = top_hit.get("score", 1.0)
-                # Only attach if the semantic score is very high (strict matching)
-                if score < 1.1:  # Lowered from 1.5 to 1.1 for higher precision
-                    article = {
-                        "title": top_hit["metadata"]["title"],
-                        "text": top_hit["text"],
-                        "article_id": top_hit["metadata"]["article_id"]
-                    }
-                    print(f"DEBUG: Auto-matched guide: '{article['title']}' (score={score:.3f})")
-                else:
-                    print(f"DEBUG: No confident guide match found (best score={score:.3f})")
+            # Build a rich composite query from ALL available context signals
+            composite_query = extract_integration_signals(page_context)
+            
+            # If it's a gallery, don't even try to match a specific guide 
+            # (prevents matching one of the many integration names listed on the page)
+            if "gallery" in composite_query.lower():
+                print(f"DEBUG: Gallery mode detected via query '{composite_query}'. Skipping guide match.")
+                results = []
+            else:
+                print(f"DEBUG: Auto-matching integration guide via composite query: '{composite_query[:100]}...'")
+                
+                # Search with higher top_k to improve recall
+                search_results_json = search_integration_kb(
+                    query=composite_query,
+                    api_key=api_key,
+                    persist_dir=persist_dir,
+                    integration_id=None,  # Don't filter by ID — we want the best semantic match
+                    top_k=3
+                )
+                results = json.loads(search_results_json) if isinstance(search_results_json, str) else search_results_json
+                if results and len(results) > 0:
+                    top_hit = results[0]
+                    score = top_hit.get("score", 1.0)
+                    # Only attach if the semantic score is very high (strict matching)
+                    if score < 1.1:  # Lowered from 1.5 to 1.1 for higher precision
+                        article = {
+                            "title": top_hit["metadata"]["title"],
+                            "text": top_hit["text"],
+                            "article_id": top_hit["metadata"]["article_id"]
+                        }
+                        print(f"DEBUG: Auto-matched guide: '{article['title']}' (score={score:.3f})")
+                    else:
+                        print(f"DEBUG: No confident guide match found (best score={score:.3f})")
         except Exception as e:
             print(f"DEBUG: Guide auto-match error: {e}")
 

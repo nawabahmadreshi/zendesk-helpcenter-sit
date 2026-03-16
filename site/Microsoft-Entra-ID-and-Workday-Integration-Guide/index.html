@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Microsoft Entra ID and Workday Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Microsoft Entra ID and Workday Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KEXX15T30EC7JT4CJ6DQGYVY">Overview </h1><p>The Aquera platform enables scalable, automated data management across enterprise applications. Through seamless integrations, it helps organizations eliminate manual processes, ensure consistency, and optimize workflows across complex IT infrastructures.</p><p>The Aquera Workday–Microsoft Entra ID integration helps keep employee identity information synchronized between Workday and Microsoft Entra ID. It supports multiple identity management scenarios, including <strong>user lifecycle management, employee photo synchronization, time-aware lifecycle management, and email writeback</strong>.</p><p>When the integration runs, it compares employee records in Workday with user accounts in Microsoft Entra ID. Employees are matched using a shared identifier, such as <strong>Employee ID</strong>, to ensure updates are applied to the correct record.</p><p>For example, employee profile photos can be synchronized so that photos stored in Microsoft Entra ID remain aligned with employee profiles in Workday. Microsoft Entra ID serves as the trusted source for employee photos, while Workday uses them to maintain accurate, consistent employee profiles for workforce operations.</p><p>The integration runs in controlled batches, respects system limits, and supports <strong>report-only mode</strong>, allowing administrators to review potential changes before they are applied.</p><h2 id="h_01KKTYEJG47FE9D2F8MQ8VMD5E">Key Functions</h2><p data-end="272" data-start="129">The integration provides the following key functions to keep employee identity information synchronized between <strong>Workday and Microsoft Entra ID</strong>:</p><ul data-end="1012" data-start="274">
+<li data-end="421" data-list-item-id="ec968013cbcc5a0c6f2340ba95f117521" data-section-id="no010x" data-start="274"><p data-end="421" data-start="276"><strong data-end="305" data-start="276">User Lifecycle Management: </strong>Automatically creates and updates user accounts in Microsoft Entra ID based on employee data stored in Workday.</p></li>
+<li data-end="421" data-list-item-id="e6ac44f8716481c490edc06783cd8df6c" data-section-id="no010x" data-start="274"><p data-end="421" data-start="276"><strong data-end="450" data-start="425">Photo Synchronization: </strong>Syncs employee profile photos from Microsoft Entra ID to the corresponding employee profiles in Workday.</p></li>
+<li data-end="421" data-list-item-id="e721ab604b91ec31379ccd74a6b3d6103" data-section-id="no010x" data-start="274"><p data-end="421" data-start="276"><strong data-end="598" data-start="563">Time-Aware Lifecycle Management: </strong>Executes lifecycle actions based on effective dates, such as creating accounts on an employee’s start date or disabling them on a termination date.</p></li>
+<li data-end="421" data-list-item-id="efa0f0ccd2ffe8ed6a8311320afc156ba" data-section-id="no010x" data-start="274"><p data-end="421" data-start="276"><strong data-end="773" data-start="754">Email Writeback: </strong>Updates the employee’s email address in Workday when it changes in Microsoft Entra ID.</p></li>
+<li data-end="421" data-list-item-id="e272c573db35ed156703262e92dbb0526" data-section-id="no010x" data-start="274"><p data-end="421" data-start="276"><strong data-end="903" data-start="883">Report-Only Mode: </strong>Allows administrators to preview the actions the integration would perform without applying any updates.</p></li>
+</ul><h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e3009771eb7843029b91edf7129c731fa">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e9574c91a6616665315de237d7ee58b3d">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal, based on your requirements:<ul>
+<li data-list-item-id="e2c8ab810f529e15b7b9693ae0f93ad9c">
+<strong>Workday:</strong> Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360020093234-Workday-Configuration-Guide" rel="noopener noreferrer" target="_blank">Workday Configuration Guide</a> for instructions on creating the Workday application connector and setting up the authentication.</li>
+<li data-list-item-id="ebf6a36f33748604c79be806d08f971dc">
+<strong>Microsoft 365</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for instructions on creating the Microsoft 365 application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul><h2 id="h_01KEXYT4S6PBGE446BGJJST3YJ">Integration Setup</h2><p data-end="188" data-start="23">This section describes the configuration steps required to set up <strong>Microsoft Entra ID to Workday User Photo Sync</strong> integration in Aquera.</p><h3 data-end="217" data-start="195" id="h_01KEXYT4S7MBFETFZYMR9QKS0M">Create Integration</h3><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e6750373f1e5568eb029ad0660d1bdc13">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="ea59ecc7bc8ca57f99aa8923815e018ab">Navigate to <strong>Integrations</strong> from the left navigation panel.</li>
+<li data-list-item-id="e057715e22ae394f10e21243cc58179e4">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="e89ff521b7667f0708ef56c8b74c8661f">Select <strong>Microsoft Entra ID / Workday.</strong>
+</li>
+<li data-list-item-id="e268f7f05ac454b7e92998e9b50547163">Enter a <strong>name</strong> and <strong>description</strong> for the integration.</li>
+<li data-list-item-id="ed48c35419527319167270bcec9f0d55d">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed.</li>
+</ol><h3 data-end="635" data-start="618" id="h_01KEXYT4SB88DN4JBNV7SJKRSV">Configuration</h3><p data-end="706" data-start="637">The following sections are available under the <strong data-end="701" data-start="684">Configuration</strong> tab:</p><h4 data-end="725" data-start="708" id="h_01KEXYT4SCB0P407JTJS4H9AYE">Applications</h4><p>The <strong>Applications</strong> section displays the application connectors required for the integration. This section allows you to select:</p><ul>
+<li data-list-item-id="e7b81fa373c2a22fd0585955d275807f1">
+<strong>Microsoft Entra ID (Azure AD)</strong> is the source application from which user profile photos are retrieved.</li>
+<li data-list-item-id="e39f3825e4f1df46022f31c0dac5345e7">
+<strong>Workday</strong> is the target application for updating employee profile photos.</li>
+</ul><p>Both connectors must be configured with valid credentials and appropriate permissions to support user lookup and photo writeback.</p><h4 id="h_01KEXZA87A280KAVD4N7YTWTXY">Parameters</h4><p>The Parameters section allows you to customize the operation of the <strong>Microsoft Entra ID to Workday User Photo Sync</strong> integration. These settings control the behavior of the integration and help tailor it to your organization’s requirements.</p><h3 id="h_01KEXZRH1Q7SDB2TMJ59K10QMY">Integration Features </h3><p>Configure the following integration features:</p><ul>
+<li data-list-item-id="e1a51988a3241db0fce37585ef37f5298">
+<strong>Enable User LifeCycle Management:</strong> Enable automatic creation and updating of user accounts in Microsoft Entra ID based on employee records in Workday. For example, when a new employee <strong>Barbara Jensen</strong> is added in Workday with <strong>Employee ID 10245</strong>, the integration can create a corresponding user account for <strong>Barbara Jensen</strong> in Microsoft Entra ID.</li>
+<li data-list-item-id="e47a2518643574b2723ee805902e56e76">
+<strong>Enable Photo Sync:</strong> Enable synchronization of employee profile photos from Microsoft Entra ID to Workday. For example, if <strong>Barbara Jensen</strong> updates her profile photo in Microsoft Entra ID, the updated photo is synced to <strong>Barbara Jensen’s</strong> employee profile in Workday.</li>
+<li data-list-item-id="eb4da0b28a8b1af1b9e7a89ecdc303f36">
+<strong>Enable Time Aware Lifecycle Management (LCM):</strong> Enable lifecycle actions to run based on effective dates and configured time offsets. For example, the user account for <strong>Barbara Jensen</strong> can be automatically created in Microsoft Entra ID on her official Workday start date.</li>
+<li data-list-item-id="eb6b984d1dd2e895410be94697aeaad17">
+<strong>Enable email writeback from Entra to Workday:</strong> Enable synchronization of updated email addresses from Microsoft Entra ID back to Workday. For example, if <strong>Barbara Jensen’s</strong> email address changes in Microsoft Entra ID from <strong>barbara.jensen@company.com</strong> to <strong>barbara.jensen2@company.com</strong>, the updated email is written back to <strong>Barbara Jensen’s</strong> Workday record.</li>
+</ul><h3 id="h_01KKTJVYPS7DQW756BWNQ7AND4">General Settings</h3><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e5b03c512f65713c1daae8adcb93dcd1f">
+<strong>Enable incremental mode:</strong> Select to run the integration in incremental mode. For example, if <strong>Barbara Jensen’s</strong> profile photo was updated after the previous integration run, only <strong>Barbara Jensen’s</strong> record is processed, rather than11 syncing all employees.</li>
+<li data-list-item-id="e0cad5a93a1aa1f7adaed04ddc16eb4af">
+<strong>Enable naming policy settings:</strong> Select to manage and apply naming policies for user accounts created or updated through the integration. For example, the integration can generate a username such as <strong>barbara.jensen@company.com</strong> for <strong>Barbara Jensen</strong> based on the configured naming policy.</li>
+<li data-list-item-id="e7f3411dfcba4fe5dc6219f71609c9b1d">
+<strong>Enable report-only mode:</strong> Select this to generate a report detailing the data changes that would occur, without applying them. For example, the report may show that <strong>Barbara Jensen’s</strong> email would be updated in Workday, but no actual change is made.</li>
+<li data-list-item-id="e9d0e69b9976ce10d9c3437d98aeab2f9">
+<strong>Enable logging:</strong> Select to generate logs outlining data changes. For example, the logs may record that <strong>Barbara Jensen’s</strong> profile photo was successfully synchronized to Workday.</li>
+<li data-list-item-id="e447c0d0887b8658f48b1550c75ee4b45">
+<strong>Enable notifications:</strong> Select to send integration-related notifications, including success, warning, and error summaries, after each run. For example, administrators may receive a notification confirming that <strong>Barbara Jensen’s</strong> record was updated successfully.</li>
+<li data-list-item-id="ed5608ce24c726e8b0ba80eaa2d7dc8a0">
+<strong>Enable report generation:</strong> Select to generate a detailed report summarizing the results of the integration run. For example, the report may list that <strong>Barbara Jensen’s</strong> account was created, updated, or skipped.</li>
+<li data-list-item-id="e393f2ccb12eb2e7a0f620862e9486ddf">
+<strong>Enable debug mode:</strong> Select to generate detailed logs showing data changes that would occur during the integration run for troubleshooting purposes. For example, debug logs may show the exact attributes being updated for <strong>Barbara Jensen’s</strong> account.</li>
+<li data-list-item-id="e408d0185a350820a7d71d6838e615903">
+<strong>Enable log insights:</strong> Select to visualize integration-related metrics and trends. For example, administrators can review metrics showing how many records, including <strong>Barbara Jensen’s</strong>, were processed during the integration run.</li>
+</ul><h4 id="h_01KEY00G6AJXRDF7143ZTPMVYW">Correlation Settings</h4><p>Configure the following correlation settings:</p><ul>
+<li data-list-item-id="ed54a686735e4036edd0fd7bd100c952c">
+<strong>Entra Correlation:</strong> Selects the field in Microsoft Entra ID that the integration uses to identify each user. When an <strong>Employee ID</strong> is selected, the integration reads the employee ID from the Entra user profile and uses it to find the matching employee in Workday.</li>
+<li data-list-item-id="e08e7ee37894806196603eced017f97dd">
+<strong>Workday Correlation:</strong> Selects the Workday field that the integration uses to identify employee records. When an <strong>Employee ID</strong> is selected, the integration searches for an employee record in Workday that matches the selected Employee ID.  <br/>These settings ensure that the integration correctly matches each Entra user to the right employee record in Workday before updating profile photos.</li>
+</ul><h3 id="h_01KKTKFXVHDSGS9R72DEX43SBG">Manage Users</h3><p>Configure the following settings to control how user accounts are created, updated, and terminated in Microsoft Entra ID based on employee records in Workday.</p><h4 id="h_01KKTQPDV9ZEPSTN07YWBASMDZ">Create Users</h4><p>Configure the following settings to create new user accounts in Microsoft Entra ID for eligible employees from Workday:</p><ul>
+<li data-list-item-id="e68ad03bb0e17190ff4ebba0ea0ea63b1">
+<strong>Create condition for users:</strong> Select the condition that determines which Workday users are eligible for account creation in Microsoft Entra ID. For example, selecting <strong>Create Active Users</strong> allows the integration to create an account for <strong>Barbara Jensen</strong> when her Workday status becomes active.</li>
+<li data-list-item-id="e696ea9f88f59ef3222108e96fac7d96c">
+<strong>Enable creation limit:</strong> Select to limit the number of user accounts created during a single integration run. For example, if the limit is enabled, only a defined number of new users, including <strong>Barbara Jensen</strong>, are created in that run.<br/>When <strong>Enable creation limit</strong> is selected, the following field is displayed:<ul><li data-list-item-id="ee54506e0564b400474d6cc2201b2cc73">
+<strong>User creation limit:</strong> Specify the maximum number of user accounts that can be created during a single integration run. For example, entering <strong>25</strong> allows the integration to create up to 25 new users such as <strong>Barbara Jensen</strong> during that run.</li></ul>
+</li>
+</ul><h4 id="h_01KKTQTTYP770MQKS2WEBRE0RY">Update User</h4><p>Configure the following settings to update existing user accounts in Microsoft Entra ID based on changes to employee records in Workday:</p><ul>
+<li data-list-item-id="e1ac3e3ff959397521a1b4f068730e34c">
+<strong>Update condition for users:</strong> Select the condition that determines which users are eligible for updates in Microsoft Entra ID. For example, selecting <strong>Update Active Users Only</strong> allows the integration to update Barbara Jensen's profile details only if her Workday status is active.</li>
+<li data-list-item-id="e53f807c2cedd399cb6b9d2d7c37b2ed5">
+<strong>Enable updation limit:</strong> Select to limit the number of user updates processed during a single integration run. For example, if the limit is enabled, updates for employees such as <strong>Barbara Jensen</strong> are processed only up to the configured limit.<br/>When the <strong>Enable updation limit</strong> is selected, the following field is displayed:<ul><li data-list-item-id="eb202f3f968c24e960ed58334d977e29d">
+<strong>User updation limit:</strong> Specify the maximum number of user records that can be updated during a single run. For example, entering <strong>50</strong> allows updates for up to 50 users, including <strong>Barbara Jensen</strong>, during that run.</li></ul>
+</li>
+</ul><h4 id="h_01KKTKFXVP5S0S3BM7P7SQBR7H">Terminate User</h4><p>Configure the following settings to disable or terminate user accounts in Microsoft Entra ID when the corresponding employee records in Workday become inactive or terminated:</p><ul>
+<li data-list-item-id="e2b2c45ddbf6e7e92bf2d8f93e010b349">
+<strong>Terminate condition for user:</strong> Select the condition that determines which users are eligible for termination in Microsoft Entra ID. For example, selecting <strong>Terminate Inactive Users Only</strong> disables the account for <strong>Barbara Jensen</strong> when her Workday status becomes inactive.</li>
+<li data-list-item-id="e0a7f3fec938d321e2bdd02c33db674f2">
+<strong>Enable termination limit:</strong> Select to limit the number of user terminations processed during a single integration run. For example, if the limit is enabled, only a specified number of accounts such as <strong>Barbara Jensen’s</strong> are terminated during that run.<br/>When the <strong>Enable termination limit</strong> is selected, the following field is displayed:<ul><li data-list-item-id="eb17d16e25a0da015fb05a0049035eccb">
+<strong>User termination limit:</strong> Specify the maximum number of user accounts that can be terminated during a single run. For example, entering <strong>20</strong> allows the integration to terminate up to 20 users, including <strong>Barbara Jensen</strong>, in that run.</li></ul>
+</li>
+</ul><h3 id="h_01KKTQ3T1G3FEBN68DWJEHJK84">Debug Mode </h3><p>This section allows administrators to run the integration for a specific Workday user for testing and troubleshooting purposes. It helps verify configuration settings and review how the integration processes a particular employee record without running the integration for all users.</p><h4 id="h_01KKTQ3ZR8MGKVBN6P677Q6F6C">Debug Settings</h4><p>Configure the following settings to run the integration for a specific Workday user for testing and troubleshooting:</p><ul><li data-list-item-id="e37e8c10ac3ae64826eb5aa85d6d71729">
+<p><strong>Workday filter:</strong> Select the attribute used to filter and retrieve a specific Workday worker from Workday. For example, selecting <strong>Employee ID</strong> allows the integration to retrieve the record for <strong>Barbara Jensen</strong> using her Employee ID.</p>
+<p>When <strong>Employee ID</strong> is selected, the following field is displayed:</p>
+<ul><li data-list-item-id="e5a7002a1a05d0e8d36effc765ef3317d">
+<strong>Employee ID:</strong> Enter the Employee ID of the Workday worker to run the integration for that specific user. For example, entering <strong>10245</strong> runs the integration only for <strong>Barbara Jensen</strong>, allowing administrators to test or troubleshoot the integration for that employee.</li></ul>
+</li></ul><h3 id="h_01KKTQ7D2TEDFYM9RWSSEQ556S">Account Provisioning</h3><p>This section defines how user accounts are created in Microsoft Entra ID when new employees are provisioned from Workday. It allows administrators to configure password generation rules, the default domain, and how the User Principal Name (UPN) and email address are generated.</p><h4 id="h_01KKTQGQ325C2FTKG7J66S9VVX">Password Settings</h4><p>Configure the following settings to define how passwords are generated for new user accounts created in Microsoft Entra ID:</p><ul>
+<li data-list-item-id="eeb0d8de24290a26e6f81f3bcad03bdc2">
+<strong>Generate password:</strong> Select the password generation method used when creating new user accounts. For example, selecting <strong>Configure Password Policy</strong> enables the integration to automatically generate a password for <strong>Barbara Jensen</strong> according to the configured password rules.</li>
+<li data-list-item-id="ee837cb6fcc75c568c7b56ca400f5b539">
+<strong>Password length:</strong> Specify the length of the generated password. For example, entering <strong>12</strong> generates a 12-character password for <strong>Barbara Jensen’s</strong> account during user creation.</li>
+<li data-list-item-id="e7a41806ef1c2b949af0977dbf3302e73">
+<strong>Allowed characters:</strong> Select the character types that can be used when generating passwords. For example, selecting <strong>Include Lowercase</strong>, <strong>Include Uppercase</strong>, <strong>Include Numbers</strong>, and <strong>Include Special Characters</strong> allows the generated password for <strong>Barbara Jensen</strong> to include all these character types.</li>
+<li data-list-item-id="e836dd555eb68711cd710e91d2491a974">
+<strong>Allowed special characters:</strong> Specify the special characters that can be included in generated passwords. For example, characters such as <em><strong>! @ # $ %</strong></em> may be included when generating a password for <strong>Barbara Jensen’s</strong> account.</li>
+</ul><h4 id="h_01KKTQGQ35HGC81DVSMS89YCY7">Domain Name</h4><p>Configure the default domain used when generating the User Principal Name (UPN) and email address for new user accounts in Microsoft Entra ID:</p><ul><li data-list-item-id="e790c4f0fd3c849fd6be659010e84c0e6">
+<strong>Default domain name*:</strong> Specify the default domain used when generating the User Principal Name (UPN) and email address. For example, entering <strong>atest.onmicrosoft.com</strong> generates a UPN such as <strong>barbara.jensen@atest.onmicrosoft.com</strong> for <strong>Barbara Jensen</strong>.</li></ul><h4 id="h_01KKTQGQ366H3XZC070KTNPSBM">Generate UserPrincipalName (UPN)</h4><p>Configure how the User Principal Name (UPN) is generated for new user accounts in Microsoft Entra ID. The UPN is the username the user uses to sign in:</p><ul><li data-list-item-id="e6b5f02def886201bc4fc50d707f526e2">
+<strong>Generate user principal name (UPN) using prompt:</strong> Specify how the User Principal Name prefix is generated before the domain is appended. For example, the integration may generate an email address such as <strong>barbara.jensen@atest.onmicrosoft.com</strong> for <strong>Barbara Jensen</strong>. <br/>If duplicate usernames exist, the integration can append a number to ensure uniqueness. For example, if <strong>barbara.jensen@atest.onmicrosoft.com</strong> already exists, the integration may generate <strong>barbara.jensen1@atest.onmicrosoft.com</strong>.</li></ul><h4 id="h_01KKTQGQ379VJERBMHAP5M9XXS">Generate Email</h4><p>Configure how email address is generated for new user accounts in Microsoft Entra ID. The generated email can be used as the user’s primary email address:</p><ul><li data-list-item-id="e73fe9d14417d453303b5a1dfd7e7487f">
+<strong>Generate email using:</strong> Select how the email address is generated for new users. For example, selecting <strong>Use UserPrincipalName (UPN) As Email</strong> sets <strong>Barbara Jensen’s</strong> email address to <strong>barbara.jensen@atest.onmicrosoft.com</strong> based on the generated UPN.</li></ul><h3 id="h_01KKTR7CZEZWTJ8BHWP2PGS8YX">Write Back for Email</h3><p>This section configures how email address changes in Microsoft Entra ID are written back to the corresponding employee record in Workday.</p><h4 id="h_01KKTR7CZFPDBZPNK11WAY00D6">Email Configuration</h4><ul>
+<li data-list-item-id="e394cd733dad6c473c8a1087121398e4f">
+<strong>Email field on Workday:</strong> Select the Workday email attribute that will be updated when email writeback occurs. For example, selecting <strong>Work-Email</strong> updates the Workday work email field for <strong>Barbara Jensen</strong> when her email changes in Microsoft Entra ID.</li>
+<li data-list-item-id="e0be6a1882812d035d56ad896785cf87d">
+<strong>Entra email field:</strong> Select the Microsoft Entra ID attribute that will be used as the source email value for writeback to Workday. For example, selecting <strong>mail</strong> writes the value of <strong>barbara.jensen@company.com</strong> from Microsoft Entra ID to the Workday <strong>Work-Email</strong> field for <strong>Barbara Jensen</strong>.</li>
+<li data-list-item-id="eb660fcc730573ad78ddf20194a40360a">
+<strong>Enable writeback limit:</strong> Select to limit the number of email updates written back to Workday during a single integration run. For example, enabling this option ensures that only a specified number of email updates, including <strong>Barbara Jensen’s</strong> email update, are processed in one run.<br/>When <strong>Enable for writeback limit</strong> is selected, the following field is displayed:<ul><li data-list-item-id="e0be7906c72bcc0e489f5ac2624372a72">
+<strong>Import limit for writeback:</strong> Specify the maximum number of email updates that can be written back to Workday during a single integration run. For example, entering <strong>25</strong> allows the integration to update the Workday email field for up to 25 employees, including <strong>Barbara Jensen</strong>, during that run.</li></ul>
+</li>
+</ul><h3 id="h_01KKTS1SPRGNJC94JXMDVBM0E0">Photo Sync</h3><p>This section configures how employee profile photos are synchronized between Workday and Microsoft Entra ID.</p><h4 id="h_01KKTS1SPR8CKZPC40GMRPJ6MJ">Photo Sync Settings</h4><p>Configure how employee profile photos are synchronized between Workday and Microsoft Entra ID, including the direction of synchronization and limits on the number of photo updates processed during each integration run.</p><ul>
+<li data-list-item-id="ea34efb079246bdb51bc0b38a84f54a9a">
+<strong>Enable photo sync:</strong> Select the direction of photo synchronization between Workday and Microsoft Entra ID. For example, selecting <strong>Workday to Entra</strong> syncs the profile photo stored in Workday to Barbara Jensen's corresponding Microsoft Entra ID account.</li>
+<li data-list-item-id="ef10a35806299b11e8dda47b6400fbfd6">
+<strong>Enable limit:</strong> Select to limit the number of photo updates processed during a single integration run. For example, if the limit is enabled, only a defined number of employee photos, including <strong>Barbara Jensen’s</strong> profile photo, are synchronized during that run.<br/>When the <strong>Enable limit</strong> is selected, the following field is displayed:<ul><li data-list-item-id="e66b7cb22499ca1d5ee68edc37deb3789">
+<strong>Photo sync limit:</strong> Specify the maximum number of employee photos that can be synchronized during a single integration run. For example, entering <strong>25</strong> allows the integration to sync photos for up to 25 employees, including <strong>Barbara Jensen</strong>, during that run.</li></ul>
+</li>
+</ul><h3 id="h_01KKTS90XB8ZXJREQZQXX9HMNX">Time Aware LCM</h3><p>This section allows you to configure time-based lifecycle management settings. It enables the integration to perform actions, such as user provisioning, based on an employee’s onboarding date, defined date offsets, and scheduled execution time.</p><h4 id="h_01KKTS90XC6G7SG8GPJM8B8KHD">Time Aware Settings</h4><p>Configure the lifecycle scenarios that should use time-aware processing based on onboarding dates and configured offsets:</p><ul><li data-list-item-id="ee6f210957d1b78d47e5a9b8fc88f632f">
+<strong>Enable time aware settings:</strong> Select the lifecycle scenario that should use time-aware processing. For example, selecting <strong>Onboarding Date Offset/Time Aware</strong> allows the integration to create the Microsoft Entra ID account for <strong>Barbara Jensen</strong> based on her onboarding date and configured offset.</li></ul><h4 id="h_01KKTSDHH1QGVEJJ6XVDKZF627">Onboarding Schedule Settings</h4><p>Configure the schedule and offset rules used to perform lifecycle actions based on an employee’s onboarding date:</p><ul>
+<li data-list-item-id="e6eb69adc6bb4e4e6965d00d44c8321f5">
+<strong>Onboarding action timing:</strong> Select when the action should happen based on the employee’s onboarding date. For example, choosing <strong>Before Onboarding Date</strong> creates the Microsoft Entra ID account for Barbara Jensen before her onboarding date.</li>
+<li data-list-item-id="e2d82a6809ff901661da73f48afc7b1a4"><p data-end="650" data-start="402"><strong data-end="429" data-start="402">Days before onboarding:</strong> Specify the number of days before the onboarding date when the lifecycle action should occur. For example, entering <strong data-end="552" data-start="546">15</strong> creates the Microsoft Entra ID account for <strong data-end="614" data-start="596">Barbara Jensen</strong> 15 days before her onboarding date.</p></li>
+<li data-list-item-id="e0eab415ddd3219ed1531a033293b07a2"><p data-end="875" data-start="654"><strong data-end="682" data-start="654">Timezone for onboarding:</strong> Select the timezone used when evaluating the onboarding date and time. For example, selecting <strong data-end="784" data-start="777">UTC</strong> ensures the onboarding lifecycle action for <strong data-end="847" data-start="829">Barbara Jensen</strong> runs according to UTC time.</p></li>
+<li data-list-item-id="e0631b2d9b7f47d732f87f4b8bb6b9459"><p data-end="1117" data-is-last-node="" data-start="879"><strong data-end="906" data-start="879">Onboarding time of day:</strong> Specify the exact time when the onboarding action should run. For example, entering <strong data-end="1000" data-start="991">14:50</strong> schedules the provisioning of <strong data-end="1051" data-start="1031">Barbara Jensen’s</strong> account to run at <strong data-end="1083" data-start="1070">14:50 UTC</strong> on the scheduled onboarding date.</p></li>
+</ul><h4 id="h_01KJBZXKQVBA7MT6TF4FN456B4">Report Settings</h4><p>This section enables you to configure the reports. </p><p><strong>Note</strong>: The <strong>Report Settings</strong> appear when you select the <strong>Enable Report Generation </strong>checkbox in the<strong> General Settings </strong>section of the<strong> Parameters </strong>tab.</p><h4 id="h_01KKTT3ST7A0HBSW0NZF10TKYS">Report Settings</h4><p>Configure the level of detail included in the integration report generated after each integration run:</p><ul><li data-list-item-id="e57dc1444385d38dc0cfdc34778098aad">
+<strong>Select report type:</strong> Select the type of information to include in the integration report.<br/>The following options are available:<ul>
+<li data-list-item-id="e41095339a3f40fda0d2637359859df63">
+<strong>Minimum:</strong> Includes only the operations performed during the integration run, such as create, update, or terminate. For example, the report may show <strong>15 Users Updated</strong> without displaying employee identifiers or attribute details. This corresponds to the option <strong>Minimum – Operations only; no GUID or fields</strong>.</li>
+<li data-list-item-id="e3b1f748ad074e9e71f43e827304d56ba">
+<strong>Full:</strong> Includes detailed report information such as the employee number, the operation performed, the field names, and the updated values, including both PII and non-PII data. For example, the report may show <strong>Barbara Jensen/Department updated to Sales</strong>. This corresponds to the option <strong>Employee Number with All Data – Employee # + operations + field names + all values (PII + non-PII)</strong>.</li>
+</ul>
+</li></ul><h3 id="h_01KKTTV50MEJRNTBPHG6QS1H62">Log Settings</h3><p>This section allows you to configure the level of information recorded in the integration logs.</p><p><strong>Note:</strong> Log settings appear only when <strong>Enable logging</strong> is selected in the <strong>General Settings</strong> section of the <strong>Parameters</strong> tab.</p><h4 id="h_01KKTTV50N8HJ91SWXFVVDRRVA">Log Settings</h4><p>Select the level of detail to include in the log insights:</p><ul><li data-list-item-id="e975268cc8c4be1dc731f273bd62a0c6b">
+<p><strong>Select log type:</strong> Select the type of information to include in the integration logs.</p>
+<p>The following options are available:</p>
+<ul>
+<li data-list-item-id="e7bdd4afc6d656d1885f9c63dfb4423ea">
+<strong>Minimum:</strong> Includes only the operations performed during the integration run, such as create, update, or terminate. For example, the logs may show <strong>15 Users Updated</strong> without displaying employee identifiers or attribute details.</li>
+<li data-list-item-id="e2127709713346641e71ccf6b381deca5">
+<strong>Full:</strong> Includes detailed log information such as the employee number, the operation performed, the field names, and the updated values, including both PII and non-PII data. For example, the logs may show <strong>Barbara Jensen/Department updated to Sales</strong>. This corresponds to the option <strong>Employee Number with All Data – Employee # + operations + field names + all values (PII + non-PII)</strong>.</li>
+</ul>
+</li></ul><h3 id="h_01KKTVMZ6KAC39A3SS0YNDTVC8">Notifications</h3><p>This section allows you to configure email notifications for integration events, such as successful or failed execution, and to define the recipients and report details included in the notification emails:</p><h4 id="h_01KKTVPXVNCW5163JW89SS6E3B">Notification Settings</h4><p>Configure the following settings to define when notification emails are sent.</p><ul>
+<li data-list-item-id="eb4092c09964d11859ab1b461361d790b">
+<strong>Send email notification for success:</strong> Select to send an email when the integration completes successfully. For example, when the integration finishes without errors, a success notification is sent to the configured recipients.</li>
+<li data-list-item-id="e597b7b80790b77de9e49157e696e2198">
+<strong>Send email notification for failure:</strong> Select to send an email when the integration fails. For example, if the integration encounters an error, a failure notification is sent to the configured recipients.</li>
+<li data-list-item-id="ea15fc754ddfe43d6e4b25bfad9461a3b">
+<strong>Attach report to email:</strong> Select to include the integration report as an attachment in notification emails. For example, enabling this option attaches the execution summary to the notification email.</li>
+</ul><h4 id="h_01KKTVMZ6MCCGM52GCHN9HT70D">Success Notification Settings</h4><p>Configure the following settings to define the recipients and content of success notification emails.</p><ul>
+<li data-list-item-id="ef068ec470350df4ebf0c07ba698b97bb">
+<strong>Success notification recipients:</strong> Enter the email addresses that should receive success notification emails. For example, add <strong>admin@company.com</strong> to receive confirmation when the integration completes successfully.</li>
+<li data-list-item-id="e661ef14dd79e49cbf7974313e3bfd9d1">
+<strong>Success notification CC:</strong> Enter additional email addresses to receive a copy of success notifications. For example, include <strong>teamlead@company.com</strong> to keep the team informed.</li>
+<li data-list-item-id="e00ec008983a936e0e1024c7cb6534bc7">
+<strong>Success email subject:</strong> Enter the subject line used for success notification emails. For example, <strong>Integration Execution Success</strong>.</li>
+<li data-list-item-id="efdd6776846bf71034457f3f6c317f3b2">
+<strong>Success email body:</strong> Enter the message content sent when the integration completes successfully. For example, include a summary of the run, such as the number of users processed and any key updates.</li>
+</ul><h4 id="h_01KKTVMZ6PB4FG3M60K73ZVPH8">Failure Notification Settings</h4><p>Configure the following settings to define the recipients and content of failure notification emails.</p><ul>
+<li data-list-item-id="e26c3e5af97e04989d5799e08c52f7298">
+<strong>Failure notification recipients:</strong> Enter the email addresses that should receive failure notification emails. For example, add <strong>support@company.com</strong> to receive alerts when the integration encounters an error.</li>
+<li data-list-item-id="ea30bfb065c410b94c6a23d47332f097a">
+<strong>Failure notification CC:</strong> Enter additional email addresses to receive a copy of failure notifications. For example, include <strong>itadmin@company.com</strong> to notify system administrators.</li>
+<li data-list-item-id="e209c24177e81827666411bd8348607a5">
+<strong>Failure email subject:</strong> Enter the subject line used for failure notification emails. For example, <strong>Integration Execution Failure</strong>.</li>
+<li data-list-item-id="ef8053ced847ec1cb289f972b827a3582">
+<strong>Failure email body:</strong> Enter the message content sent when the integration fails. For example, include error details and troubleshooting guidance.</li>
+</ul><h4 id="h_01KKTVMZ6R6GM9N0C0QYCB7HQ0">Notification Report Settings</h4><p>Configure the report information included in notification emails.</p><ul>
+<li data-list-item-id="e97213f5854cab762fd73c7cde44ce613">
+<strong>Select report type:</strong> Select the type of report data included in the notification email. For example, selecting <strong>Employee Number with All Data – Employee # + operations + field names + all values (PII + non-PII)</strong> includes detailed execution data in the notification report.</li>
+<li data-list-item-id="eba28f748e59fcd6af6ef53cdc3fe96cc">
+<strong>Select report level:</strong> Select the level of report detail included in the notification email. For example, selecting <strong>Full</strong> includes all available attribute details in the report.</li>
+</ul><h3 id="h_01KKTW0YB3BJ089MQ0SFMRGYYF">Log Insights</h3><p>This section allows you to configure the analytics dashboard for monitoring integration activity and metrics.</p><p><strong>Note:</strong> The <strong>Log Insights</strong> section appears only when <strong>Enable log insights</strong> is selected in the <strong>General Settings</strong> section of the <strong>Parameters</strong> tab.</p><h4 id="h_01KKTW0YB45P6DZFV8KBPF96A1">Log Insights Settings</h4><p>Configure the following settings to define how integration analytics are generated and displayed.</p><ul>
+<li data-list-item-id="e11f044a5cedfcd9f6bf33dcb8a7bf7b0">
+<strong>Enter dashboard name:</strong> Enter a name for the analytics dashboard that will display the integration metrics. For example, entering <strong>User Sync Monitoring</strong> creates a dashboard that displays analytics for integration runs.</li>
+<li data-list-item-id="e1f0593f3fb33ea9c09fbe7277bdfb480">
+<strong>Select Log insights type:</strong> Select the type of information to include in the analytics dashboard.<br/>The following options are available:<ul>
+<li data-list-item-id="e0b6062335948d173fc2ab1d594a1d8d3">
+<strong>Minimum:</strong> Displays only the operations performed during the integration run, such as create, update, or terminate. For example, the dashboard may show <strong>15 Users Updated</strong> without displaying employee identifiers or attribute details.</li>
+<li data-list-item-id="e5a6b54cb206fb3c38d839fe3161aff9c">
+<strong>Full:</strong> Displays detailed insights, including the employee number, operation performed, field names, and updated values, including both PII and non-PII data. For example, the dashboard may show <strong>Barbara Jensen – Department updated to Sales</strong>.</li>
+</ul>
+</li>
+<li data-list-item-id="eb2c625ae7bb889698783f1ad86d13d62">
+<strong>Select analytics level:</strong> Select the level of detail to display in the analytics dashboard. For example, selecting <strong>Full</strong> displays all available attribute details related to the integration execution.</li>
+</ul><h2 id="h_01KKTWC785YZM4J6DH0F2ZKEQ6">Attribute Mapper</h2><p>This section defines how employee attributes from <strong>Workday</strong> are mapped to the corresponding user attributes in <strong>Microsoft Entra ID</strong>. These mappings control how employee data is used when creating or updating user accounts in Entra ID during the integration run.</p><p>Each mapping specifies how a <strong>source attribute or expression from Workday</strong> is transformed and assigned to a <strong>target attribute in Entra ID</strong>. This ensures that employee identity information, such as names, email addresses, phone numbers, and location details, remains consistent between the two systems.</p><p>Mappings may use direct attributes from Workday or expressions that combine or transform values before sending them to Entra ID. For example, <strong>preferredFirstName</strong> and <strong>preferredLastName</strong> from Workday may be combined to populate the <strong>Display Name</strong> attribute in Entra ID.</p><p>Administrators can review and modify these mappings to align with organizational identity requirements. Any updates made in this section determine how worker data from Workday is provisioned and synchronized to Microsoft Entra ID during user creation and updates.</p><h3 data-end="613" data-start="601" id="h_01KEY0VRP28DFNKTTNRZ36WYVZ">Schedule</h3><p data-end="872" data-start="615">Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h3 data-end="902" data-start="879" id="h_01KEY0VRP38CCXNPB165EJ6C27">Execute Integration</h3><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><div><div><div tabindex="-1">
+<div><div data-message-author-role="assistant" data-message-id="40d9eb3f-6ce0-4378-9c1c-720248d31676" data-message-model-slug="gpt-5-3" dir="auto"><div><div>
+<h1 data-end="209" data-section-id="8in3fz" data-start="189" id="h_01KKTWEXSDDR5TJX9R40F5KEXN">Additional Options</h1>
+<p data-end="547" data-start="211">Aquera provides additional options that allow administrators to perform various actions on integrations. These actions include executing integrations, upgrading to newer versions, copying integrations, modifying configurations, deleting integrations, exporting or importing integrations, viewing execution logs, and downloading reports.</p>
+<p data-end="636" data-start="549">Refer to <strong data-end="590" data-start="558">User Actions on Integrations</strong> for detailed information about these options.</p>
+<h2 id="h_01KKTWEXSMAEMXKQCXGS6FWJHZ">Update the Integration to the Latest Version</h2>
+<p data-end="816" data-start="691">You can upgrade an integration created from a template to the latest version to access new features, improvements, and fixes.</p>
+<h3 id="h_01KKTWEXSP9XTFJDSS42HRY4KA">Upgrade an Integration</h3>
+<p data-end="899" data-start="845">Perform the following steps to upgrade an integration:</p>
+<ol data-end="1976" data-start="901">
+<li data-end="975" data-list-item-id="e2f0c0a63a7b52b26202b6704031b5c79" data-section-id="l0fj1s" data-start="901"><p data-end="975" data-start="904">Navigate to the <strong data-end="936" data-start="920">Integrations</strong> module in the <strong data-end="974" data-start="951">Aquera Admin Portal</strong>.</p></li>
+<li data-end="1023" data-list-item-id="eee4454b0892ae300f04b1977ffe38c61" data-section-id="1c0q0mc" data-start="977"><p data-end="1023" data-start="980">Locate the integration you want to upgrade.</p></li>
+<li data-end="1116" data-list-item-id="e9b8245ba8fce075dcb3b2e4ac78377a0" data-section-id="5zuogu" data-start="1025"><p data-end="1116" data-start="1028">Click the <strong data-end="1063" data-start="1038">vertical ellipsis (⋮)</strong> next to the integration and select <strong data-end="1115" data-start="1099">View Details</strong>.</p></li>
+<li data-end="1579" data-list-item-id="e9fefcda07f0bf602380cc6225fc53e9a" data-section-id="ock67g" data-start="1118">
+<p data-end="1175" data-start="1121">The <strong data-end="1136" data-start="1125">Details</strong> panel displays the following sections:</p>
+<p data-end="1341" data-start="1180"><strong data-end="1204" data-start="1180">Integration details:</strong> Displays the integration name, description, creation date, last updated date, and the user who created or last modified the integration.</p>
+<p data-end="1579" data-start="1346"><strong data-end="1367" data-start="1346">Template details:</strong> Displays the current integration version under <strong data-end="1434" data-start="1415">Current Version</strong>.<br/>If a newer version is available, it appears under <strong data-end="1516" data-start="1491">New Version Available</strong> along with a summary of the changes and an <strong data-end="1571" data-start="1560">Upgrade</strong> option.</p>
+</li>
+<li data-end="1646" data-list-item-id="eb568556231feffdd4dfb6d6181af2fc7" data-section-id="1ml0ebj" data-start="1581"><p data-end="1646" data-start="1584">Click <strong data-end="1601" data-start="1590">Upgrade</strong>. The <strong data-end="1630" data-start="1607">Upgrade Integration</strong> window appears.</p></li>
+<li data-end="1953" data-list-item-id="eac5932e434bade5f1ce55d944d00f8e3" data-section-id="ohdbek" data-start="1648">
+<p data-end="1710" data-start="1651">Provide the following details for the upgraded integration:</p>
+<ul>
+<li data-end="1953" data-list-item-id="e833312ab245cc0f077ac8ff8b5c36ff7" data-section-id="ohdbek" data-start="1648"><p data-end="1710" data-start="1651"><strong data-end="1740" data-start="1715">New integration name:</strong> Enter a name for the upgraded integration.</p></li>
+<li data-end="1953" data-list-item-id="e2376d4d4ee9710095645ca12293a34b9" data-section-id="ohdbek" data-start="1648"><p data-end="1710" data-start="1651"><strong data-end="1804" data-start="1788">Description:</strong> Enter a description for the upgraded integration.</p></li>
+</ul>
+<p data-end="1953" data-start="1859">The window also displays the <strong data-end="1907" data-start="1888">current version</strong> and the <strong data-end="1931" data-start="1916">new version</strong> that will be applied.</p>
+</li>
+<li data-end="1976" data-list-item-id="e9f86bfbafb0d79249ebc39d4bdbca9d6" data-section-id="17rlz70" data-start="1955"><p data-end="1976" data-start="1958">Click <strong data-end="1975" data-start="1964">Upgrade</strong>.</p></li>
+</ol>
+<p data-end="2116" data-is-last-node="" data-is-only-node="" data-start="1978">A new integration is created using the upgraded template version while retaining the configuration settings from the existing integration.</p>
+</div></div></div></div>
+<div><div> </div></div>
+</div></div></div><div aria-hidden="true" data-edge="true">
+<br/> </div>
+  </div>
+</body>
+</html>

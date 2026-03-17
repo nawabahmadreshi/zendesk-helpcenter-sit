@@ -19,7 +19,14 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>ADP Workforce Now to ServiceNow Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>The ADP Workforce Now to ServiceNow integration extracts the worker attributes from ADP Workforce Now and creates onboarding and offboarding tickets in ServiceNow. </p><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows organizations to automate data movement and lifecycle processes across business applications, helping teams streamline provisioning, reduce manual effort, and maintain consistency across systems.</p><p>The ADP Workforce Now to ServiceNow integration retrieves worker data from ADP Workforce Now, evaluates onboarding and offboarding eligibility, and creates corresponding ServiceNow Service Catalog / RITM-based tickets for downstream fulfilment. The integration also supports destination validation checks, date-offset processing, duplicate-ticket prevention through correlation caching, execution reporting, email notifications, and analytics logging.</p><h2 id="h_01KKXFEP8K9H5STEX8HPYZRNVX">Key Features</h2><ul data-end="2062" data-start="654">
+<li data-end="793" data-list-item-id="e85e4a3e018c6d7e192ab06ef26122548" data-section-id="sg77ft" data-start="654"><p data-end="793" data-start="656"><strong data-end="697" data-start="656">Automated onboarding and offboarding:</strong> Creates ServiceNow tickets for new hires and terminated workers based on configured conditions.</p></li>
+<li data-end="931" data-list-item-id="e8e44ca6a4ccbc24058e50bde7f854cdd" data-section-id="1kkbh4i" data-start="795"><p data-end="931" data-start="797"><strong data-end="844" data-start="797">Service Catalog Item-based ticket creation:</strong> Uses ServiceNow Service Catalog Items to generate onboarding and offboarding requests.</p></li>
+<li data-end="1165" data-list-item-id="efdd5b76046bcc1fb17eb2eee2eb71bb4" data-section-id="p3m5el" data-start="933"><p data-end="1165" data-start="935"><strong data-end="978" data-start="935">User validation before ticket creation:</strong> Validates user presence in systems such as Okta, Entra ID, and ServiceNow before creating tickets. If the user is not found, ticket creation is deferred until the user becomes available.</p></li>
+<li data-end="1316" data-list-item-id="e66ea0626ce4a8dfc0c66e3e50e95346b" data-section-id="k0yqnq" data-start="1167"><p data-end="1316" data-start="1169"><strong data-end="1193" data-start="1169">Date offset support:</strong> Allows scheduling of onboarding and offboarding tickets before or after the actual event date based on configured offsets.</p></li>
+<li data-end="1467" data-list-item-id="e865547b5d173b77272ec96a9639298fd" data-section-id="14iv38l" data-start="1318"><p data-end="1467" data-start="1320"><strong data-end="1352" data-start="1320">Duplicate ticket prevention:</strong> Prevents duplicate ticket creation by tracking existing requests and allowing recreation only for selected states.</p></li>
+<li data-end="1592" data-list-item-id="e364655c86c98a6617ee44124624144f0" data-section-id="1nlhprh" data-start="1469"><p data-end="1592" data-start="1471"><strong data-end="1498" data-start="1471">Incremental processing:</strong> Processes only records that have changed since the last successful run, improving efficiency.</p></li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="e987234e093e8e51736f0d187a5a13113">
 <strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit the <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
 </li>
@@ -40,13 +47,13 @@
 <li data-list-item-id="e95c30dc3f4b7db19bf547ad8de9d0c7c">Enter a name and a description for the integration.</li>
 <li data-list-item-id="e110ace082bb999a22702f4044332609a">Select both application connector instances from the dropdown menus.</li>
 <li data-list-item-id="e0d2121742e1ffaccd6a19946a8b38237">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
-</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Features</h4><p>Configure the following integration features:</p><ul>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields.</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Features</h4><p>Configure the following integration features:</p><ul>
 <li data-list-item-id="e4ac31722886f8470f0b409de5d6a3687">
-<strong>Enable onboarding ticket generation</strong>: Select to create ServiceNow onboarding tickets for new hires in ADP Workforce Now.</li>
+<strong>Enable onboarding ticket generation</strong>: Select to create ServiceNow onboarding tickets for new hires in ADP Workforce Now.<br/>When <strong data-end="1528" data-start="1489">Enable onboarding ticket generation</strong> is selected, the <strong data-end="1562" data-start="1546">Manage Hires</strong> tab appears.</li>
 <li data-list-item-id="e93e3109dc383068928cf4b423400ff46">
-<strong>Enable offboarding ticket generation</strong>: Select to create ServiceNow offboarding tickets for terminated workers in ADP Workforce Now.</li>
+<strong>Enable offboarding ticket generation</strong>: Select to create ServiceNow offboarding tickets for terminated workers in ADP Workforce Now.<br/>When the <strong data-end="1623" data-start="1583">Enable offboarding ticket generation</strong> is selected, the <strong data-end="1664" data-start="1641">Manage Terminations</strong> tab appears.</li>
 <li data-list-item-id="e40dbe4004ce6cc37ba66a71402e689af">
-<strong>Enable date offset</strong>: Select to enable date offset, allowing records to synchronize based on the specified date offset and time zone.</li>
+<strong>Enable date offset</strong>: Select to enable date offset, allowing records to synchronize based on the specified date offset and time zone.<br/>When the <strong data-end="1707" data-start="1685">Enable date offset</strong> is selected, the <strong data-end="1740" data-start="1725">Date Offset</strong> tab appears.</li>
 </ul><h4 id="h_01KHK1CAS2QHGYWZN7TPET5E8D">Operational Settings</h4><p>Configure the following integration features:</p><ul>
 <li data-list-item-id="e91b3ed8429d2c30a2260c244ef943c40">
 <strong>Run in report-only mode</strong>: Simulate the integration run and generate results without making any changes to the target system.</li>
@@ -56,31 +63,55 @@
 <strong>Run in incremental mode</strong>: Run the integration using only records that have changed since the last successful execution.</li>
 <li data-list-item-id="ebec0bf047870f70852f091650b7c649b">
 <strong>Enable log insights</strong>: Select to visualize the integration-related metrics.</li>
+<li data-list-item-id="e0f0cc5ad496bafe204365ac7f1a4bb14">
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes.</li>
 <li data-list-item-id="e77f3f44a4d0b753b53b381ba7a497a1d">
 <strong>Enable notifications:</strong> Select to enable integration-related notifications.</li>
 </ul><h3 id="h_01KHK210EF6PMW6J4GA9H9GS9C">Manage Hires</h3><p>This tab enables you to configure onboarding settings. </p><p><strong>Note</strong>: The <strong>Manage Hires</strong> tab appears when you select the <strong>Enable onboarding ticket generation </strong>checkbox in the<strong> Integration Features </strong>section of the<strong> Parameters </strong>tab.</p><h4 id="h_01KHK2155TJ64WEF1N7ASAXCEZ">Onboarding Tickets Generation</h4><p>Configure the following onboarding ticket generation settings:</p><ul>
 <li data-list-item-id="e37be509411c781487154948042a4b4ca">
-<strong>Onboarding condition type</strong>: Select the condition to create onboarding tickets in ServiceNow.</li>
-<li data-list-item-id="e7f349a3ea221acee5ff32d752aff2f7f">
-<strong>Custom onboarding condition</strong>: Enter the expression to follow when creating onboarding tickets in ServiceNow.</li>
+<strong>Onboarding condition type</strong>: Select the condition to create onboarding tickets in ServiceNow.<br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="e55c6b809bae2c88a9e36a59914891869">
+<strong>All Workers:</strong> Creates onboarding tickets for all workers from ADP Workforce Now.</li>
+<li data-list-item-id="e5ce29a46cde4c96503268b6600a4196f">
+<strong>All Active Workers:</strong> Creates onboarding tickets only for workers with an active status.</li>
+<li data-list-item-id="e82bb17dec59b68885425e855b826429f">
+<strong>All Active Full-Time Workers:</strong> Creates onboarding tickets only for active full-time workers.</li>
+<li data-list-item-id="e05f9d0bd6bdc5c968517dc1b35117819">
+<strong>Custom:</strong> Allows you to define a custom condition using an expression.<br/>When <strong>the Custom</strong> option is selected, the following field is displayed:<ul><li data-list-item-id="e7f349a3ea221acee5ff32d752aff2f7f">
+<strong>Custom onboarding condition</strong>: Enter the expression to follow when creating onboarding tickets in ServiceNow.</li></ul>
+</li>
+</ul>
+</li>
 <li data-list-item-id="e6a4a8241db350d954109c8b23d3c5bbb">
-<strong>ServiceNow trigger for onboarded worker</strong>: Currently, the integration only supports the <strong>Service Catalog Item</strong> trigger, so this field cannot be configured.</li>
+<strong>ServiceNow trigger for onboarded worker</strong>: Creates onboarding tickets using the <strong data-end="390" data-start="366">Service Catalog Item</strong> trigger. <br/><strong>Note</strong>: The integration currently only supports the <strong>Service Catalog Item</strong> trigger, so this field cannot be configured.</li>
 <li data-list-item-id="eec227b8c61d9ebce85d2b2ce677efcc3">
-<strong>ServiceNow catalog item for onboarded worker:</strong> Select a catalog item from the dropdown menu. This catalog item will be applicable to the onboarded worker.</li>
+<strong>ServiceNow catalog item for onboarded worker:</strong> Select the Service Catalog Item that will be used to create onboarding tickets in ServiceNow. For example, selecting <strong data-end="241" data-start="223">Onboarding_ADP</strong> ensures that onboarding requests are created using that catalog item template.</li>
 <li data-list-item-id="e7ae4da4374a3e9473caae90dbd47bafb">
-<strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Okta before ticket creation:</strong> Select to ensure a ServiceNow onboarding ticket is created only after the user is verified in your selected Okta instance. If the worker is not yet found in Okta during the sync, the ticket creation will be deferred until the user is successfully identified in a subsequent run. When you select this, the <strong>Okta instance</strong> dropdown appears.</li>
-<li data-list-item-id="ea7a5abaebaebd9157542ebd89fc08dc0">
-<strong>Okta instance</strong>: Select the Okta instance from the dropdown menu. The worker will be verified in this selected instance.</li>
+<strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Okta before ticket creation:</strong> Select to ensure a ServiceNow onboarding ticket is created only after the user is verified in your selected Okta instance. <br/><strong>Note</strong>: If the worker is not yet found in Okta during the sync, the ticket creation will be deferred until the user is successfully identified in a subsequent run. <br/>When you select <strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Okta before ticket creation,</strong> the <strong>Okta instance</strong> dropdown appears:<ul><li data-list-item-id="ea7a5abaebaebd9157542ebd89fc08dc0">
+<strong>Okta instance</strong>: Select the Okta instance from the dropdown menu. The worker will be verified in this selected instance.</li></ul>
+</li>
 <li data-list-item-id="e076fa6c6a9a49032ffe4afe817b50234">
-<strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Entra ID before ticket creation</strong>: Select to ensure a ServiceNow onboarding ticket is created only after the user is verified in your selected Entra ID instance. If the worker is not yet found in Entra ID during the sync, the ticket creation will be deferred until the user is successfully identified in a subsequent run. When you select this, the <strong>Entra ID instance</strong> dropdown appears.</li>
-<li data-list-item-id="e30ab0a10b854766af914c84e52a2c3c4">
-<strong>Entra ID instance</strong>: Select the Entra ID instance from the dropdown menu. The worker will be verified in this selected instance.</li>
+<strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Entra ID before ticket creation</strong>: Select to ensure a ServiceNow onboarding ticket is created only after the user is verified in your selected Entra ID instance. <br/><strong>Note</strong>: If the worker is not yet found in Entra ID during the sync, the ticket creation will be deferred until the user is successfully identified in a subsequent run. <br/>When you select <strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Entra ID before ticket creation</strong>, the <strong>Entra ID instance</strong> dropdown appears:<ul><li data-list-item-id="e30ab0a10b854766af914c84e52a2c3c4">
+<strong>Entra ID instance</strong>: Select the Entra ID instance from the dropdown menu. The worker will be verified in this selected instance.</li></ul>
+</li>
 <li data-list-item-id="ee3e5022922ffaa552199dd2ed72688fd">
-<strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in ServiceNow before ticket creation</strong>: Select to ensure a ServiceNow onboarding ticket is created only after the user is verified in ServiceNow. If the worker is not yet found in ServiceNow during the sync, the ticket creation will be deferred until the user is successfully identified in a subsequent run. </li>
-<li data-list-item-id="ee60029995a071151ba1dd39f31242a34">
+<strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in ServiceNow before ticket creation</strong>: Select to ensure a ServiceNow onboarding ticket is created only after the user is verified in ServiceNow. <br/><strong>Note</strong>: If the worker is not yet found in ServiceNow during the sync, the ticket creation will be deferred until the user is successfully identified in a subsequent run. </li>
+<li data-list-item-id="e6b967bb12a83f049158f19a73b431375">
 <strong>Start date for onboarding ticket generation</strong>: Specify the date from which the workers' records in the ADP Workforce Now are considered for onboarding ticket creation in ServiceNow.</li>
 <li data-list-item-id="ecd7b5f113c1260b0466d96e6fde6f3cd">
-<strong>Allowed statuses for duplicate onboarding tickets</strong>: Select the RITM states that permit creating a new onboarding ticket when an existing record is already present.<span aria-hidden="true" data-animation-atomic="" data-complete="true" data-sae="" data-wiz-attrbind="class=jztzu_1a/TKHnVd" data-wiz-uids="jztzu_1b,jztzu_1c"></span>
+<strong>Allowed statuses for duplicate onboarding tickets</strong>: Select the RITM states that permit creating a new onboarding ticket when an existing record is already present.</li>
+<li data-list-item-id="e2cef7a9740b85a4f44c3abd979762f19">
+<p data-end="601" data-start="338"><strong data-end="375" data-start="338">Onboarding </strong><strong data-end="375" data-start="338">Subtask </strong><strong data-end="375" data-start="338">Type </strong><strong data-end="375" data-start="338">to </strong><strong data-end="375" data-start="338">Close:</strong> Select the onboarding catalog task type under the RITM that should be identified and closed from the dropdown.<br/>The following are the available:</p>
+<ul>
+<li data-list-item-id="ec732b0e1b30faf16d7cc248ce45ac239">
+<strong>None</strong>: No subtask type is selected, and no onboarding subtasks will be automatically closed.</li>
+<li data-list-item-id="e090a766020b18027488b4cd6f3d7e37c">
+<strong>SCTASK</strong>: Identifies and closes ServiceNow catalog tasks (SCTASK) under the onboarding RITM that match the configured criteria.<br/>When SCTASK is selected the following fields are displayed: <ul>
+<li data-list-item-id="e2b8578e5b041087fa0155e98f7e24c40"><p data-end="873" data-start="603"><strong data-end="645" data-start="603">Onboarding </strong><strong data-end="645" data-start="603">Subtask </strong><strong data-end="645" data-start="603">Short </strong><strong data-end="645" data-start="603">Descriptions:</strong> Enter one or more catalog task short descriptions to identify the tasks that should be closed. For example, entering <strong data-end="801" data-start="763">Create </strong><strong data-end="801" data-start="763">User </strong><strong data-end="801" data-start="763">Account, </strong><strong data-end="801" data-start="763">Assign </strong><strong data-end="801" data-start="763">Laptop</strong> ensures that only tasks with matching short descriptions are processed.</p></li>
+<li data-list-item-id="eb9cc82cb09a0af8191c0d118a44ac3a6"><p data-end="1103" data-start="875"><strong data-end="926" data-start="875">Onboarding </strong><strong data-end="926" data-start="875">Subtask </strong><strong data-end="926" data-start="875">States </strong><strong data-end="926" data-start="875">Eligible </strong><strong data-end="926" data-start="875">for </strong><strong data-end="926" data-start="875">Closure:</strong> Select one or more task states that qualify for closure. For example, selecting <strong data-end="1015" data-start="1007">Open</strong> and <strong data-end="1040" data-start="1020">Work </strong><strong data-end="1040" data-start="1020">in </strong><strong data-end="1040" data-start="1020">Progress</strong> ensures that only tasks currently in these states are updated.<span aria-hidden="true" data-animation-atomic="" data-complete="true" data-sae="" data-wiz-attrbind="class=jztzu_1a/TKHnVd" data-wiz-uids="jztzu_1b,jztzu_1c"></span></p></li>
+</ul>
+</li>
+</ul>
 </li>
 </ul><h4 id="h_01KHK22304N44RG4GH3VW8EBG3">Correlation Settings</h4><p>Configure the following correlation settings:</p><ul>
 <li data-list-item-id="e0d067cb0239e06a33c2675f9ae521fc4">
@@ -91,15 +122,21 @@
 <strong>Okta correlation attribute</strong>: Select an attribute in Okta that matches the selected ADP Workforce Now attribute value to identify common users across ADP Workforce Now and Okta. This field is required only when you have selected the <strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Okta before ticket creation</strong> checkbox.</li>
 <li data-list-item-id="e77db4917f7dcd6b5c57e06176240327f">
 <strong>Entra ID correlation attribute</strong>: Select an attribute in Entra ID that matches the selected ADP Workforce Now attribute value to identify common users across ADP Workforce Now and Entra ID. This field is required only when you have selected the <strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Entra ID before ticket creation</strong> checkbox.</li>
-</ul><h3 id="h_01KHKACRS1SACB85DEV28Y1RTF">Manage Terminations</h3><p>This tab enables you to configure offboarding settings. </p><p><strong>Note</strong>: The <strong>Manage Terminations </strong>tab appears when you select the <strong>Enable offboarding ticket generation </strong>checkbox in the<strong> Integration Features </strong>section of the<strong> Parameters </strong>tab.</p><h4 id="h_01KHKADH0CYDDWB04HGJNJNS4F">Offboarding Tickets Generation</h4><p>Configure the following correlation settings for onboarding ticket creation:</p><ul>
+</ul><h3 id="h_01KHKACRS1SACB85DEV28Y1RTF">Manage Terminations</h3><p>This tab enables you to configure offboarding settings. </p><p><strong>Note</strong>: The <strong>Manage Terminations </strong>tab appears when you select the <strong>Enable offboarding ticket generation </strong>checkbox in the<strong> Integration Features </strong>section of the<strong> Parameters </strong>tab.</p><h4 id="h_01KHKADH0CYDDWB04HGJNJNS4F">Offboarding Tickets Generation</h4><p>Configure the following settings for offboarding ticket generation:</p><ul>
 <li data-list-item-id="e6d955589319f3ce03e40e6286bd479b0">
-<strong>Offboarding condition</strong>: Select the condition type to create offboarding tickets in ServiceNow.</li>
+<strong>Offboarding condition type</strong>: Select the condition type to create offboarding tickets in ServiceNow.<br/>The following options are available: <ul>
 <li data-list-item-id="e96335825479d65716a8f8416cd0a719c">
-<strong>Select one or more offboarding conditions</strong>: Select the offboarding condition(s) to create offboarding tickets in ServiceNow.</li>
-<li data-list-item-id="ebb0747fb15849ed6eeb6773a0802de61">
-<strong>Custom offboarding condition</strong>: Enter the expression to follow when creating offboarding tickets in ServiceNow.</li>
+<strong>Basic</strong>: Allows you to select predefined worker statuses for offboarding.<br/>When you select <strong>Basic</strong>, the following field is displayed: <ul><li data-list-item-id="e4ed5521ea5f5ccf18d8c0df4ad94088f">
+<strong>Offboarding conditions</strong>: Select one or more worker conditions to determine which workers are marked for offboarding. For example, you can select <strong>All Terminated Workers</strong>, <strong>All Deceased Workers</strong>, or <strong>All Retired Workers</strong>.</li></ul>
+</li>
+<li data-list-item-id="e3dc40c31e898bd24aff76b4868337cd0">
+<strong>Custom</strong>: Allows you to define a custom condition using an expression.<br/>When you select <strong>Custom</strong>, the following field is displayed: <ul><li data-list-item-id="ebb0747fb15849ed6eeb6773a0802de61">
+<strong>Custom offboarding condition</strong>: Enter the expression to follow when creating offboarding tickets in ServiceNow.</li></ul>
+</li>
+</ul>
+</li>
 <li data-list-item-id="e86b1e9601eaf1532b46eefa2120e6e41">
-<strong>ServiceNow trigger for offboarded worker</strong>: Currently, the integration only supports the <strong>Service Catalog Item</strong> trigger, so this field cannot be configured.</li>
+<strong data-end="140" data-start="95">ServiceNow trigger for offboarded worker:</strong> Creates offboarding tickets using the <strong data-end="203" data-start="179">Service Catalog Item</strong> trigger.<br/><strong>Note</strong>: The integration currently supports only the <strong data-end="289" data-start="265">Service Catalog Item</strong> trigger, so this field cannot be configured.</li>
 <li data-list-item-id="e6b2a1628ea0f99aa9d6c1d05c880a505">
 <strong>ServiceNow catalog item for offboarded worker</strong>: Select a catalog item from the dropdown menu. This catalog item will be added for the offboarded worker.</li>
 <li data-list-item-id="e5eae9cd901234fb3cb3ba438fc6a5e4d">
@@ -107,7 +144,22 @@
 <li data-list-item-id="e3fe0e5a79fed0d4a705c53e5c16bfd1d">
 <strong>Start date for offboarding ticket generation</strong>: Specify the date from which the workers' records in the ADP Workforce Now are considered for offboarding ticket creation in ServiceNow.</li>
 <li data-list-item-id="e7774f077f45676046cfb05a70ec88e22">
-<strong>Allowed statuses for duplicate offboarding tickets</strong>: Select the RITM states that permit creating a new offboarding ticket when an existing record is already present.</li>
+<strong>Allowed statuses for duplicate offboarding tickets</strong>: Select the Request Item states that permit creating a new offboarding ticket when an existing record is already present.</li>
+<li data-list-item-id="ef2621de7d9788b60f8206a22d13da88d">
+<p data-end="342" data-start="135"><strong data-end="191" data-start="135">Offboarding </strong><strong data-end="191" data-start="135">Subtask </strong><strong data-end="191" data-start="135">Type </strong><strong data-end="191" data-start="135">to </strong><strong data-end="191" data-start="135">Close </strong><strong data-end="191" data-start="135">After </strong><strong data-end="191" data-start="135">Termination:</strong> Select the offboarding catalog task type under the request item that should be identified and closed from the dropdown.<br/>The following options are available:</p>
+<ul>
+<li data-list-item-id="eee64297ef7bda15a2ed9be2e87dca2c6"><p data-end="342" data-start="135"><strong data-end="355" data-start="346">None:</strong> No subtask type is selected, and no offboarding subtasks will be automatically closed.</p></li>
+<li data-end="576" data-list-item-id="e08ee019678c3bf7d9fdfdb3c354efd0d" data-section-id="1mrfz9p" data-start="444">
+<p data-end="576" data-start="446"><strong data-end="457" data-start="446">SCTASK:</strong> Identifies and closes ServiceNow catalog tasks (SCTASK) under the offboarding RITM that match the configured criteria.<br/>When <strong data-end="593" data-start="583">SCTASK</strong> is selected, the following fields are displayed:</p>
+<ul>
+<li data-list-item-id="ebaa38aea57ee4af4e8e2651a98d40f3a"><p data-end="916" data-start="644"><strong data-end="687" data-start="644">Offboarding </strong><strong data-end="687" data-start="644">Subtask </strong><strong data-end="687" data-start="644">Short </strong><strong data-end="687" data-start="644">Descriptions:</strong> Enter one or more catalog task short descriptions to identify the tasks that should be closed. For example, entering <strong data-end="844" data-start="805">Disable </strong><strong data-end="844" data-start="805">User </strong><strong data-end="844" data-start="805">Account, </strong><strong data-end="844" data-start="805">Revoke </strong><strong data-end="844" data-start="805">Access</strong> ensures that only tasks with matching short descriptions are processed.</p></li>
+<li data-list-item-id="eab484b6cedb43bdf9252c6a5f3cfd51e"><p data-end="1147" data-start="918"><strong data-end="970" data-start="918">Offboarding </strong><strong data-end="970" data-start="918">Subtask </strong><strong data-end="970" data-start="918">States </strong><strong data-end="970" data-start="918">Eligible </strong><strong data-end="970" data-start="918">for </strong><strong data-end="970" data-start="918">Closure:</strong> Select one or more task states that qualify for closure. For example, selecting <strong data-end="1059" data-start="1051">Open</strong> and <strong data-end="1084" data-start="1064">Work </strong><strong data-end="1084" data-start="1064">in </strong><strong data-end="1084" data-start="1064">Progress</strong> ensures that only tasks currently in these states are updated.</p></li>
+<li data-list-item-id="e5a091d9f563f90ef4e892abe4183a498"><p data-end="1351" data-start="1149"><strong data-end="1219" data-start="1149">Validate </strong><strong data-end="1219" data-start="1149">User </strong><strong data-end="1219" data-start="1149">Termination </strong><strong data-end="1219" data-start="1149">in </strong><strong data-end="1219" data-start="1149">Okta </strong><strong data-end="1219" data-start="1149">Before </strong><strong data-end="1219" data-start="1149">Closing </strong><strong data-end="1219" data-start="1149">ServiceNow </strong><strong data-end="1219" data-start="1149">Tasks:</strong> Select to ensure that the user is confirmed as terminated in Okta before automatically closing associated ServiceNow catalog tasks.</p></li>
+<li data-list-item-id="efafb2ee110f50412e954e681b01a0294"><p data-end="1681" data-start="1353"><strong data-end="1427" data-start="1353">Validate </strong><strong data-end="1427" data-start="1353">User </strong><strong data-end="1427" data-start="1353">Termination </strong><strong data-end="1427" data-start="1353">in </strong><strong data-end="1427" data-start="1353">Entra </strong><strong data-end="1427" data-start="1353">ID </strong><strong data-end="1427" data-start="1353">Before </strong><strong data-end="1427" data-start="1353">Closing </strong><strong data-end="1427" data-start="1353">ServiceNow </strong><strong data-end="1427" data-start="1353">Tasks:</strong> Select to ensure that the user is confirmed as terminated in Entra ID before automatically closing associated ServiceNow catalog tasks. When enabled, the system verifies the user’s termination status before closing tasks to prevent premature completion.</p></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul><h4 id="h_01KHKADH0CMR3ZG14R5C65TJTW">Correlation Settings</h4><p>Configure the following correlation settings for offboarding ticket creation:</p><ul>
 <li data-list-item-id="ed62059cd1585925bd8156c9c5778cb8d">
 <strong>ADP Workforce Now Correlation Attribute</strong>: Select an attribute that uniquely identifies a user in ADP Workforce Now.</li>
@@ -117,38 +169,56 @@
 <strong>Okta correlation attribute</strong>: Select an attribute in Okta that matches the selected ADP Workforce Now attribute value to identify common users across ADP Workforce Now and Okta. This field is required only when you have selected the <strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Okta before ticket creation</strong> checkbox.</li>
 <li data-list-item-id="e3cf207cd5c12858c6988d1c2e5cf61b7">
 <strong>Entra ID correlation attribute</strong>: Select an attribute in Entra ID that matches the selected ADP Workforce Now attribute value to identify common users across ADP Workforce Now and Entra ID. This field is required only when you have selected the <strong aria-owns="action-menu-parent-container" data-complete="true">Validate user in Entra ID before ticket creation</strong> checkbox.</li>
-</ul><h3 id="h_01KHKAHS0RPY90Y3MTKX7D18KY">Date Offset</h3><p>This tab enables you to configure date offset settings. All attributes marked with a red asterisk (<span>*</span>) indicate required fields.</p><p><strong>Note</strong>: The <strong>Date Offset </strong>tab appears when you select the <strong>Enable date offset </strong>checkbox in the<strong> Integration Features </strong>section of the<strong> Parameters </strong>tab.</p><h4 id="h_01KHKANS7965H6AX88QT0E48QG">Onboarding Date Offset</h4><p>Configure the following date offset settings for onboarding:</p><ul>
+</ul><h3 id="h_01KHKAHS0RPY90Y3MTKX7D18KY">Additional Instances</h3><p>This section allows you to configure additional identity provider instances for validation during onboarding and offboarding.</p><p>Configure the following settings:</p><ul>
+<li data-list-item-id="efd4da741713acb0624a29e54fbbd8ccf">
+<strong>Okta instance</strong>: Select the Okta application instance to be used for user validation. For example, selecting <strong>Okta_exa </strong>ensures that users are validated against that Okta environment.</li>
+<li data-list-item-id="efd7ae7f56aa64b8d658a184982a9ca6b">
+<strong>Entra ID instance</strong>: Select the Entra ID application instance to be used for user validation. For example, selecting <strong>Office365_exa</strong> ensures that users are validated against that Entra ID environment.</li>
+</ul><p><strong data-end="726" data-start="717">Note: </strong>These instances are used when validation options are enabled to verify whether a user exists or is terminated before processing tickets.</p><h3 id="h_01KKXJ8AD67T2GXC8K53KGPE9M">Date Offset</h3><p>This tab enables you to configure date offset settings. All attributes marked with a red asterisk (<span>*</span>) indicate required fields.</p><p><strong>Note</strong>: The <strong>Date Offset </strong>tab appears when you select the <strong>Enable date offset </strong>checkbox in the<strong> Integration Features </strong>section of the<strong> Parameters </strong>tab.</p><h4 id="h_01KHKANS7965H6AX88QT0E48QG">Onboarding Date Offset</h4><p>Configure the following date offset settings for onboarding:</p><ul>
 <li data-list-item-id="e2fbf641900918499b1c8c108d0c96a9d">
-<strong>Onboarding date offset type</strong>: <span>Select an option from the dropdown menu that determines the onboarding date offset.</span>
+<strong>Onboarding date offset type</strong><span><strong>*</strong></span>: <span>Select an option from the dropdown menu that determines the onboarding date offset.</span><ul data-end="800" data-start="490">
+<li data-end="564" data-list-item-id="ed4b791363cdeb8d357f923e7e009d50f" data-section-id="d29c0i" data-start="490"><p data-end="564" data-start="492"><strong data-end="506" data-start="492">No Offset:</strong> Creates onboarding tickets on the actual onboarding date.</p></li>
+<li data-end="683" data-list-item-id="e7c3d0e84c560d3e1e1ebb312416f1330" data-section-id="gu9705" data-start="565">
+<p data-end="683" data-start="567"><strong data-end="601" data-start="567">Offset Before Onboarding Date:</strong> Creates onboarding tickets a specified number of days before the onboarding date.<br/>When <strong data-end="601" data-start="567">Offset Before Onboarding Date </strong>is selected, the following field is displayed:</p>
+<ul><li data-end="683" data-list-item-id="e7bfa83af476aa5c1e6a83f7c213b7f8a" data-section-id="gu9705" data-start="565"><p data-end="683" data-start="567"><strong>Days of offset before the onboarding date</strong>: Specify the number of days before the onboarding date to create an onboarding ticket in ServiceNow.</p></li></ul>
 </li>
-<li data-list-item-id="e055b4402b81851212f17d4c38e870f7a">
-<strong>Days of offset before the onboarding date</strong>: Specify the number of days before the onboarding date to create an onboarding ticket in ServiceNow.</li>
-<li data-list-item-id="e971cc5c637cddff5814b646e940751c7">
-<strong>Days of offset from the onboarding date</strong>: Specify the number of days after the onboarding date to create an onboarding ticket in ServiceNow.</li>
+<li data-end="800" data-list-item-id="e5b346d2ec48d030464369b9f3dfa6cea" data-section-id="1o5silx" data-start="684">
+<p data-end="800" data-start="686"><strong data-end="719" data-start="686">Offset After Onboarding Date:</strong> Creates onboarding tickets a specified number of days after the onboarding date.<br/>When <strong data-end="719" data-start="686">Offset After Onboarding Date</strong><strong data-end="601" data-start="567"> </strong>is selected, the following field is displayed:</p>
+<ul><li data-end="800" data-list-item-id="e733efe2543960febc698a915fde2abf3" data-section-id="1o5silx" data-start="684"><p data-end="800" data-start="686"><strong>Days of offset from the onboarding date</strong>: Specify the number of days after the onboarding date to create an onboarding ticket in ServiceNow.</p></li></ul>
+</li>
+</ul>
+</li>
 <li data-list-item-id="ef5496b97f1f91912c32b86bbfa8ae0d7">
-<strong>Onboarding offset time zone priority</strong>: Select the options from the dropdown menu in an order that determines the time zone for onboarding ticket creation in ServiceNow.</li>
+<strong>Onboarding offset time zone priority</strong>: Select the options from the dropdown menu in an order that determines the time zone for onboarding ticket creation in ServiceNow.<br/><strong>Note</strong>: If the first selected time zone is unavailable, the system evaluates the next option in the list.</li>
 <li data-list-item-id="eafd7993067eecbc47190760d6ec3fbed">
-<strong>Onboarding offset time</strong>: Select the hour from the dropdown menu when the onboarding ticket is created in ServiceNow.</li>
+<strong>Onboarding offset time</strong><span><strong>*</strong></span>: Select the time at which the onboarding ticket is created based on the calculated offset.</li>
 </ul><h4 id="h_01KHKANWAXRFS6DFAN1MWCJCK2">Offboarding Date Offset</h4><p>Configure the following date offset settings for offboarding:</p><ul>
 <li data-list-item-id="ee166c20f843be81c33ce2cc83ec5c362">
-<strong>Offboarding date offset type</strong>: <span>Select an option from the dropdown menu that determines the offboarding date offset.</span>
+<strong>Offboarding date offset type</strong><span><strong>*</strong></span>: <span>Select an option from the dropdown menu that determines the offboarding date offset.</span><br/><span>The following are the available options:</span><ul>
+<li data-list-item-id="e3bde80a64dbc0b4a14ff27faf4cb1599"><p data-end="195" data-start="92"><strong data-end="106" data-start="92">No Offset:</strong> Creates offboarding tickets on the actual offboarding date without any delay or advance.</p></li>
+<li data-list-item-id="e1b0cc13014ed24f8032696a149ea3f9f">
+<p data-end="318" data-start="199"><strong data-end="234" data-start="199">Offset Before Offboarding Date:</strong> Creates offboarding tickets a specified number of days before the offboarding date.<br/>When <strong data-end="234" data-start="199">Offset Before Offboarding Date </strong>is selected, the following field is displayed:</p>
+<ul><li data-list-item-id="e6f746cce5a639568baa8eda6bb4abf17"><p data-end="318" data-start="199"><strong>Days of offset before offboarding</strong><span><strong>*</strong></span>: Specify the number of days before the offboarding date to create an offboarding ticket in ServiceNow.</p></li></ul>
 </li>
-<li data-list-item-id="e688eac8b38ec670b08a85d93f4d55c65">
-<strong>Days of offset before offboarding</strong>: Specify the number of days before the offboarding date to create an offboarding ticket in ServiceNow.</li>
-<li data-list-item-id="e08784f1e3531b198d85a3b014f9b62be">
-<strong>Days of offset after offboarding</strong>: Specify the number of days after the offboarding date to create an offboarding ticket in ServiceNow.</li>
+<li data-list-item-id="e154e6fa1b94a374fbc9ad2d7553b326c">
+<p data-end="439" data-is-last-node="" data-start="322"><strong data-end="356" data-start="322">Offset After Offboarding Date:</strong> Creates offboarding tickets a specified number of days after the offboarding date.<br/>When <strong data-end="356" data-start="322">Offset After Offboarding Date</strong><strong data-end="234" data-start="199"> </strong>is selected, the following field is displayed:</p>
+<ul><li data-list-item-id="e08784f1e3531b198d85a3b014f9b62be">
+<strong>Days of offset after offboarding</strong><span><strong>*</strong></span>: Specify the number of days after the offboarding date to create an offboarding ticket in ServiceNow.</li></ul>
+</li>
+</ul>
+</li>
 <li data-list-item-id="e0be7aecf4cb2720d3656a2fcf7c1d11c">
 <strong>Offboarding offset time zone priority</strong>: Select the options from the dropdown menu in an order that determines the time zone for offboarding ticket creation in ServiceNow.</li>
 <li data-list-item-id="e169f30f00b0ee7a1c6caa64010ab1687">
-<strong>Offboarding offset time</strong>: Select the hour from the dropdown menu when the offboarding ticket is created in ServiceNow.</li>
-</ul><h3 id="h_01KHKAY5WRHT5HMSHZHYHR83QN">Debug Settings</h3><p>This tab enables you to set debug options to help troubleshoot and fix integration issues. All attributes marked with a red asterisk (<span>*</span>) indicate required fields.</p><p><strong>Note</strong>: The <strong>Debug Settings </strong>tab appears when you select the <strong>Enable debug mode </strong>checkbox in the<strong> Operational Settings </strong>section of the<strong> Parameters </strong>tab.</p><p>Configure the following debug mode setting under the <strong>ADP Workforce Now Workers Debug Setting</strong> section:</p><ul>
-<li data-list-item-id="e9e1740d85007c56044f22d1c64673984">
-<strong>ADP Workforce Now filter</strong>: Select the ADP Workforce Now filter to filter the workers.</li>
+<strong>Offboarding offset time</strong><span><strong>*</strong></span>: Select the time at which the offboarding ticket is created based on the calculated offset.</li>
+</ul><h3 id="h_01KHKAY5WRHT5HMSHZHYHR83QN">Debug Settings</h3><p>This tab enables you to set debug options to help troubleshoot and fix integration issues. All attributes marked with a red asterisk (<span>*</span>) indicate required fields.</p><p><strong>Note</strong>: The <strong>Debug Settings </strong>tab appears when you select the <strong>Enable debug mode </strong>checkbox in the<strong> Operational Settings </strong>section of the<strong> Parameters </strong>tab.</p><p>Configure the following debug mode setting under the <strong>ADP Workforce Now Workers Debug Setting</strong> section:</p><ul><li data-list-item-id="e9e1740d85007c56044f22d1c64673984">
+<strong>ADP Workforce Now filter</strong><span><strong>*</strong></span>: Select the ADP Workforce Now filter to filter the workers.<br/>The following options are available: <ul>
 <li data-list-item-id="e003e9cf384456dca9f92991d22ca9e1b">
-<strong>Associate ID</strong>: Enter the associate ID to filter the workers in ADP Workforce Now.</li>
+<strong>Associate ID</strong><span><strong>*</strong></span>: Enter the associate ID to filter the workers in ADP Workforce Now.</li>
 <li data-list-item-id="ee942b4c23591869bb8ad48d092eb0138">
-<strong>Position ID</strong>: Enter the position ID to filter the workers in ADP Workforce Now.</li>
-</ul><h3 id="h_01KHKBGVW1RE1DJZYENEJ6SM78">Notifications</h3><p>This tab enables you to configure the email notification settings.</p><p><strong>Note</strong>: The <strong>Notifications </strong>tab appears when you select the <strong>Enable notifications </strong>checkbox in the<strong> Operational Settings </strong>section of the<strong> Parameters </strong>tab.</p><p>Configure the following notification settings under the <strong>Notification Settings</strong> section:</p><ul>
+<strong>Position ID</strong><span><strong>*</strong></span>: Enter the position ID to filter the workers in ADP Workforce Now.</li>
+</ul>
+</li></ul><h3 id="h_01KHKBGVW1RE1DJZYENEJ6SM78">Notifications</h3><p>This tab enables you to configure the email notification settings.</p><p><strong>Note</strong>: The <strong>Notifications </strong>tab appears when you select the <strong>Enable notifications </strong>checkbox in the<strong> Operational Settings </strong>section of the<strong> Parameters </strong>tab.</p><p>Configure the following notification settings under the <strong>Notification Settings</strong> section:</p><ul>
 <li data-list-item-id="e6fed332a9e450dc490d5462889b8533d">
 <strong>Admin email recipients</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
 <li data-list-item-id="edd0c035c21216eecd8bd8f4395e95a7b">
@@ -157,6 +227,29 @@
 <strong>Email Message</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
 <li data-list-item-id="e47afb8c6e3d737ec0f5356499b445922">
 <strong>Send Integration Report via Email:</strong> Select to attach the integration report to the email notifications for all integration runs.</li>
+</ul><h3 id="h_01KKXF14DDD398N247JXNJ6WD6">Log Insights Settings</h3><p>This section allows you to configure analytics and dashboard visibility for integration activity and performance metrics.</p><p>Configure the following Log Insights settings:</p><ul>
+<li data-list-item-id="e37e83bdd43482ee1d8260b35c51cdd0c">
+<strong>Enter Dashboard Name:</strong> Enter the dashboard name where integration analytics will be displayed. For example, entering <strong>ADP_WORKFORCE_NOW_SERVICENOW</strong> creates or updates a dashboard with that name to track execution metrics.</li>
+<li data-list-item-id="ead4fb0597b40fc9147c3620d794c8267">
+<strong>Select Inisights Type:</strong> Select the type of data to include in insights logs. For example, choosing <strong>Employee Number with All Data</strong> includes employee number, operations, field names, and all values (PII and non-PII).</li>
+<li data-list-item-id="eb600c487f604f4205ab52faa6753c2e5">
+<strong>Select insights Level:</strong> Select the level of detail to include in Log Insights.<br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="ebfcdef139253338e7e364ea41c1a0e28">
+<strong>Include List:</strong> Includes only the attributes specified in the Custom Inclusion List field.<br/>If <strong>Include List</strong> is selected, the following field is displayed:<ul><li data-list-item-id="e22f4ca0f6ec1d1e8562c6f1d1a6288ec">
+<strong>Custom Inclusion List:</strong> Enter the attributes that should be included in Log Insights. For example, entering <strong>firstName, lastName, and email</strong> ensures only these fields are captured in logs.</li></ul>
+</li>
+<li data-list-item-id="e2ab0ff6a05c2a6e45a21fb8a8906be5d">
+<strong>Exclude list</strong>: Includes all attribute details except those specified in the Custom Exclusion List field.<ul><li data-list-item-id="e163765b2eb30f1d1fbca94e190bfc0b8">
+<strong>Custom Exclusion List: </strong>Enter the attributes that should be excluded from Log Insights. For example, entering <strong data-end="382" data-start="360">salary, bonus, and SSN</strong> ensures these fields are not captured in logs.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e44f1db72f8b248378a8538c870be31c3">
+<strong>Enter PII Fields:</strong> Enter the fields that contain personally identifiable information (PII) to be included in analytics logs. For example, adding <strong>dateOfBirth</strong> or <strong>SSN</strong> includes these fields in the logs based on the selected log insights type.</li>
+<li data-list-item-id="ecddc55239d28e0a3aac4c8bf6b383275">
+<strong>Enter GUID Fields:</strong> Enter the fields that contain globally unique identifiers to ensure they are handled correctly in analytics logs. For example, adding <strong>workerId</strong> ensures the value is treated as a system identifier.</li>
+<li data-list-item-id="e2982311ebc557fec417e168c83c62e75">
+<strong>Enter EmployeeId Fields:</strong> Enter the fields that represent employee identification values to be displayed consistently in analytics. For example, adding <strong>associateId</strong> ensures the employee identifier is included in analytics reports.</li>
 </ul><h2 id="h_01KHKB5JY6TY3YJQRG433GPA14">Attribute Map</h2><p>The ADP Workforce Now to ServiceNow integration maps the ADP Workforce Now and ServiceNow attributes. You can modify only the source attributes as needed to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><p>You will see the following two attribute map tables:</p><h3 id="h_01KHKBKEQDDTMMB1CCCQRVRM1E">Onboarding Map</h3><p>This tab displays the attribute mapping for creating an onboarding ticket in ServiceNow.</p><h3 id="h_01KHKBKHBP49K206ZXCYR1NSCH">Offboarding Map</h3><p>This tab displays the attribute mapping for creating an offoarding ticket in ServiceNow.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span><span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
 <li data-list-item-id="e255eb70ee8bd739caf430ec3335bd26f">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
 <li data-list-item-id="e20fecf610a3df134c9c60fa7c774673a">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>

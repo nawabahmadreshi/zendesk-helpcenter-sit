@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Jira / PingOne Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Jira / PingOne Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide outlines the process of synchronizing the user's group name(s) from PingOne for Workforce to the ticket description in Jira Service Management Cloud for the selected work type.</p>
+<p>To identify user records across both systems, the integration uses the <strong>emails</strong> attribute from <strong>Jira Service Management Cloud </strong>and matches it to the <strong>emails </strong>attribute in the <strong>PingOne for Workforce </strong>as a correlation attribute.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The Jira Cloud to PingOne for Workforce Access Audit Integration provides the following functions:</p>
+<ul>
+<li>Retrieves the work email address from the Jira Service Management Cloud ticket and identifies a user with the same email address in PingOne for Workforce.</li>
+<li>If exactly one matching user is found, it retrieves their group name from PingOne for Workforce.</li>
+<li>Appends the user's group information to the description field of the Jira Service Management Cloud ticket.</li>
+<li>Changes the status of the ticket based on predefined settings.</li>
+</ul>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>PingOne for Workforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360045142273" rel="noopener noreferrer" target="_blank">PingOne for Workforce Configuration Guide</a> for details.</li>
+<li>
+<strong>Jira Service Management Cloud</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/13840676724631" rel="noopener noreferrer" target="_blank">Jira Service Management Cloud Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured to push the group name from PingOne for Workforce to Jira Service Management Cloud.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Jira / PingOne</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your PingOne for Workforce and Jira Service Management Cloud connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K33R1ZPW74QQS8E9Q5JSJ2DM">Integration Scenario(s)</h4>
+<p>Configure the following integration scenario(s):</p>
+<ul>
+<li>
+<strong>Select the JML Operation(s)</strong>: Select one or more JML operations for which the ticket description should be updated with the group name fetched from PingOne for Workforce. The available options from the dropdown are <strong>Joiner</strong>, <strong>Mover</strong>, and <strong>Leaver</strong>.<br/><strong>Note</strong>: The <strong>Joiner Settings</strong>, <strong>Mover Settings</strong>, and <strong>Leaver Settings</strong> sections will be displayed based on your selection.</li>
+<li>
+<strong>Select PingOne Environment ID</strong>: Select the PingOne Environment ID from the dropdown, where the user's group name information will be retrieved and synchronized. For example, <strong>Administrators</strong>.<br/><strong>Note</strong>: Whenever you change the environment ID, make sure that the corresponding client ID (as the username) and client secret (as the password) are also updated in the PingOne for Workforce connector to enable authentication and retrieve group name information.</li>
+<li>
+<strong>Execute Full Run</strong>: Select this checkbox to execute a full integration run manually at any time.<br/>Note: By default, a full integration run occurs every two days. To manually trigger a full integration run between these scheduled executions, select this checkbox.</li>
+</ul>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li>
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. The <strong>Log Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Notifications</strong>: Select this checkbox to enable the integration-related notifications. The <strong>Notification</strong><strong> Settings</strong> section will be displayed only when this checkbox is selected.</li>
+<li>
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics.</li>
+<li>
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report.</li>
+</ul>
+<h3 id="h_01K1AZMN7X654PY5H47Q1Q6JZX">Joiner Settings</h3>
+<p>Configure the following joiner settings:</p>
+<ul>
+<li>
+<strong>Project Name</strong>: Select the project to retrieve project-specific joiner tickets.</li>
+<li>
+<strong>Worker Type</strong>: Select the corresponding worker type to retrieve joiner tickets. For example, select <strong>Joiner</strong> from the dropdown to retrieve all joiner tickets for the selected project.</li>
+<li>
+<strong>Ticket Pickup Status</strong>: Select the ticket statuses from the dropdown to retrieve the corresponding joiner tickets. For example, select <strong>Open </strong>and<strong> Reopened</strong> from the dropdown that retrieves all joiner tickets in the <strong>Open </strong>or<strong> Reopened </strong>status into your integration.</li>
+<li>
+<strong>Post-Update Ticket Status</strong>: Select the ticket status to which Joiner tickets should transition after their group descriptions are updated. For example, select <strong>In Progress</strong> from the dropdown, which automatically updates the status of the joiner tickets that we retrieved using the <strong>Ticket Pickup Status</strong> field to <strong>In Progress</strong>.</li>
+<li>
+<strong>Update Only Ticket Status If Ticket Description Exists</strong>: Select this checkbox to update only the ticket status when the ticket description is already up to date.</li>
+</ul>
+<h4 id="h_01K35A8BW0AFVC2DSAZHQQXN72">Correlation Field Settings</h4>
+<p>Configure the following correlation field settings:</p>
+<ul>
+<li>
+<strong>Select Correlation Field in Jira</strong>: Select the source field in Jira Service Management Cloud that is used to match users with PingOne for Workforce records as a correlation during synchronization. For example, <strong>Corporate email address</strong>.</li>
+<li>
+<strong>Select</strong> <strong>Correlation Field in PingOne</strong>: Select the corresponding target field in PingOne for Workforce that is used to match users with Jira Service Management Cloud records as a correlation during synchronization. For example, <strong>email</strong>.</li>
+</ul>
+<h3 id="01K1B5KRG3P9044195SR6F482P">Mover Settings</h3>
+<p>Configure the following mover settings:</p>
+<ul>
+<li>
+<strong>Project Name</strong>: Select the project to retrieve project-specific mover tickets.</li>
+<li>
+<strong>Worker Type</strong>: Select the corresponding worker type to retrieve mover tickets. For example, select <strong>Mover</strong> from the dropdown to retrieve all mover tickets for the selected project.</li>
+<li>
+<strong>Ticket Pickup Status</strong>: Select the ticket statuses from the dropdown to retrieve the corresponding mover tickets. For example, select <strong>Open </strong>and<strong> Reopened</strong> from the dropdown that retrieves all mover tickets in the <strong>Open </strong>or<strong> Reopened </strong>status into your integration.</li>
+<li>
+<strong>Post-Update Ticket Status</strong>: Select the ticket status to which mover tickets should transition after their group descriptions are updated. For example, select <strong>In Progress</strong> from the dropdown, which automatically updates the status of the mover tickets that we retrieved using the <strong>Ticket Pickup Status</strong> field to <strong>In Progress</strong>.</li>
+<li>
+<strong>Update Only Ticket Status If Ticket Description Exists</strong>: Select this checkbox to update only the ticket status when the ticket description is already up to date.</li>
+</ul>
+<h4 id="01K35ACZRFY5JYKH4R714WF61X">Correlation Field Settings</h4>
+<p>Configure the following correlation field settings:</p>
+<ul>
+<li>
+<strong>Select Correlation Field in Jira</strong>: Select the source field in Jira Service Management Cloud that is used to match users with PingOne for Workforce records as a correlation during synchronization. For example, <strong>Corporate email address</strong>.</li>
+<li>
+<strong>Select</strong> <strong>Correlation Field in PingOne</strong>: Select the corresponding target field in PingOne for Workforce that is used to match users with Jira Service Management Cloud records as a correlation during synchronization. For example, <strong>email</strong>.</li>
+</ul>
+<h3 id="h_01K1DPW044BECBRCTR5DSC4RYJ"><span>Leaver Settings</span></h3>
+<p>Configure the following leaver settings:</p>
+<ul>
+<li>
+<strong>Project Name</strong>: Select the project to retrieve project-specific leaver tickets.</li>
+<li>
+<strong>Worker Type</strong>: Select the corresponding issue worker to retrieve leaver tickets. For example, select <strong>Leaver</strong> from the dropdown to retrieve all leaver tickets for the selected project.</li>
+<li>
+<strong>Ticket Pickup Status</strong>: Select the ticket statuses from the dropdown to retrieve the corresponding leaver tickets. For example, select <strong>Open </strong>and<strong> Reopened</strong> from the dropdown that retrieves all leaver tickets in the <strong>Open </strong>or<strong> Reopened </strong>status into your integration.</li>
+<li>
+<strong>Post-Update Ticket Status</strong>: Select the ticket status to which leaver tickets should transition after their group descriptions are updated. For example, select <strong>In Progress</strong> from the dropdown, which automatically updates the status of the leaver tickets that we retrieved using the <strong>Ticket Pickup Status</strong> field to <strong>In Progress</strong>.</li>
+<li>
+<strong>Update Only Ticket Status If Ticket Description Exists</strong>: Select this checkbox to update only the ticket status when the ticket description is already up to date.</li>
+</ul>
+<h4 id="01K35ADJYWW8661SRRYHG3T5HF">Correlation Field Settings</h4>
+<p>Configure the following correlation field settings:</p>
+<ul>
+<li>
+<strong>Select Correlation Field in Jira</strong>: Select the source field in Jira Service Management Cloud that is used to match users with PingOne for Workforce records as a correlation during synchronization. For example, <strong>Corporate email address</strong>.</li>
+<li>
+<strong>Select</strong> <strong>Correlation Field in PingOne</strong>: Select the corresponding target field in PingOne for Workforce that is used to match users with Jira Service Management Cloud records as a correlation during synchronization. For example, <strong>email</strong>.</li>
+</ul>
+<h3 id="h_01K04B51EEX43EAV95YABBP3F5">Log Settings</h3>
+<p>Configure the following settings to customize the report:</p>
+<ul>
+<li>
+<strong>Select the Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:
+<ul>
+<li>
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li>
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+</ul>
+</li>
+</ul>
+<h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h3>
+<p>Configure the following settings for email notifications:</p>
+<ul>
+<li>
+<strong>Admin's Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li>
+<strong>Admin Email Notification Template</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+</ul>
+<h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2>
+<p>The Jira Cloud to PingOne for Workforce Access Audit Integration maps the PingOne for Workforce and Jira Service Management Cloud attributes. Modify the source attributes, if required, based on your use case.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

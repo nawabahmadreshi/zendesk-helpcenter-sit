@@ -1,0 +1,235 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BambooHR / Jira Service Management Cloud Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>BambooHR / Jira Service Management Cloud Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01K2YJ98NDZF1G4AYXZHAF24HA">Overview</h1>
+<p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p>
+<p>This guide outlines the process of synchronizing the user's lifecycle from BambooHR to Jira Service Management Cloud for the selected work type. This integration ensures that all user lifecycle events in BambooHR are accurately tracked and managed within the Jira system for seamless operational workflows.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The BambooHR to Jira Ticket Management Integration provides the following functions:</p>
+<ul>
+<li>Whenever an employee is onboarded, transferred, or terminated in the BambooHR application, the integration automatically creates a ticket in the Jira Service Management Cloud application.</li>
+<li>If a ticket is already available for an employee in Jira, the integration updates the details of the ticket based on the integration settings.</li>
+<li>When an employee is rehired, a ticket will be created.</li>
+<li>To identify the existing Jira tickets corresponding to BambooHR user records, the integration matches the employeeNumber or work email attribute from BambooHR to a Jira Service Management Cloud custom attribute defined in the integration.</li>
+</ul>
+<h1 id="h_01K2XP8PNW9ARR279G936S4SE9">Limitation</h1>
+<p>When a user’s previous job record is updated in the BambooHR application, the system incorrectly treats it as the latest job record. This is a known limitation with the BambooHR system. As a result, the integration creates or updates a ticket in the Jira Service Management Cloud for that record.</p>
+<p>To avoid this issue, you must always update the latest job record for an employee in BambooHR.</p>
+<h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>BambooHR</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360020300534" rel="noopener noreferrer" target="_blank">BambooHR Configuration Guide</a> for details.</li>
+<li>
+<strong>Jira Service Management Cloud</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/13840676724631" rel="noopener noreferrer" target="_blank">Jira Service Management Cloud Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li>
+<strong>Setup Webhooks in BambooHR</strong>: Your BambooHR admin must set up Webhooks in the BambooHR application to trigger events for employee onboarding, transfers, and terminations. For details on the webhooks setup, refer to the <a href="#h_01K38544N2F49NRW9XSYYFRXCW">Setting up Webhooks in BambooHR</a> section.<br/><strong>Note</strong>: When configuring webhooks for sending events to Aquera, make sure the field names exactly match those provided in the Aquera portal. If the field names in BambooHR webhooks differ from those in the Aquera integration setup page, the events will not be processed by the integration. In case you want the Aquera integration setup page to show different field names (to align with your BambooHR webhook configuration), please contact the Aquera support personnel.</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section outlines how the integration must be configured to push the group name from BambooHR to Jira Service Management Cloud.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>BambooHR / Jira Service Management Cloud</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your BambooHR and Jira Service Management Cloud connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2>
+<p>The following sections are displayed under the <strong>Configuration</strong> tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4>
+<p>Configure the following general settings:</p>
+<ul>
+<li>
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes. The <strong>Logging Settings</strong> section is displayed.</li>
+</ul>
+<h4 id="h_01K245JP9M81Z33F1VN19HDVPH">JML Settings</h4>
+<p>Configure the following JML settings:</p>
+<ul>
+<li>
+<strong>JML Operations</strong>: Select the JML operations that must be supported by the integration for creating or updating a Jira ticket. The available options are <strong>Joiner</strong>, <strong>Mover</strong>, and <strong>Leaver</strong>.<br/><strong>Note</strong>: The <strong>Joiner Ticket Settings</strong>, <strong>Mover Ticket Settings</strong>, and <strong>Leaver Ticket Settings</strong> sections will be displayed based on your selection.</li>
+<li>
+<strong>Webhook Employment Status Fields</strong>: Select the webhook fields that must be used to identify any change in the employment status in BambooHR. <br/><strong>Note</strong>: Ensure that you have configured the exact field names as provided in this drop-down list when you have configured webhooks in BambooHR to send the employment status changes. For example, you must configure the field name as <em>Effective Date</em> in BambooHR webhooks instead of the default field name, <em>Employment Status-Effective Date</em>. If you want a different set of names to be shown in this drop-down (to align with the field names in your webhooks setup), contact Aquera support personnel. <br/><br/>
+</li>
+<li>
+<strong>Wait Time to Handle Duplicate Events (in Minutes)</strong>: This field is applicable for all the update events from BambooHR. Enter the delay time (in minutes) after which an update event has to be processed. When a user is created in BambooHR, both the create and update events are triggered. To ensure the update event is processed after a delay, specify a wait time (in minutes) in this field. For example, entering "5" will delay the update event by 5 minutes after the processing of create ticket event. </li>
+</ul>
+<h4 id="h_01K2YK0S5BZGJKS42R5EYV6B3G">Employee Filter Settings</h4>
+<p>Configure the following settings to filter employees from BambooHR:'</p>
+<ul>
+<li>
+<strong>Employee Attribute</strong>: Select the attribute that must be used for filtering the employees from BambooHR.</li>
+<li>
+<strong>Operator</strong>: Select the operator that must be applied for the filter.</li>
+<li>
+<strong>Filter Value</strong>: Select the attribute value that must be used for filtering the employees.<br/>For example, if you want to filter an employee with the employee number 1234, provide the following values in the filter settings:<br/><strong>Employee Attribute</strong>: <em>Employee Number</em><br/><strong>Operator</strong>: <em>Equals</em><br/><strong>Filter Value</strong>: <em>1234</em>
+</li>
+</ul>
+<h4 id="h_01K2YQA3F0WGCWFPF99BQ46QXA">Logging Settings</h4>
+<p><strong>Select the Log Detail Level</strong>: Select <em>Full</em> to create logs with all the details.</p>
+<h3 id="h_01K1AZMN7X654PY5H47Q1Q6JZX">Joiner Ticket Settings</h3>
+<p>Configure the settings related to the joiner tickets.</p>
+<h4 id="h_01K2YA0BTWG3AHRH9DXHPQS777">Ticket Management</h4>
+<p>Configure the following joiner ticket management settings:</p>
+<ul>
+<li>
+<strong>Project Name</strong>: Select the project under which the integration must create the joiner tickets in Jira.</li>
+<li>
+<strong>Work Type</strong>: Select the corresponding work type to create joiner tickets. For example, select <strong>Joiner</strong> from the dropdown to create tickets of type <em>Joiner</em> under the selected project.</li>
+</ul>
+<h4 id="h_01K2YACBW1V07PQ5WKZSEW4N34">Ticket Correlation Settings</h4>
+<p>Configure the following joiner ticket update settings if you want an existing ticket to be updated for an employee. If you want a new ticket to be created for every joiner event, leave this section without configuring these settings.</p>
+<ul>
+<li>
+<strong>BambooHR Correlation Attribute</strong>: Select the BambooHR employee attribute that will be used by the integration to find a joiner ticket, if it already exists for a BambooHR employee. The available employee attributes are <em>Work Email</em> and <em>Employee Number</em>. </li>
+<li>
+<strong>Jira Correlation Field</strong>: Select the joiner ticket field that will be used by the integration to find a ticket that might have already been created for an employee from BambooHR. For example, <em>Email Address</em>.<br/><strong>Note</strong>: Make sure that matching attributes are configured correctly to avoid creating duplicate tickets. For example, if you have selected <em>Work Email </em>as the <strong>BambooHR Matching Attribute </strong>and <em>Email Address </em>as the <strong>Jira Matching Field</strong>, the integration uses the values of these two attributes to find whether a joiner ticket already exists for an employee.</li>
+<li>
+<strong>Ticket Statuses for Updating an Existing Ticket</strong>: Select one or more statuses of the joiner tickets that must be updated with the details from BambooHR. If the integration finds an existing joiner ticket for an employee, the integration updates that ticket's details if the status of that ticket matches one of the statuses configured in this field. This field is mandatory if you have configured the correlation attributes.<br/><strong>Note</strong>: The ticket details are updated based on the attributes mapping configured for the joiner tickets in the integration.</li>
+</ul>
+<h4 id="h_01K2YBFKVZM77HJPE1TJQ6QM1A">Rehire Settings</h4>
+<p>Configure the settings to identify the rehire records:</p>
+<ul>
+<li>
+<strong>Employee Inactive Statuses</strong>: Select the statuses from the drop-down that must be considered as inactive statuses for an employee. The integration considers an employee as a rehire only if they move from one of these statuses to a status configured in the <strong>Employee Active Statuses</strong> field.</li>
+<li>
+<strong>Employee Active Statuses</strong>: Select the statuses from the drop-down menu that must be considered as active statuses for an employee. The integration considers an employee as a rehire only if they move to one of these statuses from a status configured in the <strong>Employee Inactive Statuses</strong> field. For example, if you have selected <em>Terminated</em> in the <strong>Employee Inactive Statuses</strong> field and <em>Active</em> in the <strong>Employee Active Statuses</strong> field, an employee from BambooHR will be considered a rehire if their status changes from <em>Terminated</em> to <em>Active</em>.</li>
+</ul>
+<h3 id="h_01K245JP9MBQH2N1XP0TNJPY3N">Mover Ticket Settings</h3>
+<p>Configure the settings related to mover tickets.</p>
+<h4 id="h_01K2YCVH50Y4BEVTWPT7ZDR7KE">Ticket Management</h4>
+<p>Configure the following mover ticket management settings:</p>
+<ul>
+<li>
+<strong>Webhook Field Names for Job-Related Information</strong>: Select the webhook field names that must be used to track any changes in the job-related details of an employee. <br/><strong>Note</strong>: Ensure that you have configured the exact field names as provided in this drop-down list when you have configured webhooks in BambooHR to send the job-related changes. If you want a different set of names to be shown in this drop-down (to align with the field names in your webhooks setup), contact Aquera support personnel. </li>
+<li>
+<strong>Project Name</strong>: Select the project under which the integration must create the mover tickets in Jira.</li>
+<li>
+<strong>Work Type</strong>: Select the corresponding work type to create mover tickets. For example, select <strong>Mover</strong> from the dropdown to create tickets of type <em>Mover</em> under the selected project.</li>
+</ul>
+<h4 id="h_01K2YMESH2JK1GT7P5WJYMKWJH">Ticket Correlation Settings</h4>
+<p>Configure the following mover ticket update settings if you want an existing ticket to be updated for an employee. If you want a new ticket to be created for every mover event, leave this section without configuring these settings:</p>
+<ul>
+<li>
+<strong>BambooHR Correlation Attribute</strong>: Select the BambooHR employee attribute that will be used by the integration to find a mover ticket, if it already exists for a BambooHR employee. The available employee attributes are <em>Work Email</em> and <em>Employee Number</em>. </li>
+<li>
+<strong>Jira Correlation Field</strong>: Select the mover ticket field that will be used by the integration to find a ticket that might have already been created for an employee from BambooHR. For example, <em>Email Address</em>.<br/><strong>Note</strong>: Make sure that matching attributes are configured correctly to avoid creating duplicate tickets. For example, if you have selected <em>Work Email </em>as the <strong>BambooHR Matching Attribute </strong>and <em>Email Address </em>as the <strong>Jira Matching Field</strong>, the integration uses the values of these two attributes to find whether a mover ticket already exists for an employee.</li>
+<li>
+<strong>Ticket Statuses for Updating an Existing Ticket</strong>: Select one or more statuses of the mover tickets that must be updated with the details from BambooHR. If the integration finds an existing mover ticket for an employee, the integration updates that ticket's details if the status of that ticket matches one of the statuses configured in this field. This field is mandatory if you have configured the correlation attributes.<br/><strong>Note</strong>: The ticket details are updated based on the attributes mapping configured for the mover tickets in the integration.</li>
+</ul>
+<h3 id="h_01K245JP9M9TCVNMP5GEQA44NG">Leaver Ticket Settings</h3>
+<p>Configure the settings related to the leaver tickets.</p>
+<h4 id="01K2YEGD13VHMG71C8G0DXNDZ8">Ticket Management</h4>
+<p>Configure the following leaver ticket management settings:</p>
+<ul>
+<li>
+<strong>Project Name</strong>: Select the project under which the integration must create the leaver tickets in Jira.</li>
+<li>
+<strong>Work Type</strong>: Select the corresponding work type to create leaver tickets. For example, select <strong>Leaver</strong> from the dropdown to create tickets of type <em>Leaver</em> under the selected project.</li>
+<li>
+<strong>Inactive Employment Status</strong>: Select the inactive employment statuses from the dropdown menu that should trigger the webhook to create a leaver ticket in the Jira Service Management Cloud application.<br/><strong>Note</strong>: Ensure that you have configured the exact field names as provided in this drop-down list when you have configured webhooks in BambooHR. If you want a different set of names to be shown in this drop-down (to align with the field names in your webhooks setup), contact Aquera support personnel. </li>
+</ul>
+<h4 id="01K2YEGD1345S55F5D7Y7P7FN4">Ticket Correlation Settings</h4>
+<p>Configure the following leaver ticket update settings if you want an existing ticket to be updated for an employee. If you want a new ticket to be created for every leaver event, leave this section without configuring these settings:</p>
+<ul>
+<li>
+<strong>BambooHR Correlation Attribute</strong>: Select the BambooHR employee attribute that will be used by the integration to find a leaver ticket, if it already exists for a BambooHR employee. The available employee attributes are <em>Work Email</em> and <em>Employee Number</em>. </li>
+<li>
+<strong>Jira Correlation Field</strong>: Select the leaver ticket field that will be used by the integration to find a ticket that might have already been created for an employee from BambooHR. For example, <em>Email Address</em>.<br/><strong>Note</strong>: Make sure that matching attributes are configured correctly to avoid creating duplicate tickets. For example, if you have selected <em>Work Email </em>as the <strong>BambooHR Matching Attribute </strong>and <em>Email Address </em>as the <strong>Jira Matching Field</strong>, the integration uses the values of these two attributes to find whether a leaver ticket already exists for an employee.</li>
+<li>
+<strong>Ticket Statuses for Updating an Existing Ticket</strong>: Select one or more statuses of the leaver tickets that must be updated with the details from BambooHR. If the integration finds an existing leaver ticket for an employee, the integration updates that ticket's details if the status of that ticket matches one of the statuses configured in this field. This field is mandatory if you have configured the correlation attributes.<br/><strong>Note</strong>: The ticket details are updated based on the attributes mapping configured for the leaver tickets in the integration.</li>
+</ul>
+<h2 id="01K24JX3EQKXK3GB454E0WB1KY">Attribute Map</h2>
+<p>The Bamboo HR to JIRA Ticket Management Integration enables you to map the BambooHR employee attributes to the Jira ticket attributes based on your requirements. You can access three attribute maps in this integration - one each for Joiner, Mover, and Leaver ticket mappings. </p>
+<p>Within each attribute map, you can set the source attributes/expressions corresponding to each ticket attribute based on your use case.</p>
+<h2 id="h_01JVP6WJ681AK5EKZYA0EHHYMZ">Event</h2>
+<p>The <strong>Event</strong> tab is used to configure the webhook details.</p>
+<p>Provide the following details and save the changes:</p>
+<ul>
+<li>
+<strong>Event Source</strong>: Select your BambooHR application from which all joiner, mover, and leaver events are triggered.</li>
+<li>
+<strong>URL</strong>: Copy this URL and paste it in the <strong>Post to URL</strong> field on the BambooHR Webhooks setup page. For details on setting up a webhook in the BambooHR application, refer to the <a href="#h_01K384C0CHBZBJN6QYE9RTZXS5">Appendix</a> section.</li>
+<li>
+<strong>Create Token</strong>: Click this button to show the <strong>Custom Token</strong> field. Copy the <strong>Private Signature Key</strong> from the BambooHR webhooks setup page and paste it in this field.<br/>For details on setting up a webhook in the BambooHR application, refer to the <a href="#h_01K38544N2F49NRW9XSYYFRXCW">Setting up Webhooks in BambooHR</a> section.</li>
+</ul>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+<h1 id="h_01K384C0CHBZBJN6QYE9RTZXS5">Appendix</h1>
+<p>This section outlines the procedure for configuring webhooks in the BambooHR application.</p>
+<h2 id="h_01K38544N2F49NRW9XSYYFRXCW">Setting up Webhooks in BambooHR</h2>
+<p><span>Webhooks must be set up in BambooHR to monitor any changes made to the fields that you specify and to post that information to Aquera. Aquera's BambooHR webhook will automatically process those changes and send them to the target application.</span></p>
+<ol>
+<li value="1">Log in to your BambooHR account as an administrator. The <strong>Home</strong> page is displayed.
+<p><img alt="Home.png" src="./assets/51398a163f3b0e4e.bin"/></p>
+</li>
+<li value="2">Click the <em>Settings</em> icon at the top-right corner of the page. The <strong>Settings</strong> page is displayed.<br/><img alt="2025-08-21_16-31-57.png" src="./assets/e9a34f7d0d043e6f.bin"/>
+</li>
+<li value="3">Click <strong>Webhooks</strong>. The <strong>Webhooks</strong> section is displayed on the page.
+<p><img alt="2025-08-21_16-35-07.png" src="./assets/a9634cb3b2504495.bin"/></p>
+</li>
+<li value="4">Click <strong>Add Webhook</strong>. The <strong>Add Webhook</strong> page is displayed.
+<p><img alt="Add_Webhook.png" height="456" src="./assets/bcd01c2c6c06325c.bin" width="507"/></p>
+</li>
+<li value="5">Enter a name for the webhook in the <strong>Webhook Name</strong> field.</li>
+<li value="6">Select the fields to be monitored by the BambooHR system for any changes, from the <strong>What fields do you want to monitor?</strong> drop-down list. The fields have to be selected one by one. All the selected fields are listed on the page.
+<p><img alt="Monitor.png" height="466" src="./assets/132b84bfd0697343.bin" width="328"/></p>
+<p>You can remove any selected fields by clicking the close icon next to the field.</p>
+</li>
+<li value="7">Select the same set of fields in the <strong>What fields do you want to post?</strong> section.
+<ul>
+<li>Search for the required field by typing the field name  and selecting it,
+<p>or</p>
+</li>
+<li>Browse to the individual categories from the <strong>Browse Fields</strong> list and then add the required field to the <strong>Selected Fields</strong> list.
+<p><img alt="Post.png" height="342" src="./assets/0a7e1041a376df8d.bin" width="474"/></p>
+</li>
+</ul>
+</li>
+<li value="8">Select <em>JSON</em> in the <strong>What format should the data be in?</strong> section.
+<p><img alt="Json.png" src="./assets/7be8e1ba20fec215.bin"/></p>
+</li>
+<li value="9">In the <strong>Post to URL</strong> field, paste the URL that has been copied from the <strong>Event</strong> tab of the <strong>BambooHR to Jira Ticket Management</strong> integration in the Aquera Admin portal.
+<p><img alt="Post_to_URL.png" height="111" src="./assets/96af82798a26e91d.bin" width="470"/></p>
+</li>
+<li value="10">Click <strong>Generate Key</strong>. Copy the <strong>Private Signature Key</strong> and use it in the <strong>Custom Token</strong> field in the <strong>Event</strong> tab on the Aquera Admin portal.</li>
+<li>Click <strong>Save</strong>. The newly created webhook is displayed in the <strong>Webhooks</strong> section on the <strong>Settings</strong> page.
+<p><img alt="Webhook_list.png" src="./assets/b15ba0a3c8513d25.bin"/><span>Now, when the specified data of users in the </span><strong>People</strong><span> section of BambooHR is updated, it will be sent to Aquera for processing and sending to the target application.</span></p>
+</li>
+</ol>
+  </div>
+</body>
+</html>

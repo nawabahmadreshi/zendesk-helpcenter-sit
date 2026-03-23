@@ -1,0 +1,354 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Active Directory / Riskonnect Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Active Directory / Riskonnect Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the process of synchronizing the Active Directory (AD) user information with Riskonnect's internal contact records. Based on a user's status and user presence in Riskonnect, the integration will create, update, or delete the corresponding record in Riskonnect.</p><h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="eba502862f0d23dca2cd285739857de78">
+<strong>Tenant Account in the Aquera Admin Portal</strong>: You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e9ca545a02bcfb0a5bdd788f56b411b38">
+<strong>Configure Connectors in the Aquera Admin Portal</strong>: You need to configure the following connectors in the Aquera Admin portal for the integration:<ul>
+<li data-list-item-id="e337e8f0f6a5860ebeca87dad91a9bf44">
+<strong>Active Directory (AD)</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
+<li data-list-item-id="e9120c1628e11acbcfc32de93f6360822">
+<strong>Riskonnect</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/28757053233303" rel="noopener noreferrer" target="_blank">Riskonnect Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to import workers from Active Directory (AD) and provisions these users in Riskonnect.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create an Integration</h2><p>Perform the following steps to create an integration:</p><ol>
+<li data-list-item-id="e0a4a7e76ea5206c896eb850888b54e6c">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e0ca6aa43fe42a672b0680caf56c64acf">Navigate to <strong>Integrations</strong> on the left panel.</li>
+<li data-list-item-id="e3c3c5a8597a5314e6b5921f9973202c8">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e65d486bcd7fbf5e8a453e991e4fe1779">Select <strong>Active Directory / Riskonnect</strong>.</li>
+<li data-list-item-id="ec476b3e9f50dafbfca5c791394a0c2bf">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e757cbac81476ef0dffd24b24d8f53c8e">Select your Active Directory (AD) and Riskonnect connector instances.</li>
+<li data-list-item-id="e3b16269e0f9548c1935fa18aa2479fcf">Click <strong>Continue</strong>. <span>The </span><a href="#h_01JPQ8ZTEY7NJC2SRMDWPK964A"><span>Configuration</span></a><span> page is displayed to configure the integration.</span>
+</li>
+</ol><p>For further details on integrations, refer to the <a href="../Integration-Studio-Guide/" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p><ul>
+<li data-list-item-id="ea20beb68a33588b6252b7ee657173020">
+<strong>Do you want to run as simulation mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="ea033e55fc69992a000531e01c42ed295">
+<strong>Enable OpenSearch Logging</strong>: Select to visualize the integration-related metrics.</li>
+<li data-list-item-id="e8b1b9c3ef820b7706ef89734b317693c">
+<strong>Generate CSV File</strong>: Select this checkbox to generate a CSV report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e6504608c532ea5148c1bb6a60cd44a16">
+<strong>Log Data Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options: <ul>
+<li data-list-item-id="e5b97d59691794b9230d4d25f8049eb32">
+<strong>ALL</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="efa1fdc73e65e4e854502ad49c6670e3b">
+<strong>Basic</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ec76e6e813356f9a73be087ff68e607fa">
+<strong>None</strong>: Select this to ignore the log generation.</li>
+</ul>
+</li>
+<li data-list-item-id="e2430bd0a6d34159ee474b7c150a862fd">
+<strong>Send Email Notification</strong>: Select this checkbox to send email notifications to the email addresses configured in the <strong>Recipient's Email Addresses </strong>parameter.</li>
+<li data-list-item-id="e48c2fa21e33733adaa70d68e53a04cdc">
+<strong>Recipient's Email Addresses</strong>: Enter the email addresses of the recipients to whom the email notifications should be sent.</li>
+<li data-list-item-id="e4e3edcb9db10a81562d7a11eb7c94d32">
+<strong>Delete User on Deactivation</strong>: Select this checkbox to delete users upon deactivation. If this checkbox is not selected, the users will not be deleted upon deactivation.</li>
+</ul><h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Mapping</h2><p>The<strong> AD To Riskonnect Internal contacts </strong>template script maps the commonly used Active Directory and Riskonnect attributes. You can customize it based on your use case.<br/>The following are the attributes that are mapped by default:</p><table border="1">
+<tbody>
+<tr>
+<td><strong>Active Directory (AD)</strong></td>
+<td><strong>Riskonnect</strong></td>
+</tr>
+<tr>
+<td>givenName</td>
+<td>first_name</td>
+</tr>
+<tr>
+<td>sn</td>
+<td>last_name</td>
+</tr>
+<tr>
+<td>title</td>
+<td>job_title</td>
+</tr>
+<tr>
+<td>department</td>
+<td>department</td>
+</tr>
+<tr>
+<td>mail</td>
+<td>work_email</td>
+</tr>
+<tr>
+<td>mobile</td>
+<td>mobile_phone</td>
+</tr>
+<tr>
+<td>telephoneNumber</td>
+<td>work_phone</td>
+</tr>
+<tr>
+<td>otherMobile</td>
+<td>home_phone</td>
+</tr>
+<tr>
+<td>otherTelephone</td>
+<td>employee_provided_phone_number</td>
+</tr>
+<tr>
+<td>employeeNumber</td>
+<td>unique_id</td>
+</tr>
+<tr>
+<td>userPrincipalName</td>
+<td>employee_provided_email</td>
+</tr>
+<tr>
+<td>streetAddress</td>
+<td>street_address</td>
+</tr>
+<tr>
+<td>l</td>
+<td>city</td>
+</tr>
+<tr>
+<td>st</td>
+<td>state</td>
+</tr>
+<tr>
+<td>postalCode</td>
+<td>postal_code</td>
+</tr>
+<tr>
+<td>co</td>
+<td>country</td>
+</tr>
+</tbody>
+</table><h3 id="h_01J6RRJMNFD5C1HMACKNNA2WQY"><strong>Active Directory (AD)</strong></h3><p>The following table lists the Active Directory application UI field name, UI path, and the corresponding Active Directory attribute:</p><table border="1">
+<tbody>
+<tr>
+<td><strong>Active Directory UI Field Name</strong></td>
+<td><strong>Application UI Path</strong></td>
+<td>
+<strong>Attribute</strong><strong><br/></strong>
+</td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>First name</td>
+<td>General &gt; First name</td>
+<td>givenName</td>
+<td>The given name, or the first name of the user</td>
+</tr>
+<tr>
+<td>Last name</td>
+<td>General &gt; last name</td>
+<td>sn</td>
+<td>The SN of the user</td>
+</tr>
+<tr>
+<td>Title</td>
+<td>Organization &gt; Job Title</td>
+<td>title</td>
+<td>The title of the user in the organization</td>
+</tr>
+<tr>
+<td>Department</td>
+<td>Organization &gt; Department</td>
+<td>department</td>
+<td>The department of the user</td>
+</tr>
+<tr>
+<td>E-mail</td>
+<td>General &gt; E-mail</td>
+<td>mail</td>
+<td>The mail ID of the user</td>
+</tr>
+<tr>
+<td>Mobile</td>
+<td>Telephone numbers &gt; Mobile</td>
+<td>mobile</td>
+<td>The mobile number of the user</td>
+</tr>
+<tr>
+<td>Telephone number</td>
+<td>General &gt; Telephone number</td>
+<td>telephoneNumber</td>
+<td>The telephone number of the user</td>
+</tr>
+<tr>
+<td>Mobile (Other)</td>
+<td>Telephone numbers &gt; Mobile (Other)</td>
+<td>otherMobile</td>
+<td>The other mobile number of the user</td>
+</tr>
+<tr>
+<td>Telephone number (Other)</td>
+<td>General &gt; Telephone number (Other)</td>
+<td>otherTelephone</td>
+<td>The other telephone number of the user</td>
+</tr>
+<tr>
+<td>Employee Number</td>
+<td>General</td>
+<td>employeeNumber</td>
+<td>The employee number of the user</td>
+</tr>
+<tr>
+<td>User logon name</td>
+<td>Account &gt; User logon name</td>
+<td>userPrincipalName</td>
+<td>The logon name of the user</td>
+</tr>
+<tr>
+<td>Street</td>
+<td>Address &gt; Street</td>
+<td>streetAddress</td>
+<td>The street address of the user</td>
+</tr>
+<tr>
+<td>City</td>
+<td>Address &gt; City</td>
+<td>l</td>
+<td>The city or the locality of the user</td>
+</tr>
+<tr>
+<td>State/province</td>
+<td>Address &gt; State/province</td>
+<td>st</td>
+<td>The state or the region of the user</td>
+</tr>
+<tr>
+<td>Zip/Postal Code</td>
+<td>Address &gt; Zip/Postal Code</td>
+<td>postalCode</td>
+<td>The zip code or the postal code of the user</td>
+</tr>
+<tr>
+<td>Country</td>
+<td>Address &gt; Country/region</td>
+<td>co</td>
+<td>The country of the user</td>
+</tr>
+</tbody>
+</table><h3 id="01K55Y5439RQG5XF9JMHG0TDBM"><strong>Riskonnect</strong></h3><p>The following table lists the Riskonnect application UI field name, UI path, and the corresponding Riskonnect attribute:</p><table border="1">
+<tbody>
+<tr>
+<td><strong>Riskonnect Field Name</strong></td>
+<td><strong>Application UI Path</strong></td>
+<td>
+<strong>Attribute</strong><strong><br/></strong>
+</td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>First Name</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>first_name</td>
+<td>The given name, or the first name of the employee</td>
+</tr>
+<tr>
+<td>Last Name</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>last_name</td>
+<td>The last name of the employee</td>
+</tr>
+<tr>
+<td>Job Title</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>job_title</td>
+<td>The title of the employee in the organization</td>
+</tr>
+<tr>
+<td>Department</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>department</td>
+<td>The department of the employee</td>
+</tr>
+<tr>
+<td>Work Email</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>work_email</td>
+<td>The word email address of the employee</td>
+</tr>
+<tr>
+<td>Mobile Phone</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>mobile_phone</td>
+<td>The mobile number of the employee</td>
+</tr>
+<tr>
+<td>Work Phone</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>work_phone</td>
+<td>The work phone number of the employee</td>
+</tr>
+<tr>
+<td>Home Phone</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>home_phone</td>
+<td>The home phone number of the employee</td>
+</tr>
+<tr>
+<td>Employee Provided Phone Number </td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>employee_provided_phone_number</td>
+<td>The phone number provided by the employee</td>
+</tr>
+<tr>
+<td>Internal Contact ID</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>unique_id</td>
+<td>The unique ID of the employee</td>
+</tr>
+<tr>
+<td>Employee Provided Email</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>employee_provided_email</td>
+<td>The email address provided by the employee</td>
+</tr>
+<tr>
+<td>Street Address</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>street_address</td>
+<td>The street address of the employee</td>
+</tr>
+<tr>
+<td>City</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>city</td>
+<td>The city or the locality of the employee</td>
+</tr>
+<tr>
+<td>State</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>state</td>
+<td>The state or the region of the employee</td>
+</tr>
+<tr>
+<td>Postal Code</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>postal_code</td>
+<td>The zip code or the postal code of the employee</td>
+</tr>
+<tr>
+<td>Country</td>
+<td>Administration &gt; Internal Contacts &gt; Users &gt; Select a User</td>
+<td>country</td>
+<td>The country of the employee</td>
+</tr>
+</tbody>
+</table><h1 id="h_01K2F6D281557NSK1AX87J3PEE">Tables</h1><p>The <strong>Tables</strong> section includes configurable key-value pairs used to standardize and translate constant values between Active Directory (AD) and Riskonnect. This ensures consistency when performing integration operations. For example, you might map integration constants such as CREATE, UPDATE, or DELETE to specific status indicators in Riskonnect.</p><p>Without this table configuration, the integration may incorrectly interpret statuses or produce inconsistent reporting. By clearly defining constants (e.g., mapping SUCCESS to an appropriate Riskonnect status), the integration maintains accuracy.</p><h1 id="h_01K2F6D9Z78A59AB3KVE88H9G4">Schedule</h1><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a>Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Run Integration</h1><p>You can set event or schedule triggers to run the script synchronization. For further details, refer to the <a href="../Integration-Studio-Guide/#h_01J7XABC17J1MPY99NBH1B6V1C" rel="noopener noreferrer" target="_blank">Integration Using Scripts</a> guide.</p><p>After the script synchronization is successfully executed, Aquera syncs the users created in Active Directory (AD) as internal contacts in Riskonnect. The imported users are staged and need admin approval to get provisioned to Riskonnect.</p><h1 id="h_01JPMEDG8C4C3GS46HWAAWBBV4">Download CSV Report</h1><p>You can download a report of an integration run in CSV format by clicking the execution status indicators in the <strong>History </strong>column and navigating to the <strong>Execution Timeline</strong> panel.</p>
+  </div>
+</body>
+</html>

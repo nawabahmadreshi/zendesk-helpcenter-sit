@@ -20,12 +20,8 @@
     <h1>SolarWinds Service Desk / ADP Workforce Now Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
 <h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, worker records from SolarWinds Service Desk are synced to the ADP Workforce Now resource.</p><p>To identify user records across both systems, the integration uses the attribute configured in the <strong>Dayforce User Attribute</strong>parameter from <strong>Dayforce</strong> and matches it to the attribute configured in the<strong> </strong><strong>Salesforce Contact Attribute</strong><strong> </strong>parameter in Salesforce as a correlation attribute.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The SolarWinds Service Desk / ADP Workforce Now Integration performs the following functions:</p><ul>
-<li data-list-item-id="e21ba15f73968411ebc7ca6218762707b">Synchronizes worker records from SolarWinds Service Desk to ADP Workforce Now.</li>
 <li data-list-item-id="e3b173885c088a734517fba9171e1e992">Creates new workers in ADP Workforce Now whenever new workers are added in SolarWinds Service Desk.</li>
-<li data-list-item-id="e61445e23540ba8173b53648bfe5868f0">Updates existing worker when their information changes in ADP Workforce Now.</li>
-<li data-list-item-id="eeac454c585ad52dc662de609d8e64eff">Deletes ADP Workforce Now worker records when they are no longer active in SolarWinds Service Desk.</li>
-<li data-list-item-id="edc043fe56db89db972fa854997b56cfd">Supports both full synchronization and incremental synchronization to process only changed records.</li>
-<li data-list-item-id="e63adfb577478b1f7f962b6d34b6d44ff">Supports filtering employees by status for creating and updating contacts in Salesforce.</li>
+<li data-list-item-id="edc043fe56db89db972fa854997b56cfd">Supports full synchronization.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="eacb67b82e7fd6cee5076c2b68ef514c3">
 <strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
@@ -62,19 +58,19 @@
 <strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
 </ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Worker Management</h3><p>The <strong>Manage Contacts</strong> section enables you to customize the integration settings for contacts management according to your specific use cases.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">SolarWinds Service Desk Settings</h4><p>Configure the following SolarWinds Service Desk settings:</p><ul>
 <li data-list-item-id="e5aae5c76e601eaa3eb2a10900743714f">
-<span><strong>Ticket State When Worker Is Ready to Onboard</strong></span><span>*</span>: Select a ticket status from the dropdown menu. Only worker records with the selected status will be considered for synchronizing from SolarWinds Service Desk to ADP Workforce Now. For example, if you select <em>New</em>, only workers with a New status will be included.</li>
+<span><strong>Ticket Status When Worker Is Ready to Onboard</strong></span><span>*</span>: Select a ticket status from the dropdown menu. Only tickets with the selected status from SolarWinds Service Desk will be used to create worker records in ADP Workforce Now.</li>
 <li data-list-item-id="e421c4f8505ac90409c0433b8dfda23e6">
-<strong>Ticket State When Worker Is Onboarded</strong><span>*</span>: Select a ticket status from the dropdown menu. </li>
+<strong>Ticket </strong><span><strong>Status</strong></span><strong> When Worker Is Onboarded</strong><span>*</span>: Select a ticket status from the dropdown menu. Once the worker record is successfully created in ADP Workforce Now, the ticket status will be updated to the selected status.</li>
 <li data-list-item-id="efbd131cb2ec19b6eeb2d5966f528ac9a">
-<strong>Limit</strong>: Enter the maximum number of worker records to be processed in a single integration execution. For example, entering 10 processes only includes the first ten worker records.</li>
+<strong>Onboarding Limit</strong>: Enter the maximum number of worker records to be processed in a single integration execution. For example, entering 10 processes only includes the first ten worker records.</li>
 </ul><h4 id="h_01KGM450J1YK3FN478G7X08MGN">ADP Workforce Now Settings</h4><p>This section enables you to customize the correlation attributes of the Dayforce and Salesforce applications.</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul><li data-list-item-id="e6658d0b8dd2b09bb155287f751175126">
-<strong>Onboarding template</strong><span>*</span>: Select a template from the dropdown men. </li></ul><h3 id="h_01KMCZVEC5SGQCEV0GMJFA2PPY">Sensitive Data Management</h3><p>The <strong>Sensitive Data Management</strong> section enables you to customize the integration settings for contacts management according to your specific use cases.</p><ul>
+<strong>Onboarding template</strong><span>*</span>: Select a template from the dropdown menu. The worker records will be created in the selected ADP Workforce Now template.</li></ul><h3 id="h_01KMD3Q7VFNT5G983FPYECWBRK">Sensitive Data Management</h3><p>The <strong>Sensitive Data Management</strong> section enables you to customize the integration settings for contacts management according to your specific use cases.</p><ul>
 <li data-list-item-id="e27ccc573a70a642389236b02ee57b521">
-<strong>PII fields</strong>: Enter the PII (Personal Identifiable Information) fields that must be masked in the worker record.</li>
+<strong>PII fields</strong>: Enter the PII (Personal Identifiable Information) fields that must be masked in the ADP Workforce Now worker record.</li>
 <li data-list-item-id="e6e513cb2b45de081b984a2f5b787e171">
-<strong>GUID fields</strong>: Enter the GUID (Globally Unique Identifier) fields that must be masked in the worker record.</li>
+<strong>GUID fields</strong>: Enter the GUID (Globally Unique Identifier) fields that must be masked in the ADP Workforce Now worker record.</li>
 <li data-list-item-id="e26e98bbc0bb8db36d55d4ce7aba6fc07">
-<strong>Employee ID fields</strong>: Enter the employee ID fields that must be masked in the worker record.</li>
+<strong>Employee ID number</strong>: Enter the employee ID field that must be masked in the ADP Workforce Now worker record.</li>
 </ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Logging</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the Enable Logging setting in the Parameters section.</p><ul><li data-list-item-id="e34e614cd0878ec50cb4a5265e7d329d2">
 <strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
 <li data-list-item-id="e43354ba216289d0be24c6c6fe38b3a72">

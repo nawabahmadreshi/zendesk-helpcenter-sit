@@ -1,0 +1,585 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now \ Microsoft Entra ID Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now \ Microsoft Entra ID Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KJBZQEYXSCQRGE1N2ZDCBAQR">Overview</h1><p>The Aquera platform enables organizations to scale complex identity and data management by automating integrations across enterprise systems. Aquera integrations facilitate automated provisioning and data synchronization, ensuring consistency across applications and infrastructure. By orchestrating identity lifecycle processes and automating repetitive tasks, organizations can streamline operations, dynamically scale resources, and improve the efficiency of managing complex IT environments.</p><p>The <strong>ADP Workforce Now to Microsoft Entra ID Integration</strong> automates the synchronization of worker data from ADP Workforce Now to Microsoft Entra ID. This integration ensures that <strong>user accounts and contacts</strong> in Entra ID are created, updated, and deactivated automatically based on authoritative HR data from ADP.</p><p>The integration retrieves worker records from ADP Workforce Now, applies configured eligibility rules, and matches each worker to an existing Entra ID user or contact using a defined correlation attribute. If no matching record is found, a new account or contact is created. If a record already exists, the integration updates it when changes are detected, such as updates to job title, department, manager, or other profile attributes. When a worker becomes inactive or no longer meets the configured eligibility conditions, the integration applies lifecycle rules to update the corresponding record status in Entra ID.</p><p>The integration also supports incremental synchronization and configurable lifecycle offsets to control when provisioning, updates, or deactivation actions occur relative to worker lifecycle events.</p><h2 id="h_01KJBZQM4GNW8CQ2R32RYCJM6E">Key Features</h2><p>The <strong>ADP Workforce Now to Microsoft Entra ID Integration</strong> provides the following capabilities to automate identity lifecycle management and maintain accurate user and contact records in Microsoft Entra ID:</p><ul>
+<li data-list-item-id="e4aa040c2b385c5c395101239f54aa8e2">Creates Microsoft Entra ID user accounts for eligible workers from ADP Workforce Now, including automatic generation of a temporary password.</li>
+<li data-list-item-id="e675bdc783af90ef349a137662991c0bd">Updates existing Microsoft Entra ID user accounts by applying attribute changes detected in ADP Workforce Now.</li>
+<li data-list-item-id="ea666e4f58ba1662efdf736b408691b9a">Deactivates Microsoft Entra ID user accounts based on configurable lifecycle rules, with deactivation prioritized when both update and deactivation conditions apply.</li>
+<li data-list-item-id="e91a1eabb07d906ebc86e63857d6fc75b">Creates Microsoft Entra ID contacts for workers based on configured contact eligibility rules.</li>
+<li data-list-item-id="eb4567f5210dbef2393fd6391a446ec35">Updates existing Microsoft Entra ID contacts when corresponding worker attributes change in ADP Workforce Now.</li>
+<li data-list-item-id="e3dfb58aa73c496d472ba9fe645022285">Removes Microsoft Entra ID contacts when workers no longer meet the configured contact eligibility conditions.</li>
+<li data-list-item-id="ea5b38eab7fbd5f574a5afc2474b2d332">Supports flexible user and contact correlation using configurable attributes such as <strong>Associate ID</strong>, <strong>Position ID</strong>, or <strong>Work Email</strong>.</li>
+<li data-list-item-id="ed177f11899eacdc14c67f5c9173c3621">Applies configurable eligibility rules to determine which workers are created, updated, or deactivated, including support for custom filtering and date-based conditions.</li>
+<li data-list-item-id="e7b218ae2da374bb784deb23b2faa5242">Supports lifecycle date offsets for onboarding and offboarding, allowing provisioning or deactivation to occur relative to worker lifecycle events.</li>
+<li data-list-item-id="eccc38f80ce1c2dde4fe594c439c0a5ca">Manages Microsoft Entra ID group memberships based on defined assignment rules.</li>
+<li data-list-item-id="ef9065d39cc76bf9f2249ef88ffe4737f">Processes only worker records that have changed since the last successful run using stored last-modified timestamps.</li>
+</ul><h2 id="h_01KJBZQTW7VQA0KBWMA7YP3XGF">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e4fbdca6fa09d7a1e755fb4a1f8c34ba2">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="eda6d4d2cc371801dfd99323465db889e">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e378fd351c3f8d5498b53e64b647f2364">
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://www.notion.so/hc/en-us/articles/360017945933">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li data-list-item-id="ef5df7fb1611de369d100ef1631956f7e">
+<strong>Microsoft 365</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711-Microsoft-365-Configuration-Guide">Microsoft 365 Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li data-list-item-id="ec67cc225cf2cf72b8a7133e6d93f9041">
+<strong data-end="386" data-start="341">Federated Microsoft Entra ID requirement:</strong> If your Microsoft Entra ID tenant uses federated authentication (for example, with ADFS, Okta, or another external identity provider), the <strong>onPremisesImmutableId</strong> must be mapped during user provisioning. This attribute serves as a unique identifier linking the on-premises identity to the Microsoft Entra ID user account. Without this mapping, federated users may not be matched correctly, leading to authentication or sign-in issues.</li>
+</ul><h2 id="h_01KKGAWHM3C5DAQPD4SKFRJ02M">Integration Setup</h2><p>This section outlines the configuration required to establish the integration between <strong>ADP Workforce Now</strong> and <strong>Microsoft Entra ID</strong> using the <strong>Microsoft 365 connector</strong> in the Aquera Admin Portal.</p><h3 id="h_01KKGAWHM38346NS37WW9QM9MP">Create Integration</h3><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e3b3fecf272f59af0dd6348e3314ae8f0">Log in to the <strong>Aquera Admin Portal</strong>.</li>
+<li data-list-item-id="e15211ca2f884cbf4857a14665884b8ea">In the left navigation panel, select <strong>Integrations</strong>.</li>
+<li data-list-item-id="e0e93e4774c61391ca187c198564d2803">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="eaac68da4ed25d82b7524efd21750f969">Select <strong>ADP Workforce Now / Entra ID</strong> as the integration template.</li>
+<li data-list-item-id="e1b70263a282f04f74a95339514c3f786">Enter a <strong>Name</strong> and <strong>Description</strong> for the integration.</li>
+<li data-list-item-id="e09d9184a1047069285c50990b3b073ec">Select the connector instances that the integration will use:<ul>
+<li data-list-item-id="e4ba2fd9498140d9481cce61b526a9077"><strong>ADP Workforce Now</strong></li>
+<li data-list-item-id="e8696adebaa54007cf97540aaef9b91c8"><strong>Microsoft 365 (Entra ID)</strong></li>
+</ul>
+</li>
+<li data-list-item-id="e19f11fb7867a1969b3290e57402cc17f">Click <strong>Continue</strong>.</li>
+</ol><p>The <strong>Configuration</strong> page is displayed to complete the integration setup.</p><h2 id="h_01KKGAXTEB1Z2K1SXSTVEPHGD9">Configuration</h2><p>The <strong>Configuration</strong> tab allows you to review and customize the behavior of the <strong>ADP Workforce Now to Microsoft Entra ID Integration</strong>.</p><p>The following sections are available under the <strong>Configuration</strong> tab:</p><h3 id="h_01KKGAXTECGNPDDW4DCMRDBGPF">Applications</h3><p>The <strong>Applications</strong> section displays the configured <strong>source</strong> and <strong>target</strong> connectors used by the integration.</p><p>This section allows you to review, search, and update the selected connector instances associated with the integration.</p><h3 id="h_01KKGAXTEDRJPHSW4RNA1205T0">Parameters</h3><p>The <strong>Parameters</strong> section allows you to configure how <strong>ADP Workforce Now worker records</strong> are processed and synchronized with <strong>Microsoft Entra ID</strong>.</p><p>This section includes settings that control worker eligibility rules, account creation and deactivation behavior, incremental synchronization, optional onboarding and offboarding date offsets, contact management behavior, and Microsoft Entra ID group assignment logic.</p><p>These settings determine which workers are created, updated, or deactivated in Entra ID and how user accounts, contacts, and group memberships are managed based on ADP Workforce Now data.</p><h4 id="h_01KJBZS539HEZKQEC2QKG6XJ50">Integration Features</h4><ul>
+<li data-list-item-id="e929887aa8a710046cd88705446fc29e7">
+<strong>Enable user management:</strong> Enables synchronization of ADP worker records to Microsoft Entra ID user accounts. For example, when a new employee is added in ADP Workforce Now and meets the eligibility rules, the integration creates the corresponding user account in Microsoft Entra ID.</li>
+<li data-list-item-id="e0e2fa38d32836d284ce11f08948513ba">
+<strong>Enable user date offset:</strong> Enables processing of users based on configured hire or termination date offsets. For example, if a hire date offset of <strong>-2 days</strong> is configured, the integration can create the user account two days before the employee’s official hire date.</li>
+<li data-list-item-id="e1859ebc5be1f2a8ddce2d0c89dc02f12">
+<strong>Enable contact management:</strong> Enables synchronization of ADP worker records as contacts in Microsoft Entra ID. For example, a contractor or external worker in ADP Workforce Now can be created as a contact in Entra ID instead of a user account.</li>
+<li data-list-item-id="ee5caaee019e5dbbd48000ffa32986e75">
+<strong>Enable contact date offset:</strong> Enables processing of contacts based on configured lifecycle date offsets. For example, if a contact offset of <strong>+1 day</strong> is configured for termination, the integration removes or deactivates the contact one day after the worker’s termination date.</li>
+<li data-list-item-id="e8c4b03fd64241f27690104830d56e70d">
+<strong>Enable password policy:</strong> Enables automatic generation of temporary passwords for newly created Microsoft Entra ID user accounts. For example, when a new employee account is created in Entra ID, the integration generates a temporary password based on the configured password policy.</li>
+<li data-list-item-id="e8dde8635f32f30fa39994a198a17113f">
+<strong>Enable incremental flow:</strong> Enables incremental synchronization so that only workers updated since the previous integration run are processed. For example, if a worker’s department or title changes in ADP Workforce Now, only that updated record is processed during the next run.</li>
+<li data-list-item-id="e8a2bc929eca128eda359ed34caab4ea4">
+<strong>Enable Entra group management:</strong> Enables automatic assignment and removal of users from Microsoft Entra ID groups based on configured group assignment rules. For example, if a worker belongs to the <strong>Sales</strong> department in ADP, the integration can automatically add the user to the <strong>Sales-Entra</strong> group.</li>
+</ul><h4 id="h_01KJBZSD23Z4RZW32GZZZ6BM55">General Settings</h4><ul>
+<li data-list-item-id="ebf1dc9a88c61f01a07e738da546eb98a">
+<strong>Enable report-only mode:</strong> Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="ef4aa3bd9b9ec3c805a1c8b604140a617">
+<strong>Enable logging:</strong> Select to generate logs outlining data changes.</li>
+<li data-list-item-id="e23836c3225eac70700fe60dc3cd7b529">
+<strong>Enable notifications:</strong> Select to enable the integration-related notifications.</li>
+<li data-list-item-id="e33fa2f418a879935157e27beb7541feb">
+<strong>Enable report generation:</strong> Select to generate the integration report.</li>
+<li data-list-item-id="e28ff4c4c1f79c3c91f97f7275603a288">
+<strong>Enable debug mode:</strong> Select to generate logs outlining data changes that would occur for debugging.</li>
+<li data-list-item-id="e6d1019886f963f2be6c50f00b162499d">
+<strong>Enable log insights:</strong> Select to visualize the integration-related metrics.</li>
+</ul><h3 id="h_01KKGF0B5DD5YV33QVXPC8JJYE">Worker Management</h3><p>This section allows you to configure how worker records from <strong>ADP Workforce Now</strong> are created, updated, and deactivated in <strong>Microsoft Entra ID</strong>.</p><p><strong>Note</strong>: The <strong>Worker Management</strong> section appears when the <strong>Enable user management</strong> checkbox is selected in the <strong>Integration Features</strong> section of the <strong>Parameters</strong> tab.</p><p>The Worker Management section includes the following settings:</p><ul>
+<li data-list-item-id="e5b3c64dfb2d0fe26867044d4ffe5590d">
+<strong>Workers eligible for provisioning in Entra:</strong> Select which ADP workers should be created or updated in Microsoft Entra ID.<br/>The following options are available:<ul>
+<li data-list-item-id="eb92bf426e0a6d4d2d03606d9ba3d4bf3">
+<strong>All workers:</strong> Provisions and updates all workers from ADP Workforce Now, regardless of employment status. For example, both active and inactive workers are synchronized to Entra ID.</li>
+<li data-list-item-id="eb9471d8d6e0a6c4b30af8f419ea6815b">
+<strong>All active workers:</strong> Provisions and updates only workers whose employment status is active. For example, terminated or retired workers are excluded.</li>
+<li data-list-item-id="e93d458416ddec37cf9944edf0c2a825e">
+<strong>All active full-time workers:</strong> Provisions and updates only workers who are both active and classified as full-time in ADP Workforce Now. For example, part-time or contract workers are excluded.</li>
+<li data-list-item-id="e5fe8fcc28b18c12258516682b1695239">
+<strong>Custom:</strong> Allows you to define a rule to determine which workers should be provisioned.<br/>When <strong>Custom</strong> is selected, the following field is displayed:<ul><li data-list-item-id="ed546e66afa08b4fadb8dbbdf000eba05">
+<p><strong>Custom upsert condition:</strong> Provide a JavaScript expression to identify which workers should be created or updated in Microsoft Entra ID.<br/><strong>Note:</strong> This field is available only when <strong>Custom</strong> is selected for the Workers eligible for provisioning parameter in Entra.</p>
+<p>Examples:</p>
+<ul>
+<li data-list-item-id="e1742aec01958e5854d14b3b859bd575e">
+<p>Provision workers only when a work email address is available</p>
+<pre>!!person__emailAddresses?.work</pre>
+</li>
+<li data-list-item-id="ec4af00631b40c64f662ec4b559a4c974">
+<p>Provision workers only when their employment status is Active</p>
+<pre>workerStatus__statusCode?.codeValue==="Active"</pre>
+</li>
+<li data-list-item-id="e13cb750c409b3eef0071d1f8cd268961">
+<p>Provision workers only when they belong to the Sales department</p>
+<pre>workerOrganization__departmentName==="Sales"</pre>
+</li>
+<li data-list-item-id="ecdf63742b253958783d8ada5e45c5d0b">
+<p>Provision workers only when their original hire date is today or in the future</p>
+<pre>newDate(workerDates?.originalHireDate)&gt;=newDate()</pre>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="eb7dfd902240cfdcf7df1db61fadf6d6e">
+<strong>Deactivate condition type:</strong> Select how the integration determines which workers should be deactivated in Microsoft Entra ID.<br/>The following options are available:<ul>
+<li data-list-item-id="e363bdb26e01127341a5249214779faf6">
+<strong>Basic:</strong> Uses predefined worker status rules to determine which users should be deactivated.<br/>When Basic is selected, the following field is displayed:<ul><li data-list-item-id="e30a83f51fb416ee8f19ac01116bb7d66">
+<strong>Workers eligible for deactivation in Entra:</strong> Select which worker statuses trigger account deactivation in Microsoft Entra ID. For example, selecting <strong>All Terminated Workers</strong> ensures that user accounts are deactivated when employees leave the organization.<br/>The following options are available:<ul>
+<li data-list-item-id="e1bd992c0313ff6c0cd08db2bf59a1365">
+<strong>All terminated workers:</strong> Deactivates user accounts for workers whose employment status is marked as terminated in ADP Workforce Now.</li>
+<li data-list-item-id="e3300391db542012853f942ff21dff98d">
+<strong>All deceased workers:</strong> Deactivates user accounts for workers whose status in ADP Workforce Now is marked as deceased.</li>
+<li data-list-item-id="e221e24f77771977ac400303ab60fc1dc">
+<strong>All retired workers:</strong> Deactivates user accounts for workers whose status in ADP Workforce Now is marked as retired.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e3606fbbf7951a670dfc1b763f8eb6104">
+<strong>Custom:</strong> Allows you to define a custom rule to determine which users should be deactivated.<br/>When <strong>Custom</strong> is selected, the following field is displayed:<ul><li data-list-item-id="e7742e3f1053d16f0095126a45ff820a1">
+<p><strong>Custom deactivate condition:</strong> Enter a JavaScript rule to determine which workers should be deactivated in Microsoft Entra ID.</p>
+<p><strong>Examples</strong>:</p>
+<ul>
+<li data-list-item-id="e1135de9ab56c1b800cef85cf3dc6f8bc">
+<p>Deactivate users when the worker status is Terminated</p>
+<pre>workerStatus__statusCode?.codeValue==="Terminated"</pre>
+</li>
+<li data-list-item-id="eaca86c9252e1f0494f464845f2d616f0">
+<p>Deactivate users when the worker status is Terminated and the termination date has passed</p>
+<pre>workerStatus__statusCode?.codeValue==="Terminated"&amp;&amp;
+newDate(workerDates?.terminationDate)&lt;=newDate()</pre>
+</li>
+<li data-list-item-id="ea848e9170fea2d9ea2a89e1c10781519">
+<p>Deactivate users when the worker status is Retired</p>
+<pre>workerStatus__statusCode?.codeValue==="Retired"</pre>
+</li>
+<li data-list-item-id="ef8b2f38a8df36dacf89384a20ce63d52">
+<p>Deactivate users when the worker is no longer Active</p>
+<pre>workerStatus__statusCode?.codeValue!=="Active"</pre>
+</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e3af84a5f22bd303b4de5b5938b476bf3">
+<strong>None:</strong> Disables automatic deactivation logic. When this option is selected, the integration does not automatically deactivate any users.</li>
+</ul>
+</li>
+</ul><h4 id="h_01KKGF0B5WBV8NHM4H08WRW3NT">User Correlation Settings</h4><p>The <strong>User Correlation Settings</strong> section defines how worker records from <strong>ADP Workforce Now</strong> are matched with existing user accounts in <strong>Microsoft Entra ID</strong>. Proper correlation ensures that existing users are updated instead of creating duplicate accounts.</p><p>The user correlation section includes the following settings: </p><ul>
+<li data-list-item-id="e5398a97bc5f75345f6f77878e2708414">
+<strong>Workforce Now correlation attribute:</strong> Select the ADP Workforce Now field that will be used to search for an existing user in Microsoft Entra ID.<br/>The following options are available:<ul>
+<li data-list-item-id="e4a28024bc78d66cc39a881a7a01b5700">
+<strong>Associate ID:</strong> Uses the worker’s Associate ID from ADP Workforce Now as the lookup value. For example, if the Associate ID is <strong>A10234</strong>, the integration searches for a user in Entra ID who has the same value for the selected Entra correlation attribute.</li>
+<li data-list-item-id="e6aa7a8e7dcf995066892e3e8dc5ce395">
+<strong>Position ID:</strong> Uses the worker’s Position ID from ADP Workforce Now as the lookup value.</li>
+<li data-list-item-id="e58372826628076b8ccadf62c59977347">
+<strong>Work Mail:</strong> Uses the worker’s primary work email address from ADP Workforce Now as the lookup value. For example, <strong>barbara.jensen@example.com</strong> is used to search for a matching user in Entra ID.</li>
+</ul>
+</li>
+<li data-list-item-id="e0e92bcc1c0fb385450792094e922bdd2">
+<p><strong>Entra correlation attribute:</strong> Select the Microsoft Entra ID attribute that will be compared with the selected ADP field during user lookup.<br/>The following options are available:</p>
+<ul>
+<li data-list-item-id="e5f17a09c57629000fafa36f6b0760bb1">
+<strong>Employee ID:</strong> Uses the Employee ID attribute in Entra ID for comparison.</li>
+<li data-list-item-id="e3f92327ccfa41cc3e5db71a2446f7cff">
+<strong>UPN:</strong> Uses the User Principal Name attribute in Entra ID for comparison.</li>
+<li data-list-item-id="e6f1d374dd1183eb3cc98c9bdf03b9d61">
+<strong>Mail:</strong> Uses the Mail attribute in Entra ID for comparison.</li>
+</ul>
+<p>For example, if <strong>Work Mail</strong> is selected in ADP and <strong>UPN</strong> is selected in Entra ID, the integration searches for a user whose <strong>UPN</strong> matches the worker’s <strong>Work Mail</strong> value.</p>
+</li>
+</ul><h3 id="h_01KKGDG3CB77CF9SSN2XN19BVN">Contact Management</h3><p>This section allows you to configure how worker records from <strong>ADP Workforce Now</strong> are synchronized as <strong>contacts</strong> in <strong>Microsoft Entra ID</strong>.</p><p>Note: The <strong>Contact Management</strong> section appears when the <strong>Enable contact management</strong> checkbox is selected in the <strong>Integration Features</strong> section of the <strong>Parameters</strong> tab.</p><p>The user contact management section includes the following settings: </p><ul>
+<li data-list-item-id="e226fd0d69cebd5438894503b9f08b17b">
+<strong>Contact to be created/updated in Entra:</strong> Select which ADP workers should have contacts created or updated in Microsoft Entra ID.<br/>The following options are available:<ul>
+<li data-list-item-id="ed1006f3544798ac26a175dafdfd0577f">
+<strong>All workers:</strong> Creates or updates contacts for all workers from ADP Workforce Now regardless of employment status. For example, both active and inactive workers will have corresponding contacts created or updated in Entra ID.</li>
+<li data-list-item-id="efe85624b59077b6b2aa2121446d771d1">
+<strong>All active workers:</strong> Creates or updates contacts only for workers whose employment status is active. For example, terminated or retired workers will not have contacts created or updated.</li>
+<li data-list-item-id="edf90a5708d3bf83eccc635bc75fcc454">
+<strong>All active full-time workers:</strong> Creates or updates contacts only for workers who are both active and classified as full-time in ADP Workforce Now. For example, part-time workers are excluded.</li>
+<li data-list-item-id="edef01d3138f9a5595d32e64f2fe6cd1d">
+<strong>Custom:</strong> Allows you to define a rule to determine which workers should have contacts created or updated.<br/>When <strong>Custom</strong> is selected, the following field is displayed:<ul><li data-list-item-id="ee7fd0f218021f1f726413754ecba8f88">
+<strong>Custom upsert condition:</strong> Enter a JavaScript rule to determine which workers should have contacts created or updated in Microsoft Entra ID. For example, you can configure the integration to create contacts only for workers who do not have an assigned Microsoft 365 license.</li></ul>
+</li>
+<li data-list-item-id="e1057eb0c61dbc95305ba8d07d3fe2770">
+<strong>None:</strong> Disables contact creation and update for all workers.</li>
+</ul>
+</li>
+<li data-list-item-id="e6003383564803a337f973b46f5449c56">
+<strong>Delete condition type:</strong> Select how the integration determines which contacts should be deleted from Microsoft Entra ID.<br/>The following options are available:<ul>
+<li data-list-item-id="e689f581d3dda314b5997e0a9d09e6304">
+<p><strong>Basic:</strong> Uses predefined worker status rules to determine which contacts should be deleted.</p>
+<p>When <strong>Basic</strong> is selected, the following field is displayed:</p>
+<ul><li data-list-item-id="e9a68b9d84afba34e7bc2112b85ee7142">
+<strong>Contact to be deleted from Entra:</strong> Select which worker statuses trigger contact deletion in Microsoft Entra ID.<br/>The following options are available:<ul>
+<li data-list-item-id="ef0dadd4087deb5fb43e3fbe431de2ca8">
+<strong>All terminated workers:</strong> Deletes contacts for workers whose employment status is marked as terminated in ADP Workforce Now.</li>
+<li data-list-item-id="ec374babba4b28af4ac385aaf90fd85fd">
+<strong>All retired workers:</strong> Deletes contacts for workers whose status is marked as retired in ADP Workforce Now.</li>
+<li data-list-item-id="e9690a6fad98a2249dc1798e8aaf11c24">
+<strong>All deceased workers:</strong> Deletes contacts for workers whose status is marked as deceased in ADP Workforce Now. For example, selecting <strong>All Terminated Workers</strong> ensures that contacts are removed when workers leave the organization.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e07403fd74f5bcea80b4f43e36845c507">
+<strong>Custom:</strong> Allows you to define a custom rule to determine which contacts should be deleted.<br/>When <strong>Custom</strong> is selected, the following field is displayed:<ul><li data-list-item-id="e9ab8ceb28ca5dfa43c8474467c7e7aa0">
+<strong>Custom delete condition:</strong> Enter a JavaScript rule to determine which contacts should be deleted from Microsoft Entra ID. For example, you can configure the integration to delete contacts only when the worker status is <strong>Terminated</strong>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="h_01KKGDG3CQRT2F62DZDASSZ1G0">Contact Correlation Settings</h4><p>The <strong>Contact Correlation Settings</strong> section defines how worker records from <strong>ADP Workforce Now</strong> are matched with existing contact records in <strong>Microsoft Entra ID</strong>. Proper correlation ensures that existing contacts are updated instead of creating duplicate contact records.</p><ul>
+<li data-list-item-id="e2e30932a278aa7fc3022f080dd16b768">
+<strong>Workforce Now correlation attribute:</strong> Select the ADP Workforce Now field used to search for an existing contact in Microsoft Entra ID.<br/>The following options are available:<ul><li data-list-item-id="ed58e70038014d1fb34fb9846b42340ed">
+<strong>Personal mail:</strong> Uses the worker’s personal email address from ADP Workforce Now as the lookup value. For example, if the worker’s personal email is <strong>barbara.jensen@gmail.com</strong>, the integration uses that value to search for a matching contact in Entra ID.</li></ul>
+</li>
+<li data-list-item-id="ea3d39da5e363bacbcfd6391b6eb8038b">
+<strong>Entra correlation attribute:</strong> Select the Microsoft Entra ID attribute used to match the selected ADP value.<br/>The following option is available:<ul><li data-list-item-id="ea4177dc2dc4641e19664567c961e3902">
+<strong>External email address:</strong> Uses the <strong>External Email Address</strong> attribute of the Entra ID contact for comparison. For example, if the ADP worker’s personal email is <strong>barbara.jensen@gmail.com</strong>, the integration searches for a contact whose <strong>External Email Address</strong> matches that value.</li></ul>
+</li>
+</ul><h3 id="h_01KKGKKX7VNT7JW7JGKZYAZG2G">Password Policy</h3><p>This section allows you to configure how passwords are generated for new <strong>Microsoft Entra ID user accounts</strong> created by the integration.</p><p>The <strong>Password Policy</strong> section appears when <strong>Enable password policy</strong> is selected in the <strong>Integration Features</strong> section of the <strong>Parameters</strong> tab.<br/>The password policy section includes the following settings: </p><ul><li data-list-item-id="e25ffd28294aafdd2ee4c5cdd66616938">
+<strong>Generate password:</strong> Select how passwords should be generated for newly created Microsoft Entra ID user accounts.<br/>The following options are available:<ul>
+<li data-list-item-id="ec31d77698aa73616712ee806c2f06c30">
+<strong>Auto generate password:</strong> Automatically generates a secure random password for each newly created user account.</li>
+<li data-list-item-id="e2a347854e6f5fc19da127f6738db2a98">
+<strong>Configure password policy:</strong> Allows you to define custom password generation rules.<br/>When Configure password policy is selected, the following fields are displayed:<ul>
+<li data-list-item-id="ea9bd38517dcc4ef83991f80113b62085">
+<strong>Allowed special characters:</strong> Specify which special characters can be included in generated passwords. For example, entering <code>!@#$%^&amp;*</code> allows the generated password to include these characters.</li>
+<li data-list-item-id="ed11f3c36d2644e886a43e383c010296c">
+<strong>Allowed characters:</strong> Select the character types that can be used in generated passwords.<br/>The following options are available:<ul>
+<li data-list-item-id="eb961ede8c45c5e2c3546aeaced116e57"><strong>Include lowercase</strong></li>
+<li data-list-item-id="e725728bd05b052cf3e77e67bd70386fd"><strong>Include uppercase</strong></li>
+<li data-list-item-id="ee41fa647911317b620b5620ca7c5c79e"><strong>Include numbers</strong></li>
+<li data-list-item-id="e9bb23bff4fd35ae6da246ede6eed798d">
+<strong>Include special characters</strong><br/>For example, selecting <strong>Include uppercase</strong>, <strong>Include lowercase</strong>, and <strong>Include numbers</strong> ensures that generated passwords contain a combination of these character types.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KKGNM4E2WVMZWTYMBMVK4AVP">User Provisioning Schedule</h3><p>This section allows you to configure when user accounts are created or deactivated in <strong>Microsoft Entra ID</strong> relative to worker lifecycle events in <strong>ADP Workforce Now</strong>.</p><p>Note: The <strong>User Provisioning Schedule </strong>section appears when the <strong>Enable user date offset</strong> checkbox is selected in the <strong>Integration Features</strong> section of the <strong>Parameters</strong> tab.<br/>The following settings are available.</p><h4 id="h_01KKJVP2B9Q6M8X0WXHT21WBV9">User Onboarding Date and Time</h4><p data-end="574" data-start="460">Configure the following settings to control when user accounts are created relative to a worker’s onboarding date:</p><ul>
+<li data-list-item-id="e890d9a4991592f48322f27c0f0b85679">
+<p data-end="719" data-start="576"><strong data-end="609" data-start="576">User account creation timing:</strong> Select when the user account should be created relative to the worker’s onboarding date in ADP Workforce Now.<br/>The following options are available:</p>
+<ul>
+<li data-end="933" data-list-item-id="e1640747755f38ce769d4135221c9c8ae" data-section-id="1i4ywsa" data-start="759"><p data-end="933" data-start="761"><strong data-end="784" data-start="761">On onboarding date:</strong> Creates the user account on the worker’s onboarding date. For example, if the onboarding date is <strong data-end="893" data-start="882">July 10</strong>, the account is created on <strong data-end="932" data-start="921">July 10</strong>.</p></li>
+<li data-end="2682" data-list-item-id="e90383d78a074c2aea12c892948a990e2" data-section-id="1n3u8k8" data-start="935">
+<p data-end="1045" data-start="937"><strong data-end="963" data-start="937">Before onboarding date</strong><span>*</span>: Creates the user account a specified number of days before the onboarding date.<br/>When <strong data-end="1080" data-start="1054">Before onboarding date</strong> is selected, the following fields are displayed:</p>
+<ul>
+<li data-end="1364" data-list-item-id="ec13ec1889347687b74591661b246a09b" data-section-id="19neypp" data-start="1133"><p data-end="1364" data-start="1135"><strong data-end="1161" data-start="1135">Days before onboarding date</strong><span>*</span>: Enter the number of days before the onboarding date when the account should be created. For example, if the onboarding date is <strong data-end="1302" data-start="1291">July 10</strong> and the value is <strong data-end="1325" data-start="1320">5</strong>, the account is created on <strong data-end="1363" data-start="1353">July 5</strong>.</p></li>
+<li data-end="2466" data-list-item-id="e4e11dad945526f2efb7e27f34e926e83" data-section-id="1wbgrc7" data-start="1368">
+<p data-end="1638" data-start="1370"><strong data-end="1391" data-start="1370">Timezone priority</strong><span>*</span>: Select the time zone priority used to determine which time zone is applied when calculating the onboarding schedule. The integration evaluates the selected options in order and uses the first available time zone to determine the execution time.<br/>The following options are available:</p>
+<ul><li data-end="1990" data-list-item-id="ed58deccac5ce6bad78801ae918826aee" data-section-id="15am7hy" data-start="1686">
+<p data-end="1990" data-start="1688"><strong data-end="1710" data-start="1688">Employee Timezone:</strong> Uses the worker’s configured time zone from ADP Workforce Now to determine when the onboarding action should occur. For example, if the execution time is <strong data-end="1874" data-start="1865">08:00</strong> and the worker’s time zone is <strong data-end="1921" data-start="1905">Asia/Kolkata</strong>, the account creation process runs at <strong data-end="1971" data-start="1960">8:00 AM</strong> in that time zone.<br/>The following options are available:</p>
+<ul>
+<li data-end="2246" data-list-item-id="e93b9ee4d89546a9bdb20616be9619f46" data-section-id="1i7xo0k" data-start="1996"><p data-end="2246" data-start="1998"><strong data-end="2006" data-start="1998">UTC:</strong> Uses <strong data-end="2048" data-start="2012">Coordinated Universal Time (UTC)</strong> as the reference time zone for executing the onboarding action. This option ensures that the account creation process runs at the same universal time regardless of the worker’s geographic location.</p></li>
+<li data-end="2466" data-list-item-id="e12f9510caaac16fc551b3ae2ddf196b5" data-section-id="n1j1ka" data-start="2252"><p data-end="2466" data-start="2254"><strong data-end="2262" data-start="2254">PST:</strong> Uses <strong data-end="2299" data-start="2268">Pacific Standard Time (PST)</strong> as the reference time zone for executing the onboarding action. For example, if the execution time is <strong data-end="2411" data-start="2402">08:00</strong>, the account creation process runs at <strong data-end="2465" data-start="2450">8:00 AM PST</strong>.</p></li>
+</ul>
+</li></ul>
+</li>
+<li data-end="2682" data-list-item-id="e427016b75338928464ca330615af28e4" data-section-id="1dgt0yr" data-start="2470"><p data-end="2682" data-start="2472"><strong data-end="2490" data-start="2472">Execution time</strong>*: Select the time when the onboarding action should occur. For example, selecting <strong data-end="2582" data-start="2573">08:00</strong> ensures that the user account is created at <strong data-end="2638" data-start="2627">8:00 AM</strong> based on the configured time zone priority.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="3765" data-list-item-id="e3aac4d89388f80582d06a62d16ff06fa" data-section-id="ov263j" data-start="2684">
+<p data-end="2792" data-start="2686"><strong data-end="2711" data-start="2686">After onboarding date</strong><span>*</span>: Creates the user account a specified number of days after the onboarding date.<br/>When <strong data-end="2826" data-start="2801">After onboarding date</strong> is selected, the following fields are displayed:</p>
+<ul data-end="3765" data-start="2879">
+<li data-end="3109" data-list-item-id="e92c078610f3c579c706236aef8f22c87" data-section-id="15v3svg" data-start="2879"><p data-end="3109" data-start="2881"><strong data-end="2906" data-start="2881">Days after onboarding date</strong><span>*</span>: Enter the number of days after the onboarding date when the account should be created. For example, if the onboarding date is <strong data-end="3046" data-start="3035">July 10</strong> and the value is <strong data-end="3069" data-start="3064">2</strong>, the account is created on <strong data-end="3108" data-start="3097">July 12</strong>.</p></li>
+<li data-end="3682" data-list-item-id="ec65f47067ecb650b5223e22d09ac08cc" data-section-id="r3cnsj" data-start="3113">
+<p data-end="3255" data-start="3115"><strong data-end="3136" data-start="3115">Timezone priority</strong><span>*</span>: Select the time zone priority used to determine which time zone is applied when calculating the onboarding schedule.<br/>The following options are available:</p>
+<ul data-end="3682" data-start="3303">
+<li data-end="3443" data-list-item-id="e72d73140ce5f4b3d5ac1429f2314d460" data-section-id="j03wtt" data-start="3303"><p data-end="3443" data-start="3305"><strong data-end="3327" data-start="3305">Employee Timezone:</strong> Uses the worker’s configured time zone from ADP Workforce Now to determine when the onboarding action should occur.</p></li>
+<li data-end="3565" data-list-item-id="e234e69743b11f4f967d30c17eaf990aa" data-section-id="1th21qd" data-start="3449"><p data-end="3565" data-start="3451"><strong data-end="3459" data-start="3451">UTC:</strong> Uses <strong data-end="3501" data-start="3465">Coordinated Universal Time (UTC)</strong> as the reference time zone for executing the onboarding action.</p></li>
+<li data-end="3682" data-list-item-id="e40a18dbcc6a985206cf5c57726e5c8bd" data-section-id="1mlqzgi" data-start="3571"><p data-end="3682" data-start="3573"><strong data-end="3581" data-start="3573">PST:</strong> Uses <strong data-end="3618" data-start="3587">Pacific Standard Time (PST)</strong> as the reference time zone for executing the onboarding action.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e33ab105e8aed20250e0ec88f8957d5d7">
+<strong>Execution time</strong>: Select the time when the onboarding action should occur. For example, selecting <strong>08:00</strong> ensures that the user account is created at <strong>8:00 AM</strong> based on the configured time zone priority.</li>
+</ul><h4 id="h_01KKJWHCT1EJVXYR32S4GWV8N6">Offboarding User Date and Time</h4><p>Configure the following settings to control when user accounts are deactivated relative to a worker’s offboarding date:</p><ul><li data-list-item-id="e3acd920ea2d19ad68a988b52a3916479">
+<strong>User account deactivation timing:</strong> Select when the user account should be deactivated relative to the worker’s offboarding date in ADP Workforce Now.<br/>The following options are available:<ul>
+<li data-list-item-id="eaedcb9dd94a555c448d95f78e1bf5c05">
+<strong>On offboarding date:</strong> Deactivates the user account on the worker’s offboarding date. For example, if the offboarding date is <strong>August 31</strong>, the account is deactivated on <strong>August 31</strong>.</li>
+<li data-list-item-id="e2fab9934d0685f8576ef35d97b550a07">
+<strong>After offboarding date</strong>: Deactivates the user account a specified number of days after the offboarding date.<br/>When <strong>After offboarding date</strong> is selected, the following fields are displayed:<ul>
+<li data-list-item-id="ed48ca800811ea71a63b9102364fe8072">
+<strong>Days after offboarding date</strong>: Enter the number of days after the offboarding date when the account should be deactivated. For example, if the offboarding date is <strong>August 31</strong> and the value is <strong>3</strong>, the account is deactivated on <strong>September 3</strong>.</li>
+<li data-list-item-id="e8e78a3576e29293511e1d58d748dfcb3">
+<strong>Timezone priority:</strong> Select the time zone priority used when calculating the offboarding schedule. The integration evaluates the selected options in order and uses the first available time zone to determine the execution time.<br/>The following options are available:<ul>
+<li data-list-item-id="e4dda6591153efa53f7a08a7d6b3805f5">
+<strong>Employee Timezone:</strong> Uses the worker’s configured time zone from ADP Workforce Now to determine when the offboarding action should occur.<br/>The following options are available:<ul>
+<li data-list-item-id="e35af2ecf6f6f551a3e7e2a9b874df14d">
+<strong>UTC:</strong> Uses <strong>Coordinated Universal Time (UTC)</strong> as the reference time zone for executing the offboarding action.</li>
+<li data-list-item-id="e6011d4518c03554d5e6e40eec20d905b">
+<strong>PST:</strong> Uses <strong>Pacific Standard Time (PST)</strong> as the reference time zone for executing the offboarding action.</li>
+</ul>
+</li>
+<li data-list-item-id="e142b17e3798071fe126fe72d79248d06">
+<strong>Execution time:</strong> Select the time when the offboarding action should occur. For example, selecting <strong>23:00</strong> ensures that the user account is deactivated at <strong>11:00 PM</strong> based on the configured time zone priority.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KKJXH6MAHVRAZCXXRX7XNME7">Contact Provisioning Schedule</h3><p>This section allows you to configure when contacts are created or removed in <strong>Microsoft Entra ID</strong> relative to worker lifecycle events in <strong>ADP Workforce Now</strong>.</p><p><strong>Note:</strong> The <strong>Contact Provisioning Schedule</strong> section appears when the <strong>Enable contact date offset</strong> checkbox is selected in the <strong>Integration Features</strong> section of the <strong>Parameters</strong> tab.</p><p>The following settings are available:</p><h4 id="h_01KKJXH6MCZW8H0YFCA0Y354DA">Contact Onboarding Date and Time</h4><p>Configure the following settings to control when contacts are created relative to a worker’s onboarding date:</p><ul><li data-list-item-id="e364720d3a7d56b8d0fbc531afcb6c66a">
+<strong>Contact creation timing:</strong> Select when the contact should be created relative to the worker’s onboarding date in <strong>ADP Workforce Now</strong>.<br/>The following options are available:<ul>
+<li data-list-item-id="eb0846ff8b460dc4c899778d3d4888d84">
+<strong>On onboarding date:</strong> Creates the contact on the worker’s onboarding date. For example, if the onboarding date is <strong>July 10</strong>, the contact is created on <strong>July 10</strong>.</li>
+<li data-list-item-id="e595eff7509f2bdde3cbe5b296bc875bd">
+<strong>Before onboarding date</strong>: Creates the contact a specified number of days before the onboarding date.<br/>When <strong>Before onboarding date</strong> is selected, the following fields are displayed:<ul>
+<li data-list-item-id="eeb68f4ca969945bc1ec27164ada2ee76">
+<strong>Days before onboarding date</strong>: Enter the number of days before the onboarding date when the contact should be created. For example, if the onboarding date is <strong>July 10</strong> and the value is <strong>5</strong>, the contact is created on <strong>July 5</strong>.</li>
+<li data-list-item-id="e1f58dfcc59074a9269939250905dd8d6">
+<strong>Timezone priority</strong>: Select the time zone priority used to determine which time zone is applied when calculating the onboarding schedule. The integration evaluates the selected options in order and uses the first available time zone to determine the execution time.<br/>The following options are available:<ul><li data-list-item-id="e653be5ff108a7775149450794ab6404e">
+<strong>Employee Timezone:</strong> Uses the worker’s configured time zone from ADP Workforce Now to determine when the contact creation action should occur. For example, if the execution time is <strong>08:00</strong> and the worker’s time zone is <strong>Asia/Kolkata</strong>, the contact creation process runs at <strong>8:00 AM</strong> in that time zone.<br/>The following options are available:<ul>
+<li data-list-item-id="ea260726fa9260a56c5fd7ceeb4310942">
+<strong>UTC:</strong> Uses <strong>Coordinated Universal Time (UTC)</strong> as the reference time zone for executing the contact creation action. This option ensures that the contact creation process runs at the same universal time regardless of the worker’s geographic location.</li>
+<li data-list-item-id="e861752fbdfb83b738cdc5967204e57ff">
+<strong>PST:</strong> Uses <strong>Pacific Standard Time (PST)</strong> as the reference time zone for executing the contact creation action. For example, if the execution time is <strong>08:00</strong>, the contact creation process runs at <strong>8:00 AM PST</strong>.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e05480ae754c98ab68f5ba4b3d096988a">
+<strong>Execution time</strong>: Select the time when the contact creation action should occur. For example, selecting <strong>08:00</strong> ensures that the contact is created at <strong>8:00 AM</strong> based on the configured time zone priority.</li>
+</ul>
+</li>
+<li data-list-item-id="e67d62d6515b1f0dacee9a5dcd76c5ccc">
+<strong>After onboarding date</strong>: Creates the contact a specified number of days after the onboarding date.<br/>When <strong>After onboarding date</strong> is selected, the following fields are displayed:<ul>
+<li data-list-item-id="e5b6c374b1e5eef45cd860c9d93754010">
+<strong>Days after onboarding date</strong>: Enter the number of days after the onboarding date when the contact should be created. For example, if the onboarding date is <strong>July 10</strong> and the value is <strong>2</strong>, the contact is created on <strong>July 12</strong>.</li>
+<li data-list-item-id="e4d34367eab91322d6d0760787351fb16">
+<strong>Timezone priority</strong>: Select the time zone priority used to determine which time zone is applied when calculating the onboarding schedule.<br/>The following options are available:<ul>
+<li data-list-item-id="e040e053fc2069c9a37c422941b2eadf0">
+<strong>UTC:</strong> Uses <strong>Coordinated Universal Time (UTC)</strong> as the reference time zone for executing the contact creation action. This option ensures that the contact creation process runs at the same universal time regardless of the worker’s geographic location.</li>
+<li data-list-item-id="e4e686ec033c832b3ddaaaed920e72acf">
+<strong>PST:</strong> Uses <strong>Pacific Standard Time (PST)</strong> as the reference time zone for executing the contact creation action. For example, if the execution time is <strong>08:00</strong>, the contact creation process runs at <strong>8:00 AM PST</strong>.</li>
+</ul>
+</li>
+<li data-list-item-id="eed9c2926d926a6a442af2f9fc921d684">
+<strong>Execution time</strong>: Select the time when the contact creation action should occur.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KKJXH6MNBK68MMBARR4K7YAH">Contact Offboarding Date and Time</h4><p>Configure the following settings to control when contacts are removed relative to a worker’s offboarding date:</p><ul><li data-list-item-id="ec0dc35436e338cabe02d7d68e06f54a6">
+<strong>Contact removal timing:</strong> Select when the contact should be removed relative to the worker’s offboarding date in <strong>ADP Workforce Now</strong>.<br/>The following options are available:<ul>
+<li data-list-item-id="e560b86760c80f1f535cfa88a89e1663a">
+<strong>On offboarding date:</strong> Removes the contact on the worker’s offboarding date. For example, if the offboarding date is <strong>August 31</strong>, the contact is removed on <strong>August 31</strong>.</li>
+<li data-list-item-id="ed6c1f2f2a665d597fef784c966965641">
+<strong>After offboarding date:</strong> Removes the contact a specified number of days after the offboarding date.<br/>When <strong>After offboarding date</strong> is selected, the following fields are displayed:<ul>
+<li data-list-item-id="e920174d0c9fa3d02646f08ea0414c666">
+<strong>Days after offboarding date:</strong> Enter the number of days after the offboarding date when the contact should be removed. For example, if the offboarding date is <strong>August 31</strong> and the value is <strong>3</strong>, the contact is removed on <strong>September 3</strong>.</li>
+<li data-list-item-id="eeca8b91d0f8faf42dda231020519cdcb">
+<strong>Timezone priority:</strong> Select the time zone priority used when calculating the offboarding schedule. The integration evaluates the selected options in order and uses the first available time zone to determine the execution time.<br/>The following options are available:<ul>
+<li data-list-item-id="eb7f51fc3f508baa0d130c5f36d958e14">
+<strong>Employee Timezone:</strong> Uses the worker’s configured time zone from ADP Workforce Now to determine when the contact removal action should occur.</li>
+<li data-list-item-id="e21a22da96db813080a0346b25f4cce7b">
+<strong>UTC:</strong> Uses <strong>Coordinated Universal Time (UTC)</strong> as the reference time zone for executing the contact removal action.</li>
+<li data-list-item-id="e4ad740f6fd7f17df561e8723b03e44a4">
+<strong>PST:</strong> Uses <strong>Pacific Standard Time (PST)</strong> as the reference time zone for executing the contact removal action.</li>
+</ul>
+</li>
+<li data-list-item-id="e7d75c0ab775f8063a5d54fa25bf3dcc5">
+<strong>Execution time:</strong> Select the time when the contact removal action should occur. For example, selecting <strong>23:00</strong> ensures that the contact is removed at <strong>11:00 PM</strong> based on the configured time zone priority.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KKK0CRP0D7ER5SW0NQK7CEWQ">Log Settings</h3><p>The <strong>Log Settings</strong> section allows you to configure how integration activity is recorded, including the level of detail captured and how sensitive information is handled in logs.</p><p><strong>Note:</strong> The <strong>Log Settings</strong> section appears when the <strong>Enable Logging</strong> checkbox is selected in the <strong>General Settings</strong> section of the <strong>Parameters</strong> tab.</p><ul>
+<li data-list-item-id="e4045a4e052acc20ffedb2871dd120be6">
+<strong>Log Type</strong>: Select the type of data that should appear in the logs.<br/>The following options are available:<ul>
+<li data-list-item-id="edd4dc39031f6a3493f8d4eb8fb0d36fb">
+<strong>Minimum:</strong> Logs only the operations performed during the integration run. Operations are recorded without GUIDs or field details. For example, the log may display <strong>User Created</strong>, <strong>User Updated</strong>, or <strong>User Deleted</strong> without listing any attributes or identifiers.</li>
+<li data-list-item-id="e273c635b4f9e0bd8ef1eff74e1fa0b4a">
+<strong>Metadata:</strong> Logs the operations performed along with the names of the fields that were changed, but does not include the GUID. For example, the log may show <strong>Updated fields: Department and Title</strong> without displaying the associated user identifier.</li>
+<li data-list-item-id="ef257b66dd3953ea50def52706275fb0f">
+<strong>Non-PII Data:</strong> Logs the operations performed, field names, and selected non-PII values. The GUID is not included. For example, the log may display <strong>Department updated to Sales</strong> while masking sensitive information such as date of birth.</li>
+<li data-list-item-id="e7d9c39c18f6b0409357cc9a2b9fd60cd">
+<strong>GUID with Non-PII Data:</strong> Logs the GUID together with the operations performed, field names, and selected non-PII values. This option provides detailed traceability while still preventing exposure of sensitive information.</li>
+</ul>
+</li>
+<li data-list-item-id="e19ffcfe26c64e2c0a1bd3f40519443c3">
+<strong>Log Level</strong>: Select the desired log detail level from the dropdown menu.<br/>The following options are available:<ul>
+<li data-list-item-id="e3820d687b5d6bf2ab7dc034f2f280a04">
+<strong>Full:</strong> Displays all attribute details recorded during the integration run.</li>
+<li data-list-item-id="ee6eedd4223595e070ed4f943c885cfea">
+<strong>Include List:</strong> Displays only the attributes specified in the <strong>Custom Inclusion List</strong> field.<br/>If <strong>Include List</strong> is selected, the following field is displayed:<ul><li data-list-item-id="e34853925f8b3bf32a1810c8c83ec15a8">
+<strong>Custom Inclusion List:</strong> Enter the attributes that should be displayed in the logs. Only the attributes specified in this list will appear in the log entries.</li></ul>
+</li>
+<li data-list-item-id="e2f94b7a7ea13eb827f5df4dc9d7d8de8">
+<strong>Exclude List:</strong> Displays all attribute details except those specified in the <strong>Custom Exclusion List</strong> field.<br/>If <strong>Exclude List</strong> is selected, the following field is displayed:<ul><li data-list-item-id="ee3e5a0f4d2b2578b1799090ccf1bd24e">
+<strong>Custom Exclusion List:</strong> Enter the attributes that should be excluded from the logs display.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e6df609cb5bcaa9f0982effb6680100cc">
+<strong>PII Fields</strong>: Enter the attributes that contain <strong>Personally Identifiable Information (PII)</strong> so they can be masked or excluded in logs. For example, adding <strong>dateOfBirth</strong> ensures that this sensitive value does not appear in integration logs.</li>
+<li data-list-item-id="ed4e34594a7b20a1f8fcb2808071a446e">
+<strong>GUID Fields</strong>: Enter the fields that store <strong>Globally Unique Identifiers (GUIDs)</strong> so they are handled correctly in logs. For example, adding <strong>managerId</strong> ensures the integration treats this value as a system-generated identifier.</li>
+<li data-list-item-id="e821b163dc408a4cd27a7338b6fca2958">
+<strong>Employee Identifier Fields:</strong> Enter the attributes that represent employee identifiers so they appear consistently in logs. For example, adding <strong>associateOID</strong> ensures the employee identifier is logged correctly for each operation.</li>
+</ul><h3 id="h_01KJBZXKQVBA7MT6TF4FN456B4">Report Settings</h3><p>This section enables you to configure the reports. </p><p><strong>Note</strong>: The <strong>Report Settings</strong> appear when you select the <strong>Enable Report Generation </strong>checkbox in the<strong> General Settings </strong>section of the<strong> Parameters </strong>tab.</p><ul>
+<li data-list-item-id="e7385811d5029af8f3ae4dd838436a9ca">
+<strong>Report Data Type</strong>: Select the type of information to include in the integration report. For example, choosing Employee Identifier with Non-Sensitive Data includes the employee number, operation performed, field names, and selected non-sensitive values in the report.The following are the available options in the dropdown:<ul>
+<li data-list-item-id="e9ce27379994730bd7c1a56aab29e2763">
+<strong>Operations only:</strong> Includes only the action performed, such as create, update, or delete. For example, the report shows <strong>15 Users Updated</strong> without listing fields.</li>
+<li data-list-item-id="e379910270bafcf2364dea70b3e0a4379">
+<strong>Operations and field names:</strong> Includes the action performed and the names of fields that changed, but not their values. For example, the report shows <strong>Department Updated</strong> without displaying the department name.</li>
+<li data-list-item-id="e53e2898287ff4b435db4f27ba681a7d5">
+<strong>Employee identifier with non-sensitive data:</strong> Includes the employee identifier, operation performed, field names, and selected non-sensitive values. For example, the report shows Employee <strong>10234</strong>, Updated <strong>Department equals Sales</strong>, without exposing sensitive information.</li>
+<li data-list-item-id="e1b588b059571c8ff23ab62edb067e6e4">
+<strong>Guid with non-sensitive data:</strong> Includes the GUID, operation performed, field names, and selected non-sensitive values. For example, the report shows GUID <strong>a12b-45c7-d890</strong>, Updated <strong>Title = Manager</strong>, without exposing sensitive data.</li>
+</ul>
+</li>
+<li data-list-item-id="eb27762e0f6c1b51d969504efef86d907">
+<p data-end="332" data-start="245"><strong data-end="269" data-start="245">Report detail level:</strong> Select the desired report detail level from the dropdown menu.<br/>The following options are available:</p>
+<ul>
+<li data-end="712" data-list-item-id="e1bb0cc753fc62dbda4a8be6cb4f565de" data-section-id="1vn26o8" data-start="372">
+<p data-end="472" data-start="374"><strong data-end="391" data-start="374">Include List:</strong> Displays only the attributes specified in the <strong data-end="463" data-start="438">Custom Inclusion List</strong> field.<br/>If <strong data-end="495" data-start="479">Include List</strong> is selected, the following field is displayed:</p>
+<ul><li data-end="712" data-list-item-id="efed5689f929ead3e4d1a8d19acf35724" data-section-id="1vn26o8" data-start="372"><p data-end="472" data-start="374"><strong data-end="574" data-start="548">Custom Inclusion List:</strong> Enter the attributes that should be displayed in the report. Only the attributes specified in this list will appear in the report output.</p></li></ul>
+</li>
+<li data-end="1001" data-list-item-id="ee4be36be3e39536fa0d50a5f70fc6439" data-section-id="2mwmxi" data-start="714">
+<p data-end="829" data-start="716"><strong data-end="733" data-start="716">Exclude List:</strong> Displays all attribute details except those specified in the <strong data-end="820" data-start="795">Custom Exclusion List</strong> field.<br/>If <strong data-end="852" data-start="836">Exclude List</strong> is selected, the following field is displayed:</p>
+<ul><li data-end="1001" data-list-item-id="e4aaf9bb5e737301e861e091146822b7c" data-section-id="2mwmxi" data-start="714"><p data-end="829" data-start="716"><strong data-end="931" data-start="905">Custom Exclusion List:</strong> Enter the attributes that should be excluded from the report display.</p></li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e5a60950433867f76e233ca3c825b3be9">
+<strong>PII fields</strong>: Enter the attributes that contain Personally Identifiable Information (PII) and should be masked or excluded from reports. For example, adding <strong>dateOfBirth</strong> or <strong>personalEmail</strong> ensures these values are not displayed in the generated report.</li>
+<li data-list-item-id="e86e979b5b61c124436cd85508d1c676d">
+<strong>GUID fields</strong>: Enter the attributes that contain system-generated unique identifiers so they are handled correctly in reports. For example, adding <strong>objectId</strong> ensures the report recognizes this value as a unique system identifier rather than regular user data.</li>
+<li data-list-item-id="ec6511e636a0e78e0ad1bf38e294d2e32">
+<strong>Employee identifier fields</strong>: Enter the attributes that represent employee identification values to be clearly displayed in reports. For example, adding <strong>associateOID</strong> ensures the employee number appears consistently for each processed worker.</li>
+</ul><h4 id="h_01KJBZY96JKQRDNK0AY2J2A47S">Debug Settings</h4><p>This section enables you to set debug options to help troubleshoot and fix integration issues. </p><p><strong>Note</strong>: The <strong>Debug Settings </strong>tab appears when you select the <strong>Enable debug mode </strong>checkbox in the<strong> General Settings </strong>section of the<strong> Parameters </strong>tab.</p><p>Configure the following debug mode setting under the <strong>ADP Workforce Now Workers Debug Setting</strong> section:</p><ul><li data-list-item-id="ed7d337bad7bdbdde9629454e6fa5f1bf">
+<strong data-end="617" data-start="592">Workforce Now Filter:</strong> Select how you want to filter workers for debugging. Based on the selected option, the corresponding input field appears below.<br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="e9e63905e05ea3534eae41a2ea32ba53f">
+<strong>Associate ID</strong>: Enter the unique associate identifier from ADP Workforce Now to process a specific worker. For example, entering X7U3FD48V runs the integration only for the worker with that Associate ID.</li>
+<li data-list-item-id="e6ad0c08c4ea54fb5884c759bb455a631">
+<strong>Position ID</strong>: Enter the position identifier to retrieve workers associated with a specific position. For example, entering <strong>BOS000853</strong> processes workers assigned to that position.</li>
+<li data-list-item-id="ebce976d18e94eb4894c013ac54b748e6">
+<strong>Custom source filter condition</strong>: Enter a JavaScript expression to define advanced filtering logic for debugging. For example, entering <strong>workerStatus === "Active" &amp;&amp; businessCommunication_emails_emailUri &amp;&amp; businessCommunication_emails_emailUri.length &gt; 0,</strong> processes only workers who are active and have a work email address defined.</li>
+</ul>
+</li></ul><h3 id="h_01KJBZYQ7STWG3WSMB3GX649KY">Notification Settings</h3><p>This section enables you to configure the notifications:</p><p><strong>Note</strong>: The <strong>Notifications </strong>tab appears when you select the <strong>Enable notifications </strong>checkbox in the<strong> Operational Settings </strong>section of the<strong> Parameters </strong>tab.</p><p><strong>Notification Template Settings</strong></p><p>Configure the following settings to define the email templates used when integration events occur:</p><ul>
+<li data-list-item-id="ef63dfd900666a0bcc74b9af3217883cf">
+<strong>Send success email notifications</strong>: Select to send an email when the integration completes successfully. For example, when the ADP to Entra sync finishes without errors, a success notification is sent to the configured recipients.</li>
+<li data-list-item-id="e362648d8c41539f1819a27d09b4f47d2">
+<strong>Send failure email notifications</strong>: Select to send an email when the integration fails. For example, if the sync encounters an error, a failure notification is sent to the configured recipients.</li>
+<li data-list-item-id="ed659bb8fd259232b3d2f1ff1b3a43434">
+<strong>Attach execution report to email</strong>: Select to include the integration report as an attachment in notification emails. For example, enabling this option attaches the execution summary to both success and failure notifications.</li>
+</ul><h4 id="h_01KMFQQJRR6ZVVR1AYCHWZGHSQ">Success Notification Settings</h4><p>Configure the following notification settings to receive email alerts when an integration run succeeds:</p><ul>
+<li data-list-item-id="ef9772fb872f7d51bc025ff3bfac213d1">
+<strong>Success notification recipients</strong>: Enter the email addresses that should receive success notification emails. For example, add admin@company.com to receive confirmation when the integration completes successfully.</li>
+<li data-list-item-id="e1a9f2db5cc8d8b3dccdd5c053a29874b">
+<strong>Success notification CC</strong>: Enter additional email addresses to receive a copy of success notifications. For example, include teamlead@company.com to keep the team informed.</li>
+<li data-list-item-id="ec6c97534a5636525ada1adb8638c14d4">
+<strong>Success email subject</strong>: Enter the subject line used for success notification emails. For example, ADP to Entra Integration Success.</li>
+<li data-list-item-id="ee9913a1be6feab2687bf0f502994803c">
+<strong>Success email body</strong>: Enter the message content sent when the integration completes successfully. For example, include a summary of the run, such as the number of users processed and any key updates.</li>
+</ul><h4 id="h_01KMFQQSQ57H477YC8CRBGHW6S">Failure Notification Settings</h4><p>Configure the following notification settings to receive email alerts when an integration run fails:</p><ul>
+<li data-list-item-id="eb13a0ff593fefe773b76b64a6c47c856">
+<strong>Failure notification recipients</strong>: Enter the email addresses that should receive failure notification emails. For example, add support@company.com to receive alerts when the integration encounters an error.</li>
+<li data-list-item-id="eb707847b65f8a2147db9285c8fff8d14">
+<strong>Failure notification CC</strong>: Enter additional email addresses to receive a copy of failure notifications. For example, include itadmin@company.com to notify system administrators.</li>
+<li data-list-item-id="e87913f08e59049bf1b369ac678079b95">
+<strong>Failure email subject</strong>: Enter the subject line used for failure notification emails. For example, ADP to Entra Integration (Failure Alert).</li>
+<li data-list-item-id="ebd282b19cfeb518ba94e20a7f82ec43e">
+<strong>Failure email body</strong>: Enter the message content sent when the integration fails. For example, include error details and troubleshooting guidance.</li>
+</ul><h4 id="h_01KMFQQYDHMNDF5BZH8SEX0P9G">Notification Report Settings</h4><p>Configure the following notification settings to receive email alerts with reports:</p><ul>
+<li data-list-item-id="e9daf092f3c4dd82964329aaa8106395f">
+<strong>Notification report type</strong>: Select the type of data to include in notification emails. For example, choosing Employee Identifier with Non-Sensitive Data includes the employee number, operation performed, and selected non-sensitive field values in the email report.</li>
+<li data-list-item-id="e0c77dbbe247a19a8b3177e5dbe9d9259">
+<strong>Notification report detail level:</strong> Select the level of detail to include in the notification report. <br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="e6b479addc106187c09d6530b3f94e87a">
+<span data-token-index="0"><strong>Full details</strong>:</span> All attribute details are displayed in the notification report.</li>
+<li data-list-item-id="e24e9cb7e541a5e0bdc89a45caea664d9">
+<span data-token-index="0"><strong>Custom inclusion list</strong>:</span> Displays only the attributes specified in the <span data-token-index="2">Custom Inclusion List</span> field.<br/>If <span data-token-index="1">Custom inclusion list</span> is selected, the following field is displayed:<ul><li data-list-item-id="eb4196ba574f88ca3f5c8401206dc96d3">
+<span data-token-index="0"><strong>Custom Inclusion List</strong>:</span> Enter the attributes that should be included in the notification report.</li></ul>
+</li>
+<li data-list-item-id="ed0a30f89a029e8f2e66cc2adb09bfcff">
+<span data-token-index="0"><strong>Custom exclusion list</strong>:</span> Displays all attribute details except those specified in the <span data-token-index="2">Custom Exclusion List</span> field.<br/>If <span data-token-index="1"><strong>Custom exclusion </strong>list</span> is selected, the following field is displayed:</li>
+<li data-list-item-id="e848956219ec4aa62ca718b1c774b079f">
+<span data-token-index="0"><strong>Custom Exclusion List</strong>:</span> Enter the attributes that should be omitted from the notification report.</li>
+</ul>
+</li>
+<li data-list-item-id="e4e70e89d768f674cb97909f657e971a8">
+<strong>PII fields to exclude</strong>: Enter the PII fields that contain sensitive personal information to be masked or excluded from notification reports. For example, adding dateOfBirth ensures this value is not included in the email report.</li>
+<li data-list-item-id="e7da2f8bd2ab4e22e021e532ca79f4649">
+<strong>GUID fields</strong>: Enter the GUID fields that contain system-generated unique identifiers to ensure they are handled correctly in notification reports. For example, adding objectId ensures it is treated as a system identifier.</li>
+<li data-list-item-id="ef6e858004e398f1c772ed851e06cdce7">
+<strong>Employee identifier fields</strong>: Enter the fields that represent employee identification values so they appear consistently in notification reports. For example, adding associateOID ensures the employee number is included in the report.</li>
+</ul><h3 id="h_01KJBZZH5XZG9CGR1VQ8SGBP6R">Log Insights Settings</h3><p>This section allows you to configure analytics and dashboard visibility for integration activity and performance metrics.</p><p><strong>Note</strong>: The <strong>Log Insights </strong>section appears when you select the <strong>Enable log insights </strong>checkbox in the<strong> General Settings </strong>section of the<strong> Parameters </strong>tab.</p><ul>
+<li data-list-item-id="ef8c635a9589c1d91c6f505f71e404539">
+<strong>Insights dashboard name</strong>: Enter the dashboard name where integration analytics will be displayed. For example, entering ADP_WORKFORCE_NOW_ENTRA creates or updates a dashboard with that name to track execution metrics.</li>
+<li data-list-item-id="ec14f916a8563e6d9eb55d888f053b7f2">
+<strong>Insights data type</strong>: Select the type of data to include in analytics logs. For example, choosing Non-Sensitive Data includes operation details, field names, and selected non-sensitive values without displaying system identifiers.</li>
+<li data-list-item-id="ecf35d77110cdbb7580d3d59261914000">
+<strong>Log Insights detail level:</strong> Select the level of detail to include in Log Insights.<br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="e99f123e1869a524dcc38b8f723b5527a">
+<span data-token-index="0"><strong>Full details</strong>:</span> All attribute details are displayed in the Log Insights.</li>
+<li data-list-item-id="e70b8aa15dc39be64611dfc87dbf0c4c8">
+<span data-token-index="0"><strong>Custom inclusion list</strong>:</span> Displays only the attributes specified in the <span data-token-index="2">Custom Inclusion List</span> field.<br/>If <span data-token-index="1"><strong>Custom inclusion </strong>list</span> is selected, the following field is displayed:<ul><li data-list-item-id="e5c9565fe1575a7563384f1bdac297db7">
+<span data-token-index="0"><strong>Custom Inclusion List</strong>:</span> Enter the attributes that should be included in Log Insights.</li></ul>
+</li>
+<li data-list-item-id="e0a2d9c107fc70b54b69a958aa9b79d9f">
+<span data-token-index="0"><strong>Custom exclusion list</strong>:</span> Displays all attribute details except those specified in the <span data-token-index="2">Custom Exclusion List</span> field.<br/>If <span data-token-index="1"><strong>Custom exclusion </strong>list</span> is selected, the following field is displayed:</li>
+<li data-list-item-id="e06ffdaec6a5c0afe28a1483ecc6e781c">
+<span data-token-index="0"><strong>Custom Exclusion List</strong>:</span> Enter the attributes that should be omitted from the Log Insights.</li>
+</ul>
+</li>
+<li data-list-item-id="e51d7cbe68b383c758c91ecec0125afb7">
+<strong>PII fields to exclude</strong>: Enter the fields that contain sensitive personal information to be excluded from analytics logs. For example, adding dateOfBirth ensures this value is not captured in Log Insights.</li>
+<li data-list-item-id="eee98d7f947e99567d37bb380b585854c">
+<strong>GUID fields</strong>: Enter the fields that contain globally unique identifiers to ensure they are handled correctly in analytics logs. For example, adding objectId ensures the value is treated as a system identifier.</li>
+<li data-list-item-id="ee82be70025344ac0582f2110ab47c212">
+<strong>Employee identifier fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in analytics. For example, adding associateOID ensures the employee number is included in analytics reports.</li>
+</ul><h3 id="h_01KJBZZQGVD2CX5G52BN7Z2W0F">Attribute Map</h3><p>The <strong>Attribute Map</strong> section defines how worker attributes from <strong>ADP Workforce Now</strong> are mapped to corresponding attributes in <strong>Microsoft Entra ID</strong>. These mappings control how employee data from ADP is used when creating or updating identities in Entra ID.</p><p data-end="624" data-start="167"><strong data-end="1917" data-start="1872">Federated Microsoft Entra ID requirement:</strong> If your Microsoft Entra ID environment is configured for federated authentication (for example, using an external identity provider such as ADFS or Okta), you must include the <strong>onPremisesImmutableId </strong>attribute in the <strong data-end="442" data-start="424">Entra User Map</strong>. </p><p data-end="1080" data-start="626">When creating or updating users through the integration, this value must be included in the provisioning payload for Microsoft Entra ID to correctly associate the provisioned account with the federated identity. For example, if a worker from ADP Workforce Now is provisioned as a federated user, the integration must populate onPremisesImmutableId using a stable identifier from the source system to ensure the user can authenticate successfully.</p><p>The following mapping configurations are available:</p><ul>
+<li data-list-item-id="e43285785553b39eb53f6dd5ee74ff6d4">
+<strong>Entra User Map: </strong>This mapping is used when provisioning <strong>user accounts</strong> in Microsoft Entra ID. Each row specifies how an ADP worker attribute or expression maps to a specific Entra ID user attribute. For example, the worker’s <strong>Work Email</strong> can be mapped to the <strong>User Principal Name (UPN)</strong> and <strong>Mail</strong> attributes, while <strong>Legal First Name</strong> and <strong>Legal Last Name</strong> can be combined to populate the <strong>Display Name</strong>.</li>
+<li data-list-item-id="e5ccc0cdbe29960647139db58f8dec6e8">
+<strong>Entra Contact Map: </strong>This mapping is used when provisioning <strong>contacts</strong> instead of user accounts in Microsoft Entra ID. Similar to the user map, each row defines how attributes from ADP Workforce Now are mapped to contact attributes in Entra ID.</li>
+</ul><p>Mappings may include expressions that transform source values before they are sent to Entra ID. For example, the <strong>Mail Nickname</strong> can be generated by extracting the portion of the worker’s <strong>Work Email</strong> before the @ symbol.</p><p>Administrators can review and modify these mappings to align with their organization’s identity provisioning requirements. Any changes made here determine how worker data from <strong>ADP Workforce Now</strong> flows into <strong>Microsoft Entra ID</strong> during provisioning and subsequent updates.</p><h2 id="h_01KKK905A6C5B27XQ1TP2S6PW4">ADP Workforce Now Worker Group Assignment Rules</h2><p>The <strong>Group Rules</strong> section determines which <strong>Microsoft Entra ID groups</strong> a worker is assigned to based on attribute values from <strong>ADP Workforce Now</strong>.</p><p>Administrators define rules that evaluate specific worker attributes from ADP and automatically assign users to the appropriate Entra ID groups during <strong>user provisioning and updates</strong>.</p><h3 id="h_01KKK905A7MB4SD9FAKFFVFMF9">Remove Groups on Deactivation</h3><p>When <strong>Remove Groups On Deactivation</strong> is enabled, users are automatically removed from the groups managed by this integration upon account deactivation in ADP Workforce Now.</p><h3 id="h_01KKK905A7JKH88XH3K9B5HF7G">Group Assignment Rules</h3><p>Each rule evaluates a selected <strong>ADP Workforce Now attribute</strong> and assigns workers to one or more groups when the rule conditions are met.</p><p>Common attributes that can be used include:</p><ul>
+<li data-list-item-id="ed8df322a322bc2879c3bff97f124cbdd"><strong>AssociateOID</strong></li>
+<li data-list-item-id="ea85830dce4572b92b21e2077decc18c0"><strong>Associate ID</strong></li>
+<li data-list-item-id="e287243ded45be7e36cf544951d4735e7"><strong>Birth Date</strong></li>
+<li data-list-item-id="ea63581776a7dea7ae3b229303af09bbb"><strong>Gender Code Value</strong></li>
+<li data-list-item-id="e69325a97f0a9c0de4b71568a8f65ff4f">Custom employment attributes such as <strong>Employment &gt; Custom Fields &gt; Sales Territory</strong>
+</li>
+</ul><p>The selected attribute becomes the <strong>condition used to evaluate each rule</strong>.</p><p>Each rule includes the following components:</p><ul>
+<li data-list-item-id="e85d45ef1b184b3c02a475a392c349f81">A <strong>value</strong> from the selected ADP Workforce Now attribute</li>
+<li data-list-item-id="e39af40d86802013650cf87420dd841a4">A <strong>worker status condition</strong> (for example, <strong>Active</strong>)</li>
+<li data-list-item-id="efb87217d6025253092a226963bae42a5">One or more <strong>Group Assignments</strong> in Microsoft Entra ID</li>
+</ul><p>Rules are evaluated <strong>from top to bottom</strong>. When a worker matches a rule, the worker is assigned to the configured groups. A worker can match <strong>multiple rules</strong> and therefore be added to <strong>multiple groups</strong>.</p><p>If no rule matches, the worker is <strong>not assigned to additional groups</strong> unless a fallback rule is configured.</p><p>These rules are applied during <strong>initial user creation and subsequent updates</strong>.</p><h3 id="h_01KKK905AA86CK7HFVVSHYT47Q">Example</h3><p>Attribute used for rule evaluation:</p><p>Employment &gt; Custom Fields &gt;<strong> Sales Territory</strong></p><ul>
+<li data-list-item-id="efbf387b22d49d8cd1c7b6a541522b82f">
+<strong>Rule 1</strong>: If <strong>Sales Territory = Boston North</strong> and <strong>Status = Active</strong>, assign the worker to <strong>Apps_Sales</strong>.</li>
+<li data-list-item-id="ee16dfe951df971a995840cffa1caa728">
+<strong>Rule 2</strong>: If <strong>Sales Territory = Connecticut</strong> and <strong>Status = Active</strong>, assign the worker to <strong>Sales-District</strong>.</li>
+<li data-list-item-id="ee09cc87e152768582abb25acb984ca80">
+<strong>Rule 3</strong>: If <strong>Sales Territory = New England</strong> and <strong>Status = Active</strong>, assign the worker to <strong>Sales-Distribution</strong>.</li>
+</ul><p><strong>Evaluation results</strong>:</p><ul>
+<li data-list-item-id="e60625165259eeb4a6a5b792990daccc8">A worker with <strong>Sales Territory = Boston North</strong> and <strong>Active</strong> status is assigned to <strong>Apps_Sales</strong>.</li>
+<li data-list-item-id="e356be25ad38639dafa8f31d66c4a72ae">A worker with <strong>Sales Territory = Connecticut</strong> and <strong>Active</strong> status is assigned to <strong>Sales-District</strong>.</li>
+<li data-list-item-id="e1c32a032d6a34c44775282b87eb00916">A worker with <strong>Sales Territory = New England</strong> and <strong>Active</strong> status is assigned to <strong>Sales-Distribution</strong>.</li>
+<li data-list-item-id="e07e1aa66ed7b0e3c041c23a3b7cee2cc">Workers who do not match any rule are <strong>not assigned to additional groups</strong>.</li>
+</ul><h3 id="h_01KKK905ADADNWSNAKWR8EM0XH">Using a Different Attribute</h3><p>If another attribute, such as <strong>Associate ID</strong>, <strong>Gender Code Value</strong>, or <strong>Birth Date,</strong> is selected, the same rule logic applies. The selected attribute is used as the value evaluated in each rule, and workers who match the rule conditions are assigned to the configured groups.</p><h3 id="h_01KKK905ADYEGNJHAWDGRV105G">Expression Mode</h3><p>You can switch the rule builder to <strong>Expression Mode</strong> by selecting <strong>Switch to Expression</strong>.</p><p>Two expression options are available:</p><ul>
+<li data-list-item-id="ea44088249070175735d7da20dc6fac98">
+<strong>For Conditions Only: </strong>Use expressions to define rule conditions while keeping group assignments configured in the UI.</li>
+<li data-list-item-id="e357538a1cf4bd87b18367a26822eb25e">
+<strong>For Conditions and Assignments: </strong>Use expressions to define both rule conditions and group assignments.</li>
+</ul><p>Expression mode allows administrators to create more <strong>advanced and flexible rule logic</strong> when the standard rule builder does not meet specific requirements.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span><span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="eb6aaa9a2771b981aeeb17e052960f637">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="e03ea6426239aa1f0b97fba72e531ebb4">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="ead38d5f5ee7c847fbb726856969a3b9a">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="eb39934eb1d12d8bc6eed2aed94acb713">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="ed8335a13803c7cf71f7dedd021ae92ee">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="eb1dae1147f481a7074fd73d0c2176896">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="e1371e1fc5fde1506378e49e44461be0e">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="eb796f544d652fb338aee4f06ad34a1fb">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="e2314a655a9d3b10ec9355767be0588e8">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol><p> </p><p> </p>
+  </div>
+</body>
+</html>

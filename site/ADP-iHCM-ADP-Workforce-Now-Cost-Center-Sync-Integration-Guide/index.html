@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP iHCM / ADP Workforce Now Cost Center Sync Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP iHCM / ADP Workforce Now Cost Center Sync Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize the cost center data from ADP Workforce Now to ADP iHCM.</p><p>To identify cost center records across both systems, the integration uses the<span> <strong>Employee number</strong> attribute from <strong>ServiceNow</strong><strong> </strong>and matches it to the <strong>Employee ID</strong> in the <strong>Active Directory</strong> </span>as a correlation attribute.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The ADP iHCM / ADP Workforce Now Cost Center Sync integration performs the following functions:</p><ul>
+<li data-list-item-id="e4d6af3146c3019d12d76529d7125bfcb">Creates new cost centers in ADP iHCM when new cost centers are added in ADP Workforce Now.</li>
+<li data-list-item-id="ea0c2dc79036903c43727bbe5f2e45602">Updated cost center details in ADP iHCM when any changes are made to the existing cost centers in ADP Workforce Now.</li>
+<li data-list-item-id="e46dd1d20f36d767a5145cd4375a4838c">Deletes the corresponding cost centers in ADP iHCM when cost centers are deleted in ADP Workforce Now.</li>
+<li data-list-item-id="e8099f433abbeced37702ad64d0f6ab1c">Performs full synchronization of cost centers on each integration run.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e7fbb30f2d40e0ff04150f1beaea120c6">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
+</li>
+<li data-list-item-id="e9fb103b93f2225066ba3e8a7627c3133">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ee02eddec2bcbb6184028fd2914ff4a70">
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="ef4d5ee59f1ce196038b9c74a41781fd4">
+<strong>ADP iHCM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/16804103956759" rel="noopener noreferrer" target="_blank">ADP iHCM Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize cost center data from ADP Workforce Now to ADP iHCM.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e58e927b41c34468bc8628b3ec2215cd7">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="eb3716907ca87f0a4388021dc6536a135">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e10bea7b749aea3533b4b915c6e654912">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ea3c6065e154a2f100c699bba507f03b2">Select<strong> ADP iHCM / ADP Workforce Now Cost Center Sync</strong>.</li>
+<li data-list-item-id="e7fa694b5c85698828e8da44bb92d6eee">Enter a name and a description for the integration.</li>
+<li data-list-item-id="efb24b6bf48365e1bdca78180c5fa55dc">Select your <strong>ADP iHCM </strong>and<strong> ADP Workforce Now </strong>connector instances.</li>
+<li data-list-item-id="ef7ead19a28047a1ef87c586de58b583b">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Scenario</h4><p>Enable the following feature based on your requirements:</p><ul data-end="1629" data-start="288"><li data-list-item-id="e29603be15aea6b241b9c4e7eb60f55fe">
+<strong>Enable Worker Onboarding</strong>: Select this checkbox to create worker records from SolarWinds Service Desk to ADP Workforce Now. When enabled, the <a href="#h_01KGMG4JM3JXCF60W9N6GEFS2V">Worker Management</a> section is displayed for further configuration.</li></ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e87c4a1e58284fd6b2048da6a5f51a8aa">
+<strong>Enable logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e3f571244aa12acd4f58a0b7ef3d51834">
+<strong>Enable notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e8c03567013c7e9bfe0907499bbab143f">
+<strong>Enable reporting generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e60e742fdba176d49baddc51479488e63">
+<strong>Enable log insights</strong>: Select this to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e623ec903b6b3d3b1a7218d0ea185006b">
+<strong>Enable debug mode</strong>: Select to generate logs outlining data changes that would occur for debugging. When enabled, the <a href="#h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e3ea96f1a119cf9c2a32151df32c484f9">
+<strong>Enable report-only mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+</ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Worker Management</h3><p>The <strong>Worker Management</strong> section allows you to customize integration settings to manage workers based on your specific use cases.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">SolarWinds Service Desk Settings</h4><p>Configure the following SolarWinds Service Desk settings:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul>
+<li data-list-item-id="e21eb697747208f7721f3a9c00d89814d">
+<span><strong>Ticket status for worker creation</strong></span><span>*</span>: Select a ticket status from the dropdown menu. Only tickets with the selected status from SolarWinds Service Desk will be used to identify workers to be created in ADP Workforce Now. </li>
+<li data-list-item-id="e534a6cbe1a7f34d0a39e8f667832cf03">
+<span><strong>Ticket status to set after worker creation</strong></span><span>*</span>: Select a ticket status from the dropdown menu. Once the worker record is successfully created in ADP Workforce Now, the ticket status in SolarWinds Service Desk will be updated to the selected status.</li>
+<li data-list-item-id="ea29548716e16cf59af1fbaae5dcc5e22">
+<strong>Import limit</strong>: Enter the maximum number of worker records to be processed in a single integration execution. For example, entering 10 processes only includes the first ten worker records.</li>
+</ul><h4 id="h_01KGM450J1YK3FN478G7X08MGN">ADP Workforce Now Settings</h4><p>Configure the following ADP Workforce Now settings:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul><li data-list-item-id="ed21458dbf3e0cae41c0e79d68d8c5db2">
+<strong>Onboarding template</strong><span>*</span>: Select an ADP Workforce Now template from the dropdown menu. The worker records will be created in the selected template.</li></ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
+<li data-list-item-id="e017362ac7f7c4fc70c3772742ecfc9f7">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Log Type</strong>: Select a log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e943d5611a9791b09714ef7be695fed8e">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e361853d106b840d89a4b39ed82ac0eed">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e6afcc6b7fd3c52e4d897eef3fc0d33ae">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ec966bab9558bce2ad04056ae95edaab0">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e072d36a34081645707b5d24f60204da3">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e940205469204b717ae8ba59259ad8d26">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data. </li>
+</ul>
+</li>
+<li data-list-item-id="e526fb3010087ff0091d6ab31d5598b87">
+<strong> Select Log Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ecac62f90183f752f430c9334cdaad096">
+<strong>Full</strong>: Select this option to include all attributes in the log.</li>
+<li data-list-item-id="ed58472df1c1034f0de90d9634d3903ee">
+<strong>Include List</strong>: Select this option to include attributes in the log.<ul><li data-list-item-id="efc876026c4c7cdacea724a541466d19b">
+<strong>Custom Inclusion List</strong>: Enter the attributes to be included in the log. This parameter is available only if you select <strong>Include List</strong> in the <strong>Select Log Level </strong>parameter.</li></ul>
+</li>
+<li data-list-item-id="e54c5d9cb5a708eea2849286f89fc020d">
+<strong>Exclude List</strong>: Select this option to exclude attributes from the log.<ul><li data-list-item-id="e946eaecb2c53cc395719d96dedce48e2">
+<strong>Custom Exclusion list</strong>: Enter the attributes to be excluded from the log. This parameter is available only if you select <strong>Exclude List</strong> in the <strong>Select Log Level </strong>parameter.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable report generation</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
+<li data-list-item-id="e0b0dfead812900c084dd0d9b6ba3e80b">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Report Type</strong>: Select a report type. This will decide the level of detail to be included in reports.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="ee1945c22213a84628b9dfa9d2fcb9221">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e324c7f478d6dccc7f0c70b7c5ea6f1f7">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="eb07f4f58a3dc7ddc6b6aee48374a4ee6">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ec24ce8e6e7466b19ea80d97e984c44c2">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e5006e89d4e4c526cd0f0620c6974bab6">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e355cd978c4c74a84ea5c88142613f16c">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="eaf652a412d86e2c5e8cd82aafcfb29dd">
+<strong>Select Report Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e27672fa6cdaa5748f32afda7ca4a05db">
+<strong>Full</strong>: Select this option to include all attributes in the report.</li>
+<li data-list-item-id="e29f72a992f6a9d2a37b2fb13e5a7fa4a">
+<strong>Include List</strong>: Select this option to include attributes in the report.<ul><li data-list-item-id="e2c9a1606290a4ffc85102a623b01cc3c">
+<strong>Custom Inclusion List</strong>: Enter the attributes to be included in the report. This parameter is available only if you select <strong>Include List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+</li>
+<li data-list-item-id="eb8df8435e7c2d039fb472071e3c0ffce">
+<strong>Exclude List</strong>: Select this option to exclude attributes from the report.<ul><li data-list-item-id="ecd13f0b4ce98ada1d52873813db43c20">
+<strong>Custom Exclusion List</strong>: Enter the attributes to be excluded from the report. This parameter is available only if you select <strong>Exclude List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable notifications</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KMD5HX6RZDKPDAS75W3C2BAC">Notification Template Settings</h4><p>Configure the following settings to customize notifications:</p><ul>
+<li data-list-item-id="ee70bb2b819615b2ed6f090443ac19888">
+<strong>Send Email Notification For Success</strong>: Select this checkbox to send a notification on successful worker creation. When enabled, the Worker Creation Notifications section is displayed for further configuration.</li>
+<li data-list-item-id="ec799281e2322180ae6efea609718790b">
+<strong>Send Email Notification For Failure</strong>: Select this checkbox to send a notification on worker creation failure. When enabled, the Worker creation failure notifications section is displayed for further configuration.</li>
+<li data-list-item-id="e3e257349f103af7f0d13a5df1ab86914">
+<strong>Attach to report to email</strong>: Select this checkbox to receive an email notification with a report for each integration execution.</li>
+</ul><h4 id="h_01KMDB9FBA9XQX58JJ5R0BJGRS">Success Execution</h4><p>Configure the following settings for successful worker creation notifications:</p><ul>
+<li data-list-item-id="eaca01057a597a9957e90c6d754fe3321">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
+<li data-list-item-id="e6471c837ba59deccd386b735ebc42223">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e2c993fcdd559adfe8044cc7fc89335d1">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li data-list-item-id="ee4c9db1d5d357804b480447ef0d1a7df">
+<strong>Integration Execution Success Email Body</strong>: Enter the content that must be used as the email body for notifications sent upon successful integration execution.</li>
+</ul><h4 id="h_01KMF55H58M5ND9REFBS3NRMB5">Failure Execution</h4><p>Configure the following settings for failed worker creation notifications:</p><ul>
+<li data-list-item-id="e40e83393a132768c52684e05123192cf">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
+<li data-list-item-id="e4098493eea1cc38c99c4b7d4ac0b61b9">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="eb00191a946048be05c5acc074deefd59">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<li data-list-item-id="e7c48df4b66d040017c93d565c2cc484a">
+<strong>Email Body</strong>: Enter the content that must be used as the email body for notifications sent upon successful integration execution.</li>
+</ul><h4 id="h_01KMF2X3G32JK6ZPBW74RWAJ7K">Notification Report Settings</h4><p>Configure the following report settings:</p><ul>
+<li data-list-item-id="eb96b9f885bf385e0199dd3b234f5d6d7">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Report Type</strong>: Select a notification type. This will decide the level of detail to be included in notifications.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e5a4133b2c619abc922c089ee3c676a9f">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e39da54e7ce80dc3e2ac8d5d898e4f64b">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="efb5da4d68425b9d874e909b6cd61afd3">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e122cb5ed6660e40e27d483f67841fd30">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ef649a5b2c2a03a7261969c9b25c55f78">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e351408f15ef7bea5b2ec3fce6441ef8a">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e62e6f9d8cf03b6f62e57639c2a1f2f27">
+<strong>Select Report Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e3094c9fe531e74a9186b7971e9f67003">
+<strong>Full</strong>: Select this option to include all attributes in the notification.</li>
+<li data-list-item-id="e283eaeaed37488315617f687ad128f60">
+<strong>Include List</strong>: Select this option to include attributes in the notification.<ul><li data-list-item-id="e977568edb41a2efcb6e2750469e02bc2">
+<strong>Custom Inclusion List</strong>: Enter the attributes to be included in the notification. This parameter is available only if you select <strong>Include List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+</li>
+<li data-list-item-id="e3ad818a43d4c298431b1266c5722a7c1">
+<strong>Exclude List</strong>: Select this option to exclude attributes from the notification.<ul><li data-list-item-id="e2377607992d398bb1a3d989cb4c89f20">
+<strong>Custom Exclusion List</strong>: Enter the attributes to be excluded from the notification. This parameter is available only if you select <strong>Exclude List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>This section enables you to customize the log insight settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
+<li data-list-item-id="eab5ac13356478eec30e0ffe2895530ad">
+<strong>Enter Dashboard Name</strong>: Enter the name of the log insights dashboard.</li>
+<li data-list-item-id="e9f90b75d345a26deff73b1220db4b3e2">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select analytics Type</strong>: Select a analytics type. This will decide the level of detail to be included in log insights.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e63adf3da2f048e28f12c895217f5940a">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="eb9f060160185e19da1c366a6a46f1e9d">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e82d24eff8369a30bb055199378e5622f">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ee3989533a2b459f751398b14d14e1a82">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e59f5e439a38446eed5fb881a44310635">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e72d5f8c201dfc54f994843afc8840ea1">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e42d5006142dac040420ae1c3260f0ea7">
+<strong data-end="185" data-start="147">Select analytics Level</strong>: Select the log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="edeb67996ecdb88bcc19c909e1c589c63">
+<strong data-end="440" data-start="423">Full</strong>: Select this option to include all attributes in the log insights.</li>
+<li data-list-item-id="e8ae9362aff7d49afd31b130fb85fe8a8">
+<strong>Include List</strong>: Select this option to include attributes in the log insights.<ul><li data-list-item-id="e407290aa792e02c65884d6f0cae7c442">
+<strong>Included Attributes</strong>: Enter the attributes to be included in the log insights. This parameter is available only if you select <strong>Include List</strong> in the <strong data-end="185" data-start="147">Select analytics Level</strong><strong> </strong>parameter.</li></ul>
+</li>
+<li data-list-item-id="ec4c47ba3cb40d31c56e990db51059c8f">
+<strong>Exclude List</strong>: Select this option to exclude attributes from the log insights.<ul><li data-list-item-id="e47145f32f6e57c78897fc6eee51cac69">
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the log insights. This parameter is available only if you select <strong>Exclude List</strong> in the <strong data-end="185" data-start="147">Select analytics Level</strong><strong> </strong>parameter.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Settings</h3><p>This section enables you to customize the debug mode settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable debug mode</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul><li data-list-item-id="e6dc47c22eedbdcbe57db9f1ee9fc481a">
+<strong>Incident ID</strong><span>*</span>: Enter the incident ID of the ticket to be debugged.</li></ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+  </div>
+</body>
+</html>

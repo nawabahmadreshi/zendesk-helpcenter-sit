@@ -19,7 +19,7 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Dayforce / Entra ID Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<div>This guide applies to the latest public version of the integration (version 1.2.7).</div>
+<div>This guide applies to the latest public version of the integration (version 2.0.0).</div>
 <h1 id="h_01J46AGRGR00VNTVGR0PNNPBGG">Overview</h1>
 <p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p>
 <p>This integration connects Dayforce with Microsoft Entra ID to automate end-to-end user lifecycle management.</p>
@@ -70,7 +70,9 @@
 <span>Click <strong>Continue</strong>. The</span> <a href="#h_01K3TMT9CQB86XXAZ9FY9M1QYW">Configuration</a> page is displayed to configure the integration.</li>
 </ol>
 <h2 id="h_01JSJZ3J2R5NESXTDE2MQ68NYR">Configuration</h2>
-<p>The <strong>Configuration</strong> tab includes a list of configurations required to set up the integration. Refer to the <a href="../Integration-Configurations-Reference-Guide/" rel="noopener noreferrer" target="_blank">Integration Configurations Reference Guide</a> for detailed information on each configuration field.</p>
+<p>The <strong>Configuration</strong> tab includes a list of configurations required to set up the integration.</p>
+<p>Under the <strong>Source Match Expression</strong> section, you must specify the source attribute and the target attribute that must be used to match employee records from Dayforce with the user records in Entra ID.</p>
+<p>Refer to the <a href="../Integration-Configurations-Reference-Guide/" rel="noopener noreferrer" target="_blank">Integration Configurations Reference Guide</a> for detailed information on each configuration field.</p>
 <h2 id="01K5B4SJWVQDKMYWJM98XE29HN">Mapping and Assignments</h2>
 <p>The <strong>Mapping and Assignments</strong> tab provides configuration options for defining user naming attributes and mapping attributes between Dayforce and Entra ID.</p>
 <h3 id="h_01J6Y6VJYTJBV9Z375CDHWSTT7">User Naming Attributes</h3>
@@ -106,7 +108,7 @@
 <li>
 <strong>Basic User Naming Configuration</strong>: This configuration is enabled by default. In this mode, select a naming format from the <strong>ULN/ Mail Format</strong> dropdown list that must be used for generating the UPN and Work Mail values for a new user in Entra ID. The selected format will be used to generate unique names for both attributes.<br/><br/>In this mode, the UPN and Work Mail attributes are mutually dependent and are evaluated together. This means the integration will verify whether the values generated using the selected format are available for both attributes before assigning them to the new user. If a value is already in use for an attribute (that means, it is already assigned to a user in Entra ID), then the integration will append a number (starting from 1) to the attribute values and check for the availability. This process continues for up to 20 attempts or until unique values are generated for both attributes. Once unique values are found for the attributes, those values will be assigned to the new user.</li>
 <li>
-<p><strong>Advanced User Naming Configuration</strong>: Select the <strong>Advanced User Naming Configuration</strong> checkbox to switch to the advanced setup mode. In this mode, you can set different formats for each of the user naming attributes.<br/><br/><img alt="2026-03-17_17-31-18.png" src="./assets/1a58f9fd170286fa.bin"/></p>
+<p><strong>Advanced User Naming Configuration</strong>: Select the <strong>Advanced User Naming Configuration</strong> checkbox to switch to the advanced setup mode. In this mode, you can set different formats for each of the user naming attributes.<br/><br/><img alt="Entra naming.png" src="./assets/a5453b0ac0a01d74.bin"/></p>
 <p>When you switch to the advanced mode, you can select whether the work mail should be mutually dependent with the UPN/ULN in the <strong>Mutually Dependant Attributes with UPN/ ULN</strong> field.<br/><br/>If you set UPN and Work Mail as mutually dependent attributes, the integration will check for a unique value in the first format for both attributes. Both attributes are evaluated together. If a unique value is unavailable (already assigned to another user), it will proceed to the next format in sequence for both attributes. The process continues until it finds available values for both attributes to assign to a user. If the integration cannot find unique values, the integration will return an error.<br/>If UPN and Work Mail are not set as mutually dependent attributes, the integration evaluates each attribute separately. If the integration finds a unique value for even one of the attributes as defined by a format, that value will be assigned to the user.<br/><br/>Define the user naming formats in the <strong>User Naming Format for UPN/ ULN</strong> and <strong>User Naming Format for Mail</strong> fields.<br/>These fields are AI Prompt fields that use Aquera Intelligence (AI Assistant) to generate UPN and work mail values during integration executions. For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.<br/><br/>When you add a format in the <strong>User Naming Format for UPN/ ULN</strong> and <strong>User Naming Format for Mail</strong> fields, you must also specify when the specified format should be applied. You can choose to apply it <strong>On Create</strong>, <strong>On Update</strong>, or <strong>On Create &amp; Update</strong>.</p>
 </li>
 </ul>
@@ -134,13 +136,25 @@
 </li>
 <li>Once done, click the check mark <img alt="check-mark.png" height="23" src="./assets/3e5e853bc401c1ce.bin" width="27"/> to add the new mapping to the attribute map.</li>
 </ol>
+<h4 id="h_01GBYT09A4ZDW90724KAM9MKJR">Attribute Map Analysis</h4>
+<p>The <strong>Attribute Map Analysis </strong>evaluates and compares user attributes across the source and target applications to identify suitable attribute mappings for the integration. It highlights Matched and Unmatched users to guide accurate data correlation.</p>
+<ol>
+<li>Click <strong>Run Analysis</strong>. The following pop-up window is displayed:<br/><img alt="AM analysis.png" height="692" src="./assets/ff4935d2ba364880.bin" width="676"/>
+</li>
+<li>Select the source attribute and the target attribute that must be used for correlation. The values in these attributes must be unique for a user and must be the same across the source and target applications for identifying the matching users.</li>
+<li>Click <strong>Run analysis</strong> to run the Attribute Map analysis. The attribute map analysis will analyze all existing attributes between both applications for the eligible users and will generate a report.</li>
+<li>After the analysis has been completed, click <strong>View Report</strong> to view the <strong>Attribute Mapper Report</strong>.<br/>You can change the map options and the source attributes, if required.<br/><img alt="Am analysis6.png" height="426" src="./assets/d9040a9b14b69092.bin" width="2178"/>
+</li>
+<li>Click <strong>Export Mapped</strong> at the top right corner of the page to export and use this Attribute Map in the integration. Only the attributes that are mapped in the report are exported to the attribute map.</li>
+</ol>
+<p>For details on the Attribute Map Report and the actions that can be performed, refer to the <a href="https://support.aquera.com/hc/en-us/articles/32518153065239-Integration-Analysis-Guide#h_01KEXGG42Y86STDKW839X2RDMK" rel="noopener noreferrer" target="_blank">Integration Analysis Guide.</a></p>
 <h4 id="01KM0EGECKDYK77KY097F0SXB0"><strong>Preview Employee Data</strong></h4>
 <p>You can preview the attribute values of a Dayforce employee that will be created or updated in Entra ID based on your mappings.</p>
 <p>To preview the attribute values of a Dayforce employee, perform the following steps:</p>
 <ol>
 <li>Click the <strong>Enter objects for preview</strong> field in the top-right corner of the <strong>Attribute Map</strong> page. A pop-up window is displayed.</li>
 <li>Click the <strong>Searchable Attribute</strong> dropdown menu and select <strong>id</strong>.</li>
-<li>Enter the employee number (ID of the employee) in the <strong>Enter value</strong> field, and then click <strong>Preview</strong>.<br/><img alt="2026-03-18_18-15-13.png" height="421" src="./assets/fe1a475d81c28e4c.bin" width="551"/><br/>The employee data will be displayed corresponding to each mapping provided on the attribute mapper.<br/><img alt="2026-03-18_18-20-30.png" height="357" src="./assets/997a3cab95096696.bin" width="551"/><br/><strong>Notes</strong>:
+<li>Enter the employee number (ID of the employee) in the <strong>Enter value</strong> field, and then click <strong>Preview</strong>.<br/><img alt="2026-03-18_18-15-13.png" height="313" src="./assets/fe1a475d81c28e4c.bin" width="410"/><br/>The employee data will be displayed corresponding to each mapping provided on the attribute mapper.<br/><img alt="2026-03-18_18-20-30.png" height="357" src="./assets/997a3cab95096696.bin" width="551"/><br/><strong>Notes</strong>:
 <ul>
 <li>The toggle button next to the preview setup field will be enabled by default. You can disable the toggle option to hide the preview.</li>
 <li>When the attributes or expressions provided in the source attributes column are invalid or do not return a value, the preview will not appear.</li>
@@ -156,45 +170,52 @@
 <li><a href="#h_01JVVCS2ZB17E6WN9ZMX0DSJQ7">Group Rules</a></li>
 <li><a href="#h_01JVVCWC8T23P8VMRGXP3X4CJV">Group Retention</a></li>
 </ul>
-<h3 id="h_01JVVCS2ZB17E6WN9ZMX0DSJQ7">Group Rules</h3>
+<h3 id="h_01JVVCS2ZB17E6WN9ZMX0DSJQ7">Set Up Group Rules</h3>
 <p>In the <strong>Group Rules</strong> section, you can create conditions that control how users are added to groups. Each rule defines the conditions for assigning users to a set of groups.</p>
 <p>Perform the following procedure to create group assignment rules:</p>
 <ol>
-<li>Click <strong>Choose Attribute</strong> to view the list of Dayforce attributes that you can use to set conditions.</li>
-<li>Search and select the attribute you want to use to define a condition.</li>
-<li>Enter a value for the selected attribute. You can configure multiple values for the selected attribute. If multiple values are provided, an OR condition is applied among those values. For example, in the following sample condition, a user's title must be either <em>Manager</em> or <em>Developer</em> to satisfy this group assignment rule.<br/><img alt="2026-03-18_19-03-20.png" height="159" src="./assets/dfea4067a8e5ffba.bin" width="408"/>
+<li>Define the conditions for assignment to groups using one of the following ways:
+<ul>
+<li><a href="#h_01KM0H9RTRKRPWDXNTDVVVD7FR">Using Condition Builder</a></li>
+<li><a href="#h_01KM0HAHDDAJMYYBC477MCE3Z9">Using Expressions</a></li>
+</ul>
 </li>
-<li>In the <strong>Assign To</strong> column, select the groups to which users who satisfy the specified condition must be assigned.</li>
-<li>If required to add another condition and assignment for the same selected attribute, click <strong>Add Row </strong>and provide a value. You can add any number of rows within a rule.<br/><strong>Note</strong>: You can delete a row by using the delete icon at the right end of the row.<br/><img alt="gr del row.png" height="422" src="./assets/5482a6de1b76ceae.bin" width="2168"/>
+<li>If required, click <strong>Add Row</strong> to add another condition within the same rule. When multiple rows are added within a rule, an <strong>OR</strong> condition is applied to the rows. That means, for each user, the integration evaluates the conditions in each row sequentially. If the conditions defined in a row are satisfied for a user, the user is assigned to that group and the remaining rows in the rule are not evaluated for that user.<br/><img alt="gr1.png" height="388" src="./assets/275a4bca9c5456b4.bin" width="2226"/><br/><br/>
 </li>
-<li>[Optional] If you want to write a JavaScript expression to set the condition, click <strong>Switch to Expression</strong>. and perform the following steps:<br/><strong>Note</strong>: When you switch to <strong>Expression</strong> mode or back to <strong>Condition Builder</strong> mode, all configured conditions in the rule will be cleared.
+<li>If required, click the + icon at the top-right corner of the rule setting section to add another rule with a set of rows/conditions for group assignments. When multiple rules are set, the integration evaluates every rule for each user.<br/><img alt="gr2.png" height="388" src="./assets/4c3e5329955bb82d.bin" width="2224"/><br/><strong>Note</strong>: You can add a maximum of 10 rules. </li>
+</ol>
+<h4 id="h_01KM0H9RTRKRPWDXNTDVVVD7FR">Using Condition Builder</h4>
+<p>The Condition Builder is the default view for configuring rules. A blank row is displayed by default for configuring the first set of conditions.</p>
 <ol>
-<li>Select one of the following based on your requirement:
-<ul>
-<li>
-<strong>For Conditions Only</strong>: Select this if you want to write a JavaScript expression only for the conditions.</li>
-<li>
-<strong>For Conditions and Assignments</strong>: Select this if you want to write an expression for both conditions and assignments.</li>
-</ul>
+<li>Click on <strong>Choose Attribute</strong> to select a Dayforce user attribute that you want to use in the condition.<br/><img alt="gr3.png" height="450" src="./assets/7823ae4cc5ca7012.bin" width="1526"/><br/><img alt="gr4.png" height="906" src="./assets/2dc38c01e339725d.bin" width="842"/><br/> </li>
+<li>After selecting the attribute, specify the value(s) of the attribute as comma-separated values. Any Dayforce user that matches the specified attribute values (OR operation) will be assigned to the group when the integration runs.<br/><img alt="gr5.png" height="244" src="./assets/c6d51238a2ce5e24.bin" width="1174"/>
 </li>
-<li>Click <strong>Continue</strong><span data-zd-seq="2"> to configure the expression.</span>
-</li>
-<li>
-<p><span data-zd-seq="3">Enter the expression based on your selection:</span></p>
-<ul>
-<li><span data-zd-seq="4">If <strong>For Conditions Only</strong> is selected, enter the expression for the conditions, and then select the group in the <strong>Assign To </strong>column.</span></li>
-<li><span data-zd-seq="5">If <strong>For Conditions and Assignments</strong> is selected, enter the expression that defines both the conditions and the group assignment.</span></li>
-</ul>
-<p><strong>Note</strong>: Expressions can use attributes from both the source and destination applications. The configured expressions must always be evaluated to true or false. The prefix <strong>SOURCE</strong> must be used in an expression to represent an attribute in the source application, and <strong>DEST</strong> must be used to represent an attribute in the destination application. For example, <em>SOURCE.addresses[].locality</em>, <em>SOURCE.addresses[].country</em>, and <em>DEST.group.displayName</em>.</p>
+<li>If required, add conditions with more attributes and values by clicking the + icon. When multiple attributes are added within the same row, those attribute conditions are evaluated using an AND operation. Only users who match all the specified conditions will be assigned to the group.<br/> </li>
+<li>In the <strong>Assign To</strong> field, select the groups where users will be placed. <br/><img alt="gr6.png" height="640" src="./assets/b2e1545e2a01d130.bin" width="904"/>
 </li>
 </ol>
+<h4 id="h_01KM0HAHDDAJMYYBC477MCE3Z9">Using Expressions</h4>
+<p>Follow this procedure to set the rules using JavaScript expressions. A blank row is displayed by default for configuring the first set of conditions.</p>
+<ol>
+<li>Click <strong>Switch to Expression</strong>. The following options are displayed:
+<ul>
+<li>
+<strong>For Conditions Only</strong>: Select this option to use JavaScript expressions for setting the conditions. You must select the corresponding group from the <strong>Assign To</strong> field.<br/><img alt="gr7.png" height="292" src="./assets/5662a8f58aeadd86.bin" width="2216"/>
 </li>
-<li>Click <strong>Add New Rule</strong> to add another group assignment rule, as explained above.</li>
+<li>
+<strong>For Conditions and Assignments</strong>: Select this option to use JavaScript expressions for setting the conditions and the group assignments.<br/><img alt="gr8.png" height="306" src="./assets/19535fd586de586e.bin" width="2226"/>
+</li>
+</ul>
+</li>
 </ol>
-<h3 id="h_01JVVCWC8T23P8VMRGXP3X4CJV">Group Retention</h3>
+<p>You can expand the Expression editor area by clicking the <img alt="expand.png" height="15" src="./assets/e69f84f4a5035dd8.bin" width="18"/> icon and then write the JavaScript expressions.</p>
+<p><strong>Note 1</strong>: Click <strong>Switch to Condition Builder</strong> if you want to switch out of the Expression mode.</p>
+<p><strong>Note 2</strong>: When you switch to the <em>Expression</em> mode or to the <em>Basic Condition</em> mode, all the configured conditions of the rule will be cleared.</p>
+<p><strong>Note 3</strong>: Expressions can use all the employee and user attributes in the Dayforce and Entra ID applications. The configured expressions must always be evaluated to <em>true</em> or <em>false</em>.<br/><strong>SOURCE</strong> must be used in an expression to represent an attribute in the source application and <strong>DEST</strong> to represent an attribute in the destination application. For example, <em>SOURCE.EmployeeNumber</em>, <em>SOURCE.HomeOrganization.ShortName</em>, <em>DEST.EmployeeNumber</em>, and so on.  </p>
+<h3 id="h_01JVVCWC8T23P8VMRGXP3X4CJV">Set Up Group Retention Policy</h3>
 <p>The <strong>Group Retention</strong> section allows you to define how a user's group memberships must be handled when the Dayforce user is updated or deactivated.</p>
-<h4 id="h_01JVVDNXZWRT83NPP8MVZ9DXRJ">On Deactivate / Delete</h4>
-<p>This dropdown list is used to specify what should happen to a user's group memberships when the Dayforce user is deactivated. It includes the following options:</p>
+<h4 id="h_01JVVDNXZWRT83NPP8MVZ9DXRJ">On Deactivate/Deletion</h4>
+<p>This drop-down list is used to specify what should happen to a user's group memberships when the Dayforce user is deactivated. It includes the following options:</p>
 <ul>
 <li>
 <strong>Remove from all assigned groups</strong>: All the group memberships currently assigned to the user will be removed. However, if the deactivated user satisfies some of the group assignment rules and they are not already part of those groups, they will be added to those groups; if they are already part of those groups, they will be retained in those groups.</li>
@@ -212,7 +233,7 @@
 </li>
 </ul>
 <h4 id="h_01JVVTGA4ZWZEXCZMPF6F19FCQ">On Update</h4>
-<p>This dropdown list is used to specify what should happen to a user's group memberships when the user is updated. It includes the following options:</p>
+<p>This drop-down list is used to specify what should happen to a user's group memberships when the user is updated. It includes the following options:</p>
 <ul>
 <li>
 <strong>Remove from all assigned groups</strong>: All the group memberships currently assigned to the user will be removed. However, if the user satisfies the conditions defined in the <strong>Group Rules </strong>section, they may be added to new groups based on the configured group rules.<br/><strong>Note</strong>: If the <strong>Update Deactivated Users</strong> configuration is enabled, a deleted or deactivated user will be added to a new group based on the group rules. However, they will not be added back to an existing group from which they have been removed during this integration run.</li>
@@ -229,6 +250,19 @@
 </ul>
 </li>
 </ul>
+<h3 id="h_01KM2EHY8GF7C6W37NE9G031R2">Group Assignments Analysis</h3>
+<p>The Group Assignments Analysis feature enables you to resolve group assignment conflicts for users in an application. The analysis identifies specific attributes a user must have to belong to a group and generates a report of assignment rules based on those attributes. The report can then be exported as a group assignment rule and applied to the integration.</p>
+<ol>
+<li>Click <strong>Run Analysis</strong>. The following pop-up window is displayed:<br/><img alt="OU corr.png" height="642" src="./assets/3e0e6983577da9bc.bin" width="636"/>
+</li>
+<li>Enter the Dayforce attribute and the Entra ID attribute that must be used for correlation. These attribute values are used for identifying the matching users.</li>
+<li>Click <strong>Run analysis</strong> to run the Group Assignments analysis. It will analyze all the users in the groups and will generate a report that contains the assignment rules based on the pattern of user data in each group.</li>
+<li>After the analysis has been completed, click <strong>View Report</strong> to view the <strong>Group Assignments Analysis Report</strong>.<br/><img alt="group rpt.png" height="684" src="./assets/e7f9a07ca6c2977a.bin" width="2340"/><br/>You must enable the mapping for the group assignment rules that you want to include in the integration.<br/><img alt="grp rpt map.png" height="606" src="./assets/9f40fb9019cb658f.bin" width="1874"/>
+</li>
+<li>Click <strong>Export Mapped</strong> at the top right corner of the page to export and use these Group Assignment rules in the integration. Only the mapped rules are exported to the Group Management page.<br/><img alt="grp assign.png" height="444" src="./assets/5b8cee52d3552445.bin" width="2190"/>
+</li>
+</ol>
+<p>For details on the Group Assignment Analysis Report and the actions that can be performed, refer to the <a href="https://support.aquera.com/hc/en-us/articles/32518153065239" rel="noopener noreferrer" target="_blank">Integration Analysis Guide</a><a href="https://support.aquera.com/hc/en-us/articles/32518153065239-Integration-Analysis-Guide#h_01KEXGG42Y86STDKW839X2RDMK" rel="noopener noreferrer" target="_blank">.</a></p>
 <h2 id="h_01JV4VH803XE82ZDJ9EMERFAXE">Tables</h2>
 <p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or particular data is not sent from the Dayforce application, and you want to update a value for that attribute in Entra ID. Based on your requirement, you can add any number of tables in the integration.</p>
 <p>The table setup and functionality are same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a> section in the <strong>Using Tables in Integration</strong> guide for details.</p>
@@ -477,18 +511,22 @@
 </tr>
 </tbody>
 </table>
-<h1 id="h_01JKDB4PPPCAQKJQ0BAHDG87GV">Limitations</h1>
+<h1 id="h_01JKDB4PPPCAQKJQ0BAHDG87GV">Known Limitations and Issues</h1>
 <ul>
-<li>You can save the integration even without mandatory fields configured, but the integration runs will fail.</li>
-<li>It is required to download a report of all employees in the Dayforce connector (through the <strong>Data</strong> tab) to view all the Dayforce attributes in this integration.</li>
+<li>You can save the integration without configuring the mandatory fields; however, the integration runs will fail.</li>
+<li>To view all the Dayforce attributes in the integration, it is required to download a report of all employees from the <strong>Data</strong> tab of the Dayforce connector configuration page.</li>
 <li>When the integration creates guest users, the UPN value is automatically generated by the Entra ID in the format, <em>emailaddress#EXT#@tenant.onmicrosoft.com.</em> The UPN naming format configured in the integration will be ignored for guest users.</li>
-<li>The <strong>Incremental Tuning</strong> configuration is designed to function only when the <strong>match</strong> <strong>expression</strong> <strong>only</strong> option is selected, as this integration does not support incremental tuning with userName.</li>
-<li>Debug logging for a full run with a large number of source records can exceed back-end limits, resulting in reports that are too big to save. This will be fixed in a future release. </li>
-<li>
-<p>In the <strong>User Naming Attributes</strong> tab, the <strong>Advanced</strong> mode expression does not support if-else statements. To write conditional logic in these expressions, use a conditional or ternary operator with the following syntax:</p>
-<pre>{condition}? {expressionIfTrue} : {expressionIfFalse}</pre>
-<p><br/> </p>
-</li>
+<li>The <strong>Incremental Tuning</strong> configuration is designed to function only when the <strong>Match expression only</strong> option is selected. Hence, the <strong>Username</strong> option has been removed from this configuration parameter.</li>
+<li>When you set up group assignment rules, the attribute values must be entered as chips. However, after you exit the Edit mode, these attribute values appear as comma-separated entries.</li>
+<li>The <strong>Import</strong> option is not available on the Group Assignment setup page. Hence, group assignment rules cannot be created via a CSV import.</li>
+<li>The <strong>Export</strong> option is not available on the Group Assignment setup page. Hence, group assignment rules cannot be exported as a CSV file.</li>
+<li>You can save a group management rule even if some rows in the rule have groups with empty conditions. This issue will be fixed in a future release.</li>
+<li>During the Group Assignments Analysis, the source and target correlation attributes must be manually entered. No drop-down list is available to select an attribute from a list of attributes.</li>
+<li>In Attribute Map, when you search for a source attribute using the attribute name, duplicate attribute names may be returned in the search result. This issue will be fixed in a future release.</li>
+</ul>
+<h1 id="h_01K592V1HARY29EJ5PN39KB4F9">References</h1>
+<ul>
+<li><a href="../Integration-Configurations-Reference-Guide/" rel="noopener noreferrer" target="_blank">Integration Configurations Reference Guide</a></li>
 </ul>
   </div>
 </body>

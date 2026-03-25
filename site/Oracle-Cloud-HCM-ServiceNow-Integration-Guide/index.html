@@ -1,0 +1,419 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Oracle Cloud HCM / ServiceNow Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Oracle Cloud HCM / ServiceNow Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1>
+<p>The Aquera platform allows your organization to efficiently scale complex data management by automating the integration of diverse resource data across different applications and systems.</p>
+<p>The integration synchronizes companies, departments, locations, managers, and positions from Oracle Cloud HCM to ServiceNow. It detects changes in Oracle Cloud HCM and applies them in ServiceNow, ensuring both systems always reflect the latest organizational structure.</p>
+<p>For each data entity:</p>
+<ul>
+<li>
+<strong>Create:</strong> If a record exists in Oracle Cloud HCM but not in ServiceNow, it is created in ServiceNow.</li>
+<li>
+<strong>Update:</strong> If a record exists in both systems but has been updated in Oracle Cloud HCM, the ServiceNow record is updated accordingly.</li>
+<li>
+<strong>Delete:</strong> If a record exists in ServiceNow but not in Oracle Cloud HCM, it can be deleted from ServiceNow (if deletion is enabled).</li>
+</ul>
+<p>The integration runs on a configurable schedule, fetching only records changed since the last successful sync to optimize performance and minimize data transfer. After each run, the integration generates a detailed CSV report of all changes (inserts, updates, deletes) and emails it to designated recipients. This integration is triggered based on the schedule that you set under the <strong>trigger</strong> tab.</p>
+<h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2>
+<p>The <em>Oracle Cloud HCM</em> <em>/ ServiceNow</em> <em>Integration</em> provides the following functions:</p>
+<ul>
+<li>Retrieves company, department, location, manager, and position data from Oracle Cloud HCM.</li>
+<li>Retrieves corresponding records from ServiceNow for each data type.</li>
+<li>Compares Oracle Cloud HCM and ServiceNow records using attribute mapping to identify:
+<ul>
+<li>Records to insert (new in Oracle Cloud HCM, missing in ServiceNow)</li>
+<li>Records to update (exist in both, but details differ)</li>
+<li>Records to delete (exist in ServiceNow, missing in Oracle Cloud HCM, if deletion is enabled)</li>
+</ul>
+</li>
+<li>Executes insert, update, and delete operations in ServiceNow in configurable batches.</li>
+<li>Generates detailed CSV reports of all changes (inserts, updates, deletes) in each run.</li>
+<li>Sends summary emails (with optional CSV attachment) to configured recipients after each sync.</li>
+<li>Provides configurable controls for:
+<ul>
+<li>Enabling/disabling insert, update, and delete.</li>
+<li>Limiting the number of operations per run.</li>
+</ul>
+</li>
+</ul>
+<h1 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li>
+<strong>Tenant Account in the Aquera Admin portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li>
+<strong>Configure application connectors in the Aquera Admin portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:
+<ul>
+<li>
+<strong>Oracle Cloud HCM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360014797914-Oracle-Cloud-HCM-Configuration-Guide" rel="noopener noreferrer" target="_blank">Oracle Cloud HCM Configuration Guide</a> for instructions on creating the Oracle Cloud HCM application connector and setting up the authentication.</li>
+<li>
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for instructions on creating the ServiceNow application connector and setting up the authentication.</li>
+</ul>
+</li>
+<li>
+<strong>ServiceNow tenant attribute configuration: </strong>Make sure that you set the value of the tenant attribute, <strong>ServiceNow OpenAPI Version to be used</strong>, as <strong><em>latest</em></strong> when you configure the ServiceNow connector. Else, this integration may fail.</li>
+</ul>
+<h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1>
+<p>This section details the configuration process for integrating Oracle Cloud HCM with ServiceNow. It covers creating the integration, setting parameters, and establishing automated synchronization of companies, departments, locations, managers, and positions from Oracle Cloud HCM to ServiceNow.</p>
+<p>This integration syncs the Oracle Cloud HCM data of all companies, departments, locations, managers, and positions. It creates tickets for any events related to employee onboarding, role changes, and offboarding in ServiceNow.</p>
+<h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2>
+<p>Perform the following steps to create the integration:</p>
+<ol>
+<li>Log in to the Aquera Admin portal.</li>
+<li>Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li>Click<strong> Create Integration</strong>.</li>
+<li>Select <strong>Oracle Cloud HCM </strong>to<strong> ServiceNow</strong>.</li>
+<li>Enter a name and a description for the integration.</li>
+<li>Select your Oracle Cloud HCM and ServiceNow connector instances.</li>
+<li>Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol>
+<h1 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h1>
+<p>The following sections are displayed under the Configuration tab:</p>
+<h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3>
+<p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p>
+<h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3>
+<p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p>
+<h4 id="h_01JYRFK57MP32WBT9QFD5S1R1B">Global Settings</h4>
+<p>Configure the following global settings:</p>
+<ul>
+<li>
+<strong>Report Only:</strong> Generates a simulation report of all intended changes without modifying any data in ServiceNow. Useful for testing and validation.</li>
+<li>
+<strong>Enable Email Notifications:</strong> Activates email alerts to keep stakeholders informed about each integration run.<br/><strong>Note</strong>: The following fields are enabled only when Enable Email Notifications is selected.  
+<ul>
+<li>
+<strong>Recipients' Email Addresses:</strong> Specify one or more email addresses to receive integration notifications and reports.</li>
+<li>
+<strong>Email Body:</strong> Customize the email body content sent to recipients, enabling personalized messaging.</li>
+</ul>
+</li>
+<li>
+<strong>Enable Report Generation:</strong> Generate a detailed integration report after every sync.</li>
+<li>
+<strong>Logging Level:</strong> Control the amount of detail recorded in logs for monitoring, troubleshooting, and audit purposes.</li>
+<li>
+<strong>Enable Analytics:</strong> Allow integration results to be visualized and analyzed through a dashboard.</li>
+</ul>
+<h4 id="h_01K09DX9KGEJCSVX6XJ3DJCFYT">Company Data Sync</h4>
+<p>Configure the following settings to control how company records are created, updated, deleted, and filtered during the integration:</p>
+<ul>
+<li data-end="738" data-start="438">
+<strong data-end="476" data-start="438">Create Company Data:</strong> Adds new company records into ServiceNow when they exist in Oracle Cloud HCM but are missing in ServiceNow. For example, Oracle Cloud HCM has a company called <strong data-end="649" data-start="630">Riverstone Corp</strong>, which is not found in ServiceNow. The sync will create this record in the target table.
+<ul>
+<li data-end="1024" data-start="740">
+<strong data-end="779" data-start="740">Enable Filter Condition for Create:</strong> Ensures only certain company records are created by applying a predefined filter. For example, when the filter allows creation only if the Company Code starts with <strong data-end="956" data-start="950">US</strong>, then records like <strong data-end="985" data-start="976">US001</strong> are created, while others are skipped.
+<ul>
+<li data-end="1285" data-start="1026">
+<strong data-end="1054" data-start="1026">Create Filter Attribute:</strong> The ServiceNow field is checked during filtering to determine whether a record should be created. For example, selecting <strong data-end="1195" data-start="1179">Company Code</strong> enables filtering records based on regional identifiers, such as <strong data-end="1267" data-start="1256">APAC001</strong> or <strong data-end="1284" data-start="1271">EMEA_CORP</strong>.</li>
+<li data-end="1563" data-start="1287">
+<strong data-end="1315" data-start="1287">Create Filter Condition:</strong> The comparison logic used to match the attribute with a value, such as Equals or Starts With. For example, if the condition is <strong data-end="1464" data-start="1449">Starts With</strong> and the value is <strong data-end="1488" data-start="1482">US</strong>, then records like <strong data-end="1522" data-start="1508">US_FINANCE</strong> and <strong data-end="1536" data-start="1527">US001</strong> are included for creation.</li>
+<li data-end="1821" data-start="1565">
+<strong data-end="1589" data-start="1565">Create Filter Value:</strong> The specific value used to determine whether the record passes the filter condition. For example, If the value is <strong data-end="1718" data-start="1710">EMEA</strong> and the condition is <strong data-end="1748" data-start="1736">Contains</strong>, then companies like <strong data-end="1785" data-start="1770">Global_EMEA</strong> and <strong data-end="1804" data-start="1790">EMEA_SALES</strong> will be created.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="2120" data-start="1823">
+<strong data-end="1861" data-start="1823">Update Company Data:</strong> Applies changes to existing company records in ServiceNow when they’ve been updated in Oracle Cloud HCM. The company <strong data-end="95" data-is-only-node="" data-start="78">NovaTech Inc.</strong> changed its name and address in Oracle Cloud HCM. These changes will be updated in ServiceNow.
+<ul>
+<li data-end="2393" data-start="2122">
+<strong data-end="2161" data-start="2122">Enable Filter Condition for Update:</strong> Applies updates only to records that meet specific criteria defined by a filter. For example, if the filter is set to update companies with names containing <strong data-end="2335" data-start="2325">Global</strong>, then <strong data-end="2356" data-start="2342">GlobalEdge</strong> and <strong data-end="2376" data-start="2361">Acme Global</strong> will be updated.
+<ul>
+<li data-end="2628" data-start="2395">
+<strong data-end="2423" data-start="2395">Update Filter Attribute:</strong> The ServiceNow field used to evaluate whether a company should be updated. For example, choosing <strong data-end="2543" data-start="2527">Company Name</strong> as the filter field allows targeting names like <strong data-end="2600" data-start="2592">Corp</strong> or <strong data-end="2612" data-start="2604">Tech</strong> during updates.</li>
+<li data-end="2867" data-start="2630">
+<strong data-end="2658" data-start="2630">Update Filter Condition:</strong> Defines how to compare the attribute value, such as Equals, Contains, or Starts With. For example, a condition of <strong data-end="2791" data-start="2779">Contains</strong> and value <strong data-end="2810" data-start="2802">Corp</strong> will update records like <strong data-end="2850" data-start="2836">HealthCorp</strong> or <strong data-end="2866" data-start="2854">TechCorp</strong>.</li>
+<li data-end="3089" data-start="2869">
+<strong data-end="2893" data-start="2869">Update Filter Value:</strong> The value that a field must match to qualify for update. For example, if the value is <strong data-end="2997" data-start="2986">Finance</strong> and the condition is <strong data-end="3032" data-start="3019">Ends With</strong>, only companies like <strong data-end="3072" data-start="3054">Global Finance</strong> will be updated.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="3342" data-start="3091">
+<strong data-end="3129" data-start="3091">Delete Company Data in ServiceNow:</strong> Removes company records from ServiceNow that no longer exist in Oracle Cloud HCM. For example, the record for <strong data-end="3258" data-start="3240">OldBridge Ltd.</strong> has been deleted in Oracle Cloud HCM. It will be removed from ServiceNow during the sync.
+<ul>
+<li data-end="3602" data-start="3344">
+<strong data-end="3383" data-start="3344">Enable Filter Condition for Delete:</strong> Deletes only the records that match the filtering condition. <strong data-end="3463" data-start="3447">For example, i</strong>f deletion is allowed only for records with codes that start with <strong data-end="3539" data-start="3531">TEMP</strong>, then <strong data-end="3557" data-start="3546">TEMP001</strong> will be deleted, while <strong data-end="3592" data-start="3581">HR_TEMP</strong> will not.
+<ul>
+<li data-end="3811" data-start="3604">
+<strong data-end="3632" data-start="3604">Delete Filter Attribute:</strong> The ServiceNow field used to decide which records qualify for deletion. For example, using <strong data-end="3746" data-start="3730">Company Code</strong> allows filtering out codes like <strong data-end="3791" data-start="3779">OLD_CORP</strong> or <strong data-end="3810" data-start="3795">ARCHIVE_002</strong>.</li>
+<li data-end="4041" data-start="3813">
+<strong data-end="3841" data-start="3813">Delete Filter Condition:</strong> Sets the comparison logic for deletion filters, such as Equals To or Ends With. For example, using <strong data-end="3960" data-start="3947">Equals To</strong> with the value <strong data-end="3989" data-start="3976">DELETE_ME</strong> deletes only the record exactly matching that code.</li>
+<li data-end="4272" data-start="4043">
+<strong data-end="4067" data-start="4043">Delete Filter Value:</strong> The value used to compare against the selected field for deletion.<br data-end="4137" data-start="4134"/><strong data-end="4153" data-start="4137">For example:</strong> If the value is <strong data-end="4178" data-start="4170">_OLD</strong> and the condition is <strong data-end="4213" data-start="4200">Ends With</strong>, records like <strong data-end="4238" data-start="4228">HR_OLD</strong> and <strong data-end="4255" data-start="4243">DATA_OLD</strong> will be deleted.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="4554" data-start="4274">
+<strong data-end="4308" data-start="4274">Limit Company Data Executions:</strong> Controls the number of create, update, and delete operations that can happen in each sync run. For example, during testing, you might limit the sync to <strong data-end="4473" data-start="4467">10</strong> creates, <strong data-end="4489" data-start="4483">15</strong> updates, and <strong data-end="4508" data-start="4503">5</strong> deletions to avoid processing a large volume.</li>
+<li data-end="4758" data-start="4556">
+<strong data-end="4579" data-start="4556">Set Creation Limit:</strong> Sets how many new company records can be created in a single sync run. For example, if 20 records qualify but the limit is set to <strong data-end="4722" data-start="4716">10</strong>, only the first 10 will be created.</li>
+<li data-end="4954" data-start="4760">
+<strong data-end="4781" data-start="4760">Set Update Limit:</strong> Sets how many company records can be updated in one sync execution. For example, if 50 records are eligible but the update limit is <strong data-end="4926" data-start="4920">25</strong>, only 25 will be processed.</li>
+<li data-end="5140" data-start="4956">
+<strong data-end="4979" data-start="4956">Set Deletion Limit:</strong> Sets how many records can be deleted during each sync. For example, if 12 records match the filter but the limit is <strong data-end="5107" data-start="5102">4</strong>, only 4 of them will be deleted.</li>
+<li data-end="5353" data-start="5142">
+<strong data-end="5170" data-start="5142">Company Data Table Name:</strong> The ServiceNow table where company records are stored and synced. For example, this might be the standard <strong data-end="5299" data-start="5283">core_company</strong> table or a custom table, such as <strong data-end="5352" data-start="5329">u_companies_staging</strong>.</li>
+<li data-end="5590" data-start="5355">
+<strong data-end="5384" data-start="5355">Company Data Primary Key:</strong> The field in ServiceNow used to uniquely match and identify company records. For example, the key <strong data-end="5523" data-start="5489">x_1641040_admin_u_company_code</strong> ensures records align correctly between Oracle Cloud HCM and ServiceNow.</li>
+</ul>
+<h2 id="h_01K09DX9KG2DM8C5PBZZQG8G1E"><!-- notionvc: 8fb34071-b021-464d-af5f-e1d5e62a8fdb --></h2>
+<h4 id="h_01K09DX9KGM7QHCFQA00E54Z1D">Department Sync</h4>
+<p>Configure the following settings to manage the creation, update, deletion, and filtering of department records during the integration:</p>
+<ul>
+<li data-end="448" data-start="145">
+<strong data-end="186" data-start="145">Create Department Data:</strong> Adds new department records into ServiceNow when they exist in Oracle Cloud HCM but are missing in ServiceNow. For example, Oracle Cloud HCM includes a department called <strong data-end="367" data-start="345">Corporate Strategy</strong>, which doesn’t exist in ServiceNow. The sync will create this department record.
+<ul>
+<li data-end="724" data-start="450">
+<strong data-end="489" data-start="450">Enable Filter Condition for Create:</strong> Ensures only certain department records are created by applying a predefined filter. For example, if the filter is set to create departments whose names start with <strong data-end="660" data-start="654">HR</strong>, only records like <strong data-end="693" data-start="680">HR_Talent</strong> and <strong data-end="710" data-start="698">HR_Admin</strong> are included.
+<ul>
+<li data-end="974" data-start="726">
+<strong data-end="754" data-start="726">Create Filter Attribute:</strong> The ServiceNow field is checked during filtering to determine whether a department record should be created. For example, selecting <strong data-end="903" data-start="884">Department Name</strong> allows filtering by values like <strong data-end="947" data-start="936">Finance</strong>, <strong data-end="955" data-start="949">HR</strong>, or <strong data-end="973" data-start="960">Marketing</strong>.</li>
+<li data-end="1277" data-start="976">
+<strong data-end="1004" data-start="976">Create Filter Condition:</strong> The comparison logic used to match the selected field with a value, such as Equals, Contains, or Starts With. For example, if the condition is <strong data-end="1163" data-start="1148">Starts With</strong> and the value is <strong data-end="1187" data-start="1181">IT</strong>, then records like <strong data-end="1221" data-start="1207">IT_Support</strong> and <strong data-end="1244" data-start="1226">IT_Development</strong> will be considered for creation.</li>
+<li data-end="1533" data-start="1279">
+<strong data-end="1303" data-start="1279">Create Filter Value:</strong> The specific value used to determine whether a department passes the filter condition. For example, if the value is <strong data-end="1429" data-start="1420">Admin</strong> and the condition is <strong data-end="1464" data-start="1451">Ends With</strong>, departments like <strong data-end="1499" data-start="1483">Office Admin</strong> and <strong data-end="1516" data-start="1504">HR_Admin</strong> will be created.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="1829" data-start="1535">
+<strong data-end="1576" data-start="1535">Update Department Data in ServiceNow:</strong> Applies changes to existing department records in ServiceNow when they’ve been updated in Oracle Cloud HCM. For example, the department <strong data-end="1729" data-start="1707">Finance Operations</strong> changed its name in Oracle Cloud HCM to <strong data-end="1790" data-start="1764">Finance and Accounting</strong>. This change is updated in ServiceNow.
+<ul>
+<li data-end="2089" data-start="1831">
+<strong data-end="1870" data-start="1831">Enable Filter Condition for Update:</strong> Applies updates only to department records that meet specific criteria defined by a filter, for example, updating only departments whose names contain <strong data-end="2034" data-start="2020">Operations</strong>, such as <strong data-end="2061" data-start="2044">IT Operations</strong> and <strong data-end="2088" data-start="2066">Finance Operations</strong>.
+<ul>
+<li data-end="2343" data-start="2091">
+<strong data-end="2119" data-start="2091">Update Filter Attribute:</strong> The ServiceNow field used to determine if a department record should be updated. For example, selecting <strong data-end="2241" data-start="2224">Department ID</strong> or <strong data-end="2253" data-start="2245">Name</strong> allows you to filter updates based on specific values like <strong data-end="2324" data-start="2313">DPT1002</strong> or <strong data-end="2342" data-start="2328">Sales Team</strong>.</li>
+<li data-end="2618" data-start="2345">
+<strong data-end="2373" data-start="2345">Update Filter Condition:</strong> Defines how the selected field is compared to the provided value, such as Equals, Contains, or Ends With. For example, if the condition is <strong data-end="2525" data-start="2513">Contains</strong> and value is <strong data-end="2550" data-start="2539">Support</strong>, it updates records like <strong data-end="2596" data-start="2576">Customer Support</strong> and <strong data-end="2617" data-start="2601">Tech Support</strong>.</li>
+<li data-end="2856" data-start="2620">
+<strong data-end="2644" data-start="2620">Update Filter Value:</strong> The value that a department field must match to qualify for update. For example, using the value <strong data-end="2752" data-start="2742">Global</strong> with the condition <strong data-end="2784" data-start="2772">Contains</strong> allows updates to departments like <strong data-end="2838" data-start="2820">Global Finance</strong> or <strong data-end="2855" data-start="2842">Global HR</strong>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="3085" data-start="2858">
+<strong data-end="2899" data-start="2858">Delete Department Data in ServiceNow:</strong> Removes department records from ServiceNow that no longer exist in Oracle Cloud HCM. For example, if <strong data-end="3012" data-start="2995">Legal Affairs</strong> has been removed in Oracle Cloud HCM, it will also be deleted from ServiceNow.
+<ul>
+<li data-end="3334" data-start="3087">
+<strong data-end="3126" data-start="3087">Enable Filter Condition for Delete:</strong> Deletes only the department records that match the filtering condition. For example, if the deletion filter matches codes starting with <strong data-end="3271" data-start="3263">OLD_</strong>, then departments like <strong data-end="3305" data-start="3295">OLD_IT</strong> or <strong data-end="3321" data-start="3309">OLD_MKTG</strong> are deleted.
+<ul>
+<li data-end="3551" data-start="3336">
+<strong data-end="3364" data-start="3336">Delete Filter Attribute:</strong> The ServiceNow field used to decide which department records qualify for deletion. For example, selecting <strong data-end="3490" data-start="3471">Department Code</strong> allows filtering values like <strong data-end="3531" data-start="3520">DPT9999</strong> or <strong data-end="3550" data-start="3535">ARCHIVED_01</strong>.</li>
+<li data-end="3797" data-start="3553">
+<strong data-end="3581" data-start="3553">Delete Filter Condition:</strong> The comparison logic used to decide if a department should be deleted, based on the field and value. For example, if the condition is <strong data-end="3729" data-start="3716">Equals To</strong> and the value is <strong data-end="3762" data-start="3747">REMOVE_THIS</strong>, only that exact match is deleted.</li>
+<li data-end="4042" data-start="3799">
+<strong data-end="3823" data-start="3799">Delete Filter Value:</strong> The value used in the condition to determine which records should be deleted. For example, if the value is <strong data-end="3939" data-start="3931">Test</strong> and the condition is <strong data-end="3973" data-start="3961">Contains</strong>, then departments like <strong data-end="4010" data-start="3997">Test_Dept</strong> or <strong data-end="4025" data-start="4014">QA_Test</strong> will be deleted.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="4297" data-start="4044">
+<strong data-end="4081" data-start="4044">Limit Department Data Executions:</strong> Controls how many create, update, and delete operations are performed per sync run. For example, you can set the sync to perform no more than <strong data-end="4229" data-start="4224">5</strong> creations, <strong data-end="4247" data-start="4241">10</strong> updates, and <strong data-end="4266" data-start="4261">3</strong> deletions during a single run.</li>
+<li data-end="4490" data-start="4299">
+<strong data-end="4322" data-start="4299">Set Creation Limit:</strong> Sets how many new department records can be created per sync run. For example, if 12 departments are eligible but the limit is <strong data-end="4455" data-start="4450">5</strong>, only the first 5 will be created.</li>
+<li data-end="4672" data-start="4492">
+<strong data-end="4513" data-start="4492">Set Update Limit:</strong> Sets how many department records can be updated in one run. For example, if 25 are eligible for update but the limit is <strong data-end="4640" data-start="4634">10</strong>, only 10 updates are performed.</li>
+<li data-end="4865" data-start="4674">
+<strong data-end="4697" data-start="4674">Set Deletion Limit:</strong> Sets how many department records can be deleted during the sync. For example, if 8 departments are flagged for deletion and the limit is <strong data-end="4840" data-start="4835">3</strong>, only 3 will be removed.</li>
+<li data-end="5053" data-start="4867">
+<strong data-end="4898" data-start="4867">Department Data Table Name:</strong> The ServiceNow table where department records are stored and synced. For example, this might be <strong data-end="5013" data-start="4995">cmn_department</strong> or a custom table like <strong data-end="5052" data-start="5037">u_dept_sync</strong>.</li>
+<li data-end="5260" data-start="5055">
+<strong data-end="5087" data-start="5055">Department Data Primary Key:</strong> The field used in ServiceNow to uniquely identify each department during sync. For example, <strong data-end="5186" data-start="5180">id</strong> or <strong data-end="5209" data-start="5190">department_code</strong> can be used to align records with Oracle Cloud HCM data.</li>
+</ul>
+<h2 id="h_01JYRFQ5MFAA2PZ3GWN30PECXY">Location Sync</h2>
+<p>Configure the following settings to manage how location records are created, updated, deleted, and filtered during the integration:</p>
+<ul>
+<li data-end="416" data-start="144">
+<strong data-end="183" data-start="144">Create Location Data:</strong> Adds new location records into ServiceNow when they exist in Oracle Cloud HCM but are missing in ServiceNow. For example, Oracle Cloud HCM includes a location called <strong data-end="351" data-start="338">Boston HQ</strong>, which isn’t found in ServiceNow. The sync will add this record.
+<ul>
+<li data-end="686" data-start="418">
+<strong data-end="457" data-start="418">Enable Filter Condition for Create:</strong> Ensures only specific location records are created by applying a filter. For example, if the filter is set to allow only locations that start with <strong data-end="612" data-start="605">NY_</strong>, then <strong data-end="629" data-start="619">NY_001</strong> and <strong data-end="643" data-start="634">NY_HR</strong> will be created, but <strong data-end="676" data-start="665">CA_WEST</strong> will not.
+<ul>
+<li data-end="897" data-start="688">
+<strong data-end="716" data-start="688">Create Filter Attribute:</strong> The ServiceNow field used to evaluate whether the location qualifies for creation. For example, selecting <strong data-end="840" data-start="823">Location Code</strong> allows filtering values like <strong data-end="881" data-start="870">LOC1001</strong> or <strong data-end="896" data-start="885">US_EAST</strong>.</li>
+<li data-end="1179" data-start="899">
+<strong data-end="927" data-start="899">Create Filter Condition:</strong> The logic used to compare the field value to the specified filter value, such as Equals, Contains, or Starts With. For example, if the condition is <strong data-end="1091" data-start="1076">Starts With</strong> and value is <strong data-end="1111" data-start="1105">US</strong>, records like <strong data-end="1135" data-start="1126">US001</strong> or <strong data-end="1150" data-start="1139">US_WEST</strong> are considered for creation.</li>
+<li data-end="1422" data-start="1181">
+<strong data-end="1205" data-start="1181">Create Filter Value:</strong> The value to be compared against the selected field to determine eligibility. For example, if the value is <strong data-end="1323" data-start="1313">EUROPE</strong> and the condition is <strong data-end="1357" data-start="1345">Contains</strong>, records like <strong data-end="1387" data-start="1372">EUROPE_WEST</strong> and <strong data-end="1405" data-start="1392">UK_EUROPE</strong> will be created.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="1679" data-start="1424">
+<strong data-end="1463" data-start="1424">Update Location Data:</strong> Applies updates to existing location records in ServiceNow when details have changed in Oracle Cloud HCM. For example, the location <strong data-end="1608" data-start="1590">Chicago Branch</strong> updated its address in Oracle Cloud HCM. The change is synced to ServiceNow.
+<ul>
+<li data-end="1927" data-start="1681">
+<strong data-end="1720" data-start="1681">Enable Filter Condition for Update:</strong> Applies updates only to location records that match the defined filter condition. For example, update only records whose location names include <strong data-end="1878" data-start="1865">Warehouse</strong>, such as <strong data-end="1904" data-start="1888">NY Warehouse</strong> or <strong data-end="1926" data-start="1908">West Warehouse</strong>.
+<ul>
+<li data-end="2130" data-start="1929">
+<strong data-end="1957" data-start="1929">Update Filter Attribute:</strong> The ServiceNow field used to apply the update filter. For example, selecting <strong data-end="2052" data-start="2035">Location Name</strong> allows filtering updates by partial matches like <strong data-end="2114" data-start="2102">Regional</strong> or <strong data-end="2129" data-start="2118">Support</strong>.</li>
+<li data-end="2339" data-start="2132">
+<strong data-end="2160" data-start="2132">Update Filter Condition:</strong> The rule used to match the selected field against a value. For example, using <strong data-end="2251" data-start="2239">Contains</strong> with the value <strong data-end="2274" data-start="2267">Lab</strong> will update records like <strong data-end="2318" data-start="2300">Innovation Lab</strong> and <strong data-end="2338" data-start="2323">Testing Lab</strong>.</li>
+<li data-end="2571" data-start="2341">
+<strong data-end="2365" data-start="2341">Update Filter Value:</strong> The value used for update filtering, based on the selected condition. For example, if the value is <strong data-end="2473" data-start="2465">Asia</strong> and the condition is <strong data-end="2508" data-start="2495">Ends With</strong>, records like <strong data-end="2538" data-start="2523">Office_Asia</strong> or <strong data-end="2558" data-start="2542">Support_Asia</strong> are updated.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="2790" data-start="2573">
+<strong data-end="2612" data-start="2573">Delete Location Data in ServiceNow:</strong> Deletes location records in ServiceNow that no longer exist in Oracle Cloud HCM. For example, if <strong data-end="2722" data-start="2704">Toronto Office</strong> has been removed in Oracle Cloud HCM, it will be deleted from ServiceNow.
+<ul>
+<li data-end="3004" data-start="2792">
+<strong data-end="2831" data-start="2792">Enable Filter Condition for Delete:</strong> Ensures only matching location records are deleted during sync. For example, delete only those locations whose code starts with <strong data-end="2969" data-start="2960">TEMP_</strong>, like <strong data-end="2987" data-start="2976">TEMP_NY</strong> or <strong data-end="3003" data-start="2991">TEMP_LON</strong>.
+<ul>
+<li data-end="3213" data-start="3006">
+<strong data-end="3034" data-start="3006">Delete Filter Attribute:</strong> The ServiceNow field used to determine which records qualify for deletion. For example, selecting <strong data-end="3150" data-start="3133">Location Code</strong> allows targeting values like <strong data-end="3194" data-start="3180">CLOSED_001</strong> or <strong data-end="3212" data-start="3198">OLD_OFFICE</strong>.</li>
+<li data-end="3438" data-start="3215">
+<strong data-end="3243" data-start="3215">Delete Filter Condition:</strong> Defines how the attribute should match the given value before deletion occurs. For example, if the condition is <strong data-end="3369" data-start="3356">Equals To</strong> and the value is <strong data-end="3402" data-start="3387">DELETE_THIS</strong>, only that exact record is deleted.</li>
+<li data-end="3688" data-start="3440">
+<strong data-end="3464" data-start="3440">Delete Filter Value:</strong> The value to compare against the selected field to determine deletion eligibility. For example, if the value is <strong data-end="3587" data-start="3577">PHASED</strong> and the condition is <strong data-end="3621" data-start="3609">Contains</strong>, records like <strong data-end="3653" data-start="3636">PHASED_OUT_EU</strong> and <strong data-end="3671" data-start="3658">NA_PHASED</strong> will be deleted.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="3909" data-start="3690">
+<strong data-end="3725" data-start="3690">Limit Location Data Executions:</strong> Controls how many create, update, and delete operations are performed per sync run. For example, limit the sync to <strong data-end="3846" data-start="3841">8</strong> creations, <strong data-end="3864" data-start="3858">12</strong> updates, and <strong data-end="3883" data-start="3878">3</strong> deletions to reduce load.</li>
+<li data-end="4090" data-start="3911">
+<strong data-end="3934" data-start="3911">Set Creation Limit:</strong> Sets the maximum number of location records that can be created per run. For example, if 10 records qualify but the limit is <strong data-end="4065" data-start="4060">4</strong>, only 4 will be created.</li>
+<li data-end="4268" data-start="4092">
+<strong data-end="4113" data-start="4092">Set Update Limit:</strong> Sets the maximum number of location records that can be updated per run. For example, if 20 are eligible but the limit is <strong data-end="4241" data-start="4236">5</strong>, only 5 will be processed.</li>
+<li data-end="4458" data-start="4270">
+<strong data-end="4293" data-start="4270">Set Deletion Limit:</strong> Sets the maximum number of location records that can be deleted per run. For example, if 9 match the delete criteria but the limit is <strong data-end="4433" data-start="4428">2</strong>, only 2 will be removed.</li>
+<li data-end="4652" data-start="4460">
+<strong data-end="4489" data-start="4460">Location Data Table Name:</strong> The ServiceNow table where location records are stored and synchronized. For example, this could be <strong data-end="4606" data-start="4590">cmn_location</strong> or a custom table like <strong data-end="4651" data-start="4630">u_location_master</strong>.</li>
+<li data-end="4878" data-start="4654">
+<strong data-end="4684" data-start="4654">Location Data Primary Key:</strong> The field used to uniquely identify each location record in ServiceNow. For example, <strong data-end="4805" data-start="4770">x_1641040_admin_u_location_code</strong> is a unique field used to match Oracle Cloud HCM location records during sync.</li>
+</ul>
+<h2 id="h_01JYRFQ5MFNQ50411TFSTYGHBN">Position Sync</h2>
+<p>Configure the following settings to manage how position records are created, updated, deleted, and filtered during the integration:</p>
+<ul>
+<li data-end="430" data-start="141">
+<strong data-end="180" data-start="141">Create Position Data in ServiceNow:</strong> Adds new position records into ServiceNow when they exist in Oracle Cloud HCM but are missing in ServiceNow. For example, Oracle Cloud HCM has a position called <strong data-end="353" data-start="330">Senior Data Analyst</strong>, which is not yet listed in ServiceNow. The sync will add this new position.
+<ul>
+<li data-end="733" data-start="432">
+<strong data-end="471" data-start="432">Enable Filter Condition for Create:</strong> Ensures only specific position records are created based on a defined filter. For example, if the filter allows creation only for positions that start with <strong data-end="636" data-start="628">ENG_</strong>, then positions like <strong data-end="671" data-start="658">ENG_DEV01</strong> and <strong data-end="688" data-start="676">ENG_QA02</strong> are created, while <strong data-end="721" data-start="708">HR_EXEC01</strong> is skipped.
+<ul>
+<li data-end="958" data-start="735">
+<strong data-end="763" data-start="735">Create Filter Attribute:</strong> The ServiceNow field used to evaluate if the position qualifies for creation. For example, selecting <strong data-end="882" data-start="865">Position Code</strong> allows filtering on codes such as <strong data-end="927" data-start="917">POS001</strong>, <strong data-end="941" data-start="929">ENG_LEAD</strong>, or <strong data-end="957" data-start="946">TEMP123</strong>.</li>
+<li data-end="1241" data-start="960">
+<strong data-end="988" data-start="960">Create Filter Condition:</strong> The logic used to compare the attribute to a filter value, like Equals or Starts With. For example, if the condition is <strong data-end="1121" data-start="1109">Contains</strong> and the value is <strong data-end="1147" data-start="1139">Lead</strong>, it includes records such as <strong data-end="1190" data-start="1177">Team Lead</strong>, <strong data-end="1208" data-start="1192">Finance Lead</strong>, or <strong data-end="1227" data-start="1213">TechLead01</strong> for creation.</li>
+<li data-end="1477" data-start="1243">
+<strong data-end="1267" data-start="1243">Create Filter Value:</strong> The value to match against the selected field to allow record creation. For example, using <strong data-end="1370" data-start="1359">Manager</strong> with condition <strong data-end="1399" data-start="1386">Ends With</strong> includes records like <strong data-end="1441" data-start="1422">Project Manager</strong>, <strong data-end="1457" data-start="1443">IT Manager</strong>, or <strong data-end="1476" data-start="1462">HR_Manager</strong>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="1750" data-start="1479">
+<strong data-end="1518" data-start="1479">Update Position Data:</strong> Applies changes to position records in ServiceNow when updates occur in Oracle Cloud HCM. For example, the position <strong data-end="1650" data-start="1629">Marketing Analyst</strong> now has an updated title or description in Oracle Cloud HCM. That change will be reflected in ServiceNow.
+<ul>
+<li data-end="1994" data-start="1752">
+<strong data-end="1791" data-start="1752">Enable Filter Condition for Update:</strong> Applies updates only to position records that meet a filter condition. For example, only update records where the position name contains <strong data-end="1941" data-start="1929">Engineer</strong>, such as <strong data-end="1970" data-start="1951">Senior Engineer</strong> or <strong data-end="1993" data-start="1974">DevOps Engineer</strong>.
+<ul>
+<li data-end="2242" data-start="1996">
+<strong data-end="2024" data-start="1996">Update Filter Attribute:</strong> The ServiceNow field used to determine whether a position record should be updated. For example, selecting <strong data-end="2149" data-start="2132">Position Name</strong> allows filtering for updates on records like <strong data-end="2206" data-start="2195">Analyst</strong>, <strong data-end="2222" data-start="2208">Consultant</strong>, or <strong data-end="2241" data-start="2227">Specialist</strong>.</li>
+<li data-end="2464" data-start="2244">
+<strong data-end="2272" data-start="2244">Update Filter Condition:</strong> The comparison rule used to determine if the field value matches the update condition. For example, using <strong data-end="2392" data-start="2379">Equals To</strong> with the value <strong data-end="2422" data-start="2408">Sales Lead</strong> ensures only that exact match is updated.</li>
+<li data-end="2685" data-start="2466">
+<strong data-end="2490" data-start="2466">Update Filter Value:</strong> The value used to determine eligibility for updating the record. For example, with value <strong data-end="2588" data-start="2580">Tech</strong> and condition <strong data-end="2615" data-start="2603">Contains</strong>, updates apply to records like <strong data-end="2663" data-start="2647">Tech Support</strong> and <strong data-end="2684" data-start="2668">TechOps Lead</strong>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="2933" data-start="2687">
+<strong data-end="2726" data-start="2687">Delete Position Data in ServiceNow:</strong> Deletes position records from ServiceNow that no longer exist in Oracle Cloud HCM. For example, if <strong data-end="2842" data-start="2820">Contract Recruiter</strong> has been removed from Oracle Cloud HCM, it will be deleted from ServiceNow during the next sync.
+<ul>
+<li data-end="3153" data-start="2935">
+<strong data-end="2974" data-start="2935">Enable Filter Condition for Delete:</strong> Ensures only position records that meet a filter condition are deleted. For example, delete only positions with codes starting with <strong data-end="3116" data-start="3107">TEMP_</strong>, such as <strong data-end="3134" data-start="3123">TEMP001</strong> or <strong data-end="3152" data-start="3138">TEMP_ADMIN</strong>.
+<ul>
+<li data-end="3387" data-start="3155">
+<strong data-end="3183" data-start="3155">Delete Filter Attribute:</strong> The ServiceNow field used to decide whether the position qualifies for deletion. For example, choosing <strong data-end="3304" data-start="3287">Position Code</strong> allows filtering based on structured codes, such as <strong data-end="3366" data-start="3353">OLD_POS01</strong> or <strong data-end="3386" data-start="3370">ARCHIVED_ENG</strong>.</li>
+<li data-end="3620" data-start="3389">
+<strong data-end="3417" data-start="3389">Delete Filter Condition:</strong> The logic used to compare the field with the specified value for deletion. For example, using <strong data-end="3524" data-start="3512">Contains</strong> with value <strong data-end="3547" data-start="3536">ARCHIVE</strong> deletes records such as <strong data-end="3583" data-start="3569">ARCHIVE_QA</strong>, <strong data-end="3600" data-start="3585">ARCHIVE2023</strong>, or <strong data-end="3619" data-start="3605">HR_ARCHIVE</strong>.</li>
+<li data-end="3860" data-start="3622">
+<strong data-end="3646" data-start="3622">Delete Filter Value:</strong> The specific value that determines which records should be deleted based on the filter. For example, using the value <strong data-end="3772" data-start="3760">Contract</strong> with <strong data-end="3791" data-start="3778">Ends With</strong> will remove records such as <strong data-end="3832" data-start="3817">HR_Contract</strong> or <strong data-end="3859" data-start="3836">Consulting_Contract</strong>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="4106" data-start="3862">
+<strong data-end="3897" data-start="3862">Limit Position Data Executions:</strong> Limits the number of position record operations per sync run. For example, limit the sync to perform only <strong data-end="4010" data-start="4004">10</strong> creations, <strong data-end="4028" data-start="4022">20</strong> updates, and <strong data-end="4047" data-start="4042">5</strong> deletions to reduce data volume during testing or rollout.</li>
+<li data-end="4308" data-start="4108">
+<strong data-end="4131" data-start="4108">Set Creation Limit:</strong> Specifies the maximum number of new position records that can be created during a sync run. For example, if 15 positions qualify for creation and the limit is <strong data-end="4271" data-start="4266">5</strong>, only the first 5 will be processed.</li>
+<li data-end="4487" data-start="4310">
+<strong data-end="4331" data-start="4310">Set Update Limit:</strong> Specifies the maximum number of position records that can be updated during a single sync. For example, if 50 are eligible but the limit is <strong data-end="4446" data-start="4440">25</strong>, only 25 will be updated during the run.</li>
+<li data-end="4672" data-start="4489">
+<strong data-end="4512" data-start="4489">Set Deletion Limit:</strong> Sets the maximum number of deletions allowed during a sync run. For example, if 10 records qualify for deletion and the limit is <strong data-end="4647" data-start="4642">3</strong>, only 3 will be removed.</li>
+<li data-end="4896" data-start="4674">
+<strong data-end="4703" data-start="4674">Position Data Table Name:</strong> The ServiceNow table where position records are stored and synchronized. For example, this might be <strong data-end="4841" data-start="4804">x_1641040_admin_u_admin_positions</strong> or another custom position table used for integration.</li>
+<li data-end="5108" data-start="4898">
+<strong data-end="4928" data-start="4898">Position Data Primary Key:</strong> The field used to identify position records in ServiceNow during sync uniquely. For example, <strong data-end="5039" data-start="5022">position_code</strong> ensures alignment between Oracle Cloud HCM and ServiceNow for each record.</li>
+</ul>
+<h4 id="h_01K09EMH8GFXM2PAWRWKYHQGWD">Manager Sync</h4>
+<p>Configure the following settings to manage how manager records are updated and filtered during the integration: </p>
+<ul>
+<li data-end="404" data-start="130">
+<strong data-end="168" data-start="130">Update Manager Data in ServiceNow:</strong> Applies changes to manager records in ServiceNow when updates are detected in Oracle Cloud HCM. For example, if the email or name of <strong data-end="310" data-start="296">John Smith</strong>, a manager in Oracle Cloud HCM, has changed, those updates are applied to his record in ServiceNow.
+<ul>
+<li data-end="637" data-start="406">
+<strong data-end="445" data-start="406">Enable Filter Condition for Update:</strong> Ensures that only matching manager records are updated based on a defined filter. For example, only update managers whose usernames start with <strong data-end="597" data-start="589">mgr_</strong>, such as <strong data-end="619" data-start="607">mgr_jane</strong> or <strong data-end="636" data-start="623">mgr_steve</strong>.
+<ul>
+<li data-end="847" data-start="639">
+<strong data-end="667" data-start="639">Update Filter Attribute:</strong> The ServiceNow field used to determine if a manager record qualifies for update. For example, selecting <strong data-end="785" data-start="772">user_name</strong> allows filtering on values, such as  <strong data-end="830" data-start="818">john.doe</strong> or <strong data-end="846" data-start="834">mgr_jane</strong>.</li>
+<li data-end="1062" data-start="849">
+<strong data-end="877" data-start="849">Update Filter Condition:</strong> Defines how to compare the selected field with the filter value. For example, using <strong data-end="974" data-start="962">Contains</strong> with value <strong data-end="995" data-start="986">admin</strong> updates records, such as  <strong data-end="1030" data-start="1017">admin_tom</strong>, <strong data-end="1044" data-start="1032">it_admin</strong>, or <strong data-end="1061" data-start="1049">hr_admin</strong>.</li>
+<li data-end="1297" data-start="1064">
+<strong data-end="1088" data-start="1064">Update Filter Value:</strong> The specific value that must match (as per the chosen condition) for the update to occur. For example, using value <strong data-end="1212" data-start="1204">team</strong> with condition <strong data-end="1241" data-start="1228">Ends With</strong> will update records, such as  <strong data-end="1281" data-start="1267">sales_team</strong> or <strong data-end="1296" data-start="1285">hr_team</strong>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-end="1502" data-start="1299">
+<strong data-end="1333" data-start="1299">Limit Manager Data Executions:</strong> Controls the number of manager updates that can be made in a single sync run. For example, limit the sync to <strong data-end="1439" data-start="1433">10</strong> updates to prevent large-scale changes during initial testing.</li>
+<li data-end="1709" data-start="1504">
+<strong data-end="1525" data-start="1504">Set Update Limit:</strong> Specifies the maximum number of manager records that can be updated during a single run. For example, if 20 managers qualify for updates and the limit is <strong data-end="1676" data-start="1671">5</strong>, only the first 5 are processed.</li>
+<li data-end="1894" data-start="1711">
+<strong data-end="1739" data-start="1711">Manager Data Table Name:</strong> The ServiceNow table where manager data is stored and updated. For example, this could be <strong data-end="1842" data-start="1830">sys_user</strong> or a custom user table, such as <strong data-end="1893" data-start="1871">u_manager_profiles</strong>.</li>
+<li data-end="2110" data-start="1896">
+<strong data-end="1925" data-start="1896">Manager Data Primary Key:</strong> The unique field in ServiceNow used to match manager records during sync. For example, using <strong data-end="2032" data-start="2019">user_name</strong> ensures that the correct ServiceNow user aligns with Oracle Cloud HCM manager data.</li>
+<li data-end="2359" data-start="2112">
+<strong data-end="2146" data-start="2112">Manager Data Fields to Expand:</strong> Lists nested fields from Oracle Cloud HCM to retrieve during the sync. For example, expanding fields like <strong data-end="2289" data-start="2247">workRelationships, assignments, managers,</strong> or <strong data-end="2303" data-start="2293">emails</strong> ensures detailed manager data is fetched and processed.</li>
+<li data-end="2644" data-start="2361">
+<strong data-end="2400" data-start="2361">Fetch Selected Manager Data Fields:</strong> Restricts the sync to fetch only the selected fields from Oracle Cloud HCM. For example, selecting fields such as <strong data-end="2518" data-start="2506">PersonId and</strong> <strong data-end="2543" data-start="2520">emails.EmailAddress</strong>, or <strong data-end="2575" data-start="2548">assignments.PrimaryFlag</strong> ensures only relevant data is fetched and improves sync performance.</li>
+</ul>
+<p data-end="2644" data-start="2361"> </p>
+<h1 id="h_01K09DX9KGJWGXTRTCDHE1MA6Y">Attribute Mapping</h1>
+<p>The <strong data-end="21" data-start="4">Attribute Map</strong> tab allows users to configure how data from Oracle Cloud HCM is transferred into ServiceNow by defining attribute-level mappings.</p>
+<p>The target attributes from ServiceNow are fixed and pre-defined, ensuring consistency with the destination schema. However, you have full control over the source application attributes.</p>
+<p>You can enter custom expressions or field paths from Oracle Cloud HCM that determine what data will be mapped. Each row in the mapping table represents a one-way data flow from a user-defined Oracle Cloud HCM expression to a specific ServiceNow attribute. Refer to the Attribute tab for complete mapping. </p>
+<p>You can toggle the view to JSON for advanced users who prefer editing mappings in code format.</p>
+<h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2>
+<p><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span></p>
+<h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1>
+<p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
+<h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1>
+<p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

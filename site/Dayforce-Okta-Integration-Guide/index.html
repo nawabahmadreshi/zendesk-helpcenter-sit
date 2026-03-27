@@ -28,7 +28,17 @@
 <li data-list-item-id="ebf4dde75e17e302bbb69791110080b22">Updates business email addresses and federated ID's from Okta to Dayforce (writeback).</li>
 <li data-list-item-id="e1b2352c96a9a7a763bf46fa292656ce3">Supports both full synchronization and incremental synchronization to process only changed records.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
-<li data-list-item-id="e0cacdcead06a965a664eac7b3be9f084">
+<li data-list-item-id="edbaedcfc98c07db2629f7c58fc9a68d5">
+<strong>Admin Access to Okta</strong>: You must have admin access to your Okta instance. You can visit the Okta portal to get access to an Okta instance.</li>
+<li data-list-item-id="e062bb9682a9d0b2d07e261383cb10a13">
+<strong>Admin Access to Dayforce</strong>: You must have admin access to your Dayforce instance.</li>
+<li data-list-item-id="e2961f879917491e8d0ddd143210703ec">
+<strong>Dayforce Field-Level Access</strong>: The specific field-level permissions must be enabled for the service account to manage user information in Dayforce. For more details, refer to the <a href="#h_01KMQF35KXFP177PZ786XZK3G7">Configuring Field-Level Access in Dayforce</a> section.</li>
+<li data-list-item-id="ed7550ab5c9d8c729a1837738e492bd59">
+<strong>Enable XaaS access</strong>: You must <a href="https://support.okta.com/help/s/?language=en_US" rel="noopener noreferrer" target="_blank">open a support case</a> with Okta to enable XaaS in your Okta instance.</li>
+<li data-list-item-id="e6055ea40740418c68fcc444f2c8ff87b">
+<strong>Source Priority for Username and Email Update</strong>: In case of username and email update for Okta profile, ensure that the username and email attributes in Okta are mastered by the correct system. Refer to the <a href="#h_01K4YTVY5CAS3BF8527S86Z7QQ">Source Priority</a> section for more details.</li>
+<li data-list-item-id="e5149059a5cf3db94d00a56250cc05743">
 <strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
 </li>
 <li data-list-item-id="eabc0e1c25d06e0c354af6d6bdae3a224">
@@ -39,7 +49,17 @@
 <strong>Okta</strong>: Ensure that you configure the Okta (version 11) or Okta XaaS (Anything-as-a-Source) connector in the Aquera Admin portal.</li>
 </ul>
 </li>
-</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push user-related data from Dayforce to Okta.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+</ul><p>For details on the limitations of Okta's Anything-as-Source (XaaS) solution, refer to the <a href="https://help.okta.com/oie/en-us/content/topics/users-groups-profiles/usgp-anything-as-a-source.htm" rel="noopener noreferrer" target="_blank">Okta documentation</a>.</p><p><strong>Note</strong>: The inactive and terminated users will not be integrated from Dayforce to Okta.</p><h2 id="h_01K4YTVY5CAS3BF8527S86Z7QQ">Source Priority</h2><p>If your use case requires updating username and email for Okta profile, ensure that these attributes in Okta are mastered by the correct system. Perform the following steps to configure the source priority:</p><ol>
+<li data-list-item-id="e1dd8dd54169eccd42f64ef0f57ed574f">In Okta Admin Console, navigate to <strong>Directory</strong> &gt; <strong>Profile Editor</strong> and select the <strong>User Profile</strong>.</li>
+<li data-list-item-id="e5335656f9f1923f7c3955bfdaa152129">On the <strong>Profile Editor</strong> page, scroll down to the <strong>Attributes</strong> section.</li>
+<li data-list-item-id="e566fcb4efcbc3c3498fc43dcabfc2d09">Find <strong>username</strong> attribute and click the info (<strong>i</strong>) icon.</li>
+<li data-list-item-id="efe6c52ff73bcc83c05c319e294b60e72">Set the <strong>Source Priority</strong> as follows:<ul>
+<li data-list-item-id="e4f6ef97873f905d2b92b8fa4eca7dfd8">Select <strong>Inherit from Profile Source</strong> if you want Dayforce to be the source of truth to provide and maintain the attribute value.</li>
+<li data-list-item-id="e2c9845285e776ed7914bb6b7db907774">Select <strong>Inherit from Okta</strong> if the attribute must be managed in Okta and then pushed to Dayforce. In this case, Okta becomes the source of truth.</li>
+</ul>
+</li>
+<li data-list-item-id="e06fb40aa941546ab03c5a2abac8659f9">Repeat the same steps for the <strong>email</strong> attribute and set the appropriate source priority based on your requirements.</li>
+</ol><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push user-related data from Dayforce to Okta.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="e40a0cc8ebcc3afffc51a4768a176ecd6">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="eadba89a425ffb28334543e0843bd1f87">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="efad30798a3869286a599fa03c340cf6a">Click<strong> Create Integration</strong>.</li>
@@ -350,7 +370,753 @@
 </ul>
 </li></ul>
 </li></ul><h2 id="h_01KKGNHR8MXVR6KNGPE8NY45CX">Custom Attributes</h2><p>This section enables you to define the custom attributes that must be included in the Okta user record from Dayforce.</p><h3 id="h_01KK96DE8X388DK8WBKT0YCCCA">Custom Attributes Creation Settings</h3><p>Configure the following setting:</p><ul><li data-list-item-id="e4b476c006279ba523f3987c4a5663445">
-<strong>Custom Attributes To Be Created In Okta</strong>: Select one or more Dayforce custom attributes from the dropdown menu that must be created in the Okta user account. For example, if you select <strong>BirthDate</strong>, the BirthDate custom attribute will be included in the Okta user record.</li></ul><h2 id="h_01KGS7GWR0HGV51CVV377A1WX4">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><h3 id="h_01KJ9R144MH0HSVY3G5ABDGVA6">User Sync</h3><p>This section enables you to define how data must be mapped from Dayforce to Okta. Based on your configuration, Dayforce employee records details are mapped to Okta user records.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h3 id="h_01KJA0WZY0D50CT7T6Y9EKTJCC">Write Back</h3><p>This section allows you to write back of business email addresses and federated IDs from Dayforce to Okta. The Okta user attributes are listed on the left side and the Dayforce employee attributes are listed on the right side of the page.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01KGHMQNFNBCR5J9J93JC1KRMP">Tables</h2><p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the Jira Service Management Cloud application, and you want to update a value for that attribute in Active Directory. Based on your requirement, you can add any number of tables in the integration.</p><p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a> section in the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for details.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+<strong>Custom Attributes To Be Created In Okta</strong>: Select one or more Dayforce custom attributes from the dropdown menu that must be created in the Okta user account. For example, if you select <strong>BirthDate</strong>, the BirthDate custom attribute will be included in the Okta user record.</li></ul><h2 id="h_01KGS7GWR0HGV51CVV377A1WX4">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><h3 id="h_01KJ9R144MH0HSVY3G5ABDGVA6">User Sync</h3><p>This section enables you to define how data must be mapped from Dayforce to Okta. Based on your configuration, Dayforce employee records details are mapped to Okta user records.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h3 id="h_01KJA0WZY0D50CT7T6Y9EKTJCC">Write Back</h3><p>This section allows you to write back of business email addresses and federated IDs from Dayforce to Okta. The Okta user attributes are listed on the left side and the Dayforce employee attributes are listed on the right side of the page.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01KGHMQNFNBCR5J9J93JC1KRMP">Tables</h2><p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the Jira Service Management Cloud application, and you want to update a value for that attribute in Active Directory. Based on your requirement, you can add any number of tables in the integration.</p><p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a> section in the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for details.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KMQEV5758A825KBE9FBGW6N7">Appendix</h1><h2 id="h_01KMQF35KXFP177PZ786XZK3G7">Configuring Field-Level Access in Dayforce</h2><p>Perform the following steps to configure the Field-Level access in Dayforce:</p><ol>
+<li data-list-item-id="e4a8470891ba5b1065f51e268d366314e">Log in to your Dayforce instance with the admin credentials.</li>
+<li data-list-item-id="e013724a6830562d8aa51babb2ae75e07">Select the relevant role. For example,<em> Identity API Integration</em>.</li>
+<li data-list-item-id="e3bd5e6e9be6060ec1f6114ad118235a0">Click the <strong>Web Services Field-Level Access</strong> tab. <br/>The <em><strong>Web Services Field-Level Access</strong> </em>tab provides a hierarchical view of the web services response types separated by the type of service (<strong>RESTful Services</strong> and <strong>SOAP Services</strong>) and the data entities and elements available within each.<br/><img alt="Inden.png" height="564" src="./assets/fbe8eeee350b1270.bin" width="1486"/>
+</li>
+<li data-list-item-id="e9c390de2fec66b6771e7ae4bfa2fc4e9">To retrieve the organization unit's location details, such as address and contact information, expand<strong> Human Resources</strong><strong> </strong>under the <strong>RESTful Services</strong>.</li>
+<li data-list-item-id="ed2741a8e1a9ef91d6608dd461fa330e8">
+<p>Enable the data elements you need for each organization unit from <strong>System Admin</strong> &gt; <strong>Roles</strong> &gt; <strong>Web Services Field-Level Access</strong> &gt; <strong>RESTful Services</strong> &gt; <strong>Human Resources</strong> &gt; <strong>Employee</strong>. <br/>The following table outlines the permissions that must be enabled in the <strong>RESTful Services</strong><strong> </strong>for each attribute:</p>
+<figure><table><tbody>
+<tr>
+<td><strong>Attribute</strong></td>
+<td><strong>Field-Level Access</strong></td>
+</tr>
+<tr>
+<td>EmployeeManagers</td>
+<td><img alt="7.png" height="225" src="./assets/a9376821c6bb6503.bin" width="165"/></td>
+</tr>
+<tr>
+<td>Contacts</td>
+<td><img alt="1.png" height="219" src="./assets/d2f67e6ac43f89ce.bin" width="193"/></td>
+</tr>
+<tr>
+<td>EmploymentStatuses</td>
+<td><img alt="2.png" height="407" src="./assets/5e65f058fa78f41d.bin" width="175"/></td>
+</tr>
+<tr>
+<td>Addresses</td>
+<td><img alt="3.png" height="436" src="./assets/1e44dca57e821fa4.bin" width="225"/></td>
+</tr>
+<tr>
+<td>WorkAssignments</td>
+<td><img alt="2025-07-28_16-08-00.png" height="275" src="./assets/4dae89487f80ea10.bin" width="227"/></td>
+</tr>
+<tr>
+<td>Roles</td>
+<td>
+<img alt="4.png" height="240" src="./assets/eb4cbbcafea917ee.bin" width="232"/> </td>
+</tr>
+<tr>
+<td>EmployeeProperties</td>
+<td><img alt="5.png" height="334" src="./assets/e0fd07b7b4876e2e.bin" width="206"/></td>
+</tr>
+<tr>
+<td>OrgUnitInfos</td>
+<td><img alt="6.png" height="423" src="./assets/e7dc86b2d0f939c4.bin" width="211"/></td>
+</tr>
+<tr>
+<td>SSOAccounts</td>
+<td><img alt="8.png" height="80" src="./assets/4edded1b04b55e84.bin" width="216"/></td>
+</tr>
+</tbody></table></figure>
+</li>
+</ol><p><strong>Note</strong>: To enable writeback of attributes from Okta to Dayforce, in addition to the above field-level access, you must also enable the following permissions:</p><ul>
+<li data-list-item-id="e0c42c4b3657d41ef58aa18b66ac7fd20">EmployeeExportParameters<br/><img alt="9.png" height="632" src="./assets/eb6b2bf08fe1397c.bin" width="215"/>
+</li>
+<li data-list-item-id="e64650f1df72e05b7a42de0c495d2c86b">EmployeeExportBulkResponse<br/><img alt="10.png" height="81" src="./assets/4b22734b84aa8ce9.bin" width="244"/>
+</li>
+<li data-list-item-id="e4d0bbe62bd7858977d69bc30d66349a5">EmployeeExportBackgroundJobStatus<br/><img alt="11.png" height="95" src="./assets/488fd3ad8dfb4cf4.bin" width="330"/>
+</li>
+</ul><h2 id="h_01KMQF4NW1G52QWVNB1HASWQAM">Create Custom Attributes in Okta</h2><p>You can add custom attributes to the App-specific user profile in Okta to include additional Dayforce <em>Employee </em>attributes. You must configure all the custom attributes individually. After the configuration, Aquera automatically populates the fields that you have created in Okta from the <em>Employee</em> resource of Dayforce.</p><p><strong>Note</strong>: To view Dayforce employee attributes, go to the <strong>Data</strong> tab of your Dayforce application connector configured in the Aquera Admin Portal. Then navigate to <strong>Resources</strong> &gt; <strong>Employees</strong> and click <strong>Fetch Records</strong>.</p><p>Perform the following steps to create custom attributes in Okta:</p><ol>
+<li data-list-item-id="ebcbfc09e63de2fa38cc677c6cf1b1cdf">Sign in to your Okta instance.</li>
+<li data-list-item-id="edd38238dde63ad68fe31ea27ec3c1b6e">Navigate to <strong>Directory</strong><strong> </strong>&gt;<strong> </strong><strong>Profile Editor</strong> and select the App-specific user profile that you've created.<br/><img alt="profile_editor.png" height="1180" src="./assets/2e6db87b3f898706.bin" width="2798"/>
+</li>
+<li data-list-item-id="efe6a02b44f33aaa4e63e692b76f3da14">Click <strong>Add Attribute</strong> to add a new attribute.<br/><img alt="Add.png" height="1094" src="./assets/ab0c6311cc316201.bin" width="1982"/>
+</li>
+<li data-list-item-id="e5f5f49e105593b39bd660cda71f35de2">Configure the attribute using the same name as Dayforce in the <strong>Variable name</strong> field and fill in other fields.<br/><img alt="image (7).png" height="570" src="./assets/d77deeaff42f2f41.bin" width="567"/><br/><strong>Note</strong>: Refer to the <a href="#h_01JXFDDH1SDBJ27MGT5Q0QQ5H2">Variable Name for Custom Attributes in Okta</a> section for details on the variable name.</li>
+<li data-list-item-id="e648d83151304906b7753423d2c1089ee">Click <strong>Save</strong><strong> </strong>to save the changes or <strong>Save and Add Another</strong> to create another custom attribute.</li>
+</ol><h2 id="h_01JXFDDH1SDBJ27MGT5Q0QQ5H2">Variable Name for Custom Attributes in Okta</h2><p>While creating custom attributes in the App-specific user profile to include additional Dayforce employee attributes, you must provide a valid variable name in the <strong>Variable name</strong> field.<br/>The following table lists the most commonly used Dayforce Employee attributes for which you must create a custom attribute with the mentioned variable names:</p><figure><table><tbody>
+<tr>
+<td><strong>Dayforce UI Attribute</strong></td>
+<td><strong>Required Variable Name in Okta</strong></td>
+<td><strong>Description</strong></td>
+<td><strong>Data Type</strong></td>
+</tr>
+<tr>
+<td>Biometric Verification</td>
+<td>
+<span>BioExempt</span><span> </span>
+</td>
+<td>
+<span>Indicates if the employee is exempt from biometric verification</span><br/> </td>
+<td>
+<span>boolean</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>BirthDate</td>
+<td>
+<span>BirthDate</span><span> </span>
+</td>
+<td>
+<span>The date of birth of the employee</span><span> </span>
+</td>
+<td><span>string</span></td>
+</tr>
+<tr>
+<td>Checksum Timestamp</td>
+<td>
+<span>ChecksumTimestamp</span><span> </span>
+</td>
+<td>
+<span> The checksum timestamp of the employee</span><span> </span>
+</td>
+<td><span>string </span></td>
+</tr>
+<tr>
+<td>Federated Id</td>
+<td>
+<span>FederatedId</span><span> </span>
+</td>
+<td>
+<span> The federated ID of the employee</span><span> </span>
+</td>
+<td>
+<span>string</span><span> </span>
+</td>
+</tr>
+<tr>
+<td><span>Gender</span></td>
+<td>
+<span>Gender</span><span> </span>
+</td>
+<td>
+<span>The gender of the employee </span><span> </span>
+</td>
+<td>
+<span>string</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>Most Recent Hire Date</td>
+<td>
+<span>HireDate</span><span> </span>
+</td>
+<td>
+<span> The hire date of the employee</span><span> </span>
+</td>
+<td><span>string</span></td>
+</tr>
+<tr>
+<td>Eligible for On-Demand Pay</td>
+<td>
+<span>EligibleForOnDemandPay</span><span> </span>
+</td>
+<td>
+<span>Indicates if the employee is eligible for on-demand pay </span><span> </span>
+</td>
+<td>
+<span>boolean</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>Connected to Dayforce Wallet</td>
+<td>
+<span>EligibleForDFWalletPayCard</span><span> </span>
+</td>
+<td>
+<span>Indicates if the employee is eligible for the Dayforce wallet pay card </span><span> </span>
+</td>
+<td>
+<span>boolean</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>Employee Latest Updated Timestamp</td>
+<td>
+<span>EmployeeLatestUpdatedTimestamp</span><span> </span>
+</td>
+<td>
+<span> The employee's last updated timestamp</span><span> </span>
+</td>
+<td><span>string </span></td>
+</tr>
+<tr>
+<td>Last Payroll New Hire Export Date</td>
+<td>
+<span>LastPayrollNewHireExportDate</span><span> </span>
+</td>
+<td>
+<span>The last payroll new hire export date </span><span> </span>
+</td>
+<td><span>string</span></td>
+</tr>
+<tr>
+<td>New Hire Approval Date</td>
+<td>
+<span>NewHireApprovalDate</span><span> </span>
+</td>
+<td>
+<span> The new hire approval date</span><span> </span>
+</td>
+<td><span>string </span></td>
+</tr>
+<tr>
+<td>New Hire Approved</td>
+<td>
+<span>NewHireApproved</span><span> </span>
+</td>
+<td>
+<span> Indicates if the new hire is approved</span><span> </span>
+</td>
+<td>
+<span>boolean</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>New Hire Approved By</td>
+<td>
+<span>NewHireApprovedBy</span><span> </span>
+</td>
+<td>
+<span> Indicates the ID of the user who approved the new hire</span><span> </span>
+</td>
+<td>
+<span>string</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>Original Hire Date</td>
+<td>
+<span>OriginalHireDate</span><span> </span>
+</td>
+<td>
+<span> The original hire date of the employee</span><span> </span>
+</td>
+<td><span>string</span></td>
+</tr>
+<tr>
+<td>Photo Exempt</td>
+<td>
+<span>PhotoExempt</span><span> </span>
+</td>
+<td>
+<span> Indicates if the photo is exempt for the employee</span><span> </span>
+</td>
+<td>
+<span>boolean</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>Requires Exit Interview</td>
+<td>
+<span>RequiresExitInterview</span><span> </span>
+</td>
+<td>
+<span>Indicates if the employee requires an exit interview </span><span> </span>
+</td>
+<td>
+<span>boolean</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>Seniority Date</td>
+<td>
+<span>SeniorityDate</span><span> </span>
+</td>
+<td>
+<span>The seniority date of the employee </span><span> </span>
+</td>
+<td><span>string</span></td>
+</tr>
+<tr>
+<td>Social Security Number</td>
+<td>
+<span>SocialSecurityNumber</span><span> </span>
+</td>
+<td>
+<span> The social security number of the employee</span><span> </span>
+</td>
+<td>
+<span>string</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>First Date Worked</td>
+<td>
+<span>StartDate</span><span> </span>
+</td>
+<td>
+<span> The start date of the employee</span><span> </span>
+</td>
+<td><span>string</span></td>
+</tr>
+<tr>
+<td>First Time Access Email Sent Count</td>
+<td>
+<span>FirstTimeAccessEmailSentCount</span><span> </span>
+</td>
+<td>
+<span>The first-time access email sent count of the employee </span><span> </span>
+</td>
+<td>
+<span>integer</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>First Time Access Verification Attempts</td>
+<td>
+<span>FirstTimeAccessVerificationAttempts</span><span> </span>
+</td>
+<td>
+<span> The first-time access verification attempts of the employee</span><span> </span>
+</td>
+<td>
+<span>integer</span><span> </span>
+</td>
+</tr>
+<tr>
+<td>Send First Time Access Email</td>
+<td>
+<span>SendFirstTimeAccessEmail</span><span> </span>
+</td>
+<td>
+<span>Indicates if the first-time access email is sent to the employee </span><span> </span>
+</td>
+<td>
+<span>boolean</span><span> </span>
+</td>
+</tr>
+<tr>
+<td><span>Login Name</span></td>
+<td>
+<span>LoginId</span><span> </span>
+</td>
+<td>
+<span>The login ID of the employee</span><span> </span>
+</td>
+<td>
+<span>string</span><span> </span>
+</td>
+</tr>
+<tr>
+<td><span>Employee Number</span></td>
+<td>
+<span>EmployeeNumber</span><span> </span>
+</td>
+<td>
+<span> The employee number of the employee</span><span> </span>
+</td>
+<td>
+<span>string</span><span> </span>
+</td>
+</tr>
+<tr>
+<td><span>Unknown Birth Date</span></td>
+<td>
+<span>UnknownBirthDate</span><span> </span>
+</td>
+<td><span>Indicates if the date of birth is unknown</span></td>
+<td>
+<span>boolean</span><span> </span>
+</td>
+</tr>
+<tr>
+<td><span>Display Name</span></td>
+<td>
+<span>DisplayName</span><span> </span>
+</td>
+<td><span>The display name of the employee</span></td>
+<td>
+<span>string</span><span> </span>
+</td>
+</tr>
+<tr>
+<td><span>LastModifiedTimestamp</span></td>
+<td>
+<span>LastModifiedTimestamp</span><span> </span>
+</td>
+<td><span>The last modified timestamp</span></td>
+<td><span>string </span></td>
+</tr>
+<tr>
+<td>City</td>
+<td>Addresses__City</td>
+<td>City of the <span>employee</span>
+</td>
+<td><span>string</span></td>
+</tr>
+<tr>
+<td>Country Code</td>
+<td>Addresses__Country__XRefCode</td>
+<td>Country code of the <span>employee</span>
+</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Department</td>
+<td>WorkAssignments__Position__Department__ShortName</td>
+<td>Department of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Suffix</td>
+<td>Suffix</td>
+<td>Suffix of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>manager</td>
+<td>EmployeeManagers__ManagerFirstName</td>
+<td>Manager of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>managerId</td>
+<td>EmployeeManagers__ManagerXRefCode</td>
+<td>Manager ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's Business Email</td>
+<td>EmployeeManagers__Contacts__BusinessEmail__ElectronicAddress</td>
+<td>Business email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's Personal Email</td>
+<td>EmployeeManagers__Contacts__PersonalEmail__ElectronicAddress</td>
+<td>Personal email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's OrgUnit-Site Email</td>
+<td>EmployeeManagers__Contacts__OrgUnitSiteEmail__ElectronicAddress</td>
+<td>OrgUnit-Site email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's OrgUnit-OnSiteDepartment Email</td>
+<td>EmployeeManagers__Contacts__OrgUnitOnSiteDepartmentEmail__ElectronicAddress</td>
+<td>OrgUnit-OnSiteDepartment email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's OrgUnit-Region Email</td>
+<td>EmployeeManagers__Contacts__OrgUnitRegionEmail__ElectronicAddress</td>
+<td>OrgUnit-Region email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Manager's Custom Email</td>
+<td>EmployeeManagers__Contacts__CustomEmail__ElectronicAddress</td>
+<td>Custom email ID of the employee's manager</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Common Name</td>
+<td>CommonName</td>
+<td>Common name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Organization</td>
+<td>WorkAssignments__Location__LegalEntity__ShortName</td>
+<td>Organization of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Culture XRefCode</td>
+<td>Culture__XRefCode</td>
+<td>The culture XRef code of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Contact Number</td>
+<td>Contacts__ContactNumber</td>
+<td>The contact number of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>State Name</td>
+<td>Addresses__State__Name</td>
+<td>The state of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Postal Code</td>
+<td>Addresses__PostalCode</td>
+<td>The postal code of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>First Name</td>
+<td>firstName</td>
+<td>The first name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Last Name</td>
+<td>lastName</td>
+<td>The last name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Middle Name</td>
+<td>MiddleName</td>
+<td>The middle name of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Email Address</td>
+<td>email</td>
+<td>The email ID of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Country LongName</td>
+<td>Contacts__Country__LongName</td>
+<td>The country long name</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Pay Policy XRefCode</td>
+<td>EmploymentStatuses__PayPolicy__XRefCode</td>
+<td>The pay policy xref code</td>
+<td>string</td>
+</tr>
+<tr>
+<td>timezone</td>
+<td>OrgUnitInfos__Site__OrgUnitDetail__Timezone</td>
+<td>The timezone of the employee</td>
+<td>string</td>
+</tr>
+<tr>
+<td>termination date</td>
+<td>TerminationDate</td>
+<td>The termination date</td>
+<td>string</td>
+</tr>
+</tbody></table></figure><p>While specifying a variable name, you must consider the following points:</p><ul>
+<li data-list-item-id="e47c7d067de3dc2370704720ef5fb8fe4">For non-complex attributes, the variable name must be the same as the Dayforce attribute name. For example, the variable name for NewHireApprovalDate must be <em>NewHireApprovalDate</em>.</li>
+<li data-list-item-id="e38d2521fc0c1e50ed409f45585d651c8">For complex attributes, the variable name must include a double underscore (__) between each sub-level attribute. For example, the variable name for the attribute <em>country</em>, which is a sub-attribute of <em>EmployeeManagers.contacts</em>must be <em>EmployeeManagers__Contacts__Country.</em>
+</li>
+<li data-list-item-id="ea0cd8cf1102a9fcc3dfc451d4a37e050">
+<p>The following table outlines the correct variable naming conventions for handling complex attributes with multiple values:</p>
+<figure><table><tbody>
+<tr>
+<td><strong>Attribute</strong></td>
+<td><strong>Format and Example</strong></td>
+</tr>
+<tr>
+<td>EmployeeManagers</td>
+<td>
+<p>Format: EmployeeManagers__{attribute name}</p>
+<p>Example: EmployeeManagers__ManagerFirstName</p>
+</td>
+</tr>
+<tr>
+<td>Contacts</td>
+<td>
+<p>Format: Contacts__{attribute name}</p>
+<p>Example: Contacts__ContactNumber</p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the Contacts__{XRefCode value}__{attribute name} format. For example, Contacts__BusinessPhone__ContactNumber.</p>
+</td>
+</tr>
+<tr>
+<td>EmploymentStatuses</td>
+<td>
+<p>Format: EmploymentStatuses<em>__{attribute name}</em></p>
+<p>Example: EmploymentStatuses<em>__PayPolicy</em></p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the EmploymentStatuses<em>__{XRefCode value}__{attribute name}</em> format.</p>
+</td>
+</tr>
+<tr>
+<td>Addresses</td>
+<td>
+<p>Format: Addresses<em>__{attribute name}</em></p>
+<p>Example: Addresses<em>__Address1</em></p>
+<p><strong>Note</strong>: Only the PrimaryResidence value will be considered. To consider a value other than the PrimaryResidence one, the variable name must be in the Addresses<em>__{XRefCode value}__{attribute name}</em> format. For example, Addresses<em>__Mailing__Address1.</em></p>
+</td>
+</tr>
+<tr>
+<td>WorkAssignments</td>
+<td>
+<p>Format: WorkAssignments<em>__{attribute name}</em></p>
+<p>Example: WorkAssignments__Position</p>
+</td>
+</tr>
+<tr>
+<td>Roles</td>
+<td>
+<p>Format: Roles<em>__{attribute name}</em></p>
+<p>Example: Roles__EffectiveStart</p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the Roles<em>__{XRefCode value}__{attribute name}</em> format. </p>
+</td>
+</tr>
+<tr>
+<td>EmployeeProperties</td>
+<td>
+<p>Format: EmployeeProperty__{attribute name}</p>
+<p>Example: EmployeeProperty__ShortName</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li data-list-item-id="e933cbd92d5e7dc79d50f927aef7d7c37">Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the EmployeeProperty<em>__{XRefCode value}__{attribute name}</em> format.</li>
+<li data-list-item-id="e1c69aaa3e29ee58a6b9199d6521305ff">While specifying variable name for EmployeeProperties, ensure that you consider the <em>XRefCode value</em> of <strong>EmployeeProperty &gt; XRefCode</strong>.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>OrgUnitInfos</td>
+<td>
+<p>Format: OrgUnitInfos__{attribute name}</p>
+<p>Example: OrgUnitInfos__OrgUnitDetail</p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the OrgUnitInfos<em>__{XRefCode value}__{attribute name}</em> format.</p>
+</td>
+</tr>
+<tr>
+<td>SSOAccounts</td>
+<td>
+<p>Format: SSOAccounts__{attribute name}</p>
+<p>Example: SSOAccounts__LoginName</p>
+<p><strong>Note</strong>: Only the current active (latest) value will be considered. To consider a value other than the latest one, the variable name must be in the SSOAccounts<em>__{XRefCode value}__{attribute name}</em> format.</p>
+</td>
+</tr>
+</tbody></table></figure>
+</li>
+</ul><h2 id="h_01KMQF535JGFF35AAPQCPR7FC0">Map Custom Attribute to Okta Profile</h2><p>Perform the following steps to map the custom attributes to the Okta profile:</p><ol>
+<li data-list-item-id="e7a8c32a82df27c8ccf530b27c60d51f7">Navigate to <strong>Directory</strong><strong> </strong>&gt;<strong> </strong><strong>Profile Editor</strong> and select the App-specific user profile that you've created.</li>
+<li data-list-item-id="ebdd1632dba2566af52c4e5879ddec3c9">Click <strong>Mappings</strong><strong> </strong>and select<strong> Configure User mappings</strong>.<br/><img alt="Map.png" height="910" src="./assets/86ac834b28d2ffac.bin" width="1980"/>
+</li>
+<li data-list-item-id="e51a5c57049fe9c5fd54becfcd2ae866c">Map the custom attribute in the App-specific user profile to an equivalent attribute in the Okta user profile and click <strong>Save Mappings</strong>.<br/><img alt="Day.png" height="768" src="./assets/43f1a3a1c32ccd42.bin" width="2012"/><br/><strong>Note</strong>: If an equivalent attribute is not present in the Okta user profile, refer to the following section and add custom attributes to the Okta user profile.</li>
+</ol><h2 id="h_01JYRSEMA6GYADZ5TAP9NFXYN6">Add Custom Attribute to Okta User Profile</h2><p>Perform the following steps to add a custom attribute to the Okta user profile:</p><ol>
+<li data-list-item-id="e47f7af8fff0b7a330b602a035597bf5b">Navigate to <strong>Directory</strong><strong> </strong>&gt;<strong> </strong><strong>Profile Editor</strong> and select the Okta user profile (User default).<br/><img alt="Profile.png" height="976" src="./assets/ca32c49228758d0c.bin" width="2178"/>
+</li>
+<li data-list-item-id="e8671656904240231122dac0591f5f63f">Click<strong> </strong><strong>Add Attribute</strong><strong> </strong>to add a custom attribute to the Okta default user profile.<br/><img alt="New.png" height="934" src="./assets/52fe660adcfa6c6a.bin" width="1982"/>
+</li>
+<li data-list-item-id="e84da4b931803a2e35440380124c6b0ec">Fill in the attribute's display name, description, data type, and set the user permission.</li>
+<li data-list-item-id="ecf6dc55442db0f6f9a4bc249a6c8f998">Click <strong>Save</strong>.</li>
+</ol><p>The following table lists the most commonly used Okta user profile attributes and their equivalent App-specific user profile attributes for mapping:</p><figure><table><tbody>
+<tr>
+<td>
+<strong>App-specific user profile Attribute</strong><br/> </td>
+<td><strong>Okta User Profile Attribute</strong></td>
+</tr>
+<tr>
+<td>Addresses__City</td>
+<td>city</td>
+</tr>
+<tr>
+<td>Addresses__Country__XRefCode</td>
+<td>countryCode</td>
+</tr>
+<tr>
+<td>WorkAssignments__Position__Department__ShortName</td>
+<td>department</td>
+</tr>
+<tr>
+<td>DisplayName</td>
+<td>displayName</td>
+</tr>
+<tr>
+<td>EmployeeNumber</td>
+<td>employeeNumber</td>
+</tr>
+<tr>
+<td>Title</td>
+<td>honorificPrefix</td>
+</tr>
+<tr>
+<td>Suffix</td>
+<td>honorificSuffix</td>
+</tr>
+<tr>
+<td>EmployeeManagers__ManagerFirstName</td>
+<td>manager</td>
+</tr>
+<tr>
+<td>EmployeeManagers__ManagerXRefCode</td>
+<td>managerId</td>
+</tr>
+<tr>
+<td>CommonName</td>
+<td>nickName</td>
+</tr>
+<tr>
+<td>WorkAssignments__Location__LegalEntity__ShortName</td>
+<td>organization</td>
+</tr>
+<tr>
+<td>Culture__XRefCode</td>
+<td>preferredLanguage</td>
+</tr>
+<tr>
+<td>Contacts__ContactNumber</td>
+<td>primaryPhone</td>
+</tr>
+<tr>
+<td>Addresses__State__Name</td>
+<td>state</td>
+</tr>
+<tr>
+<td>Addresses__Address1</td>
+<td>streetAddress</td>
+</tr>
+<tr>
+<td>WorkAssignments__Position__ShortName</td>
+<td>title</td>
+</tr>
+<tr>
+<td>Addresses__PostalCode</td>
+<td>zipCode</td>
+</tr>
+<tr>
+<td>Addresses__Address1</td>
+<td>postalAddress</td>
+</tr>
+<tr>
+<td>Timezone__XRefCode</td>
+<td>timezone</td>
+</tr>
+<tr>
+<td>firstName</td>
+<td>firstName</td>
+</tr>
+<tr>
+<td>lastName</td>
+<td>lastName</td>
+</tr>
+<tr>
+<td>MiddleName</td>
+<td>middleName</td>
+</tr>
+<tr>
+<td>email</td>
+<td>email</td>
+</tr>
+<tr>
+<td>secondEmail</td>
+<td>secondEmail</td>
+</tr>
+<tr>
+<td>Contacts__ContactNumber</td>
+<td>mobilePhone</td>
+</tr>
+<tr>
+<td>Contacts__Country__LongName</td>
+<td>region</td>
+</tr>
+<tr>
+<td>Gender</td>
+<td>gender</td>
+</tr>
+<tr>
+<td>EmploymentStatuses__PayPolicy__XRefCode</td>
+<td>paySchedule</td>
+</tr>
+</tbody></table></figure><p id="01JYNY9EYVTQY340D1E6XZTGWA">Similarly, you can map all custom attributes created in Okta to include additional Dayforce Employee attributes with Okta User Profile attributes.</p>
   </div>
 </body>
 </html>

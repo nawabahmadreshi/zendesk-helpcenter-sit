@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce / Ivanti Neurons Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce / Ivanti Neurons Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01K2F6A5Z9TCR2GKB9Z5SNZK01">Overview</h1><p>The Aquera platform enables scalable, automated data management across enterprise applications. Through seamless integrations, it helps organizations eliminate manual processes, ensure consistency, and optimize workflows across complex IT infrastructures.</p><p>This integration facilitates synchronization between <strong>Dayforce</strong> and <strong>Ivanti Neurons</strong>, automating ticket creation for onboarding, offboarding, and change management based on employee lifecycle events.</p><p>The integration is triggered either on a fixed schedule or through event-based mechanisms<strong>.</strong> Once triggered, it fetches recent or upcoming employee lifecycle changes such as new hires, terminations, and updates from Dayforce, and then processes them into Ivanti Neurons tickets.</p><h2 id="h_01K2F6AHCRCKT97FG6WHM44KF3">Key Functions</h2><p>This integration performs the following key tasks:</p><ul>
+<li data-list-item-id="ef7e2610520518fd4457dc40fc3dcd194">Retrieves employee data from Dayforce, including hires, terminations, and updates.</li>
+<li data-list-item-id="e64ab58104f422cc55acdeb22fa20257b">Processes detailed employee profiles (contact, department, job metadata).</li>
+<li data-list-item-id="ed3b174d7eea2d5cff6ed6933cf9ab97a">Matches employees to existing Ivanti records using correlation fields.</li>
+<li data-list-item-id="eb56f1d1659165cf57eaa1dc5d46b8195">Creates or updates onboarding, offboarding, and change tickets in Ivanti.</li>
+<li data-list-item-id="e425dc67275759d9ab590d873429362e7">Prevents duplicate ticketing by checking for existing records.</li>
+</ul><h1 id="h_01K2F6ANZ30WMRWZ3HS0H8MAZN">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e34769a954dceebfe006c2b038522c880">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access. <strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e05c5abd810c3fac349fe315c9cdca948">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin Portal for the integration:<ul>
+<li data-list-item-id="e68d1ffdcdc7963fdd33db6bece2cbf9c">
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for instructions on creating the Dayforce application connector and setting up the authentication.</li>
+<li data-list-item-id="e41dcb110b5fd934502fdeab0b0dad07b">
+<strong>Ivanti Neurons for ITSM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/11243486514839-Ivanti-Neurons-for-ITSM-Configuration-Guide" rel="noopener noreferrer" target="_blank">Ivanti Neurons for ITSM Configuration Guide</a> for instructions on creating the Ivanti Neurons for ITSM application connector and setting up the authentication.</li>
+</ul>
+</li>
+</ul><h1 id="h_01K2F6ATPEHT3GYX5RHK0HPXDP">Integration Setup</h1><p>This section outlines the configuration process for integrating <strong>Dayforce</strong> with <strong>Ivanti Neurons</strong> using the Aquera platform. It includes the steps for creating the integration, defining parameters, and enabling the automated processing of employee lifecycle events, such as onboarding, offboarding, and profile updates.</p><p>This integration continuously syncs employee records from Dayforce, specifically new hires, terminations, and job changes, and dynamically creates or updates corresponding tickets in Ivanti Neurons.</p><h2 id="h_01K2F6AZX1EBQGGMJDJKKVRJRD">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ecc7df66e80243cecd0091c4e80e28681">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ec859de2f9c2e48916b3fa59c48359495">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e3265763a4731cba3bdd030516f2986f4">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e6e9e7e6739ad821acfb3d671af4c7e2d">Search for <strong>Dayforce / Ivanti Neurons </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="e3a507a8710d15a5bbce3b34787f4b6a0">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e759e0abfd5fd3b253e7d55c7ef3a143c">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e3d7e6b52fff2505eb035092afc6e8f31">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="eae168d60674917eafe06fc1eabcc91a1">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01K2F6B803S2KACS8J7SDAK7ZQ">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01K2F6BDEHHGSYSM92F7MNBNV9">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to edit, remove, and refresh these application connectors.</p><h3 id="h_01K2F6BM75NA07BYVFX5C44SCK">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following configuration parameters:</p><h4 id="h_01K3R61D392VDX3EQ42XV16ZR6">Integration Feature</h4><p>Configure the following integration scenario:</p><ul><li data-list-item-id="e6dd849fd20858fc02a1fea7932d6bbae">
+<strong>Enable Ticket Management</strong>: Select to automatically create Ivanti Neurons tickets for Dayforce hires, terminations, and updates. When selected, the <a href="#h_01K2F6CRGTPF1SDTGKJT3KP2F4">Manage Ticket</a> section will be displayed.</li></ul><h4 id="h_01K2F6BS3NBF9V5XW431XMFS35">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e7b4f7f5392cc4f8eeac7438fb25fbf79">
+<strong>Enable Report-Only Mode: </strong>Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e0d26c10e9880d2aa4f4f47e4d0cea4c7">
+<strong>Enable Logging: </strong>Select to generate logs outlining data changes. The <a href="#h_01K2F6CD8RKHQSX6BRPJFBWES0">Logging</a> section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="e848b3f6e095ead0dd9fc31542bee5da4">
+<strong>Enable Reporting: </strong>Select to generate the integration report. The <a href="#h_01K2F6BZM1XDX51RG3MHM2E5TE">Reporting</a> section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="e4f666529d2a8408c7f054723e54cbc5c">
+<strong>Enable Log Insights: </strong>Select to visualize the integration-related metrics. The <a href="#h_01K0PGWJSDXT2R47JVRVF1X192">Log Insights</a> section will be displayed only when this checkbox is selected.</li>
+<li data-list-item-id="ec5e81181aa9f84b04253384cb8c9cbc0">
+<strong>Enable Notifications</strong>: Select to enable integration-related notifications. The <a href="#h_01K2F6C8BG7HJPMWHQMSRTPNHJ">Notifications</a> section will be displayed only when this checkbox is selected.</li>
+</ul><h3 id="h_01K2F6CRGTPF1SDTGKJT3KP2F4">Manage Ticket</h3><p>Configure the following ticket management settings:</p><ul><li data-list-item-id="ea052651f1eafee37c288e8b2cf94d0f1">
+<strong>HR Events to Trigger Ticketing</strong>: Select one or more employee lifecycle events that should initiate ticket creation workflows. The available options from the dropdown are <strong>Joiner</strong>, <strong>Mover</strong>, and <strong>Leaver</strong>.</li></ul><p><strong>Target Settings</strong></p><p>Configure the following target setting:</p><ul><li data-list-item-id="ec1c1f7b2cf9ca3b22259f7773321d1dd">
+<strong>Username</strong>: Enter your Ivanti username used to create service requests.</li></ul><h3 data-end="231" data-start="202" id="h_01K5V7Z6N70D3633G2YG1S0183">Joiner</h3><p>Configure the following joiner ticket settings:</p><ul data-end="1580" data-start="233">
+<li data-end="496" data-list-item-id="e3bdcd049e5aedf964f348a07e3b7ae98" data-start="233">
+<strong data-end="273" data-start="235">Filter Onboarding Users by Status: </strong>Select employee statuses that will trigger the creation of a joiner ticket. <strong data-end="374" data-start="358">For example,</strong> choose <strong data-end="392" data-start="382">Active</strong> and <strong data-end="409" data-start="397">Prestart</strong> so a joiner ticket is created when a candidate’s status changes to Active or Prestart.</li>
+<li data-end="742" data-list-item-id="e300cfbdddcd484a87397ce26b8e3f956" data-start="498">
+<strong data-end="538" data-start="500">Days Before Hire to Create Ticket: </strong>Enter the number of days before the hire date to create the ticket. <strong data-end="631" data-start="615">For example,</strong> set <strong data-end="642" data-start="636">10</strong> to create the ticket ten days before the employee’s official start date so that IT can prepare the necessary equipment.</li>
+<li data-end="906" data-list-item-id="e58a972e3f45eb1a453d9b9359e53e4c9" data-start="744">
+<strong data-end="762" data-start="746">Select the Ticket Type: </strong>Select the ticket type for new hire requests. <strong data-end="833" data-start="817">For example:</strong> Select <strong data-end="860" data-start="841">Service Request</strong> to open a new-hire service request in Ivanti.</li>
+<li data-end="1085" data-list-item-id="ebf06dd10aadc9daf8295a7c51dde078a" data-start="908">
+<strong data-end="927" data-start="910">Create Limit: </strong>Enter the maximum number of tickets that can be created. <strong data-end="1009" data-start="993">For example:</strong> Set <strong data-end="1021" data-start="1014">100</strong> to cap the total number of joiner tickets generated each month.</li>
+<li data-end="1342" data-list-item-id="eafa11728c419aa438bee01ab7efc5b99" data-start="1087">
+<strong data-end="1110" data-start="1089">Request Template: </strong>Select the template used to create service requests. <strong data-end="1188" data-start="1172">For example:</strong> Choose <strong data-end="1240" data-start="1196">AABC_AIM_HR Onboarding_Return 2025-08-21</strong> to use the standard onboarding template that pre-populates workstation and application access fields.</li>
+<li data-end="1580" data-list-item-id="e8de6ce80410aeeff7c6d7b99e724a31f" data-start="1344">
+<strong data-end="1364" data-start="1346">Select User Pay Type to Create Service Request: </strong>Select the Dayforce user pay type to create a service request in Ivanti. For example<strong data-end="1462" data-start="1446">,</strong> Select <strong data-end="1480" data-start="1470">Hourly</strong> so that tickets are created only for hourly workers who require different provisioning than salaried staff.</li>
+</ul><h3 data-end="1616" data-start="1587" id="h_01K5V7Z6N72VQEVDBRDKD4AVQP">Leaver</h3><p>Configure the following leaver ticket settings:</p><ul data-end="2935" data-start="1618">
+<li data-end="1856" data-list-item-id="e1a13a2adaf5ddaf55ecec48a99589487" data-start="1618">
+<strong data-end="1659" data-start="1620">Filter Offboarding Users by Status: </strong>Select the employee statuses that trigger a leaver ticket. For example, select <strong data-end="1761" data-start="1751">Active</strong> and <strong data-end="1780" data-start="1766">Terminated</strong> so that a leaver ticket is triggered when an employee is marked for termination.</li>
+<li data-end="2116" data-list-item-id="e92a91de43b7ecaa9311fc75c0a221f29" data-start="1858">
+<strong data-end="1905" data-start="1860">Days Before Termination to Create Ticket: </strong>Enter the number of days before the termination date to create the ticket. For example, Set <strong data-end="2011" data-start="2006">7</strong> to create the ticket a week before the termination date to schedule equipment return and access removal.</li>
+<li data-end="2286" data-list-item-id="e9cb352358bc5e94c69fc441817b774b3" data-start="2118">
+<strong data-end="2136" data-start="2120">Select the Ticket Type: </strong>Select the ticket type for employee departure requests. For example: Select <strong data-end="2244" data-start="2225">Service Request</strong> to create an offboarding service request.</li>
+<li data-end="2479" data-list-item-id="ecc19125b81d4ad838c21fd6297f26286" data-start="2288">
+<strong data-end="2307" data-start="2290">Create Limit: </strong>Enter the maximum number of tickets that can be created. For example, Set <strong data-end="2401" data-start="2394">100</strong> to allow no more than one hundred leaver tickets during a large layoff cycle.</li>
+<li data-end="2706" data-list-item-id="ebe30600543ae7b69dea0e07ea05b6a69" data-start="2481">
+<strong data-end="2504" data-start="2483">Request Template: </strong>Select the template used to create service requests. For example, choose <strong data-end="2630" data-start="2590">AABC_HR Offboarding/Leave 2025-08-26</strong> to use the standard offboarding checklist that includes badge deactivation.</li>
+<li data-end="2935" data-list-item-id="e1488719649b2ddbb1f85d895197bb36f" data-start="2708">
+<strong data-end="2735" data-start="2710">Select User Pay Type to Create Service Request: </strong>Select the Dayforce pay type that triggers a service request in Ivanti. For example, select <strong data-end="2850" data-start="2840">Salary </strong>so that the ticket is generated only for salaried employees who require laptop retrieval.</li>
+</ul><h3 data-end="2970" data-start="2942" id="h_01K5V7Z6N78VEHC71VKA8Y3GTH">Mover</h3><p>Configure the following mover ticket settings:</p><ul data-end="4341" data-start="2972">
+<li data-end="3270" data-list-item-id="e9b793bde69167b138ea9851803314a8c" data-start="2972">
+<strong data-end="3010" data-start="2974">Filter Transfer Users by Status: </strong>Select the employee statuses that trigger a mover ticket. For example, select <strong data-end="3114" data-start="3101">Maternity</strong>, <strong data-end="3129" data-start="3116">Paternity</strong>, <strong data-end="3144" data-start="3131">Pensioner</strong>, and <strong data-end="3162" data-start="3150">Inactive</strong> so a mover ticket is created when an employee moves into any of these statuses during an internal transfer.</li>
+<li data-end="3521" data-list-item-id="ee59d135d9b38f592d34debc3d5636f25" data-start="3272">
+<strong data-end="3315" data-start="3274">Days After Transfer to Create Ticket: </strong>Enter how many days after the transfer date to create the ticket. For example: Set <strong data-end="3418" data-start="3411">100</strong> to create the ticket one hundred days after the transfer to follow up on post-move access adjustments.</li>
+<li data-end="3692" data-list-item-id="eec1595aec8d5b5844f90f431773eb4d6" data-start="3523">
+<strong data-end="3541" data-start="3525">Select the Ticket Type: </strong>Select the ticket type for employee transfer requests. For example, choose <strong data-end="3648" data-start="3629">Service Request</strong> to open a transfer-related service request.</li>
+<li data-end="3871" data-list-item-id="e7926a6df8c97bf10f857c000f3ba25b6" data-start="3694">
+<strong data-end="3713" data-start="3696">Create Limit: </strong>Enter the maximum number of tickets that can be created. For example, set <strong data-end="3805" data-start="3800">1</strong> ensures that only one mover ticket is created per employee transfer.</li>
+<li data-end="4098" data-list-item-id="e74a4395c20fe8869ba9f2c74d5e2920d" data-start="3873">
+<strong data-end="3896" data-start="3875">Request Template: </strong>Select the template used to create service requests. For example, choose <strong data-end="4011" data-start="3982">HR_Transfer_Access_Update</strong> to request updates for access and department distribution lists.</li>
+<li data-end="4341" data-list-item-id="eaa26a235c3c32de5a198f5c50ffe668e" data-start="4100">
+<strong data-end="4120" data-start="4102">Select User Pay Type to Create Service Request: </strong>Select the Dayforce pay type that triggers a service request in Ivanti. For example, choose <strong data-end="4239" data-start="4225">Contractor</strong> so tickets are generated only for contractors who change departments and need new system permissions.</li>
+</ul><h3 id="h_01K2F6CD8RKHQSX6BRPJFBWES0">Logging</h3><p>Configure the following logging settings:</p><ul>
+<li data-list-item-id="ecfd601f5e0d52c8e3f6e98e185eaf891">
+<strong>Select the Log Detail Level</strong>:  Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ef2b7c5cf5f451ae0a740112438dde90c">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ea7981636567ba733891c098352911a9d">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e0dda2e3431e00febd2e665efc789391f">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following option only appears when the dashboard detail level is set to <strong data-end="475" data-start="465">Custom</strong>.<ul><li data-list-item-id="ea231b617c96d85867d5b1023d21dd9e6">
+<strong>Attribute Filter</strong>: controls which event attributes are included or excluded.   <ul>
+<li data-list-item-id="ea6f8c5c933d2b196cb1a5d6c72e0cd80">
+<strong>Included Attributes</strong>: Include only selected attributes in the log.</li>
+<li data-list-item-id="e1e2bd35c664ecdd61e9f34c32e13243b">
+<strong>Excluded Attributes</strong>: Include all attributes except the selected ones in the log.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="edfdd10b2804463e81c173a7dc32768db">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values when choosing the <strong>Full Details</strong> option.</li>
+<li data-list-item-id="e4ed51bb77558080a510e5654fce1f58a">
+<strong>Enable Debug Mode</strong>: Select this checkbox to generate logs that outline data changes, enabling debugging.</li>
+</ul><h3 id="h_01K2F6BZM1XDX51RG3MHM2E5TE">Reporting</h3><p>Configure the following settings to customize the report:</p><ul>
+<li data-list-item-id="ef2c3aaeead4d816275e815afc14a25dd">
+<strong data-end="258" data-start="227">Select the Report Detail Level:</strong> Select the desired level of report detail from the dropdown menu.<br/>The following are the available options:<ul>
+<li data-end="473" data-list-item-id="efc977948145f2e059ba8f44a84118c16" data-start="373">
+<strong data-end="390" data-start="373">Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-end="532" data-list-item-id="e409b16cd46a1ecfd58552e92216d08cd" data-start="476">
+<strong data-end="493" data-start="476">Full Details:</strong> All attribute details are displayed.</li>
+<li data-end="590" data-list-item-id="e050ee7b6b996c248dcf039fc38bb9587" data-start="535">
+<strong data-end="546" data-start="535">Custom:</strong> Includes or excludes selected attributes. <span>The following options only appear when the report detail level is set to </span><strong data-end="685" data-start="675">Custom</strong><span>.</span><ul><li data-end="590" data-list-item-id="ea778489ee8be7f9d1e0f15d78916841b" data-start="535">
+<span></span><strong data-end="711" data-start="690">Attribute Filter:</strong><span> Controls which attributes are included or excluded in the report.</span><ul>
+<li data-end="590" data-list-item-id="e14acfaf9434456b4f1fdda72faa52eab" data-start="535">
+<strong data-end="1177" data-start="1153">Included Attributes:</strong> Select the attributes to include in the CSV report.</li>
+<li data-end="590" data-list-item-id="e5f12c13475856d26e88326296269c7e5" data-start="535">
+<strong data-end="1258" data-start="1234">Excluded Attributes:</strong> Select the attributes to exclude from the CSV report.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e0d17d4f6e13a30b4ad84d652ea1dd28e">
+<strong>Show Attribute Values for Each Event</strong> <strong>(requires consent to store event data temporarily)</strong>: Select to populate the attribute values when choosing the Full Details or Custom option.</li>
+<li data-list-item-id="e87733e35725e0e47c14db1dc31577654">
+<strong>Enable Integration Report Download</strong>: Select to allow downloading the integration report.</li>
+</ul><h3 id="h_01K2F6C8BG7HJPMWHQMSRTPNHJ">Notifications</h3><p>Configure the following settings for email notifications:</p><ul>
+<li data-list-item-id="ee4a8c13cfec9d73b90071e611bd84af0">
+<strong>Admin's Email Address:</strong> Enter one or more admin email addresses that should receive notifications about integration executions, including success, failure, and CSV reports.</li>
+<li data-list-item-id="ee953f94cfcb61c7072a137fdc8f241a7">
+<strong>Admin Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications to the admins.</li>
+<li data-list-item-id="ecc87cd507f787677386cbbf4d6b890fe">
+<strong>Email Body on Successful Integration Execution:</strong> Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+<li data-list-item-id="e9ac6d845f96cd3e6e609f5dee5ef8789">
+<strong>Email Body on Failed Integration Execution:</strong> Enter the content that must be used as the email body in the notifications sent for integration errors.</li>
+<li data-list-item-id="eaef5a4f1d18f1be3ab5f270fd3cbe508">
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for all integration runs.</li>
+<li data-list-item-id="ea2af376e89ecbf8241189240f1fe5319">
+<strong>Notify Admin Via Email</strong>: Check this checkbox to send email notifications to all admins.</li>
+</ul><h3 id="h_01K0PGWJSDXT2R47JVRVF1X192">Log Insights</h3><p>Configure the following log insight settings:</p><ul>
+<li data-end="316" data-list-item-id="e200cc0f7b7f2f426f42b391510d2ece9" data-start="147">
+<strong data-end="185" data-start="147">Select the Analytics Detail Level:</strong> Select the desired level of log insights detail from the dropdown menu on the analytics dashboard.<br/>The following are the available options:<ul>
+<li data-end="420" data-list-item-id="e4bcaf5b8a143d27544c368b2c1909a06" data-start="318">
+<strong data-end="337" data-start="320">Summary Only:</strong> Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-end="479" data-list-item-id="e54768098ad347804fbfce8e946b6de38" data-start="421">
+<strong data-end="440" data-start="423">Full Details:</strong> All attribute details are displayed.</li>
+<li data-end="537" data-list-item-id="e997419bef4a41e1e39d4dd2049e15eb3" data-start="480">
+<strong data-end="493" data-start="482">Custom:</strong> Includes or excludes selected attributes. <span>The following option only appears when the log insights level is set to </span><strong data-end="635" data-start="625">Custom</strong><span>.</span><ul><li data-end="537" data-list-item-id="e09ab9f340c43bdc52b0d79e7dd5c1c64" data-start="480">
+<span></span><span></span><strong data-end="661" data-start="640">Attribute Filter:</strong><span> Controls which attribute details are included or excluded in the analysis.</span><ul>
+<li data-end="537" data-list-item-id="e64b8b923e42f88bd104ba1feb88626a6" data-start="480">
+<span></span><strong data-end="1106" data-start="1082">Included Attributes:</strong><span> Select the attributes to include in the insights.</span>
+</li>
+<li data-end="537" data-list-item-id="eb4f7124e5a96c65c5bf43f6760ef2112" data-start="480">
+<span></span><strong data-end="1185" data-start="1161">Excluded Attributes:</strong> Select the attributes to exclude from the insights.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-end="537" data-list-item-id="e8b4064a8e4224e1a390f1f4a1c464970" data-start="482">
+<strong>Show Attribute Values for Each Event</strong> <strong>(requires consent to store event data temporarily)</strong>: Select to populate the attribute values when choosing the Full Details or Custom option.</li>
+</ul><h2 id="h_01K2F6CW6Z28S5QQS7SN9RVC4K">Attribute Mapping</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side, and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01K2F6D281557NSK1AX87J3PEE">Tables</h2><p>In the Tables tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p><h2 id="h_01K2F6D9Z78A59AB3KVE88H9G4">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a>Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01K2F6DEXBP5A1KHTZSA3FMCQV">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a>User Action on Integrations</a> guide.</p><h1 id="h_01K2F6DMW23YJJ84ZW61QNFA00">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a>User Actions on Integrations</a> for further details.</p><p> </p>
+  </div>
+</body>
+</html>

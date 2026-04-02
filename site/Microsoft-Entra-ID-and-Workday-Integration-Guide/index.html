@@ -61,7 +61,7 @@
 <strong>Enable email writeback from Entra to Workday:</strong> Enable synchronization of updated email addresses from Microsoft Entra ID back to Workday. For example, if <strong>Barbara Jensen’s</strong> email address changes in Microsoft Entra ID from <strong>barbara.jensen@company.com</strong> to <strong>barbara.jensen2@company.com</strong>, the updated email is written back to <strong>Barbara Jensen’s</strong> Workday record.</li>
 </ul><h3 id="h_01KKTJVYPS7DQW756BWNQ7AND4">General Settings</h3><p>Configure the following general settings:</p><ul>
 <li data-list-item-id="e5b03c512f65713c1daae8adcb93dcd1f">
-<strong>Enable incremental mode:</strong> Select to run the integration in incremental mode. For example, if <strong>Barbara Jensen’s</strong> profile photo was updated after the previous integration run, only <strong>Barbara Jensen’s</strong> record is processed, rather than11 syncing all employees.</li>
+<strong>Enable incremental mode:</strong> Select to process only records that have changed since the last run. For example, if Barbara Jensen’s profile photo was updated after the previous integration run, only Barbara Jensen’s record is processed instead of syncing all employees. </li>
 <li data-list-item-id="e0cad5a93a1aa1f7adaed04ddc16eb4af">
 <strong>Enable naming policy settings:</strong> Select to manage and apply naming policies for user accounts created or updated through the integration. For example, the integration can generate a username such as <strong>barbara.jensen@company.com</strong> for <strong>Barbara Jensen</strong> based on the configured naming policy.</li>
 <li data-list-item-id="e7f3411dfcba4fe5dc6219f71609c9b1d">
@@ -129,8 +129,24 @@
 <strong>Import limit for writeback:</strong> Specify the maximum number of email updates that can be written back to Workday during a single integration run. For example, entering <strong>25</strong> allows the integration to update the Workday email field for up to 25 employees, including <strong>Barbara Jensen</strong>, during that run.</li></ul>
 </li>
 </ul><h3 id="h_01KKTS1SPRGNJC94JXMDVBM0E0">Photo Sync</h3><p>This section configures how employee profile photos are synchronized between Workday and Microsoft Entra ID.</p><h4 id="h_01KKTS1SPR8CKZPC40GMRPJ6MJ">Photo Sync Settings</h4><p>Configure how employee profile photos are synchronized between Workday and Microsoft Entra ID, including the direction of synchronization and limits on the number of photo updates processed during each integration run.</p><ul>
-<li data-list-item-id="ea34efb079246bdb51bc0b38a84f54a9a">
-<strong>Enable photo sync:</strong> Select the direction of photo synchronization between Workday and Microsoft Entra ID. For example, selecting <strong>Workday to Entra</strong> syncs the profile photo stored in Workday to Barbara Jensen's corresponding Microsoft Entra ID account.</li>
+<li data-list-item-id="e484a98f95df747e94870383223e6e3fd">
+<p data-end="444" data-start="120"><strong data-end="144" data-start="120">Photo Sync Behavior:</strong> Select to sync employee profile photos from <strong data-end="222" data-start="189">Workday to Microsoft Entra ID</strong> and from <strong data-end="265" data-start="232">Microsoft Entra ID to Workday</strong>, and define how photos are updated, processed, and retained in each direction. For example, if <strong data-end="395" data-start="361">Barbara Jensen’s profile photo</strong> is being synced, the integration follows these rules:</p>
+<ul>
+<li data-end="871" data-list-item-id="eb959c13302ebf1085c7e52a50f00006a" data-section-id="19baxdq" data-start="446">
+<strong data-end="472" data-start="448">Workday to Entra ID:</strong><ul>
+<li data-end="601" data-list-item-id="ed1b5d89ece2e433a70ea0a6fe2240c91" data-section-id="1njt4fi" data-start="477">Supports <strong data-end="508" data-start="488">incremental sync</strong>. For example, if only <strong data-end="557" data-start="531">Barbara Jensen’s photo</strong> was updated, only her photo is processed.</li>
+<li data-end="791" data-list-item-id="eedb8e9db5dc623c82ed40643770bcd43" data-section-id="1cv9k7w" data-start="604">Supports larger photo sizes when using <strong data-end="673" data-start="645">Office 365 Connector v19</strong>. For example, <strong data-end="730" data-start="688">Barbara Jensen’s high-resolution photo</strong> in Workday can be synced to Entra ID using this connector.</li>
+<li data-end="871" data-list-item-id="ef370e0030521a126faec898764445370" data-section-id="tn9bh2" data-start="794">Deleting a photo in <strong data-end="827" data-start="816">Workday</strong> removes it from <strong data-end="856" data-start="844">Entra ID</strong> during sync.</li>
+</ul>
+</li>
+<li data-end="1263" data-list-item-id="edbbfcd4f0834a9f66199506b516e3794" data-section-id="5qs34g" data-start="873">
+<strong data-end="899" data-start="875">Entra ID to Workday:</strong><ul>
+<li data-end="1077" data-list-item-id="e92d0724ced6da6506a64b13ff07149d9" data-section-id="hirdum" data-start="904">Only <strong data-end="924" data-start="911">full sync</strong> is supported (incremental sync is not available). For example, even if only <strong data-end="1027" data-start="1001">Barbara Jensen’s photo</strong> was updated, all employee photos are processed.</li>
+<li data-end="1263" data-list-item-id="e3b1b3a865785a8225f163bbc564d8250" data-section-id="1mftawr" data-start="1080">Deleting a photo in <strong data-end="1114" data-start="1102">Entra ID</strong> does not remove it from <strong data-end="1150" data-start="1139">Workday</strong>. For example, if <strong data-end="1194" data-start="1168">Barbara Jensen’s photo</strong> is deleted in Entra ID, it will still remain in her Workday profile.</li>
+</ul>
+</li>
+</ul>
+</li>
 <li data-list-item-id="ef10a35806299b11e8dda47b6400fbfd6">
 <strong>Enable limit:</strong> Select to limit the number of photo updates processed during a single integration run. For example, if the limit is enabled, only a defined number of employee photos, including <strong>Barbara Jensen’s</strong> profile photo, are synchronized during that run.<br/>When the <strong>Enable limit</strong> is selected, the following field is displayed:<ul><li data-list-item-id="e66b7cb22499ca1d5ee68edc37deb3789">
 <strong>Photo sync limit:</strong> Specify the maximum number of employee photos that can be synchronized during a single integration run. For example, entering <strong>25</strong> allows the integration to sync photos for up to 25 employees, including <strong>Barbara Jensen</strong>, during that run.</li></ul>

@@ -1,0 +1,839 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Workforce Now / Active Directory / Microsoft Entra ID Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Workforce Now / Active Directory / Microsoft Entra ID Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KNGZDTKKX27CHVZ5JQ03XXDB">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This integration automates provisioning between ADP Workforce Now, Active Directory, and Microsoft Entra ID. It synchronizes employee and candidate data, manages group assignments, and handles onboarding, updates, and terminations. It also supports automated access assignments and provides detailed notifications, logs, and reports.</p><p>This guide covers the end-to-end tasks in setting up the integration to sync employee and candidate data from ADP Workforce Now to the directory.<br/>Key Functions</p><p>This integration automates identity lifecycle management with the following primary capabilities:</p><ul>
+<li data-list-item-id="ef48b347dc9edb0f66ac33a104aac305f">Synchronizes employee and candidate data from ADP Workforce Now to Active Directory and Microsoft Entra ID. Refer to the <a href="#h_01KN3VWFN63Z6QM0B9AGMBP9JY">Supported Provisioning Methods</a> section for the various provisioning methods supported by the integration.</li>
+<li data-list-item-id="edd4ef55d423c4db5d5b95e18e914a27e">Generates password for new users in Active Directory and Microsoft Entra ID.</li>
+<li data-list-item-id="e87082d6a0865d631d869a52f780c9c46">Manages group assignments.</li>
+<li data-list-item-id="ee5bb970c34bed1e6aa98ec5ad4633405">Sends notifications about provisioning events.</li>
+<li data-list-item-id="e3a216bb91e7cf96ff54ea4b00033b15f">Generates detailed logs and reports.</li>
+</ul><h2 id="h_01KN3VWFN63Z6QM0B9AGMBP9JY">Supported Provisioning Methods</h2><p>This section explains how employee and candidate records from ADP Workforce Now are created, updated, and deactivated across different directory environments based on the selection of a provisioning method.</p><p>The integration supports the following provisioning methods:</p><ul>
+<li data-list-item-id="e915ca6a6f03d827ae7b60422bc1f2d7b">
+<strong>Active Directory Provisioning</strong>: In this provisioning method, employee and candidate records from ADP Workforce Now are created, updated, and deactivated in Active Directory. The integration synchronizes data from ADP Workforce Now to Active Directory and applies the required changes, including account creation, attribute updates, password management, Organizational Unit (OU) assignments, and group assignments. You can use this method if your use case requires automated provisioning from ADP Workforce Now to Active Directory.</li>
+<li data-list-item-id="e978dda8233cfbabd03853274d8c39af9">
+<strong>Entra ID Directory Provisioning</strong>: In this provisioning method, employee and candidate records from ADP Workforce Now are created, updated, and deactivated in Microsoft Entra ID. The integration manages the user lifecycle by synchronizing user attributes and handling access assignments in Entra ID.</li>
+<li data-list-item-id="e0416d615a4e693c060413767f8650aa3">
+<strong>Hybrid Directory Provisioning</strong>: This provisioning method combines both Active Directory and Microsoft Entra ID by provisioning users in Active Directory, and then the records are synchronized to Entra ID using the Microsoft Entra Connect. Employee and candidate records from ADP Workforce Now are initially created and managed in Active Directory.<br/><strong>Note</strong>: Microsoft Entra Connect (Azure AD Connect) is a Microsoft tool that integrates your on-premises Active Directory with Microsoft Entra ID. It syncs users and access information from Active Directory to Entra ID.</li>
+<li data-list-item-id="e24c6a810b212c331c4e8c264cc31002c">
+<strong>Dual Directory Provisioning</strong>: This provisioning method enables independent provisioning to both Active Directory and Microsoft Entra ID. In this method, employee and candidate records from ADP Workforce Now are created, updated, and deactivated in both Active Directory and Microsoft Entra ID separately.</li>
+</ul><p><strong>Note</strong>: The provisioning method is selected and configured in the <a href="#h_01KMQ95W0VKEWZT0G3MVJZ0SR8">Directory</a> section.</p><h2 id="h_01KMM9BYN5GDF0VKSZEQZD3XVQ">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e7a286d8eb9bda1584c066b8deae81c64">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="edef715c884eb1373e9762ccc7f8e3816">
+<strong>User Account in Entra ID</strong>: You must have a user account in Entra ID with permission to configure provisioning (for example, Application Administrator, Cloud Application Administrator, Application Owner, or Global Administrator).<br/><strong>Notes</strong>:<ul>
+<li data-list-item-id="ec09f279d022247e609705842d59e0260">The <strong>Exchange Administrator</strong> role is required for Exchange-related features, such as mailbox conversion.</li>
+<li data-list-item-id="e30d08cd13d6f501039f006512c298917">The <strong>SharePoint Administrator</strong> role is required for SharePoint-related features, such as providing OneDrive access to the user's manager.</li>
+</ul>
+</li>
+<li data-list-item-id="e90d6cd6de7e54c99726abb830b52f6b5">
+<strong>Admin Access to ADP Workforce Now</strong>: You must have admin access to your ADP Workforce Now instance.</li>
+<li data-list-item-id="e70240bf77859e31e33ad73bdfe64f570">
+<strong>Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e8b0032bd0b7c4a8aef7f51d2b55dc172">
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="e487c0bdd1ccb7b51a60c46f1a2c9e156">
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="e05430ecb6223ad9b37a0bdfa2c93358a">
+<strong>Microsoft 365</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section details the configuration and mapping process for integrating ADP Workforce Now with Active Directory and Microsoft Entra ID. It outlines the steps to create the integration, set up integration preferences, and define how data is mapped.</p><h2 id="h_01KFN5VN33W6V4TKMMX55CFV6R">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e09a0765aa12991e71e870a89c8fd1a2d">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="eca2694d7ef8497b23246ab892374be67">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ecb4ac310e87ef33e13e75b3047174a91">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e805374bf585993c2e0edeadddb147368">Search for <strong>ADP Workforce Now / Active Directory / Microsoft Entra ID</strong> in the search box next to the <strong>Explore Templates</strong> section, and then select it to create a new integration.</li>
+<li data-list-item-id="e7a1dcaf636ca100d77c1c2425d601801">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ee65c2fcc47f7d24606921743bc1f3424">Click <strong>Continue</strong>.</li>
+</ol><p>Once created, the following tabs are displayed:</p><ul>
+<li data-list-item-id="ead1c5e5ccf81c98594458aadc3c2af0d"><a href="#h_01K3TMT9CQB86XXAZ9FY9M1QYW">Overview</a></li>
+<li data-list-item-id="e68f88fcca36deb874b5e28ed3d10e61c"><a href="#h_01KFZGBB1GN0RB6E0SP3SYR0BS">Source</a></li>
+<li data-list-item-id="eae9b93399e68d51295954579a85f9171"><a href="#h_01KMQ7TNEHPPD4BK4XJK83E7J3">Directory</a></li>
+<li data-list-item-id="ef2511fb309f23741ae199ed8c48c3e45"><a href="#h_01KMQ7TX7BWSQ5G56YKZ7PKWND">Policy</a></li>
+<li data-list-item-id="e8c5c00bdf32e8dd4e4d2cfcee4e75cad"><a href="#h_01KMQ7V436R8NAB6DY1Q9CZ0K6">Execution</a></li>
+<li data-list-item-id="ea8b91f0e7f8ac4bba9cb8e0080742d0d"><a href="#h_01KMQ7VBW5CRXEP8KGFHBYG161">Notification Center</a></li>
+<li data-list-item-id="e1b36dc8173314d76316cdbad43b760bd"><a href="#h_01KMQ7WN0WEE2127MZ5RDTFBWD">Tables</a></li>
+<li data-list-item-id="e5709ae3355b9574e0a20cb5cc3997f61"><a href="#h_01KMQ7VRVT1E4AD0BFY20V8496">Schedule</a></li>
+</ul><h2 id="h_01K3TMT9CQB86XXAZ9FY9M1QYW">Overview</h2><p>On this tab, you can view integration details and the list of features supported by the integration.</p><p>Scroll to the <a href="#h_01KMMA69K704VGB3TJEGRDBT26">Features List</a> section to enable or disable integration features based on your use case.</p><h3 id="h_01KMMA69K704VGB3TJEGRDBT26">Features List</h3><p>This section lists the features supported by the integration. You can enable or disable each feature based on your requirements.</p><p>The following are the supported features:</p><ul>
+<li data-list-item-id="edbafb2b3dc6497924b69af2e0fe0510a">
+<strong>Enable Employee Management in Entra ID</strong>: Enable this option to synchronize employee data with Microsoft Entra ID. When enabled, the integration provisions new user accounts, updates user attributes based on changes, and deprovisions accounts according to employee lifecycle events and data changes in ADP Workforce Now.</li>
+<li data-list-item-id="e188180a37cc631b01f2cdfad219723e5">
+<strong>Enable Candidate Management in Entra ID</strong>: Enable this option to synchronize candidate data with Microsoft Entra ID. When enabled, candidate accounts can be provisioned and managed in Microsoft Entra ID.</li>
+<li data-list-item-id="ea22a4869c67dd3df2faa94260582cc48">
+<strong>Enable Employee Management in Active Directory</strong>: Enable this option to synchronize employee data with Active Directory. When enabled, the integration creates, updates, and deprovisions user accounts in Active Directory based on employee lifecycle events and data changes in ADP Workforce Now.</li>
+<li data-list-item-id="ecc6417eb1ca0ee2d8a96feef34893f20">
+<strong>Enable Candidate Management in Active Directory</strong>: Enable this option to synchronize candidate data with Active Directory. When enabled, candidate accounts can be provisioned and managed in Active Directory.</li>
+<li data-list-item-id="e0fc5b4ca70477696b0589ab373d6d0b4">
+<strong>Enable Monitored Provisioning</strong>: Enable this option to review proposed changes before they are applied to the directories. Once enabled, the system evaluates integration executions against the defined monitoring rules and conditions, and then creates tasks for review.</li>
+</ul><h2 id="h_01KFZGBB1GN0RB6E0SP3SYR0BS">Source</h2><p>Navigate to the <strong>Source</strong> tab to identify the ADP Workforce Now application connector used for the integration and configure the required source settings.</p><p>This section includes the following configuration sections:</p><ul>
+<li data-list-item-id="eacdbff4f176f1a432af60ead38856089"><a href="#h_01KMMBSG1HKCWYHM8EKS17PQY3">Application Settings</a></li>
+<li data-list-item-id="e8bc29f9340bafb28474dd7d244e39578"><a href="#h_01KMZHBBGFSRX4RBMD3WW86DCN">Time Based Settings</a></li>
+<li data-list-item-id="ec3a8f0b70f8743e0522336930603105a"><a href="#h_01KMZHBBGG0RGHQ04VVAP3J6RJ">Attribute Settings</a></li>
+<li data-list-item-id="e9ac34add6626042f1797c0c20c623917"><a href="#h_01KMZHBBGG9D8BERBETDSS9G8J">Define PII Attributes</a></li>
+</ul><h3 id="h_01KMQ7T44VZFB5PBARG0TYREKF">Application Settings</h3><p>This section allows you to identify the ADP Workforce Now application connector for employee and candidate management and define onboarding and offboarding criteria.</p><p>The following sub-sections are displayed on this page for configuration:</p><ul>
+<li data-list-item-id="e56b4bd7b95661b4c66db09ed34426ac4"><a href="#h_01KMQ8T0H858Q6EASJRRVCJA22">Employee Source Configuration</a></li>
+<li data-list-item-id="ec068ea51f131a0d6e15bf06dce4b342f"><a href="#h_01KMQNGJCFQZN9JT6F2P6Z0TBM">Candidate Source Configuration</a></li>
+</ul><h4 id="h_01KMQ8T0H858Q6EASJRRVCJA22">Employee Source Configuration</h4><p>The following fields are displayed:</p><ul>
+<li data-list-item-id="e5c5d4ea32ae69708ac30a8348e5f50c8">
+<strong>Source Application</strong>: Select the ADP Workforce Now application connector that you have configured in the Aquera Admin portal for employee management. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.</li>
+<li data-list-item-id="e181b81de8cca5503033936c577359c3c">
+<strong>Employee onboarding/offboarding criteria</strong>: Select one of the following options to define how employee accounts from ADP Workforce Now are evaluated for creation and termination in the directory:<ul>
+<li data-list-item-id="efa3f98b631ccd8fe15b2fc4236fb920e">
+<strong>Based on status</strong>: Select this option to evaluate account creation and termination based on the employee’s status in ADP Workforce Now. When selected, the integration uses the configured statuses to determine which users are eligible for account creation or termination in the directory. The following parameters are available for further configuration:<ul>
+<li data-list-item-id="e66816fc77cc377e95d66578686e0bbd5">
+<strong>Status(es) to be considered for account activation in the target application</strong>: Select the statuses that should be considered active. Employees with these statuses in ADP Workforce Now are considered for account creation in the directory.</li>
+<li data-list-item-id="efbd8156ddf1bc87ceb400ca21b1dd9f1">
+<strong>Status(es) to be considered for account deactivation in the target application</strong>: Select the statuses that should be considered inactive. Employees with these statuses in ADP Workforce Now are considered for account termination in the directory.</li>
+</ul>
+</li>
+<li data-list-item-id="e61eb7fe2ef3a699ba00116a0b1de36fd">
+<strong>Based on date</strong>: Select this option to evaluate account creation and termination using a date attribute in ADP Workforce Now. When selected, the integration uses the configured date attribute to determine when employee accounts are considered for creation or termination in the directory. The following parameters are available for further configuration:<ul>
+<li data-list-item-id="ee977e728a7dc271013c1d5c81a28f5e8">
+<strong>Date to be considered for account activation in the target application</strong>: Select a date attribute in ADP Workforce Now to identify employees for creation in the directory.</li>
+<li data-list-item-id="e8b8e89017f507261792bab7482f93aa9">
+<strong>Date to be considered for account deactivation in the target application</strong>: Select a date attribute in ADP Workforce Now to identify employees for termination in the directory.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="h_01KMQNGJCFQZN9JT6F2P6Z0TBM">Candidate Source Configuration</h4><p>The following fields are displayed:</p><ul>
+<li data-list-item-id="e6e8710c53c516491744dd2571a0f11cc">
+<strong>Source Application</strong>: Select the ADP Workforce Now application connector that you have configured in the Aquera Admin portal for candidate management. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.<br/><strong>Note</strong>: The source application can be the same for employee and candidate management.</li>
+<li data-list-item-id="e25125f26120f3325e9d506e163b4ed35">
+<strong>Candidate onboarding/offboarding criteria</strong>: Select one of the following options to define how candidate accounts from ADP Workforce Now are evaluated for creation and termination in the directory:<ul>
+<li data-list-item-id="e7e4ed97059114b38d837e12d59b3cd08">
+<strong>Based on status</strong>: Select this option to evaluate account creation and termination based on the candidate’s status in ADP Workforce Now. When selected, the integration uses the configured statuses to determine which candidates are eligible for account creation or termination in the directory. The following parameters are available for further configuration:<ul>
+<li data-list-item-id="e7c7bbdc82be7e4cdc12e69579a190ac0">
+<strong>Status(es) to be considered for account activation in the target application</strong>: Select the statuses that should be considered active. Candidates with these statuses in ADP Workforce Now are considered for account creation in the directory.</li>
+<li data-list-item-id="e6cdc41354c14a24926a00a0cb0bd8f62">
+<strong>Status(es) to be considered for account deactivation in the target application</strong>: Select the statuses that should be considered inactive. Candidates with these statuses in ADP Workforce Now are considered for account termination in the directory.</li>
+</ul>
+</li>
+<li data-list-item-id="e5cc817af789655644a61898b5d579d6e">
+<strong>Based on the date</strong>: Select this option to evaluate account creation and termination using a date attribute in ADP Workforce Now. When selected, the integration uses the configured date attribute to determine when candidate accounts are considered for creation or termination in the directory. The following parameters are available for further configuration:<ul>
+<li data-list-item-id="ed3abbecb9267fa582e4e0a3ba9ca3418">
+<strong>Date to be considered for account activation in the target application</strong>: Select a date attribute in ADP Workforce Now to identify candidates for creation in the directory.</li>
+<li data-list-item-id="ec01c5d32e9d305db35702c1f89ad6265">
+<strong>Date to be considered for account deactivation in the target application</strong>: Select a date attribute in ADP Workforce Now to identify candidates for termination in the directory.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KMZHBBGFSRX4RBMD3WW86DCN">Time Based Settings</h3><p>This section allows you to define the timezone and schedule for onboarding and offboarding processes.</p><p>The following fields are displayed on this page:</p><ul>
+<li data-list-item-id="ebbce76a2a8a4fc904d853b834ad296e4">
+<strong>Applicable time zone for provisioning</strong>: Select the timezone to be used for onboarding and offboarding. The following are the available options:<ul>
+<li data-list-item-id="e58918f5f4b10d49acd8ed093b716e221">
+<strong>Co-Ordinated Universal Timezone (UTC)</strong>: Select this option to onboard or offboard users using Coordinated Universal Time (UTC), regardless of the user's local time.</li>
+<li data-list-item-id="e4b02c33d0606b9207d53c02b06539804">
+<strong>Attribute Based Timezone</strong>: Select this option to onboard and offboard users based on their work location’s timezone. This allows processing to align with each user’s local timezone. When selected, the following field is displayed for further configuration:<ul><li data-list-item-id="ecc22dcbf136578a3e41a914a1ab049a0">
+<strong>Attribute for the time zone calculation</strong>: Select a ADP Workforce Now attribute to determine the employee's timezone.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="eedc02bfe98f4485b689c6cfe9818dfaa">
+<strong>Onboarding time</strong>: Enter the time for the onboarding in 24-hour format (HH:MM). For example, <em>03:40</em>.</li>
+<li data-list-item-id="e226ea4446e4412d0dea89f15585a0e36">
+<strong>Offboarding time</strong>: Enter the time for the offboarding in 24-hour format (HH:MM). For example, <em>03:40</em>.</li>
+</ul><h3 id="h_01KMZHBBGG0RGHQ04VVAP3J6RJ">Attribute Settings</h3><p>In this section, you can identify the employee and candidate objects to be involved in the integration. Only selected attributes will be available for provisioning to the directory.</p><p>It has the following fields for configuration:</p><ul>
+<li data-list-item-id="e43d704a32c29a72991a07cf2da12319e">
+<strong>ADP Workforce Now employee object(s) to retrieve attributes</strong>: Select the employee objects from ADP Workforce Now to include related attributes in the integration.</li>
+<li data-list-item-id="e610f40bf723aab9c145dfa90080dde3d">
+<strong>ADP Workforce Now candidate object(s) to retrieve attributes</strong>: Select the candidate objects from ADP Workforce Now to include related attributes in the integration.</li>
+<li data-list-item-id="ea9bae7675e210fb6e6cd77d67beb1384">
+<strong>ADP Workforce Now Employee Attribute Mapper</strong>: Select the attribute mapper to be used for employee management.</li>
+<li data-list-item-id="e7addb9b30a115cc67e751b5e8471709a">
+<strong>ADP Workforce Now Candidate Attribute Mapper</strong>: Select the attribute mapper to be used for candidate management.</li>
+</ul><h3 id="h_01KMZHBBGG9D8BERBETDSS9G8J">Define PII Attributes</h3><p>This section allows you to define the PII attributes for the integration. The configuration specified here determines how the integration handles those attributes when generating logs and reports.</p><p>The following field is displayed for configuration in this section:</p><ul><li data-list-item-id="e4e10dd3eefebde9129ed1c8717294f13">
+<strong>Attributes to be considered as PII attributes</strong>: Select the ADP Workforce Now attributes that you want to be considered as personally identifiable information.</li></ul><h2 id="h_01KMQ95W0VKEWZT0G3MVJZ0SR8">Directory</h2><p>Navigate to the <strong>Directory</strong> tab to configure the target directory settings for the integration. This tab allows you to select the target directory (Active Directory or Entra ID), define attribute mappings, and configure provisioning, deprovisioning, and OU assignment settings, along with mailbox, OneDrive, device, and writeback options.</p><p>The following sections are displayed for configuration in this tab:</p><ul>
+<li data-list-item-id="ea7aac63f9ba0dc2414c5b55a8cb60d5d"><a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Directory Settings</a></li>
+<li data-list-item-id="e9661e3ba82c724a65ea8fac24066c1ad"><a href="#01KMJFJ7EWSXBG3MC60VXC8Q7M">Manage Employee - AD</a></li>
+<li data-list-item-id="e0cb13d5824c07198c1e56ee80155c3d8"><a href="#01KMM89QASD6PVCPJMESF136AA">Manage Candidate - AD</a></li>
+<li data-list-item-id="e98f56469fc71130b3e3aa894bd42c0a2"><a href="#01KMPR5X84XTP5K0RP94BV50SF">Manage Employee - Entra ID</a></li>
+<li data-list-item-id="e7a1d6a2ab335e437ea42a3197475f6a1"><a href="#01KMPR4HH49Y6PR2WW8RW99BSG">Manage Candidate - Entra ID</a></li>
+<li data-list-item-id="e42f674ac86482cbcba3487db3c731b00"><a href="#h_01KN1TBK83XCVZZF3RY26PJXS2">Mailbox Settings</a></li>
+<li data-list-item-id="ec2d90fd0a4d1f7a6a8b7df742a5a8941"><a href="#h_01KN1TBZY5Q4C9AN1ZHRDMXAHP">OneDrive Settings</a></li>
+<li data-list-item-id="ec7461260e34277b28855e37db0fb0482"><a href="#h_01KN1TCB7YSSTH14250DTZDD4F">Device Settings</a></li>
+<li data-list-item-id="e5a1e5acd9d5d15666de7599ca5783c3f"><a href="#h_01KN1TCKBWQRHN1ZKMW2Z7BQM6">Groups Settings</a></li>
+<li data-list-item-id="e703bc5382dbf855f374688108bea7c77"><a href="#h_01KMZG877J1FGTK7QZB1DV7H2R">Writeback Settings</a></li>
+</ul><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Directory Settings</h3><p data-pm-slice="0 0 []">This section enables you to configure directory provisioning. In this section, you can define how employee and candidate records from ADP Workforce Now are provisioned to Active Directory and Microsoft Entra ID and configure rules for account creation, updates, and management. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Target Application Configuration</h4><p>This section enables you to configure the target application connectors involved in the integration. It also allows you to define how passwords are generated for new users in the directory.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="edae0531b29494e1ea9232d8b06bd319a">
+<strong>Active Directory</strong>: Select the Active Directory application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.<br/><strong>Note</strong>: This field identifies the Active Directory application that enables provisioning and synchronization between ADP Workforce Now and Active Directory.</li>
+<li data-list-item-id="e67797c3144df034f763755808658abcd">
+<strong>Generate custom passwords for users provisioned to Active Directory</strong>: Enable this option to generate passwords for new users according to the custom Active Directory policies defined in the <strong data-end="131" data-start="112">Password Policy</strong> section. By default, the integration generates a random password for new users. When enabled, the following field is displayed:<ul><li data-list-item-id="e536a90d467bfcf6187dbaba93f460f7e">
+<strong>Active Directory password policy</strong>: Select the password policy to be used for this integration. All password policies created in the Password Policy section are available for selection. If you do not find your password policy in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul>
+</li>
+<li data-list-item-id="e5f2b6392a58381f8050a20c663cd5108">
+<strong>Entra ID Application</strong>: Select the Entra ID application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.<br/><strong>Note</strong>: This field identifies the Entra ID application that enables provisioning and synchronization between ADP Workforce Now and Entra ID.</li>
+<li data-list-item-id="e5fb32b7bfc85dbc819b5621d9526b253">
+<strong>Generate custom passwords for users provisioned to Entra ID</strong>: Enable this option to generate passwords for new users according to the custom Entra ID policies defined in the <strong data-end="131" data-start="112">Password Policy</strong> section. By default, the integration generates a random password for new users. When enabled, the following field is displayed:<ul><li data-list-item-id="ea0bd241e782156423c630524c0eb47e5">
+<strong>Entra ID password policy</strong>: Select the password policy to be used for this integration. All password policies created in the Password Policy section are available for selection. If you do not find your password policy in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul>
+</li>
+</ul><h4 id="01KMJ2YB1Y0Z8SCBTW9S8E97MF">Synchronization Settings</h4><p>This section enables you to configure how data is synchronized between ADP Workforce Now, Active Directory, and Microsoft Entra ID.</p><p>It has the following settings:</p><ul><li data-list-item-id="e20a1380e48dbac70ce83d7e7b02b585f">
+<strong>Enable full</strong> <strong>synchronization</strong>: Enable this option to run the integration in full synchronization mode. When disabled, only incremental changes are synchronized.<ul>
+<li data-list-item-id="efe0f26650a4796e0ee54536c87f4cb6d">
+<strong>Full Sync Frequency</strong>: Select the frequency of full sync from ADP Workforce Now to Active Directory and Entra ID. The following options are available:<ul>
+<li data-list-item-id="ed59c5422cac54f32ffbde309bddd21b3">
+<strong>Every 6 hours</strong>: Select this to execute a full sync after every 6 hours.</li>
+<li data-list-item-id="e06fc0fa5378c2ee6dd68dd7e3e19ad47">
+<strong>Every 12 hours</strong>: Select this to execute a full sync after every 12 hours.</li>
+<li data-list-item-id="e8b6ad45cc6494ca10e0cfb421307facc">
+<strong>Every 24 hours</strong>: Select this to execute a full sync after every 24 hours.</li>
+</ul>
+</li>
+<li data-list-item-id="ee8ebf4d0762305bcb794fe7208871940">
+<strong>Disable Incremental Sync</strong>: Select this option to stop incremental synchronization. When disabled, incremental changes are synchronized as they occur.<br/><strong>Note</strong>: If <strong>Full Sync Frequency</strong> is set to every <strong>6 hours</strong> and <strong>Disable Incremental Sync</strong> is enabled, the integration runs only Full synchronization at 12 AM, 8 AM, and 4 PM. The runs at 4 AM, 12 PM, and 8 PM are ignored.</li>
+</ul>
+</li></ul><p><strong>Notes</strong>:</p><ul>
+<li data-list-item-id="e6b923639ff6bba4c05c7fabf0f6a1e81">The <strong>first synchronization</strong> always runs as a full sync, regardless of this setting. After the initial sync, subsequent syncs run incrementally based on the schedule configured in the <strong>Schedule</strong> tab.</li>
+<li data-list-item-id="ecb4477afe0d87ef4041ad0e4a130c6a3">If <strong>Full Sync Frequency</strong> is set to every <strong>6 hours</strong> and the <strong>Schedule</strong> frequency is set to every <strong>4 hours</strong>, the integration runs every 4 hours. During these runs, the integration alternates between Full and Incremental synchronization. For example, Full synchronization runs at 12 AM, 8 AM, and 4 PM, while Incremental synchronization runs at 4 AM, 12 PM, and 8 PM.</li>
+</ul><h4 id="01KMJ30VKYKZT7E5R2FZBFY2WS">Target Directory Assignment Settings</h4><p>This section enables you to configure how user accounts are assigned within the target directories.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="ecb9fb2ef7c52eb4075ee5e186b9d6235">
+<strong>Enable custom eligibility rules for the target directory</strong>: Enable this option to define a custom eligibility rule that identifies employees and candidates eligible for directory assignment. By default, all active employees and candidates with the <strong>Offer Accepted</strong> status are eligible for directory assignment.<ul><li data-list-item-id="e042192c632685503931726719daeb63a">
+<strong>Custom eligibility rule builder prompt</strong>: Enter your prompt to define a rule to identify employees or candidates who are eligible for directory assignment using Aquera Intelligence. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711-Using-Aquera-AI-Assistant-for-Generating-Unique-Values-in-Integrations" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide for more details.</li></ul>
+</li>
+<li data-list-item-id="e89c9d333e36466974fb3491a642ed6d3">
+<strong>Enable custom assignment rules for the target directory</strong>: Enable this option to apply custom rules for assigning directory accounts. When disabled, directory accounts are assigned to all employees and candidates based on the default synchronization configuration.<ul><li data-list-item-id="e011901fdd4769016c7c5b5e70252a57b">
+<strong>Directory Assignment Rule</strong>: Configure rules to determine how directory accounts are assigned to employees and candidates. <br/>Perform the following steps to create new <strong>Employee rules</strong>:<ol>
+<li data-list-item-id="eeef53e0ff455992e603ae2db7b48b29f">Click the vertical ellipsis next to <strong>Choose Attribute</strong>, and then click <strong>Select Attribute</strong> to view the list of available attributes you can use to set the eligibility rule.<br/><img alt="DF_Hybrid_1.png" height="308" src="./assets/6211de6cbc8b9b04.bin" width="1976"/>
+</li>
+<li data-list-item-id="e01da70654e856256d8cfbb77b305342e">Search and select the attribute you want to use to define a condition. For example, select <em>Application_Status_Group_Reference_Code</em>.</li>
+<li data-list-item-id="e819f562b7403b0b1fa7c491533f5abbb">In the next row, double-click and select the attribute value to define the rule. If multiple values are selected, an <strong>OR</strong> condition is applied among them.<br/><img alt="DF_Hybrid_2.png" height="308" src="./assets/da39fcea5be96d11.bin" width="1976"/>
+</li>
+<li data-list-item-id="e7edf47606847dc9f0815cf81c4052b9a">In the <strong>Directory</strong> Column, double-click and select the provisioning method to define the rule. Refer to the <a href="#h_01KN3VWFN63Z6QM0B9AGMBP9JY">Supported Provisioning Methods</a> section for more details.<br/><img alt="DF_Hybrid_3.png" height="308" src="./assets/b2a74879362eb540.bin" width="1976"/>
+</li>
+<li data-list-item-id="e20749527149551a0aed3c8301165a1ed">Click <strong>Add Row</strong> to add additional conditions for the selected attribute. Multiple rows can be added within a rule.</li>
+<li data-list-item-id="e29fe9d2a54d4162ca1dc57ad4ac4897d">Click the ellipsis and select <strong>Delete Row</strong> to delete a row as needed.<br/><img alt="DF_Hybrid_4.png" height="444" src="./assets/ec84a33601044062.bin" width="2034"/>
+</li>
+<li data-list-item-id="ea9167f79a782d9c68960baad2f5068a6">Click<strong> +</strong> to add another rule, as explained above. <br/><img alt="DF_Hybrid_5.png" height="310" src="./assets/43ed6edc163592b1.bin" width="1980"/>
+</li>
+<li data-list-item-id="e2e8a3b7368b35f213d258bd1cdee4079">Click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
+</ol>
+</li></ul>
+</li>
+</ul><p><strong>Note</strong>: Follow the above steps to add rules for <strong>Candidates</strong>.</p><p><strong>Sync the user's manager info to the target</strong>: Enable this option to sync the user's manager information to the target directory during user provisioning. When enabled, the integration retrieves the manager information from ADP Workforce Now and assigns the corresponding manager to the user account in Active Directory and Microsoft Entra ID during provisioning.</p><h3 id="01KMJFJ7EWSXBG3MC60VXC8Q7M">Manage Employee - AD</h3><p>This section enables you to configure how employee accounts are created, updated, and managed in Active Directory using employee data from ADP Workforce Now.</p><p>It has the following settings:</p><h4 id="01KMJFKP2NXMBY17A86HZQB5WE">Identity Mapping</h4><p>This section enables you to configure how user identities from ADP Workforce Now are mapped to existing accounts in Active Directory.</p><p>It has the following settings:</p><ul><li data-list-item-id="e0cad0adeb41e124ed16a0a313c1991ca">
+<strong>Enable custom correlation</strong>: By default, the integration correlates users by matching the Employee Number in ADP Workforce Now with the Employee Number in Active Directory. Enable this option to configure a different attribute mapping for user correlation. When enabled, additional fields are displayed for further configuration:<ul>
+<li data-list-item-id="e51d1287b5bad08c109b7661868da00c0">
+<strong>Correlate employees using the ADP Workforce Now Employee Number and the Active Directory Employee Number</strong>: Select this option to match users by comparing the Employee Number attribute in ADP Workforce Now with the Employee Number attribute in Active Directory.</li>
+<li data-list-item-id="e474d4860cb46989fd5bd29ae3c2c7ce6">
+<strong>Correlate employees using the ADP Workforce Now Employee Number and the Active Directory Employee ID</strong>: Select this option to match users by comparing the Employee Number in ADP Workforce Now with the Employee ID in Active Directory.</li>
+<li data-list-item-id="e0c63fc1d7ba1923105bb3220edb709da">
+<strong>Correlate employees using custom attributes in the source and target applications</strong>: Select this option to configure custom attributes in the source and target applications for user correlation.</li>
+</ul>
+</li></ul><h4 id="01KMJFSHD2M8QJ6FNTKAYQEPBW">Account Creation Settings</h4><p>This section enables you to configure how new user accounts are created in Active Directory based on employee data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e0ebcae040131a43f41152a2f47b6af34">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how employee accounts are assigned during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="e41404201b86a1bda6212acbfff6d1baf">
+<strong>Days prior to the hire date to create user account</strong>: Enter the number of days before the employee's actual start date when the user account should be activated. For example, if you set this attribute to 5 and the new hire's start date is 06-Mar-2026, the user account is activated on 01-Mar-2026, which is 5 days before the actual start date.</li>
+<li data-list-item-id="ea88b582d87ce22ed7c2ab6c5417641c6">
+<strong>Enable time-based onboarding</strong>: Select this option to create and manage employee accounts based on configured onboarding timelines. </li>
+<li data-list-item-id="e2613649cd80c90a9860ad2b16f317506">
+<strong>Force password change on first login</strong>: Select this option to force employees to change their password on their first sign-in. </li>
+<li data-list-item-id="e0a359960cbb842a1b1963ab286ca0dea">
+<strong>Enable Account Activation Limit</strong>: Enable this option to limit the number of employee accounts that can be activated during a single integration run. When enabled, the following field is displayed:<ul><li data-list-item-id="e1ac83c01aa6c80621359bfe1ebbb022c">
+<strong>Set the Creation Limit</strong>: Specify the maximum number of employee records that can be created in the Active Directory during a single integration run.</li></ul>
+</li>
+<li data-list-item-id="eee7be7e2cc5dfe3e95eebbb08b53e591">
+<strong>Create accounts but leave them inactive</strong>: Enable this option to create user accounts in advance while keeping them inactive until the configured activation condition is met. When enabled, the following field is displayed:<ul><li data-list-item-id="ef487524023cb088465311c26e85c7f82">
+<strong>Activate user account</strong>: Select a condition from the dropdown menu to determine when a new user account should be activated during provisioning. The following options are available:<ul>
+<li data-list-item-id="ed3e0c489f168060869ecef6578a0e63e">
+<strong>Never</strong>: Select this to never activate the account automatically.</li>
+<li data-list-item-id="e7441beaad47b49f2fb7407fa55571cfa">
+<strong>On Joining Date</strong>: Select this to activate the account on the joining date.</li>
+<li data-list-item-id="ef4ea0340395a4c80a88a9ab050b3d1b1">
+<strong>X Days Before Joining Date</strong>: Select this to activate the account X days before the joining date.</li>
+</ul>
+</li></ul>
+</li>
+</ul><h4 id="01KMM530DPFP25CT8P12W5ZV79">Account Update Settings</h4><p>This section enables you to configure how user accounts are updated in Active Directory based on employee data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e1da2ce3a22635c64463d28c708969941">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how employee accounts are updated during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="e311d4db7febe325fe938c31d32c1f1b7">
+<strong>Enable Update Limit</strong>: Enable this option to limit the number of employee accounts that can be updated during a single integration run. When enabled, the following field is displayed: <ul><li data-list-item-id="e0028f444f0446eb0e03e16bed5546488">
+<strong>Update Limit</strong>: Specify the maximum number of employee records that can be updated in the Active Directory during a single integration run.</li></ul>
+</li>
+</ul><h4 id="01KMM54TDXMGNMGSRG62JYPN5K">Account Deactivation Settings</h4><p>This section enables you to configure how user accounts are terminated in Active Directory based on employee data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e5f37072366e982bf122f856947559ee2">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how employee accounts are deactivated during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="eea284462c8ff152d62587e81b6bd3721">
+<strong>Enable Termination Limit</strong>: Enable this option to limit the number of employee accounts that can be terminated during a single integration run. When enabled, the following field is displayed:  <ul><li data-list-item-id="eedc57ef50b9a5556e3fd0e63c3ab4b74">
+<strong>Termination Limit</strong>: Specify the maximum number of employee records that can be terminated in the Active Directory during a single integration run.</li></ul>
+</li>
+<li data-list-item-id="eedc60ba0d4985ff76ad72889e8377337">
+<strong>Actions to perform upon account termination</strong>: Select a condition or a list of conditions from the dropdown menu to determine what action should be taken when an employee is terminated. When enabled, the following field is displayed: <ul>
+<li data-list-item-id="ed04f56c1de2c329fa7d01a80ef46c647">
+<strong>Password reset setting</strong>: Select a condition from the dropdown menu to determine when an employee's account password should be reset during provisioning. The following options are available:<ul>
+<li data-list-item-id="e141b999c2af5606e32fd929b3b9a74ee">
+<strong>Reset Password Immediately</strong>: Select this option to reset the password immediately.</li>
+<li data-list-item-id="edc6a09aab1aa82d5355227be1ed58811">
+<strong>Reset Password After X Days</strong>: Select this option to reset the password X days after the specified event.</li>
+</ul>
+</li>
+<li data-list-item-id="e2e4ad1873d75348a0f17041b43b73917">
+<strong>Account deactivation setting</strong>: Select a condition from the dropdown menu to determine when an employee account should be disabled during provisioning. The following options are available:<ul>
+<li data-list-item-id="e7b40bafa21229f18542eead3c4fbea17">
+<strong>Disable Immediately</strong>: Select this option to disable the account immediately.</li>
+<li data-list-item-id="ebfd7efb3e4c7a2113a6d19b886b888a4">
+<strong>Disable Account X Days Before</strong>: Select this option to disable the account X days before the specified event.</li>
+<li data-list-item-id="efdceee443d9de01490087ed7d435687e">
+<strong>Disable Account X Days After</strong>: Select this option to disable the account X days after the specified event.</li>
+<li data-list-item-id="e33a9d61fe98dc780069ec63fa8566ee7">
+<strong>Disable Account Immediately After Password Reset</strong>: Select this option to disable the account immediately after the password is reset.</li>
+</ul>
+</li>
+<li data-list-item-id="e0cbaaa6e27bfb93dec31ef1b41de359f">
+<strong>Account deletion settings</strong>: Select a condition from the dropdown menu to determine when an employee account should be deleted during provisioning. The following options are available:</li>
+</ul>
+</li>
+</ul><ul>
+<li data-list-item-id="e7747fdaaa43d9e7735fd1255711b7576">
+<strong>Delete Immediately</strong>: Select this option to delete the account <em>immediately</em>.</li>
+<li data-list-item-id="ea1b17222012d40608327406defe35eed">
+<strong>Delete Account Immediately After Disable</strong>: Select this option to <em>delete the account immediately after it is disabled</em>.</li>
+<li data-list-item-id="e59bf8d792c368c02fbff3f3e00e18621">
+<strong>Delete Account X Days After Disable</strong>: Select this option to <em>delete the account X days after it is disabled</em>.</li>
+<li data-list-item-id="e1ac00ae3e1cc28677f490dd57937dd62">
+<strong>Disabled OU: </strong>Enter the Active Directory Organizational Unit (OU) where disabled user accounts should be placed.</li>
+<li data-list-item-id="ea2594a559a7fe89a29d09d3ebd9b6ea4">
+<strong>Enable time-based offboarding</strong>: Enable this option to disable and delete employee accounts based on the configured offboarding timelines. </li>
+<li data-list-item-id="ea70fd65a2e5ea8155a9301c1bc8392d4">
+<strong>Remove user accounts from groups after termination</strong>: Enable this option to remove a terminated employee from all the groups.</li>
+</ul><h4 id="h_01KMM5A8XS2FT0AYY8DG5BD024">Attribute Mapping</h4><p>This section allows you to control how attributes are synchronized between <strong>ADP Workforce Now</strong> and <strong>Active Directory</strong>.</p><p>Source attributes are listed on the left and target attributes are listed on the right. You can modify the source attributes as needed to align with your specific use case.</p><p>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. Enter the expression directly in the source attribute field, or click the <strong>expand</strong> icon to write a longer expression.</p><p>Attributes marked with a red asterisk (*) are required for successful provisioning.</p><p>Use the <strong>Search Attributes</strong> field to filter the list of available attributes for mapping.</p><p>After completing the source-to-target attribute mapping, click <strong>Save Changes</strong> in the top-right corner of the page to save the configuration.</p><h3 id="01KMM89QASD6PVCPJMESF136AA">Manage Candidate - AD</h3><p>This section enables you to configure how candidate accounts are created, updated, and managed in Active Directory using employee data from ADP Workforce Now.</p><p>It has the following settings:</p><h4 id="01KMM89QASTXKNWG9C54PNXZCP">Account Correlation Settings</h4><p>This section enables you to configure how user identities from ADP Workforce Now are mapped to existing accounts in Active Directory.</p><p>It has the following settings:</p><ul><li data-list-item-id="e3cf6b7ffe670d47382aeb003f3608d02">
+<strong>Enable Custom Lookup for User Correlation</strong>: By default, the integration correlates users by matching the Employee ID in ADP Workforce Now with the Candidate ID in Active Directory. Enable this option to configure a different attribute mapping for user correlation. When enabled, additional fields are displayed for further configuration:<ul>
+<li data-list-item-id="ed439e5d8b4555c9fa3c82c9063b44243">
+<strong>Correlate candidate using the ADP Workforce Now Candidate ID and the Active Directory Employee ID</strong>: Select this option to match users by comparing the Candidate ID attribute in ADP Workforce Now with the Employee ID attribute in Active Directory.</li>
+<li data-list-item-id="eb9643546dec748205510fd3cdf7db964">
+<strong>Correlate candidate using the ADP Workforce Now Candidate ID and the Active Directory Employee Number</strong>: Select this option to match users by comparing the Candidate ID attribute in ADP Workforce Now with the Employee Number attribute in Active Directory.</li>
+<li data-list-item-id="e341b98d92ea79ad8d38c7061ab1f88b1">
+<strong>Correlate employees using custom attributes in the source and target applications</strong>: Select this option to configure custom attributes in the source and target applications for user correlation.</li>
+</ul>
+</li></ul><h4 id="01KMM89QASYY5QYFG4YVPNMBZ4">Account Activation Settings</h4><p>This section enables you to configure how new user accounts are created in Active Directory based on candidate data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="ec3afa714ec9f78a702a3e802ed32f213">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how candidate accounts are assigned during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="e468c97009df6549aae407074bba1ff2f">
+<strong>Create User Account X days before Hire Date</strong>: Enter the number of days before the candidate's actual start date when the user account should be activated. For example, if you set this attribute to 5 and the new hire's start date is 06-Mar-2026, the user account is activated on 01-Mar-2026, which is 5 days before the actual start date. </li>
+<li data-list-item-id="e079bf1b03a4944c4334bbe95515d39c6">
+<strong>Enable Time Based Onboarding (Candidate)</strong>: Select this option to create and manage candidate accounts based on configured onboarding timelines. </li>
+<li data-list-item-id="eb7d38f801da020bb7fc53f20110069c2">
+<strong>Force password change on first login</strong>: Select this option to force candidates to change their password on their first sign-in. </li>
+<li data-list-item-id="e0e80890c4df02e5be97d8ba9510abe6c">
+<strong>Enable Account Activation Limit</strong>: Select this option to limit the number of candidate accounts that can be activated during a single integration run. When enabled, the following field is displayed:<ul><li data-list-item-id="eb262938103f172429f26a2a40bb74bfc">
+<strong>Set the Creation Limit</strong>: Specify the maximum number of candidate records that can be created in the Active Directory during a single integration run.</li></ul>
+</li>
+<li data-list-item-id="ebc949e8f05eeb2b2fcf7a6ac4d0ccdc5">
+<strong>Create Account But Keep It Inactive</strong>: Enable this option to create the candidate account in advance while keeping it inactive until the activation condition is met. When enabled, the following field is displayed:<ul><li data-list-item-id="e944b482915cb8f905df5419edee64f31">
+<strong>Activate New Joiner Account</strong>: Select a condition from the dropdown menu to determine when a new joiner's account should be activated during provisioning. The following options are available:<ul>
+<li data-list-item-id="e8800a0872526d657170aa3fe84c06b30">
+<strong>Never</strong>: Select this to never activate the account automatically.</li>
+<li data-list-item-id="e00ff2b741ef3fd09dc8f8515b0c73bc2">
+<strong>On Joining Date</strong>: Select this to activate the account on the joining date.</li>
+<li data-list-item-id="ed7f59abd1986141da3cd6b1385c2ecf7">
+<strong>X Days Before Joining Date</strong>: Select this to activate the account X days before the joining date.</li>
+</ul>
+</li></ul>
+</li>
+</ul><h4 id="01KMM9JSKN5QKPTEMV6G98J7X4">Account Update Settings</h4><p>This section enables you to configure how user accounts are updated in Active Directory based on candidate data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e9cf698240670e6e1f27df65d882d4eee">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how candidate accounts are updated during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="eed553a875c42ffafe252e8c21db1cd13">
+<strong>Enable Update Limit</strong>: Enable this option to limit the number of candidate accounts that can be updated during a single integration run. When enabled, the following field is displayed: <ul><li data-list-item-id="e6d626eed0ae827d805f4921c0aa66501">
+<strong>Update Limit</strong>: Specify the maximum number of candidate records that can be updated in the Active Directory during a single integration run.</li></ul>
+</li>
+</ul><h4 id="01KMM9TW3ERRSQTDZ0AAG52KDG">Account Deactivation Settings</h4><p>This section enables you to configure how user accounts are terminated in Active Directory based on candidate data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e6580e69594a9e2c82ae99b0b8c58247e">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how candidate accounts are deactivated during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="e02792687b41764135882a2b0e158e7c6">
+<strong>Enable Termination Limit</strong>: Select this option to limit the number of candidate accounts that can be terminated during a single integration run. When enabled, the following field is displayed:  <ul><li data-list-item-id="ed7846ad6e52edcea2e923039e23ce85a">
+<strong>Termination Limit</strong>: Specify the maximum number of candidate records that can be terminated in the Active Directory during a single integration run.</li></ul>
+</li>
+<li data-list-item-id="e137b46aa9cbb5ee61a0df540d47ba6d8">
+<strong>On Termination, Select (Candidate)</strong>: Select a condition or a list of conditions from the dropdown menu to determine what action should be taken when a candidate is terminated.</li>
+<li data-list-item-id="eb806e6918a1d0bc7abc08d96c26ddf5f">
+<strong>Disable Action (Candidate)</strong>: Select a condition from the dropdown menu to determine when a candidate account should be disabled during provisioning. The following options are available:<ul>
+<li data-list-item-id="e0e851db61aefaf644ae5433b42a1a2f0">
+<strong>Disable Immediately</strong>: Select this option to disable the account <em>immediately</em>.</li>
+<li data-list-item-id="e34349d5cbb3fc33a082187771c22fd83">
+<strong>Disable Account Immediately After Password Reset</strong>: Select this option to <em>disable the account immediately after the password is reset</em>.</li>
+<li data-list-item-id="e7a03628fbaabf2eec0b1039aa66abf08">
+<strong>Disable Account X Days After Password Reset</strong>: Select this option to <em>disable the account</em> <em>X days after</em> the specified event.</li>
+</ul>
+</li>
+<li data-list-item-id="ea90286f969174da0d751fc96988e23b8">
+<strong>Delete Action (Candidate)</strong>: Select a condition from the dropdown menu to determine when a candidate account should be deleted during provisioning. The following options are available:<ul>
+<li data-list-item-id="e49fa9b7d0621783a782eed2070d8ae79">
+<strong>Delete Immediately</strong>: Select this option to delete the account <em>immediately</em>.</li>
+<li data-list-item-id="ec87b8d98ca9c69a48a3f04f17d4fa0d0">
+<strong>Delete Account Immediately After Disable</strong>: Select this option to <em>delete the account immediately after it is disabled</em>.</li>
+<li data-list-item-id="e91a973d5ccfb9d69f0d6c70d5617f552">
+<strong>Delete Account X Days After Disable</strong>: Select this option to <em>delete the account X days after it is disabled</em>.</li>
+</ul>
+</li>
+<li data-list-item-id="e070cc50badfb94c895b9d13fee98ca84">
+<strong>Enable Time-Based Offboarding (Candidate)</strong>: Select this option to disable and delete candidate accounts based on the configured onboarding timelines. </li>
+<li data-list-item-id="e9e5855b51c52adab60afba956a30aa95">
+<strong>Remove from groups</strong>: Select this option to remove an employee from all the groups</li>
+<li data-list-item-id="e211c56a21d6768a6a66e5ce391920aba">
+<strong>Enable Hooks (Custom Actions)</strong>: Select this option to run custom actions during provisioning. You can write custom code or select an existing script to execute before or after provisioning.<ul>
+<li data-list-item-id="e5b471601cdffb38c18501f87a7847be5">
+<strong>Pre-Hook (Before Provisioning)</strong>: Enter the JavaScript expression to run a custom action before the provisioning process starts.</li>
+<li data-list-item-id="eda2efe25cd12a5c487ea92c682f76aee">
+<strong>Post-Hook (After Provisioning)</strong>: Enter the JavaScript expression to run a custom action after the provisioning process completes.</li>
+</ul>
+</li>
+</ul><h4 id="01KMM9Z8S3RFW84RB6A0JEKASR">Attribute Mapping</h4><p>This section allows you to control how attributes are synchronized between <strong>ADP Workforce Now</strong> and <strong>Active Directory</strong>.</p><p>Source attributes are listed on the left and target attributes are listed on the right. You can modify the source attributes as needed to align with your specific use case.</p><p>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. Enter the expression directly in the source attribute field, or click the <strong>expand</strong> icon to write a longer expression.</p><p>Attributes marked with a red asterisk (*) are required for successful provisioning.</p><p>Use the <strong>Search Attributes</strong> field to filter the list of available attributes for mapping.</p><p>After completing the source-to-target attribute mapping, click <strong>Save Changes</strong> in the top-right corner of the page to save the configuration.</p><h3 id="01KMPR5X84XTP5K0RP94BV50SF">Manage Employee - Entra ID</h3><p>This section enables you to configure how employee accounts are created, updated, and managed in Entra ID using employee data from ADP Workforce Now.</p><p>It has the following settings:</p><h4 id="01KMPRJJS6VTJ0E3W02S22DTPF">Account Correlation Settings</h4><p>This section enables you to configure how user identities from ADP Workforce Now are mapped to existing accounts in Entra ID.</p><p>It has the following settings:</p><ul><li data-list-item-id="e92d32513d406d81e1ade0e908b52516f">
+<strong>Enable Custom Lookup for User Correlation</strong>: By default, the integration correlates users by matching the Personal Email in ADP Workforce Now with the User Principal Name in Entra ID. Enable this option to configure a different attribute mapping for user correlation. When enabled, additional fields are displayed for further configuration:<ul>
+<li data-list-item-id="e4f2c599fba78261994f5526771136f0d">
+<strong>Correlate employees using the ADP Workforce Now Employee Number and the Entra Employee ID</strong>: Select this option to match users by comparing the Employee Number in ADP Workforce Now with the Employee ID in Entra ID.</li>
+<li data-list-item-id="e42b1491a828f66b1ee35ce5565af5762">
+<strong>Correlate employees using custom attributes in the source and target applications</strong>: Select this option to configure custom attributes in the source and target applications for user correlation.</li>
+</ul>
+</li></ul><h4 id="01KMPRJJS6Y9GQ0Q5SKP21S97C">Account Activation Settings</h4><p>This section enables you to configure how new user accounts are created in Entra ID based on employee data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e372e870bd2432b6593971d2b2a9db6f0">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how employee accounts are assigned during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="e9a1d640844de397c162cf2cc8b90e538">
+<strong>Select the Domain for User's UPN</strong>: Select the domain that will be used to generate the user's User Principal Name (UPN) during account provisioning. For example, select aqueratest.onmicrosoft.com. </li>
+<li data-list-item-id="eaffed280f26c3fe0742cb4aaa2327334">
+<strong>Create User Account X days before Hire Date</strong>: Enter the number of days before the employee's actual start date when the user account should be activated. For example, if you set this attribute to 5 and the new hire's start date is 06-Mar-2026, the user account is activated on 01-Mar-2026, which is 5 days before the actual start date.</li>
+<li data-list-item-id="e2056f4e004b824897cc31b64c40c315e">
+<strong>Enable Time Based Onboarding (Employee)</strong>: Select this option to create and manage employee accounts based on configured onboarding timelines. </li>
+<li data-list-item-id="e89131b8ddebfb5c63d183fc598199229">
+<strong>Force password change on first login</strong>: Select this option to force employees to change their password on their first sign-in.</li>
+<li data-list-item-id="e50b912a67e3b9845f9c26575551d028f">
+<strong>Enable Account Activation Limit</strong>: Select this option to limit the number of employee accounts that can be activated during a single integration run. When enabled, the following field is displayed:<ul><li data-list-item-id="e7ac02e4538b8f959035df9b8d6fac576">
+<strong>Set the Creation Limit</strong>: Specify the maximum number of employee records that can be created in Entra ID during a single integration run.</li></ul>
+</li>
+<li data-list-item-id="e37733ed962c9d98bb1c32c68d822c2f3">
+<strong>Create Account But Keep It Inactive</strong>: Select this option to create the employee account in advance while keeping it inactive until the activation condition is met. When enabled, the following field is displayed:<ul><li data-list-item-id="e587d30e379c2415aeb1957c7d3c855bb">
+<strong>Activate New Joiner Account</strong>: Select a condition from the dropdown menu to determine when a new joiner's account should be activated during provisioning. The following options are available:<ul>
+<li data-list-item-id="e923b87f08c91c031a9e7e9f70269a18c">
+<strong>Never</strong>: Select this to never activate the account automatically.</li>
+<li data-list-item-id="e2ea2efe81c70f8813f2295813bc4fa91">
+<strong>On Joining Date</strong>: Select this to activate the account on the joining date.</li>
+<li data-list-item-id="ea5160da7fe07fa0e1c0d1c69d8aa8543">
+<strong>X Days Before Joining Date</strong>: Select this to activate the account X days before the joining date.</li>
+</ul>
+</li></ul>
+</li>
+</ul><h4 id="01KMPRJJS6F1ZM4VXJE7T1D6X8">Account Update Settings</h4><p>This section enables you to configure how user accounts are updated in Entra ID based on employee data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="efc086924580475c54ca0e269e5dab5b4">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how employee accounts are updated during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="ef94aaf3f4506059d9f52822df3600d36">
+<strong>Enable Update Limit</strong>: Select this option to limit the number of employee accounts that can be updated during a single integration run. When enabled, the following field is displayed: <ul><li data-list-item-id="e448cc4a939ef314f7d49f5e75d92ad00">
+<strong>Update Limit</strong>: Specify the maximum number of employee records that can be updated in Entra ID during a single integration run.</li></ul>
+</li>
+</ul><h4 id="01KMPRJJS696C6889SSCVBANZE">Account Deactivation Settings</h4><p>This section enables you to configure how user accounts are terminated in Entra ID based on employee data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="eb438842d0810365c14b02bc991bcbe2d">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how employee accounts are deactivated during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="ebd81670f105c709be45c96232bdce8f9">
+<strong>Enable Termination Limit</strong>: Select this option to limit the number of employee accounts that can be terminated during a single integration run. When enabled, the following field is displayed:  <ul><li data-list-item-id="efad2f3f500798e182497e2d210b7210f">
+<strong>Termination Limit</strong>: Specify the maximum number of employee records that can be terminated in Entra ID during a single integration run.</li></ul>
+</li>
+<li data-list-item-id="e5417437620bfbc105605469023c585ea">
+<strong>On Termination, Select (Employee)</strong>: Select a condition or a list of conditions from the dropdown menu to determine what action should be taken when an employee is terminated.<ul>
+<li data-list-item-id="e2339ff8f708146daffe61fad80f57acd">
+<strong>Password Reset (Employee)</strong>: Select a condition from the dropdown menu to determine when an employee's account password should be reset during provisioning. The following options are available:<ul>
+<li data-list-item-id="e7d31089aad7621ced2403b7f632e0ee1">
+<strong>Reset Password Immediately</strong>: Select this option to reset the password <em>immediately</em>.</li>
+<li data-list-item-id="e50229adf3dd0e324720459084c2b7cce">
+<strong>Reset Password After X Days</strong>: Select this option to <em>reset the password</em> <em>X days after</em> the specified event.</li>
+</ul>
+</li>
+<li data-list-item-id="e042ddd1977aa56c128bdc657b0c2c23a">
+<strong>Disable Action (Employee)</strong>: Select a condition from the dropdown menu to determine when an employee account should be disabled during provisioning. The following options are available:<ul>
+<li data-list-item-id="e344433f8a85affd1644a38c752604ae6">
+<strong>Disable Immediately</strong>: Select this option to disable the account <em>immediately</em>.</li>
+<li data-list-item-id="e76a4aa2d81fb781051e213e1983c6613">
+<strong>Disable Account Immediately After Password Reset</strong>: Select this option to <em>disable the account immediately after the password is reset.</em>
+</li>
+<li data-list-item-id="e4ea9db6c4e5003847763659d3f734edb">
+<strong>Disable Account X Days After Password Reset</strong>: Select this option to <em>disable the account</em> <em>X days after</em> the specified event.</li>
+</ul>
+</li>
+<li data-list-item-id="e20ae5effb3020002732cdfc6c0d8e606">
+<strong>Delete Action (Employee)</strong>: Select a condition from the dropdown menu to determine when an employee account should be deleted during provisioning. The following options are available:<ul>
+<li data-list-item-id="ea00ba6616e6fc20717492d7c57233e6a">
+<strong>Delete Immediately</strong>: Select this option to delete the account <em>immediately</em>.</li>
+<li data-list-item-id="eb01acad3341ab8f7e425795b79f6e6c7">
+<strong>Delete Account Immediately After Disable</strong>: Select this option to <em>delete the account immediately after it is disabled</em>.</li>
+<li data-list-item-id="edd8a6d43240c4632b7b6457f1e74178a">
+<strong>Delete Account X Days After Disable</strong>: Select this option to <em>delete the account X days after it is disabled</em>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="eafc01e85db93aef42e89b4f4810b93fc">
+<strong>Enable Time-Based Offboarding (Employee)</strong>: Select this option to disable and delete employee accounts based on the configured onboarding timelines. </li>
+</ul><h4 id="01KMPRJJS6QPVWDR13Q9VX3GJN">Attribute Mapping</h4><p>This section allows you to control how attributes are synchronized between <strong>ADP Workforce Now</strong> and <strong>Entra ID</strong>.</p><p>Source attributes are listed on the left and target attributes are listed on the right. You can modify the source attributes as needed to align with your specific use case.</p><p>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. Enter the expression directly in the source attribute field, or click the <strong>expand</strong> icon to write a longer expression.</p><p>Attributes marked with a red asterisk (*) are required for successful provisioning.</p><p>Use the <strong>Search Attributes</strong> field to filter the list of available attributes for mapping.</p><p>After completing the source-to-target attribute mapping, click <strong>Save Changes</strong> in the top-right corner of the page to save the configuration.</p><h3 id="01KMPR4HH49Y6PR2WW8RW99BSG">Manage Candidate - Entra ID</h3><p>This section enables you to configure how candidate accounts are created, updated, and managed in Entra ID using employee data from ADP Workforce Now.</p><p>It has the following settings:</p><h4 id="01KN3RB5W0F2ZDP8H86TD5EMVD">Account Correlation Settings</h4><p>This section enables you to configure how user identities from ADP Workforce Now are mapped to existing accounts in Entra ID.</p><p>It has the following settings:</p><ul><li data-list-item-id="e602512e2f55730515ba4ec86ece80577">
+<strong>Enable Custom Lookup for User Correlation</strong>: By default, the integration correlates users by matching the Personal Email in ADP Workforce Now with the User Principal Name (UPN) in Entra ID. Enable this option to configure a different attribute mapping for user correlation. When enabled, additional fields are displayed for further configuration:<ul>
+<li data-list-item-id="ec533ef6abe30eccf758844cd6113d1ae">
+<strong>Correlate candidate using the ADP Workforce Now Candidate ID and the Entra Employee ID</strong>: Select this option to match users by comparing the Candidate ID attribute in ADP Workforce Now with the Employee ID attribute in Entra ID.</li>
+<li data-list-item-id="e7c8b70e3a697da5f3051180d67175098">
+<strong>Correlate employees using custom attributes in the source and target applications</strong>: Select this option to configure custom attributes in the source and target applications for user correlation.</li>
+</ul>
+</li></ul><h4 id="01KN3RB5W0493K9CFA276MJCVH">Account Activation Settings</h4><p>This section enables you to configure how new user accounts are created in Entra ID based on candidate data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="eb1fd376949698a586e19ea3b76cab742">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how employee accounts are assigned during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="e09614624fd71087e0e25867c3efe90b8">
+<strong>Select the Domain for User's UPN</strong>: Select the domain that will be used to generate the user's User Principal Name (UPN) during account provisioning. For example, select aqueratest.onmicrosoft.com. </li>
+<li data-list-item-id="e3f488ec729104561b6491366d2d169e2">
+<strong>Create User Account X days before Hire Date</strong>: Enter the number of days before the employee's actual start date when the user account should be activated. For example, if you set this attribute to 5 and the new hire's start date is 06-Mar-2026, the user account is activated on 01-Mar-2026, which is 5 days before the actual start date.</li>
+<li data-list-item-id="ea1ebcdc5bf4e3571e460d08e7adef548">
+<strong>Enable Time Based Onboarding (Employee)</strong>: Select this option to create and manage employee accounts based on configured onboarding timelines. </li>
+<li data-list-item-id="e4eba6c3f62568b6747ab4cdb64e6dbe8">
+<strong>Force password change on first login</strong>: Select this option to force employees to change their password on their first sign-in.</li>
+<li data-list-item-id="e4230b10061225f8fd6bf1db0a702b075">
+<strong>Enable Account Activation Limit</strong>: Select this option to limit the number of employee accounts that can be activated during a single integration run. When enabled, the following field is displayed:<ul><li data-list-item-id="e49cf1e54a98ebeb029df1a7695de10af">
+<strong>Set the Creation Limit</strong>: Specify the maximum number of employee records that can be created in the Entra ID during a single integration run.</li></ul>
+</li>
+<li data-list-item-id="e54c0f0012c911b8478538dea942b23ae">
+<strong>Create Account But Keep It Inactive</strong>: Select this option to create the employee account in advance while keeping it inactive until the activation condition is met. When enabled, the following field is displayed:<ul><li data-list-item-id="e61507dd405319222cc24e05385345cf8">
+<strong>Activate New Joiner Account</strong>: Select a condition from the dropdown menu to determine when a new joiner's account should be activated during provisioning. The following options are available:<ul>
+<li data-list-item-id="ebe25e80c098c82a32a6ea743a212d1eb">
+<strong>Never</strong>: Select this to never activate the account automatically.</li>
+<li data-list-item-id="e8bd4047dbffbe44d2fdfeb6c3ef5fae4">
+<strong>On Joining Date</strong>: Select this to activate the account on the joining date.</li>
+<li data-list-item-id="eac1db23099306b1c3cf1b523b05d3213">
+<strong>X Days Before Joining Date</strong>: Select this to activate the account X days before the joining date.</li>
+</ul>
+</li></ul>
+</li>
+</ul><h4 id="01KN3RB5W01RB1DJPFZD927HY3">Account Update Settings</h4><p>This section enables you to configure how user accounts are updated in Entra ID based on candidate data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="ea3f49b0b3cfbfbff375a9297490ebf07">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how employee accounts are updated during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="ed914998574db4c453c69b667f5043578">
+<strong>Enable Update Limit</strong>: Select this option to limit the number of employee accounts that can be updated during a single integration run. When enabled, the following field is displayed: <ul><li data-list-item-id="eb057589614cd4e12692e062a60f2ca22">
+<strong>Update Limit</strong>: Specify the maximum number of employee records that can be updated in the Entra ID during a single integration run.</li></ul>
+</li>
+</ul><h4 id="01KN3RB5W1Q9RZ616HT2QM6ZNP">Account Deactivation Settings</h4><p>This section enables you to configure how user accounts are terminated in Entra ID based on candidate data received from ADP Workforce Now.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e524b5ccc4e5d776d3fba23150c4e0bd9">
+<strong>Account Assignment Policy</strong>: Select a policy or list of policies from the dropdown menu to determine how employee accounts are deactivated during provisioning. If you do not find your assignment policy in the list, click the refresh icon available next to the field to reload the available policies.</li>
+<li data-list-item-id="e99c29509cef93e2694c54e0b247b466a">
+<strong>Enable Termination Limit</strong>: Select this option to limit the number of employee accounts that can be terminated during a single integration run. When enabled, the following field is displayed:  <ul><li data-list-item-id="e429449cb3be8e13f2523a628d940bbdd">
+<strong>Termination Limit</strong>: Specify the maximum number of employee records that can be terminated in the Entra ID during a single integration run.</li></ul>
+</li>
+<li data-list-item-id="e2490cf4cb4e649e5949174a44a2ab961">
+<strong>On Termination, Select (Candidate)</strong>: Select a condition or a list of conditions from the dropdown menu to determine what action should be taken when an employee is terminated.</li>
+<li data-list-item-id="e1443f46e45d248119c347226add20fe4">
+<strong>Password Reset (Candidate)</strong>: Select a condition from the dropdown menu to determine when an employee's account password should be reset during provisioning. The following options are available:<ul>
+<li data-list-item-id="ef8ed0121d81d759cf832922e676ed45f">
+<strong>Reset Password Immediately</strong>: Select this option to reset the password <em>immediately</em>.</li>
+<li data-list-item-id="e9a803a0b4da01a1a564ea1cdac519a04">
+<strong>Reset Password After X Days</strong>: Select this option to <em>reset the password</em> <em>X days after</em> the specified event.</li>
+</ul>
+</li>
+<li data-list-item-id="eac3c9d605f307a2072e0357764be9f03">
+<strong>Disable Action (Candidate)</strong>: Select a condition from the dropdown menu to determine when an employee account should be disabled during provisioning. The following options are available:<ul>
+<li data-list-item-id="eff7052d8414aedf754120011dc1ef8b3">
+<strong>Disable Immediately</strong>: Select this option to disable the account <em>immediately</em>.</li>
+<li data-list-item-id="e3cc74cec78a71fa6b4833e1688ab7017">
+<strong>Disable Account X Days Before</strong>: Select this option to <em>disable the account</em> <em>X days before</em> the specified event.</li>
+<li data-list-item-id="e2ece5ffb4fd11b1947b86f1bf9a3a2a1">
+<strong>Disable Account X Days After</strong>: Select this option to <em>disable the account</em> <em>X days after</em> the specified event.</li>
+<li data-list-item-id="e99a5491de76e3f4f6c5329f6b8b18348">
+<strong>Disable Account Immediately After Password Reset</strong>: Select this option to <em>disable the account immediately after the password is reset</em>.</li>
+</ul>
+</li>
+<li data-list-item-id="ea530f86e0574326d49526fb3df1936b2">
+<strong>Delete Action (Candidate)</strong>: Select a condition from the dropdown menu to determine when an employee account should be deleted during provisioning. The following options are available:<ul>
+<li data-list-item-id="ea0174ce2b7c86d63584fbec0640db05c">
+<strong>Delete Immediately</strong>: Select this option to delete the account <em>immediately</em>.</li>
+<li data-list-item-id="eb865987213381678cb5e24d9a10d984a">
+<strong>Delete Account Immediately After Disable</strong>: Select this option to <em>delete the account immediately after it is disabled</em>.</li>
+<li data-list-item-id="effe1aee49c70961afc452c1ae47b5064">
+<strong>Delete Account X Days After Disable</strong>: Select this option to <em>delete the account X days after it is disabled</em>.</li>
+</ul>
+</li>
+<li data-list-item-id="ee4a8c7d4688c5012ec51d6f93b0de3d7">
+<strong>Enable Time-Based Offboarding (Candidate)</strong>: Select this option to disable and delete employee accounts based on the configured onboarding timelines. </li>
+</ul><h4 id="01KN3RB5W1NVZ4E6DHY20MBFVY">Attribute Mapping</h4><p>This section allows you to control how attributes are synchronized between <strong>ADP Workforce Now</strong> and <strong>Entra ID</strong>.</p><p>Source attributes are listed on the left and target attributes are listed on the right. You can modify the source attributes as needed to align with your specific use case.</p><p>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. Enter the expression directly in the source attribute field, or click the <strong>expand</strong> icon to write a longer expression.</p><p>Attributes marked with a red asterisk (*) are required for successful provisioning.</p><p>Use the <strong>Search Attributes</strong> field to filter the list of available attributes for mapping.</p><p>After completing the source-to-target attribute mapping, click <strong>Save Changes</strong> in the top-right corner of the page to save the configuration.</p><h3 id="h_01KN1TBK83XCVZZF3RY26PJXS2">Mailbox Settings</h3><p>This section allows you to configure and manage settings related to a user’s mailbox. The following fields are available for configuration in this section:</p><ul>
+<li data-list-item-id="eee3876fbef56715f3a68cd099d614a31">
+<strong>Forward emails of a deactivated user to their manager</strong>: Select this checkbox to automatically forward all incoming emails of a deactivated user to their manager's email address. This ensures that important communications are not missed and can be handled appropriately after the user is deactivated.</li>
+<li data-list-item-id="eda0964d4a0d20b2608237bd2a8594d7d">
+<strong>Disable Exchange ActiveSync on deactivation</strong>: Select this checkbox to disable Exchange ActiveSync for users upon deactivation. If not selected, the deactivated user may continue to access emails on previously configured mobile devices. Enabling this option prevents mobile email access after deactivation.<br/><strong>Note</strong>: Exchange ActiveSync enables users to access email, calendar, contacts, and tasks on mobile devices, and allows them to continue using this data even when offline.</li>
+<li data-list-item-id="e17059863d15b6b9f2dce9079b8c2ecbf">
+<strong>Remove recurring meetings from calendar on deactivation</strong>: Select this checkbox to automatically remove all recurring meetings organized by the user when the user is deactivated.</li>
+<li data-list-item-id="e8805c5ce8221c9e8b45b80f00871a3be">
+<strong>Convert Users regular mailbox to shared mailbox on deactivation</strong>: Select this checkbox to convert the private (regular) mailbox of a user to a shared mailbox on user deactivation.</li>
+<li data-list-item-id="e23bec9b8daf8e88c67d650e472211b84">
+<strong>Remove shared mailbox delegations on user deactivation</strong>: Select this checkbox to remove the shared mailbox delegations on user deactivation. If this checkbox is selected, all delegated access to other users’ shared mailboxes will be removed from the user on deactivation.</li>
+<li data-list-item-id="e84109d1ec56a1f12958a3351794041cd">
+<strong>Add shared mailbox permission to manager on deactivation</strong>: Select this checkbox to add the shared mailbox permission to the user's manager when the user is deactivated.<br/><strong>Note</strong>: Deactivating and converting the shared mailbox and assigning permission to the<strong> </strong>manager changes will be visible in the Exchange Online admin portal.</li>
+<li data-list-item-id="e6d6759e96c28a4fdbfa20d8715c76185">
+<strong>Send auto-reply message after the user is deactivated</strong>: Select this checkbox to set an automatic out-of-office reply in a user's mailbox upon deactivation. When enabled, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="e0aa99cae7c4641615c64b9cbe26e016b">
+<strong>Auto-reply message configuration</strong>: Enter the message that must be sent as an automatic out-of-office reply on behalf of a user when the user is deactivated.</li>
+<li data-list-item-id="eaaaeec8900d3ac2e9cf291861770bf40">
+<strong>Auto-reply end date (in days)</strong>: Enter the number of days after which you want to disable the automatic out-of-office reply from a deactivated user's mailbox. For example, if you configure <em>90</em> in this field, the automatic out-of-office reply will not be sent after 90 days of deactivation of a user account.</li>
+</ul>
+</li>
+</ul><p><strong>Note</strong>: The <strong>Exchange Administrator</strong> role is required for Exchange-related features.</p><h3 id="h_01KN1TBZY5Q4C9AN1ZHRDMXAHP">OneDrive Settings</h3><p>This section allows you to configure settings related to a user’s OneDrive access. The following fields are available for configuration in this section:</p><ul>
+<li data-list-item-id="eb9b3b2515084e7c6caa621685a177816">
+<strong>Allow OneDrive access on user deletion/deactivation</strong>: Select this checkbox to allow OneDrive access to users upon deletion or deactivation.</li>
+<li data-list-item-id="e9c2311cda8b909814a1228aff2167767">
+<strong>Transfer OneDrive access to manager on deactivation</strong>: Select this checkbox to grant access to a user’s OneDrive to the user’s manager upon deactivation.</li>
+</ul><p><strong>Note</strong>: The <strong>SharePoint Administrator</strong> role is required for managing OneDrive access.</p><h3 id="h_01KN1TCB7YSSTH14250DTZDD4F">Device Settings</h3><p>This section allows you to manage users’ device access. The following fields are available for configuration in this section:</p><ul>
+<li data-list-item-id="efd815d093c67ea845fc1bf45cd4abb88">
+<strong>Sign out user from all devices on deactivation</strong>: Select this checkbox to sign out users from all devices automatically when their account is deactivated.</li>
+<li data-list-item-id="eb8fb7cdedf90329f47b4030dd4143367">
+<strong>Remove mobile devices on deactivation</strong>: Select this checkbox to remove the mobile devices of a user when the user is deactivated. This will remove all connections between the user’s mailbox and their mobile devices.</li>
+<li data-list-item-id="ed09430d771e8d07782bf58294e94152f">
+<strong>Remove Intune-managed devices on deactivation</strong>: Select this checkbox to remove all devices of a user that are managed or pre-enrolled through Microsoft Intune Admin Center when the user is deactivated.<br/><strong>Note</strong>: This feature requires an active Intune license.</li>
+</ul><h3 id="h_01KN1TCKBWQRHN1ZKMW2Z7BQM6">Groups Settings</h3><p>This section allows you to configure users’ group settings. The following fields are available for configuration in this section:</p><ul>
+<li data-list-item-id="e934cd1efd3cfb7084fc1d6bb43d2f2de">
+<strong>Remove user from groups on deletion</strong>: Select this checkbox to remove users from groups when the user is deleted.</li>
+<li data-list-item-id="e381dd99c1f90f3e179b0412199b7579b">
+<strong>Remove user from groups on deactivation</strong>: Select this checkbox to remove users from groups when the user is deactivated.</li>
+<li data-list-item-id="eba1daef21d6251b626251846c0d91324">
+<strong>Transfer group ownership to manager on deactivation or deletion</strong>: Select this checkbox to automatically remove a user's group ownership and assign it to their manager when the user is deactivated or deleted. This applies only when the user is the only owner of the group.</li>
+</ul><h3 id="h_01KMZG877J1FGTK7QZB1DV7H2R">WriteBack Settings</h3><p>This section allows you to configure settings for updating data back to the source system. The following fields are available in this section:</p><ul>
+<li data-list-item-id="ee912561824f87aa9fa2c5682c70645f7">
+<strong>Enable Writeback</strong>: Select this checkbox to enable updating attributes in ADP Workforce Now (source system) based on changes in the directory.</li>
+<li data-list-item-id="e7105670d56819ed5a4ca627aae2f9f2a">
+<strong>Select attributes for writeback</strong>: Select which attributes should be updated in ADP Workforce Now when their values change.</li>
+<li data-list-item-id="e382fa97b40baa15f0d6671c2c428bfeb">
+<strong>Source application attribute</strong>: Select the correlation attribute available in the directory that uniquely identifies a user record in ADP Workforce Now. For example, select <em>employeeId</em> if you want to use it to match user records in ADP Workforce Now.</li>
+<li data-list-item-id="ef665071fcfe0b0b2c7ccfd3e0e5082c0">
+<strong>Target Application Attribute</strong>: Select the correlation attribute available in ADP Workforce Now that uniquely identifies a user record in the directory. For example, select <em>EmployeeNumber</em>.</li>
+</ul><h2 id="h_01KMQ7TX7BWSQ5G56YKZ7PKWND">Policy</h2><p>Navigate to the <strong>Policy</strong> tab to define policies for the integration. The following sections are displayed on the page to define policies:</p><ul>
+<li data-list-item-id="e798f36f538029c2191ebd8e4505d5c3d"><a href="#h_01KJFB909KSYK22Z0F567BKM61">Business Groups</a></li>
+<li data-list-item-id="e551424856761d273d03d02aaa7a6f8c4"><a href="#h_01KKKEZG6H87DM8VPRD0V2Q9NW">Access Rules</a></li>
+<li data-list-item-id="ed0238fca2a58d3e5fbe46699e02a5eb9"><a href="#h_01KMQNB8YF19XTGQXY5SNGKXZJ">Monitoring Rules</a></li>
+<li data-list-item-id="e5570c99c242a65479fb03976bea4b5a1"><a href="#h_01KMN40VMF41N5TF8FPZDF6A53">Naming Policy</a></li>
+<li data-list-item-id="ea6fd707e500dd69802048d98936abc64"><a href="#h_01KMQNB8YFJHAQHKRTEZ19XQQE">Password Policy</a></li>
+</ul><h3 id="h_01KJFB909KSYK22Z0F567BKM61">Business Groups</h3><p>A business group is a logical group created within the integration system to make group assignments easier. It works as an intermediate layer between the source system and the target application groups.</p><p>In this approach, users are first assigned to business groups based on specific attributes configured in the <a href="#h_01KKKEZG6H87DM8VPRD0V2Q9NW">Access Rules</a> section. These business groups are then mapped to the appropriate groups in the target applications.</p><p>The <strong>Business Groups</strong> section allows you to define business groups and map them to the target application groups.</p><p>In this section, if the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="edc2f7b61a6c7821cf86d550306984242">
+<strong>Name</strong>: Provide a name for the group.</li>
+<li data-list-item-id="e75d52e36f02d0b986b77593ccb5322f4">
+<strong>Description</strong>: Provide a short description for the group.</li>
+<li data-list-item-id="eee5a58511aeed0fa0c72cc5bdaf3a37e">
+<strong>Owner</strong>: Enter the email addresses of the group owners.</li>
+<li data-list-item-id="e63d7e79aba94fb095d3c58d07a32728b">
+<strong>Is Sub group</strong>: Enable this parameter to include other business groups as a subgroup to this group. Users assigned to the selected subgroups will also be part of this group. When enabled, the following parameter is displayed for further configuration:<ul><li data-list-item-id="eb5e1425294a8e1140e856800090628c1">
+<strong>Sub Business Groups</strong>: Select one or more business groups you want to include in this group.</li></ul>
+</li>
+<li data-list-item-id="e3a608f7a6a1e97e905d08238b531ab54">
+<strong>Business Groups with Application Groups</strong>: Select this checkbox to map the business group to the target application groups.<br/>When enabled, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="e72d627112f4363c86827e041821cdf6f">
+<strong>Select Application</strong>: Select the target applications for which you want to manage group assignments through this business group.</li>
+<li data-list-item-id="efa07b6fa1f9d8fa3dec78c7bffb668ad">
+<strong>Entitlement Type</strong>: Select an entitlement type available in your target applications to which users will be assigned through this business group. For example, select <em>Licenses</em>.</li>
+<li data-list-item-id="e63f094ae3d3e77f4a5d9af2d689bcee5">
+<strong>Entitlements</strong>: Select an entitlement from the dropdown menu to which users will be assigned through this business group. For example, select <em>Licenses</em>.</li>
+</ul>
+</li>
+</ul><h3 id="h_01KKKEZG6H87DM8VPRD0V2Q9NW">Access Rules</h3><p>This section allows you to define rules for assigning users to business groups defined in the <a href="#h_01KJFB909KSYK22Z0F567BKM61">Business Groups</a> section.</p><h4 id="h_01KMN29FF651PEW913V0D17KT4">Organizational Unit (OU) Assignment Rules</h4><p>Configure the following settings to define the OU assignment rules for the users:</p><ul>
+<li data-list-item-id="e3a0ad3064816b0be6529297473707c11">
+<strong>Assign Employees to default OU</strong>: Enable this parameter only if you want to assign the onboarding employees to the default OU. When enabled, a field is displayed adjacent to this parameter. Select a default OU from the dropdown menu to assign onboarding employees.</li>
+<li data-list-item-id="ed2d887c18ba7f20eeabb194a9e4032e7">
+<strong>Assign Terminated Employees to Default OU</strong>: Enable this parameter only if you want to assign the terminated employees to the default OU. When enabled, a field is displayed adjacent to this parameter. Select a default OU from the dropdown menu to assign terminated employees.</li>
+<li data-list-item-id="ec18d164ac1a692d141e571b48e56041c">
+<strong>Assign Candidates to Default OU</strong>: Enable this parameter only if you want to assign the onboarding candidates to the default OU. When enabled, a field is displayed adjacent to this parameter. Select a default OU from the dropdown menu to assign onboarding candidates.</li>
+<li data-list-item-id="e0253d0a342af22d72b0866df91ef1ca0">
+<strong>Assign Rejected Candidates to Default OU</strong>: Enable this parameter only if you want to assign the rejected candidates to the default OU. When enabled, a field is displayed adjacent to this parameter. Select a default OU from the dropdown menu to assign rejected candidates.</li>
+</ul><h4 id="h_01KMQBXYNJ6DC2BYP73FRMAZAN">Organisation Unit Employee (OU)</h4><p>Perform the following steps to define access rules for the employees:</p><ol>
+<li data-list-item-id="ea9c194e6f01472dd22c28fb39347e7ae">Click the vertical ellipsis next to <strong>Choose Attribute</strong>, and then click <strong>Select Attribute</strong> to view the list of available attributes you can use to set the assignment rule.<br/><img alt="22.png" height="392" src="./assets/5290aed6fc0b8493.bin" width="2572"/>
+</li>
+<li data-list-item-id="e5e0603588bd750ffa779dd3c0eae9036">Search and select the attribute you want to use to define a condition. For example, select<em> Employment Status Reason.</em>
+</li>
+<li data-list-item-id="e96ad78cd2deb0ee8f66b80dc62441ef5">In the below row, double-click and select the attribute value to define the rule. If multiple values are selected, <strong>OR </strong>condition is applied among them. For example, in the following sample condition, a user's employment status reason must be either <em>New Hire</em> or <em>Rehire</em> to satisfy this assignment rule.<br/><img alt="33.png" height="392" src="./assets/b439137dab878de4.bin" width="2572"/>
+</li>
+<li data-list-item-id="e6578b1c1a00cae00890010b4c6f79507">If required to add another condition and assignment for the same selected attribute, click <strong>Add Row</strong>. You can add any number of rows within a rule.</li>
+<li data-list-item-id="ebd180cee626253be2ed1b0c62b47beb0">If required to include another attribute to the group assignment rule, click the vertical ellipsis in the first column, and then click <strong>Add Attribute</strong>.<br/>If multiple columns are added for a rule, <strong>AND</strong> condition is applied between different columns. For example, in the following sample condition, employee's <strong>Employment Status Reason</strong> must be either <em>New Hire</em> or <em>Rehire, </em>and <strong>Primary Work Assignment Department</strong> must be <em>Engineering</em> to satisfy this assignment rule. You can use multiple attributes and their corresponding values to define a group assignment rule.<br/><img alt="77.png" height="306" src="./assets/507909d0ec3d32c8.bin" width="2560"/>
+</li>
+<li data-list-item-id="eef3982b6e137859eb7f285a6c887a5b2">Under the <strong>Organisational Unit (OU)</strong> field, double-click and select the OU to which users who satisfy the specified condition will be assigned.</li>
+<li data-list-item-id="e8c1c920f2aa677b28fbce799ffcb675b">If needed, click the <strong>+</strong> icon at the top right corner to add another rule, as explained above.</li>
+<li data-list-item-id="e06b9bed2a6a729d5da55cf906b6cba18">Click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
+</ol><p><strong>Note</strong>: If required to delete a row, click the horizontal ellipsis next to the row and select <strong>Delete Row</strong>.</p><p>The same procedure can be followed in the <strong>Organisation Unit Candidate (OU)</strong>, <strong>Groups Active Directory (Group Rules)</strong>, and <strong>Groups Entra (Groups Rule)</strong> sections to define the rule for assigning the users in the defined OUs.</p><h3 id="h_01KMQNB8YF19XTGQXY5SNGKXZJ">Monitoring Rules</h3><p>This section enables you to define the administrator email addresses and rules for the Aquera's Monitoring Provisioning product.</p><h4 id="h_01KMQ23A5EVANCP3A0G0VFMZS6">Monitoring Settings</h4><ul><li data-list-item-id="e69669c9e078ac613435d62e12bd4b5bb">
+<strong>Administrator Email Addresses for Monitoring Tasks</strong>: Enter the administrator email addresses that should receive the list of pending changes and decide whether to approve or reject. For details on the Aquera's Monitoring Provisioning product, refer to the <a href="https://support.aquera.com/hc/en-us/articles/33344350092951" rel="noopener noreferrer" target="_blank">Monitored Provisioning Setup and Reviews</a>
+</li></ul><h4 id="h_01KMQ23Z6WK14YVW1GGJ9GETMZ">Rule Detail (Monitoring)</h4><p>This section enables you to define rules for monitored provisioning. By default, the Employee Monitoring Rules and Candidate Monitoring Rules are created. Define the rules in their respective tabs.</p><p>Perform the following steps to define the rules:</p><ol>
+<li data-list-item-id="e71c0d9c0ae82ee8ad7a83152fe7a7aa5">Click the vertical ellipsis next to <strong>Choose Attribute</strong>, and then click <strong>Select Attribute</strong> to view the list of available attributes you can use to set the assignment rule.<br/><img alt="55.png" height="306" src="./assets/ca8594435cefef7c.bin" width="2560"/>
+</li>
+<li data-list-item-id="e2acf7249a0ae1a052020cb6d3f192af5">Search and select the attribute you want to use to define a condition. For example, select <em>Primary Work Assignment Departments.</em>
+</li>
+<li data-list-item-id="ec013db317d2464170f8b69a33735a77c">In the below row, double-click and enter the attribute value to define the rule. If multiple values are selected, <strong>OR </strong>condition is applied among them. For example, in the following sample condition, a user's primary work assignment departments must be either <em>Administrator</em> or <em>Facility</em> <em>Administrator</em> to satisfy this assignment rule.<br/><img alt="66.png" height="306" src="./assets/77013fd434a25852.bin" width="2560"/>
+</li>
+<li data-list-item-id="e9b360a2a02df40bf276c4260003ede09">If required to add another condition and assignment for the same selected attribute, click <strong>Add Row</strong>. You can add any number of rows within a rule.</li>
+<li data-list-item-id="e68f5c5e50d49dcb93cee7dbfc6075ae3">If required to include another attribute to the monitoring rule, click the vertical ellipsis in the first column, and then click <strong>Add Attribute</strong>.<br/>If multiple columns are added for a rule, <strong>AND</strong> condition is applied between different columns. For example, in the following sample condition, a user's primary work assignment departments must be <em>Administrator</em> or <em>FacilityAdministrator</em>, and the active employment status must be ac<em>tive</em> to satisfy this assignment rule. You can use multiple attributes and their corresponding values to define a group assignment rule.<br/><img alt="66.png" height="306" src="./assets/77013fd434a25852.bin" width="2560"/>
+</li>
+<li data-list-item-id="e73c2b845f23cb71aebc2158c713f5e31">Click the vertical ellipsis next to <strong>Choose Target</strong>, and then click <strong>Select Target Attribute</strong> to view the list of targets you can use to set the monitoring rule. For example, select <strong>Directory</strong>.</li>
+<li data-list-item-id="e88f43639a90ef6308a9b4ed394c3c4ab">In the below row, double-click and select the target applications to define the rule. If multiple values are selected, <strong>OR </strong>condition is applied among them.</li>
+<li data-list-item-id="e76dfaab3ff696753bfb52ad270679434">If needed, click the <strong>+</strong> icon at the top right corner to add another rule, as explained above.</li>
+<li data-list-item-id="e6577bc20a5aee3cbc9f0865bf2ca1dbf">Click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
+</ol><p><strong>Note</strong>: If required to delete a row, click the horizontal ellipsis next to the row and select <strong>Delete Row</strong>.</p><h3 id="h_01KMN40VMF41N5TF8FPZDF6A53">Naming Policy</h3><p>This section allows you to customize the sAM account name, common name, user principal name, and email address of the user.</p><h4 id="h_01KMN45XQR7V20BD6R5JVQMJ92">Naming Policy Settings</h4><p>Configure the following naming policy settings:</p><ul>
+<li data-list-item-id="e7ca90a0c38b4bd1b53844c0d89c249ed">
+<strong>Generate sAMAccountName</strong>: Enable this parameter to generate a unique sAM account name for the user. When enabled, the <strong>Generate sAMAccountName</strong> section is displayed.</li>
+<li data-list-item-id="e70b9a09dfa4d8e15324895115fabf067">
+<strong>Generate Common Name</strong>: Enable this parameter to generate a unique common name for the user. When enabled, the <strong>Generate Common Name (CN)</strong> section is displayed.</li>
+<li data-list-item-id="e33bb12c0f26870a854b9b5e68ab3f9fa">
+<strong>Generate UserPrincipalName (UPN)</strong>: Enable this parameter to generate a unique user principal name for the user. When enabled, the <strong>UserPrincipalName (UPN)</strong> section is displayed.</li>
+<li data-list-item-id="ef7857f4c1ebe5193e29a2a7191660dd2">
+<strong>Generate Email</strong>: Enable this parameter to generate a unique email address for the user. When enabled, the <strong>Generate Email</strong> section is displayed.</li>
+<li data-list-item-id="ea75400beddcecf479afcb4670da41874">
+<strong>Domain</strong>: Enter the domain name of the user principal name.</li>
+</ul><h4 id="h_01KMN4GEKY0M4KPDGR1EJ3FCH8"><strong>Generate sAMAccountName</strong></h4><p>Configure the following to customize the sAM account name:</p><ul><li data-list-item-id="e19f2b7ff71612abd071203d114263b7a">
+<strong>Unique sAMAccountName Generation Patterns</strong>: Select an option from the dropdown menu to generate a unique sAM account name for the user. You can define a custom policy for generating the sAM account name by selecting the <em>Custom</em> option. When the <strong>Custom</strong> option is selected, the following parameter is displayed:<ul><li data-list-item-id="e257387281aa76779a211a18c221c7d65">
+<strong>Select Policy for sAMAccountName</strong>: Enter a prompt that defines the policy for generating a unique sAMAccountNames for the users. Click the preview icon (<img alt="44.png" height="68" src="./assets/b90a6c8649bac97c.bin" width="78"/>) to view the sAMAccountNames suggested by the Aquera Intelligence feature.</li></ul>
+</li></ul><h4 id="h_01KMN5EYC0AQNMA7FKB80GCRM2"><strong>Generate UserPrincipalName (UPN)</strong></h4><p>Configure the following to customize the user principal name:</p><ul><li data-list-item-id="e8fcec5099e1ca37c2a5406cd74d588d0">
+<strong>Unique UPN Generation Patterns</strong>: Select an option from the dropdown menu to generate a unique user principal name for the user. You can also define a custom policy for generating the unique user principal name by selecting the <em>Custom</em> option. When the <strong>Custom</strong> option is selected, the following parameter is displayed:<ul><li data-list-item-id="ed29e72d6ece332221f66b023ac5942f2">
+<strong>Select Policy for UserPrincipalName (UPN)</strong>: Enter a prompt that defines the policy for generating a unique user principal name for the users. Click the preview icon (<img alt="44.png" height="68" src="./assets/b90a6c8649bac97c.bin" width="78"/>) to view the UPNs suggested by the Aquera Intelligence feature.</li></ul>
+</li></ul><h4 id="h_01KMN5EYC063KGS56YDE8Z6ATT"><strong>Generate Email</strong></h4><p>Configure the following to customize the user's email address:</p><ul><li data-list-item-id="ecc40542a1038e093b3506e72476d91b3">
+<strong>Unique Email Generation Patterns</strong>: Select an option from the dropdown menu to generate a unique email address for the user. You can define a custom policy for generating the unique email address by selecting the <em>Custom</em> option. When the <strong>Custom</strong> option is selected, the following parameter is displayed:<ul><li data-list-item-id="e1b937f48a7da99740056a7566cee8ce3">
+<strong>Select Policy to Generate Email</strong>: Enter a prompt that defines the policy for generating a unique email addresses for the users. Click the preview icon (<img alt="44.png" height="68" src="./assets/b90a6c8649bac97c.bin" width="78"/>) to view the email addresses suggested by the Aquera Intelligence feature.</li></ul>
+</li></ul><h4 id="h_01KMN5EYC0JTZT4ZY8TTQ7KCX9"><strong>Generate Common Name (CN)</strong></h4><p>Configure the following to customize the user's common name:</p><ul><li data-list-item-id="ed94dcec753312bf0fa4073162505e0aa">
+<strong>Unique Common Name (CN) Generation Patterns</strong>: Select an option from the dropdown menu to generate a unique common name for the user. You can define a custom policy for generating the unique common name by selecting the <em>Custom</em> option. When the <strong>Custom</strong> option is selected, the following parameter is displayed:<ul><li data-list-item-id="e7551cadca6f3cfa77774880cfc9feb9e">
+<strong>Select Policy for Common Name (CN)</strong>: Enter a prompt that defines the policy for generating a unique common name for the users. Click the preview icon (<img alt="44.png" height="68" src="./assets/b90a6c8649bac97c.bin" width="78"/>) to view the common names suggested by the Aquera Intelligence feature.</li></ul>
+</li></ul><h3 id="h_01KMQNB8YFJHAQHKRTEZ19XQQE">Password Policy</h3><p>Navigate to the <strong>Password Policy</strong> section to define how passwords are generated in the target applications. This section allows you to configure password generation rules, complexity requirements, and length constraints.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (*) are mandatory.</p><ul>
+<li data-list-item-id="e5e4b67db887a9ec46cba0d32008ebc51">
+<strong>Policy Name</strong>*: Enter the unique name to identify the password policy.</li>
+<li data-list-item-id="ec5c43dfb54ec00d476e4418204fb8969">
+<strong>Maximum Password Length</strong>: Enter the maximum number of characters allowed in password creation.</li>
+<li data-list-item-id="e37c7d600b9c500b3ee52958a74c0aa9a">
+<strong>Minimum Password Length</strong>: Enter the minimum number of characters allowed in password creation.</li>
+<li data-list-item-id="ee8ca2fba61aebca6d6b8e798aa699e9c">
+<strong>Password Complexity Requirements</strong>: Select one or more password complexity types from the dropdown menu. Based on your selection, the corresponding types will be used in generating a unique password for the user. For example, if you select the <em>Require Numbers</em> option, numbers will be included when generating a unique password for the user.</li>
+<li data-list-item-id="efeea33f7717886f8e7b814ef4919064d">
+<strong>Allowed Special Characters</strong>: Select one or more special characters from the dropdown menu. Only the selected special characters will be used in the password creation. This parameter is displayed only if you select the <em>Require Special Characters</em> option in the <strong>Password Complexity Requirements </strong>parameter.</li>
+</ul><h2 id="h_01KN1VKJFQ9FAWC8B6EY7ECH5N">Execution</h2><p>The <strong>Execution</strong> tab allows you to configure various settings required for the integration execution. The following sections are displayed in this tab:</p><ul>
+<li data-list-item-id="eab54e1e1dd19a192849648cd0140dd21"><a href="#h_01KN1W5D3KG4Q8Z44BMB8CBYQ5">Advance Settings</a></li>
+<li data-list-item-id="ead4e41c87d2480ee387fd9977fa75c8c"><a href="#h_01KN47NYDZ014D07BNJKKQFDED">Operational Settings</a></li>
+</ul><h3 id="h_01KN1W5D3KG4Q8Z44BMB8CBYQ5">Advance Settings</h3><p>This section enables you to filter employees and candidates for debugging purposes.</p><p>The following fields are displayed for configuration:</p><ul>
+<li data-list-item-id="e6bcc6764091d7c8210eb4b3d3325a5aa">
+<strong>Report Only Mode</strong>: Enable the toggle button to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e5bf4d887a5ccc4d6dcb6487920e61def">
+<strong>Enable Source Filter</strong>: Select this checkbox to filter an employee for debugging purposes. When enabled, the following parameters are displayed:<ul>
+<li data-list-item-id="e4f1c1aa456381adafb7c720d061383d0">
+<strong>Select The Filter Type</strong>: Select an attribute from the dropdown menu to filter an employee. For example, select <em>Employee Number</em>.</li>
+<li data-list-item-id="ebb89173376b6dba0bc3b9242b82abfbe">
+<strong>Filter Value</strong>: Enter a value for the selected attribute. For example, <em>EMP123</em>.</li>
+</ul>
+</li>
+<li data-list-item-id="e5a1704c3e5ab0cd0bb72fcb6de0ca6fb">
+<strong>Enable Source Filter for Candidate</strong>: Select this checkbox to filter a candidate for debugging purposes. When enabled, the following parameters are displayed:<ul>
+<li data-list-item-id="efbad033d72142860777a2a5aad0d93fd">
+<strong>Select The Candidate Filter Type</strong>: Select an attribute from the dropdown menu to filter a candidate. By default, the value is <em>Candidate Id</em>.</li>
+<li data-list-item-id="eb23be176db7cbec31e37f4d80d257c14">
+<strong>Filter Value for Candidate</strong>: Enter a value for the selected attribute. For example, 1233.</li>
+</ul>
+</li>
+</ul><h3 id="h_01KN47NYDZ014D07BNJKKQFDED">Operational Settings</h3><p>This section enables you to customize the operational settings.</p><p>The following parameters are displayed for configuration:</p><ul>
+<li data-list-item-id="e8043c0751d70d883cf537c2865a37a96">
+<strong>Enable Custom Logging</strong>: Select this checkbox to customize the detail level in logs. By default, all attributes are included in logs.</li>
+<li data-list-item-id="ebbab496cabd3f081caef1958ceb7f66a">
+<strong>Enable Custom Reporting</strong>: Select this checkbox to customize the detail level in reports. By default, all attributes are included in reports.</li>
+<li data-list-item-id="eb24922f9e6ffc2e0e350248b3024e870">
+<strong>Enable Custom Log Insights: </strong>Select this checkbox to customize the detail level to be included for dashboard generation. By default, all attributes are included.</li>
+</ul><p>When you enable the above settings, you must configure the fields available in the following section:</p><h4 id="h_01KN3Q8QVV3ACYFE8R1W6QS4ZA">Operational Settings Definition</h4><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e3d750f6a86aefb9fc05d914c321502f2">
+<strong>Select Applications</strong>: Select an application connector for which you want to configure the operational settings. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available target application connectors.</li>
+<li data-list-item-id="e658d2be38e727a9daa59b307116204a7">
+<strong>Select Log Type</strong>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:<ul>
+<li data-list-item-id="e2dae8a50240e561e1590cf92ed2ff555">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e4b227e29d604667923a98fb3c93444ce">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e60866ad5dde8aee5a82ebfca9f357945">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ecf23c6161809fd4c5f3cdb8736d40873">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e8eae5870be1690859e9ddd4d882a330e">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e8c4019e4257a1cd4ebd194e0e6754848">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="ee100cb1b89c8d90d1422edd5069438f7">
+<strong>Reporting Type</strong>: Select the report type. This will decide the level of details to be included in reports.<br/>The following are the available options:<ul>
+<li data-list-item-id="ede9edc5554a32856d6a299f35874f9a6">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ed2e1762c15a01334edcbcf4a12300aed">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e82a6c3cbaa5199deafa6c5eec0d275cd">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e629cca66ed642d43caee73cd1d7919b4">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e71159c6ff4a4808cd59b2cef8de57855">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="efab2d42b11bd9de928a78274f0f2d88b">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e9ac6ac5928e4207be848e2f2bb1f7d22">
+<strong>Select Report Format</strong>: Select the file format of the report to be generated. The available options are <em>CSV Report</em>and <em>Excel Report</em>.</li>
+<li data-list-item-id="e6b4ccd64585bb8ac5bf966adde08081b">
+<strong>Select Log Insight Type</strong>: Select the Log insights type. This will decide the level of detail to be included for log insights.<br/>The following are the available options:<ul>
+<li data-list-item-id="eb0e3737427e602d9a894ff11bea45027">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e5ad48be2827ec434e4181e46747a0d67">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ee6890db5280ed401069ab7e3b57d61c0">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e3b88bace8c5918d389cdf76733d136ba">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e24ffb3e9c8f09ce3457ad9eeb9753583">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e7cb46dbd30753dfa09952320171f489b">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+</ul><p>To add another configuration, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button. Only three operational settings can be configured.</p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><p>To delete a configuration, click the delete icon.</p><p>To view the operational settings in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h2 id="h_01KN1ASDTRY0GR0850VZCFF8FP">Notification Center</h2><p>Navigate to the <strong>Notifications</strong> tab to configure notification settings for the integration. The following sections are displayed on the page:</p><ul>
+<li data-list-item-id="eae5888890e2d6b43e0bb564615d6786d"><a href="#h_01KN1AVC1MJHX5RB3ETN8MHCM7">Channels</a></li>
+<li data-list-item-id="e0c75e4ee5d8c74ef340a567c8a2462ad"><a href="#h_01KN1AVFK47V9644J22EQEDVZE">Template Library</a></li>
+<li data-list-item-id="e630175770d8eb4db288b80604c3fd206"><a href="#h_01KN1AVMW81679JNM3NZGGKJAY">Configuration</a></li>
+</ul><h3 id="h_01KN1AVC1MJHX5RB3ETN8MHCM7">Channels</h3><p>This section enables you to customize the notification channel to be used for the integration.</p><p>It has the following setting:</p><ul><li data-list-item-id="ee6df680bfbc947e82c77c8eee640c523">
+<strong>Enable Email</strong>: Select this checkbox to enable integration-related email notifications.</li></ul><h3 id="h_01KN1AVFK47V9644J22EQEDVZE">Template Library</h3><div><section data-scroll-anchor="true" data-testid="conversation-turn-8" data-turn="assistant" data-turn-id="request-WEB:b8537714-ca0c-46c0-8a1e-d45ba5037c47-3" dir="auto"><div><div><div><div data-message-author-role="assistant" data-message-id="b7be539b-5db3-466b-adc4-4deb26e882b5" data-message-model-slug="gpt-5-3" data-turn-start-message="true" dir="auto" tabindex="0"><div><div>
+<p data-end="155" data-is-last-node="" data-is-only-node="" data-start="0">This section enables you to create an email body for sending email notifications.</p>
+<p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p>
+</div></div></div></div></div></div></section></div><ul>
+<li data-list-item-id="ec8a494a66026c702caed986c2d348bd2">
+<strong>Name</strong>: Enter the unique name to identify the template.</li>
+<li data-list-item-id="e8cd246d998e08ef75569c9d77af52bbe">
+<strong>Type</strong>: Select a notification type from the dropdown menu. The available option is email. For example, if you select email, this template can be used in an email.</li>
+<li data-list-item-id="eadb81837a744b759b2507bdb7ed8bd54">
+<strong>Template</strong>: Click the <strong>Improve Description</strong> icon (<img alt="3.png" height="58" src="./assets/7aea445511f469a4.bin" width="54"/>) to enter a prompt that will be used as the template body when sending notifications. Based on your prompt, the Aquera AI will generate a notification body to be sent to the user.</li>
+</ul><p>Once the above parameters are configured, click <strong>Save Changes</strong> to create a template. Click <strong>List View</strong> to see the newly created template.</p><h3 id="h_01KN1AVMW81679JNM3NZGGKJAY">Configuration</h3><p>This section allows you to define notification settings for provisioning events.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e1e9f4d825a6ba5c00140c7ed6cf76ecc">
+<strong>Template Name</strong>: Enter a name for the email notification.</li>
+<li data-list-item-id="ef0dd1b208fc084f7c9d53ddaaf83dc8e">
+<strong>Select Application</strong>: Select target applications for notification configuration. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available target application connectors. </li>
+<li data-list-item-id="e7c8420c3ec2de255dc32f20440e55d97">
+<strong>Select Event for Notification</strong>: Select the provisioning event that will trigger a notification. For example, select <strong>Account Provisioned</strong> to get email notifications every time accounts are provisioned to the target application.</li>
+<li data-list-item-id="e46c4cb423f140f40f24cdd9e50a5fc02">
+<strong>Notification Delivery Channel</strong>: Select the channel to be used for sending notifications. By default, the value is email.<ul><li data-list-item-id="e7df7f1a7ba1421ad3638b14cc64ff57e">
+<strong>Email</strong>: Select this option if you want to send notifications through email. When selected, the following fields are displayed for further configuration:</li></ul>
+</li>
+<li data-list-item-id="e7ef44ddfa75a499cc325827307d3c227">
+<strong>Custom Notification Recipients</strong>: By default, notifications are sent to the user’s work email ID. If you want to send notifications to any other recipients, enable this checkbox.<br/>When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="ef4f62ae897114f60ef069709da7ecae3">
+<strong>Send To</strong>: Select the additional recipients to send email notifications. For example, select <em>Supervisor</em> if you want to send email notifications to the user's supervisor. The following field is displayed when you select <strong>Custom</strong> in this field:<ul><li data-list-item-id="e8b91b48866cf2ec6c7688e957fe900d1">
+<strong>Custom Email Address</strong>: Enter the email IDs of the users to whom you want to send email notifications.</li></ul>
+</li></ul>
+</li>
+<li data-list-item-id="e292bd4b03ce8d735773e31698ffda771">
+<strong>Subject</strong>: Enter the content that must be used as the subject for email notifications.</li>
+<li data-list-item-id="e8f74523dd01baa8b50c2be6dd3131e15">
+<strong>Use Existing Templates</strong>: Select this checkbox to use the existing templates for the email body that were configured in the <a href="#h_01KN1AVFK47V9644J22EQEDVZE">Template Library</a> section. When enabled, the following parameter is displayed:<ul><li data-list-item-id="e0ea3dd5d384ccc8f401035c6e0b05f2a">
+<strong>Templates</strong>: Select a template from the dropdown menu. All templates defined in the <a href="#h_01KN1AVFK47V9644J22EQEDVZE">Template Library</a> section are listed in the dropdown. The notifications will be sent in the selected template format.</li></ul>
+</li>
+<li data-list-item-id="e0a22b1bf0ff73de609ccb38822fc90c7">
+<strong>Template</strong>: Click the <strong>Improve Description</strong> icon (<img alt="3.png" height="58" src="./assets/7aea445511f469a4.bin" width="54"/>) to create a new template for the email body. Enter a prompt to generate the email body for sending email notifications.</li>
+<li data-list-item-id="ef4461873927ad0a1082fd408c345d750">
+<strong>Attach Report</strong>: Select this checkbox to receive an email notification with a report for each integration execution.</li>
+</ul><p>To add another configuration, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button.</p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><p>To delete a configuration, click the delete icon.</p><p>To view the notification settings in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h2 id="h_01KMQ7WN0WEE2127MZ5RDTFBWD">Tables</h2><p>In the <strong>Tables</strong> tab, you can add tables to the integration. Tables are used to define custom source attributes and synchronize them with the target application. If the required data is not available in the source application, you can define it in a table and use it to update the target application. Once defined, the table can be referenced in attribute mapping expressions to set or update values automatically.</p><p>For example, to set the timezone attribute of users in the target application to <em>Europe/Paris</em>, create a table during integration setup with <em><strong>timezone</strong></em> as an attribute name and <em><strong>Europe/Paris</strong></em> as a value. Once defined, reference the table in the source attribute of the attribute mapper using the following format:<br/><em><strong>TABLE.&lt;table_name&gt;.&lt;key_name&gt;</strong> or <strong>TABLE.&lt;table_name&gt;[&lt;key_name&gt;]</strong></em></p><p>For example: <em>TABLE.test.timezone</em></p><p><strong>Note</strong>: You can configure expressions with nested tables in the attributes mapper, if required.<br/>For example: <em>TABLE.UserHireRecord[TABLE.UserRecord["empDate"]]</em></p><p>Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p><h2 id="h_01KJCP43MS8PMZZMVQPMDWVEEP">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your preferred timeframe. Refer to the </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p><p> </p><p> </p>
+  </div>
+</body>
+</html>

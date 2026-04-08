@@ -19,7 +19,7 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Dayforce Employees to Active Directory Users (V3) Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01J46AGRGR00VNTVGR0PNNPBGG">Overview</h1><div>This guide applies to the v3.0 version of the integration.</div><p>Aquera provides an innovative platform that allows your organization to scale complex data management by automating data synchronization from Dayforce employees to Active Directory users.</p><p>Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, every employee newly created or modified in Dayforce is updated in the Active Directory according to the schedule.</p><p>This guide covers details on how to set up the <em>Dayforce to Active Directory</em> integration to synchronize employees data from Dayforce to the Active Directory. </p><h1 id="h_01J46AGRGRQPVRAPETC1V9F4Q4">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<h1 id="h_01J46AGRGR00VNTVGR0PNNPBGG">Overview</h1><div>This guide applies to the v3 version of the integration.</div><p>Aquera provides an innovative platform that allows your organization to scale complex data management by automating data synchronization from Dayforce employees to Active Directory users.</p><p>Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, every employee newly created or modified in Dayforce is updated in the Active Directory according to the schedule.</p><p>This guide covers details on how to set up the <em>Dayforce to Active Directory</em> integration to synchronize employees data from Dayforce to the Active Directory. </p><h1 id="h_01J46AGRGRQPVRAPETC1V9F4Q4">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="eaa266978f14e234ca1ab3bebb7356d8f">
 <strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a><br/> </li>
 <li data-list-item-id="e6bbea15f954cdd1f0d5090f70e15f556">
@@ -46,7 +46,579 @@
 <li data-list-item-id="e21e48f23342d780294f3fa266772b4ad">Click <strong>Continue</strong>. The integration is created and the <strong>Configuration</strong> tab of the integration setup page is displayed. The configurations are categorized under various sections within the <strong>Configuration</strong> tab.</li>
 <li data-list-item-id="efab71d39b13d179b7415a02c6ea85cef">Set the configurations as per your requirements. Refer to the <a href="../Integration-Configurations-Reference-Guide/" rel="noopener noreferrer" target="_blank">Integration Configurations Reference Guide</a> for details.</li>
 <li data-list-item-id="e6f490e355b6e50a5e22976fc5aba2b00">Click <strong>Save Changes</strong> to save the <em>Dayforce to AD</em> integration configurations.</li>
-</ol><h2 id="h_01JSJZ3J2R5NESXTDE2MQ68NYR">Configuration</h2><p>The <strong>Configuration</strong> tab includes a list of configurations required to set up the integration. For detailed information on individual configuration fields, refer to the <a href="../Integration-Configurations-Reference-Guide/" rel="noopener noreferrer" target="_blank">Integration Configurations Reference Guide</a>.</p><h2 id="h_01K598XK6ZRCYEKPB5B55JW6FN">Mapping and Assignments</h2><p>The <strong>Mapping and Assignments</strong> tab consolidates the configuration options for setting the user naming attributes, specifying organizational unit (OU) assignment rules, and mapping attributes between Dayforce and AD. </p><h2 id="h_01J6Y6VJYTJBV9Z375CDHWSTT7">User Naming Attributes</h2><p>In Active Directory, the user naming attributes are User Principal Name (UPN), SAM Account Name (SAM), Common Name (CN), and Work Mail. These attributes are used to identify user objects in AD.</p><ul>
+</ol><h2 id="h_01JSJZ3J2R5NESXTDE2MQ68NYR">Configuration</h2><p>The <strong>Configuration</strong> tab includes a list of configurations required to set up the integration. Refer to the following sections for details on each configuration:</p><h2 id="h_01H0PWCXWT6MJE5NCTTP63J2YS">Basic Details</h2><p>This section explains the fields to configure the basic details. </p><figure><table><tbody>
+<tr>
+<td><strong>Field</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETCNZJJ82ZSS3JSKP4KH0Z">Source Application</h4></td>
+<td><p>Displays the source application that was selected when you created the integration. This is the application from which the data of a specific resource (for example, employees) must be retrieved as part of the integration. You can select a different instance of the application (connector), if required. </p></td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETDCC2FX7A96FZVS1MTD7Z">Target Application</h4></td>
+<td><p>Displays the target application that was selected when you created the integration. This is the application to which the data retrieved from the source application must be updated as part of the integration. You can select a different instance of the application (connector), if required. </p></td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETDNX1PS5WSKG76W4CT719">Report Only</h4></td>
+<td>Select this checkbox to generate a report that shows the data that would be changed, without actually making those changes. This can be selected for the first instance of integration to identify any issues. You can clear this selection after verifying the report and confirming that the result is as expected.</td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETE7WXSJW507TZF27RYGC5">Update Limit</h4></td>
+<td>
+<p>The maximum number of user records that are allowed to be changed in the target application during a single run of the integration. Set this field to <em>unlimited</em> if you do not want to limit the number of records that would be changed in the target. The default value of <em>1</em> updates a single user in the target application. </p>
+<p><strong>Notes</strong>: </p>
+<ol>
+<li data-list-item-id="e114f91c03de44caa7a67b3104f0717e2">The <strong>Update Limit</strong> controls the number of creations, updates, deletions, and deactivations in the target application.</li>
+<li data-list-item-id="e747725d1952625a820c424f41f6e6114">The <strong>Update Limit</strong> must be set to <em>unlimited</em> when the integration runs in the <strong>Incremental Mode</strong>. Otherwise, a few user updates may be skipped during the incremental runs, and the integration may take a long time to complete the execution.</li>
+</ol>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETEJHRGTX46BYBRFSKNFHG">Match Expression</h4></td>
+<td>
+<p>This field is used to define the expression that determines how a source user record is matched with a corresponding record in the target application.</p>
+<p>You can set the match expression in one of the following ways:</p>
+<ul>
+<li data-list-item-id="eb3de139c16e4a2fc19e5cc8421b3b788">Select the source attribute and the target attribute that must be compared to identify a matching user. The supported attributes are listed in the drop-down lists.</li>
+<li data-list-item-id="e24418ff9850eefe3408a4ea18cea8d29">Click <strong>Switch to Expression Mode</strong> to configure a JavaScript expression that must be used to identify the matching records. For example, <em>SOURCE.EmployeeNumber == DEST.EmployeeNumber</em>
+</li>
+</ul>
+<p><strong>Note</strong>: When you switch between the basic mode and the expression mode, you will lose any match expressions that you have not saved. Ensure that you save the changes before you switch between the modes.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETGYF8R1NB4RWM1WRRDWZ7">Import Limit</h4></td>
+<td>
+<p>The maximum number of user records that must be retrieved from the source application during a single run of the integration. Set this field to <em>unlimited</em> if you do not want to limit the number of imported records. The default value is <em>unlimited </em>which retrieves all the users from the source application.</p>
+<p>The limit can be set accordingly to verify and debug the source-to-target mapping. You can set the import limit to <em>1</em> to verify that the user is imported correctly.</p>
+<p><strong>Note</strong>: The <strong>Import Limit</strong> must be set to <em>unlimited</em> when the integration runs in incremental import. Otherwise, a few user updates may be skipped during the incremental import and the integration may take a long time to complete the execution.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETHB98MMAZ5Q91SHB5ES0M">Source Filter Condition</h4></td>
+<td>
+<p>Select this checkbox if you want to filter the source employee records that must be included in the integration. The <strong>Employee Filter Criteria</strong> fields are displayed for you to set the conditions for filtering the employees, using either <em>Basic mode</em> or <em>Expression mode</em>.</p>
+<p>An option is provided for you to switch between the<em> Basic mode</em> and the <em>Expression mode</em>.<br/><strong>Note</strong>: Make sure that you save the configured filter condition (by clicking <strong>Save Changes</strong>) before switching between these modes. Otherwise, all unsaved filter conditions will be lost.</p>
+<p>In the <em>Basic mode</em>, you have to provide the following details:</p>
+<ul>
+<li data-list-item-id="e637fce037520237397638df98817193b">Select the source attribute by which the employees have to be filtered.</li>
+<li data-list-item-id="eb0759a10dd1bc977b0fa0c5b65bc6bad">Select a conditional operator.</li>
+<li data-list-item-id="e55890818569e530b0bae6000351cab11">Enter the value that will be used for filtering the employees.</li>
+</ul>
+<p>In the <em>Expression mode</em>, you need to enter a conditional expression to filter the employees.</p>
+<p><strong>Note</strong>: Make sure that the filter that you have configured is supported by the Dayforce connector.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETP0MHT03VXNH1DJ4HJ0QN">Create Condition</h4></td>
+<td>
+<p>Select the condition that determines whether a Dayforce employee record has to be created in Active Directory. The following options are available:</p>
+<ul>
+<li data-list-item-id="e47831cf3e872680c1c4ac483e5d19a45">
+<strong>Create all active users </strong><em>- O</em>nly the active employee records will be imported from the Dayforce and then created in Active Directory.</li>
+<li data-list-item-id="ef29eb233bd09b4c0c1656746a154848f">
+<strong>Create all users</strong><em> - </em>All active and inactive employees will be imported from Dayforce and then created in Active Directory.</li>
+<li data-list-item-id="ee498a280ac79cb892bbd753801f8d471">If you want to set a different create condition, click <strong>Switch to Expression Mode</strong> to write a JavaScript expression for the create condition. For example, <em>SOURCE.active==true &amp;&amp; SOURCE.EmploymentStatuses=="Hired"</em>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETP5N1ENJCFYKX52KXBAYE">Update Condition</h4></td>
+<td>
+<p>Select the condition that determines whether the updates made to an employee in Dayforce have to be synchronized to Active Directory. The following options are available:</p>
+<ul>
+<li data-list-item-id="e3ce0c479c22a7691e44cd0abb89c7a21">
+<strong>Update all active users</strong> - The details of only the active employees will be imported from Dayforce and updated in Active Directory.</li>
+<li data-list-item-id="e9c469e1f0b1d7ee4422cd0d70a63890b">
+<strong>Update all users</strong> - The details of all active and inactive employees will be imported from Dayforce and updated in Active Directory.</li>
+<li data-list-item-id="e4ca52b87ec92cb663cf027cccf4ff443">If you want to set a different update condition, click <strong>Switch to Expression Mode</strong> to write a JavaScript expression for the update condition. For example, <em>SOURCE.active==true || SOURCE.EmploymentStatuses =="Hired"</em>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01GYETPGFMDGR5BSJ91HPAZBJ6">Map Manager</h4></td>
+<td>
+<p>Select this checkbox to map users' managers from Dayforce to Active Directory. <br/><strong>Notes</strong>: </p>
+<ol>
+<li data-list-item-id="ee97f832d64a56e8c75a7e96a496d7650">During full imports, the user’s manager will be removed from Active Directory when it is removed from Dayforce. However, during incremental imports, the user’s manager will not be removed from Active Directory.</li>
+<li data-list-item-id="e8329447db9dc145a940c6abdba41a436">If the <strong>Map Manager</strong> checkbox is selected and the manager is deactivated in Dayforce, then the manager attributes of the users who are mapped to this deactivated manager will be updated as <em>undefined</em> in Active Directory.</li>
+</ol>
+</td>
+</tr>
+</tbody></table></figure><h2 id="h_01H0PWE7Q4GMR48G4DSVR28SDZ">Advanced Details</h2><figure><table><tbody>
+<tr>
+<td><strong>Field</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td><h4 id="01K56QPR4CC2535FB69KGBYMGY">Termination Delay</h4></td>
+<td>
+<p>The number of days to wait after a user record in Dayforce is deactivated, before deleting the user record in Active Directory. Once the delay period is over, the user is deleted in the next integration run. The user record will be deleted only if the Active Directory connector supports the user delete operation. If the Active Directory connector does not support the delete operation, the user will only be deactivated.</p>
+<p>The active status of the user must be false in both Dayforce and Active Directory applications for this setting to be effective.</p>
+<p>By default, the <strong>Termination Delay</strong> value is <em>unlimited.</em> If the <strong>Termination Delay</strong> is set as <em>unlimited</em> and a user is deactivated in Dayforce, then that user in Active Directory will not be deleted.</p>
+<p><strong>Note 1</strong>: This setting works only in the full import mode.</p>
+<p><strong>Note 2</strong>: If a <strong>Termination Delay</strong> is set and the <strong>Map Manager </strong>checkbox is selected, then the manager attributes of the users who are mapped to a deactivated manager will be updated as <em>undefined</em> in Active Directory.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58XFVAPMJYJ6QYXJC8FJ5K9">Allow Creation of Inactive Users</h4></td>
+<td>Select this checkbox to support the creation of inactive users in Active Directory. You must set a relevant expression in the <strong>Create Condition</strong> configuration to create inactive users.</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58JJR8CCD94D1FZZ98WV2Z4">Source Caching</h4></td>
+<td>
+<p>Select an option from the dropdown list to enable, disable, or refresh the caching of source records.</p>
+<p>The caching of records can be done when there are a large number of source records and you want to improve the performance of the integration. When caching is enabled, the source records are cached, and the integration reads the records from the cache instead of Dayforce. </p>
+<p>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e9647c2ee14bb88d699c5d6f66234cddb">
+<strong>disabled</strong>: Select this option if you do not want the Dayforce employee records to be cached.</li>
+<li data-list-item-id="ebd3cc9b463c61f7c3e38deb5ef4bff85">
+<strong>enabled</strong>: Select this option to cache the employee records so the integration runs can be faster. <br/>Cached records are retained for 7 days or until caching is disabled. During this period, the integration runs skip the records loading stage and use the cached records, which leads to faster integration runs.</li>
+<li data-list-item-id="e4f7a34d236227e12a184cb3c73450604">
+<strong>refresh</strong>: Select this option to refresh the cache with the latest Dayforce records in the next integration run. After the refresh, you can switch this setting back to <em>enabled</em> to use the cached records in the next integration runs.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58XFVAP0BBF0GPYFKGANTV8">Target Caching</h4></td>
+<td>
+<p>Select an option from the dropdown list to enable, disable, or refresh the caching of Active Directory records.</p>
+<p>The caching of records can be done when there are a large number of target records and you want to improve the performance of the integration. When caching is enabled, the target records are cached, and the integration reads the records from the cache instead of the target application.</p>
+<p>The following are the available options:</p>
+<ul>
+<li data-list-item-id="eab0f2a3fcd6f4b5487b05137d149d3df">
+<strong>disabled</strong>: Select this option if you do not want target records to be cached. The target records will be updated only when the target caching is <strong>disabled</strong>.</li>
+<li data-list-item-id="e0f813f00adcf064928391a09062ccfb8">
+<strong>enabled</strong>: Select this option to cache the target records so the integration runs can be faster. The target records will be securely stored in an encrypted format using a hash of the configured integration ID. <br/>Cached target records are retained for 7 days or until caching is disabled. During this period, the integration runs skip the target records loading stage and use the cached records, which leads to faster integration runs.</li>
+<li data-list-item-id="e80837882557aaec9b71e8dcf9f88509a">
+<strong>refresh</strong>: Select this option to refresh the cache with the latest target records in the next integration run. After the refresh, you can switch this setting back to <em>enabled </em>to use the cached records in the next integration runs.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01GYEVBHHRZFZY0BG6P8MYP3G0">Deactivate Users Missing in the Source Application</h4></td>
+<td>
+<p>Select this checkbox to deactivate all the target user records for which the associated source records are not present in Dayforce.</p>
+<p><strong>Note</strong>: The deactivation of target user records will work only during a full import with the <strong>Import Limit</strong> and <strong>Update Limit</strong> set to <em>unlimited.</em></p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01KKTYBF06CSBK5A2AJN3HWFXP">Incremental Mode</h4></td>
+<td>
+<p>Select this checkbox to run the integration in incremental import (incremental run). During Incremental import, the source records that have been created or modified in the source application since the last integration run will be updated in the target application.</p>
+<p>When the <strong>Incremental Mode</strong> checkbox is not selected, integrations run in full import mode. During full import, all the records from the source application will be updated in the target application.</p>
+<p>Incremental import is supported by setting the<strong> Incremental Mode Timestamp</strong> and selecting the <strong>Incremental Mode</strong> checkbox. </p>
+<ul><li data-list-item-id="e38fb2cf9b67c3f54b51ba1c4aa768d41">If you are running the integration for the first time and you have selected the <strong>Incremental Mode </strong>checkbox and have not set any timestamp in the <strong>Incremental Mode Timestamp</strong>, then the integration will run in full import. In the next run, the integration will run in incremental import using the timestamp associated with the full import.</li></ul>
+<div aria-setsize="-1" data-item-key="1682416945.384969" data-qa="virtual-list-item" id="1682416945.384969" role="listitem" tabindex="0"><div data-qa="message_container" data-qa-placeholder="false" data-qa-unprocessed="false" role="presentation"><div aria-roledescription="message" data-qa-hover="true" role="document"><div><div><div data-qa="message_content" role="presentation"><div><div data-qa="message-text"><div data-qa="block-kit-renderer"><div><div dir="auto"><ul><li data-list-item-id="e728f0b7cd7c94fc408ef48e7514f38ba"><div>If you have not selected the <strong data-stringify-type="bold">Incremental Mode</strong> checkbox and have set a timestamp in the <strong data-stringify-type="bold">Incremental Mode Timestamp</strong>, then the integration will run in full import.</div></li></ul></div></div></div></div></div></div></div></div></div></div></div>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01KKTYBN3BW5P8S6E41R2HRG7T">Incremental Mode Timestamp</h4></td>
+<td>
+<p>The timestamp that must be considered when you run the integration in the incremental mode. The source records that were added or modified after this timestamp will only be considered for the incremental import. For example, <em>2026-03-16T14:15:16.148Z</em></p>
+<p>You have to set this timestamp manually before each incremental run. If you do not set the timestamp, the timestamp of the last incremental record will be considered.</p>
+<p><strong>Note</strong>: This timestamp will be effective only if you have selected the<strong> Incremental Mode </strong>checkbox. If you have not selected the <strong data-stringify-type="bold">Incremental Mode</strong> checkbox and have set a timestamp in the <strong data-stringify-type="bold">Incremental Mode Timestamp</strong>, then the integration will run in the full import mode.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58CBDKGZCVACWDR6N87F3D0">Phone Number Formatting</h4></td>
+<td>
+<p>Enter the standard format to which user's phone numbers must be converted before updating them to the target application. The valid values are:</p>
+<ul>
+<li data-list-item-id="e65efe94717ede270906f8be2afe8d213">
+<strong>disabled</strong>: By default, the conversion of phone numbers to a specific format is disabled.</li>
+<li data-list-item-id="e7201534d619af6091adf0686ea1ada3a">
+<strong>E164</strong>: Convert the phone number to E.164 international telephone number format, which is represented as<br/><em>+ &lt;country code&gt;&lt;subscriber number including area code&gt;</em>. This is a machine-friendly format. For example, <em>+14155552671</em>
+</li>
+<li data-list-item-id="e06fd4d98e9d080dd7f7a71f5c1df7750">
+<strong>INTERNATIONAL</strong>: Convert the phone number to international format, which is represented as<br/><em>+ &lt;country code&gt; &lt;subscriber number including area code&gt;</em>. This is a user-friendly format and includes spaces for readability. For example, <em>+1 415 555 2671</em>
+</li>
+<li data-list-item-id="ec8e737292347521ade88aa18429cac8b">
+<strong>NATIONAL,country=&lt;countrycode&gt;</strong>: Convert the phone number to the national format followed in a country. For example, if you provide the value as <strong>NATIONAL,country=US</strong>, the format will be <em>(415) 555-2671</em>, which is the US national format.</li>
+<li data-list-item-id="e1bd2c79553af97d2dfdc1f513e9e489d">
+<strong>automatic</strong>: Convert the phone number to automatic format.</li>
+</ul>
+<p><strong>Notes</strong>: </p>
+<ul>
+<li data-list-item-id="e01212a47841ea3a513af2368faa1bc8b">To set the international phone number format of +1-123-4567890 during the integration, set the field value as <strong>INTERNATIONAL,template=+.-...-.......</strong>
+</li>
+<li data-list-item-id="e62cfba125fd8ebe16e61b24648fbe0c7">To set the phone number format of +1 1234567890 during the integration, set the field value as <strong>INTERNATIONAL,template=+. ..........</strong>
+</li>
+<li data-list-item-id="edc007f708b82c2b70765b224390870aa">Make sure that the format is supported in the target application.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K56QC2SYQ3J375802JG5TNXX">Generate Password</h4></td>
+<td>
+<p>Select this checkbox to generate a random password when a user is created in the target application.</p>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li data-list-item-id="e3024434c37b6627df9573d301bfff832"><p>When you select the <strong>Generate Password </strong>checkbox and you also provide a mapping for the password in the attribute mapping, then the attribute mapping takes precedence.</p></li>
+<li data-list-item-id="e68429e924edcf7e5a76e5617ab1e3267"><p>The generated password includes a combination of letters (lowercase and uppercase), numbers, and special characters. The first character will always be a letter.</p></li>
+<li data-list-item-id="e68b035954b52b851878734dfb0f08e8f"><p>The Aquera platform sends passwords over encrypted emails using the <strong>TLS 1.2 </strong>protocol. You will receive encrypted emails if you are using an email server that supports <strong>Secure SMTP over TLS.</strong></p></li>
+<li data-list-item-id="e717c5f617e1a8dadf7500496141a05ed"><p>For the Active Directory connector, the random generation of passwords does not work without the use of LDAPS. Refer to this <a href="https://support.aquera.com/hc/en-us/articles/360052131934#h_01GK1CGW9HV1R3WFS69YDC3JW6" rel="noopener noreferrer" target="_blank">guide</a> for more details.</p></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K56QC2SYQA5BQDFH815MX4AY">Password Length</h4></td>
+<td>
+<p>The length of the random password that will be created when a user is created in the target application. This field is displayed only if the <strong>Generate Password</strong> checkbox is selected.</p>
+<p><strong>Note</strong>: There is no minimum or maximum limit on password length. If the user specifies a zero value, an empty string password will be generated. </p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K56QC2SYN5ACYQ8J2BJK9QRW">Special Character Set for Password</h4></td>
+<td>
+<p>Defines the set of special characters available for inclusion in the generated password. The default value is <em>!$#%</em>. If this field is left blank, then the default password <em>!$#%</em> will be set for a new target user.</p>
+<p>This field is displayed only if the <strong>Generate Password</strong> checkbox is selected.</p>
+<p><strong>Note</strong>: The generated password will contain up to 4 special characters, selected randomly from the characters configured in this field.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="01K58M5YKDTY2D8NQSS0D522RH">Report Mode</h4></td>
+<td>
+<p>Select a logging mode that defines the level of detail to be captured in the integration logs. </p>
+<p>The available modes are listed below from least to most detailed: </p>
+<ul>
+<li data-list-item-id="eb0088dceec1b1477ff3f66a5322cd380">Minimal</li>
+<li data-list-item-id="e9514ecae684971e1a9fbf1533210be69">Normal</li>
+<li data-list-item-id="efef77c052fd62f233fbf855baece5f02">Debug</li>
+<li data-list-item-id="e9f41fa439d384df7f0b0f70c2fe761fd">Verbose</li>
+</ul>
+<p>The default value is <em>normal</em>. </p>
+<p>For further information on the log-level details for each report mode, refer to the <a href="../Integration-Logging-Modes/" rel="noopener noreferrer" target="_blank">Integration Logging Modes</a> guide.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58GZV68EVNCT3P1A0WMPJYH">Timezone Offset</h4></td>
+<td><p>The UTC timezone offset value to be used for generating reports. For example, a value of -8 in this field indicates PST, 0 indicates GMT, and so on.</p></td>
+</tr>
+<tr>
+<td><h4 id="h_01K58H05A6J59JN6V0PW2WR6CP">Skip Create and Update Failures</h4></td>
+<td>
+<p>When this checkbox is selected, during incremental execution of the integration, if there are failures in creating or updating destination users, those transactions will be skipped in the next incremental run. The last modified timestamp will be updated for the source records, including the source records that encountered failures in the incremental run. Hence, in the next incremental run, only the changes from the last modified timestamp will be considered.</p>
+<p>When this checkbox is not selected, then those failed transactions will be attempted on the next incremental execution. The last modified timestamps will remain the same as those of the previous incremental run for those records so the integration will re-read all those updates in the next incremental run. This action may result in longer delays while the failures continue through repeated executions of the integration.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K56QC2SZD727X425XMAKJGKN">Update Deactivated Users</h4></td>
+<td>
+<p>Select this checkbox to update the deactivated source employee records in the target system, provided the records satisfy the <strong>Update Condition</strong> configured for the integration. If this checkbox is not selected, the data of employee records that are deactivated in the source are not updated in the target.</p>
+<p><strong>Note</strong>: This setting works only when the integration runs in full import mode.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="01K58M5YKE0TB613KCAN1XYP4Q">Email From Address</h4></td>
+<td>
+<p>Specify the sender email address for all emails sent by the integration. The default email address is <a aria-expanded="false" aria-haspopup="menu" data-sk="tooltip_parent" data-stringify-link="mailto:noreply@aquera.com" rel="noopener noreferrer" target="_blank">noreply@aquera.com</a>.</p>
+<p>To modify the e-mail address, you must first send a request to <a href="mailto:%20support@aquera.com" target="_self">support@aquera.com</a>. A verification email will be sent to that email address. You must follow the instructions in the email to grant Aquera permission to send emails on behalf of your email account. <br/>Refer to <a href="https://support.aquera.com/hc/en-us/articles/4407142577431" rel="noopener noreferrer" target="_blank">Verifying Email Address and Configuring DKIM Settings</a> for more details.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58H09SKWA8BYNHTZYK537E3">Destination Modification Safeguard Enabled</h4></td>
+<td>
+<p>Select this checkbox to trigger the safeguard, which will abort the integration run if it would result in the number of modifications exceeding the <strong>Max Destination Modification Percentage</strong>. <br/><br/>The modifications include creations, updates, and deletions of users in the target application.</p>
+<p><strong>Note</strong>:</p>
+<ul><li data-list-item-id="e4ca912812b0040f33f8f6f4bc35449e9">The safeguard calculation ignores <strong>Update Limit</strong>. The use of <strong>Import Limit</strong> will reduce the number of modifications in the calculation.</li></ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58H0F06C2NYWESBAA8V0ZB7">Max Destination Modification Percentage</h4></td>
+<td>
+<p>This percentage value is used to restrict the number of modifications in the target application. The integration run will be aborted if the number of modifications exceeds the configured percentage. The default percentage set is <em>25</em> (%). </p>
+<p>This field is displayed only when the <strong>Destination Modification Safeguard Enabled </strong>checkbox is selected.</p>
+<p>The Destination Modification Safeguard will be triggered based on the following calculation:   </p>
+<p><strong>For full imports:</strong></p>
+<p>((target records that will be created + target records that will be updated) / (target records that will be created + source records matched)) &gt; <strong>Max Destination Modification Percentage</strong></p>
+<p>Here, the <strong>source records matched </strong>is the total number of source employees satisfying the <strong>Source</strong> <strong>Match Expression /Dest Match Field </strong>condition and the userName criteria.               </p>
+<p><strong>For incremental imports:</strong></p>
+<p>((target records that will be created + target records that will be updated) / (target records that will be created + total matched records)) &gt; <strong>Max Destination Modification Percentage</strong> </p>
+<p>Here, the <strong>total matched records</strong> include all of the matches seen in the previous integration runs for the incremental import.</p>
+<p>During incremental runs, when a safeguard is triggered, the incremental mode timestamp will not be updated, and hence no employee records will be skipped.</p>
+<p><strong>Note</strong>:</p>
+<ul><li data-list-item-id="e86996aef970d9c345b16c31fa089537b">If the <strong>Report Mode</strong> is selected as <em>debug</em> or <em>verbose</em>, then the integration logs will include the details of the modification safeguard calculation and indicate if the safeguard has been triggered or not.</li></ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K56P6WYADTWQTYGEHYQAGJPW">New User Integration Hook</h4></td>
+<td>
+<p>Select an Integration that has to be executed when a user is created in the target application. The selected integration will be triggered during user creation. This is an optional setting. </p>
+<p>Example scenario:</p>
+<p>If you have an integration in your tenant that creates an onboarding ticket in a ticketing system<strong>, </strong>you can select that integration in this field. When the current integration creates a new user in the target application, the ticketing integration will be triggered to create an onboarding ticket for the new user.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K56PYKTXMAQJJXJMXHFXBGVJ">Update User Integration Hook</h4></td>
+<td>
+<p>Select an integration that must be triggered when a user is updated in the target application. This is an optional setting. </p>
+<p><strong>Note</strong>: The <strong>Update User Integration Hook</strong> will be triggered for user deactivations also, if the <strong>Deprovision User Integration Hook</strong> is not configured.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K588CNQ6ST04AQD44J365VBY">Deprovision User Integration Hook</h4></td>
+<td>
+<p>Select an integration that must be triggered when a user is deactivated in the target application. This is an optional setting. </p>
+<p><strong>Note</strong>: If the <strong>Deprovision User Integration Hook</strong> is not configured, the <strong>Update User Integration Hook</strong> will be triggered for user deactivations (if configured).</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58H00XVXSE2KPY6DHBK250F">Fire Hooks on Error</h4></td>
+<td>
+<p>Select this checkbox to trigger the integrations specified in the <strong>New User Integration Hook</strong> and <strong>Update User Integration Hook</strong> fields, even if there is a failure in user creations and updates.</p>
+<p><strong>Note</strong>: When there is a failure in user creations and updates, the JSON body will have an error attribute containing the details of the failure.</p>
+<p>However, if you do not select this checkbox, the integration specified in the respective integration hooks will be triggered only for successful user creations and updates, and not for failures during user creations and updates.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58H0K9GRBQFM0TQZTHRZC1H">Incremental Tuning</h4></td>
+<td><p>Displays the algorithm that is used to identify matching target records for incremental imports. The integration attempts to locate a matching target by searching based on the configured <strong>Match Expression </strong>condition. </p></td>
+</tr>
+</tbody></table></figure><h2 id="h_01KNM3SEW8631WTRXXJV2FAH0H"> </h2><h2 id="h_01KNM3SEW8R539F8VTCJENTF5D">Creation Notification</h2><figure><table><tbody>
+<tr>
+<td><strong>Field</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNPJYFW2G06TYJTFP31BTSR">Creation Distribution List</h4></td>
+<td>
+<p>The comma-separated list of email addresses to which an e-mail notification has to be sent when a new user is created in the target application as part of the integration. </p>
+<p><strong>Note</strong>: Do not enclose the e-mail addresses in single or double quotes.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01H259NX8ZQ1SG3CV99H73XA5M">Creation Email Subject</h4></td>
+<td>
+<p>The subject line to be used in the e-mail notification that will be sent when a user is created in the target application.<br/>For example, <em>New User Created</em></p>
+<p><span><strong>Note</strong>: This setting does not support group attributes and JavaScript expressions.</span></p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K56HNB40GXRHSW16X0N3EPKQ">Creation Email Body</h4></td>
+<td>
+<p>The template that has to be used for the notification e-mail body, which will be sent when a new user is created in the target application.</p>
+<p>To include the source attributes in the e-mail body, the following is a sample template:<br/><em>name     : {{givenName}} {{sn}}</em><br/><em>employeeNo : {{employeeNumber}}</em><br/><em>password : {{unicodePwd}}</em><br/> </p>
+<p><strong>Notes</strong>:</p>
+<ol>
+<li data-list-item-id="e9581f52ba7476825999cd5ee59557bc3">If no attribute mapping is set in the integration for any source or target attributes configured in the e-mail body, then the e-mail body will have the value as <em>undefined</em> for those attributes.</li>
+<li data-list-item-id="e7d57280d1d101225bb8cb40d738c8cca">If the <strong>Generate Password</strong> checkbox is not selected, then in the e-mail body, the password will be shown as <em>undefined.</em>
+</li>
+</ol>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K56HQ1Z0VGZ0VXWB97GS2TDK">Send as HTML</h4></td>
+<td>
+<p>Select this checkbox to send the e-mail in HTML format. You can use the standard HTML tags in the <strong>Body</strong> field to format the email body.</p>
+<p>Example:</p>
+<p><em>&lt;p style="text-align:center;"&gt;&lt;img src="https://www.company.com/Logoimage" alt="Comp1"&gt; &lt;/p&gt; Hello {{SOURCE.FirstName}}, &lt;br/&gt; &lt;p&gt;Congratulations on your new position!&lt;/p&gt;</em></p>
+<p><em>&lt;p&gt;We look forward to having you join the team!&lt;/p&gt; &lt;p&gt;With Appreciation,&lt;/p&gt; &lt;p&gt;HR Talent Acquisition Team&lt;/p&gt;</em></p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNPJYFXE8NJPD1MQWF175FE">Send to Manager's Home Email</h4></td>
+<td>Send the e-mail notification to the <em>Home</em> email ID of the user's manager in the target application, when the user is created. This option works only if the <em>home email</em> is available for the user's manager and the <strong>Map Manager </strong>option is enabled.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNPJYFX3B4AK8YV9Y2YX7YE">Send to Manager's Work Email</h4></td>
+<td>Send the e-mail notification to the <em>Work</em> email ID of the user's manager in the target application, when the user is created. This option works only if the <em>work email</em> is available for the user's manager and the <strong>Map Manager </strong>option is enabled.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNPG18AJYYXHDA1ZGTDDZP3">Send to User's Home Email</h4></td>
+<td>Send the e-mail notification to the <em>Home</em> email ID of the user in the source application. This option works only if the <em>home email</em> is available for the user.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNPGBR14DMN0450GVY7C89Z">Sent to User's Work Email</h4></td>
+<td>Send the e-mail notification to the <em>Work</em> email ID of the user in the source application. This option works only if the <em>work email</em> is available for the user.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNPHHY36W0JDRBTHTPNAPAT">Send Email To</h4></td>
+<td>
+<p>Enter a comma-separated list of additional Email IDs of users who should be notified when the integration creates a new target user.<br/><strong>Notes:</strong></p>
+<ul>
+<li data-list-item-id="e1bec8d23948f0c5ee7a4878cf66bf9df">This setting supports any expressions that result in a comma-separated list of email IDs.<br/>The following is a sample expression: <em>SOURCE.EmployeeNumber +"@example.com"</em>
+</li>
+<li data-list-item-id="e06b0862f3b02fb07fa1520576b30bd5b">If you have configured multiple expressions<strong> </strong>and if the validation fails for one of the expressions, then the email will not be sent to any of the email IDs mentioned in <strong>Send Email To</strong>.</li>
+<li data-list-item-id="e6986656498bd545da8357eaecb3eb0c1">A constant email address has to be enclosed in double-quotes. For example, <em>"bjensen@example.com" </em>
+</li>
+</ul>
+</td>
+</tr>
+</tbody></table></figure><p> </p><h2 id="h_01K598XK6ZRCYEKPB5B55JW6FN">Deactivation Notification</h2><figure><table><tbody>
+<tr>
+<td><strong>Field</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNTS986S433K9T3J601DYAF">Deactivation Distribution List</h4></td>
+<td>
+<p>The comma-separated list of email addresses to which an e-mail notification must be sent when a user is deactivated in the target application as part of the integration.</p>
+<p><strong>Note</strong>: Do not enclose the e-mail addresses in single or double quotes.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="01K56T70CXW68YSZQRRSSCZ85K">Deactivation Email Subject</h4></td>
+<td>The subject line to be used in the e-mail notification that must be sent when a user is deactivated in the target application.<br/>For example, <em>User Deactivated</em>
+</td>
+</tr>
+<tr>
+<td><h4 id="01K56T70CX4XGR45WNAQQJ8HE7">Deactivation Email Body</h4></td>
+<td>
+<p>The template that has to be used for the notification e-mail body, which will be sent when a new user is deactivated in the target application.</p>
+<p>The following is a sample template:<br/><em>name: {{givenName}} {{sn}}</em><br/><em>employeeNo : {{employeeNumber}}</em></p>
+<p>To include the target attributes in the e-mail body, the following is a sample template:<br/><em>name: {{TARGET.FirstName}} {{TARGET.LastName}}</em><br/><em>email: {{TARGET.BusinessEmailElectronicAddress}}</em></p>
+<p><strong>Note:</strong> If no attribute mapping is set in the integration for any source or target attributes configured in the e-mail body, then the e-mail body will have the value of those attributes as <em>undefined</em>.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="01K56T70CYTP83YN5KWM9QH9DM">Send as HTML</h4></td>
+<td>
+<p>Select this checkbox to send the e-mail in HTML format. You can use the standard HTML tags in the <strong>Body</strong> field to format the email body.</p>
+<p>Example:</p>
+<p><em>&lt;p style="text-align:center;"&gt;&lt;img src="https://www.company.com/Logoimage" alt="Comp1"&gt;</em></p>
+<p><em>&lt;/p&gt; Hello, &lt;br/&gt;</em></p>
+<p><em>&lt;p&gt;The user {{FirstName}} {{LastName}} is deactivated!&lt;/p&gt;</em></p>
+<p><em>&lt;p&gt;Regards,&lt;/p&gt; &lt;p&gt;HR Team&lt;/p&gt;</em></p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNTS987540P1W2DRNRFWY6D">Send to Manager's Home Email</h4></td>
+<td>Send the e-mail notification to the <em>Home</em> email ID of the user's manager in the target application, when the user is deactivated. This option works only if the <em>home email</em> is available for the user's manager and the <strong>Map Manager </strong>option is enabled.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNTS987JVJP0FDJ2A3D8S0F">Send to Manager's Work Email</h4></td>
+<td>Send the e-mail notification to the <em>Work</em> email ID of the user's manager in the target application, when the user is deactivated. This option works only if the <em>work email</em> is available for the user's manager and the <strong>Map Manager </strong>option is enabled.</td>
+</tr>
+<tr>
+<td><h4 id="01K56T70CY0YC9XVCK276TYHNC">Send Email To</h4></td>
+<td>
+<p>Enter a comma-separated list of additional e-mail IDs of users who should be notified when the integration deactivates a target user.<br/><strong>Notes:</strong></p>
+<ul>
+<li data-list-item-id="ec339505af7f5b1b461674c7c456868cc">This setting supports any expressions that result in a comma-separated list of email IDs.<br/>The following is a sample expression: <em>SOURCE.EmployeeNumber +"@example.com"</em>
+</li>
+<li data-list-item-id="eadb710a07d59b54b4a80616f316c23fa">If you have configured multiple expressions,<strong> </strong>and the validation fails for one of the expressions, then the email will not be sent to any of the email IDs mentioned in <strong>Send Email To</strong>.</li>
+<li data-list-item-id="e49208fe13d47b8364166091c60c1cefa">A constant email address has to be enclosed in double-quotes. For example, <em>"bjensen@example.com" </em>
+</li>
+</ul>
+</td>
+</tr>
+</tbody></table></figure><h2 id="h_01KNNTS987AGCSBWFBJ8ET1FQ7">Admin Notification</h2><figure><table><tbody>
+<tr>
+<td><strong>Field</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNTS987P8PDWVT3DKCTKRZ4">Admin Email List</h4></td>
+<td>
+<p>The comma-separated list of administrative email addresses to which integration reports have to be sent.</p>
+<p><strong>Note</strong>: Do not enclose the e-mail addresses in single or double quotes.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNRJ3PJ96V9FW74G4PDNDJF">Admin Email Subject</h4></td>
+<td>
+<p>Specify the subject of the email.</p>
+<p>The default template of the email subject is: <em>Integration Repor</em>t</p>
+<p>The following keywords can be used in the email subject template:</p>
+<ul>
+<li data-list-item-id="ea4b312692caef2fb16663805f6caeb2d">
+<em><strong>{{name}}</strong></em> This is replaced with the name of the integration</li>
+<li data-list-item-id="eb000806dbe6efe158c686e45b5971f7b">
+<em><strong>{{status}} </strong></em>This is replaced with the status of the integration</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<ul>
+<li data-list-item-id="e6fb79096a62f40d2b57ed0050aaa1c7e"><em>{{name}} Integration Report and Status is {{status}}</em></li>
+<li data-list-item-id="e8326bf22b2fa34ce9b4ba1c9f5ecf83d"><em>[{{name}}] - [{{status}}] Integration Report</em></li>
+</ul>
+<p><strong>Note</strong>: You cannot use any user or employee attributes in Subject.</p>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNRS5H864B0Y8N7BYBX1X8K">Send Always</h4></td>
+<td>
+<p>Sends an email report when the integration run is a <em>success</em>, <em>failure</em>, or <em>error</em>. The report is not sent when you cancel the integration execution.<br/><strong>Note</strong>: If the integration fails due to creation failures, update failures, or delete failures, then an email report will be sent. An email report will not be sent if the integration fails due to any of the following reasons:</p>
+<ul>
+<li data-list-item-id="e7ea76d35f1fb564bb483a335e1a20de5">Employee import failures</li>
+<li data-list-item-id="e773ed25c7f23e5a46ee2ed10236e27d8">Source/target application is not available</li>
+<li data-list-item-id="ea0c5e554930b534d0e37650e1bc2ef60">Source/target application is renamed</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01K58XFVAQXSSG0ZYG9STYC063">Safeguard Email List</h4></td>
+<td>Enter a comma-separated list of email IDs to which an email notification must be sent whenever the <strong>Destination Modification Safeguard</strong> is triggered for the integration.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNRS5H9VQWPCY9BENP0QSZY">Send on Report Only</h4></td>
+<td>Sends an email report when the integration is run in <strong>Report Only</strong> mode.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNRS5HAM6AEBSEDC3F06XSJ">Send on Update</h4></td>
+<td>Sends an email report when any change is successfully updated in the target application. The changes can be creation, update, deactivation, or reactivation.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNRS5HAQ8R7HRB9E02HXPFD">Send on Error</h4></td>
+<td>Send an email report when errors occur during integration runs.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNRS5HASTSD542676QNEXT0">Send on Failure</h4></td>
+<td>Sends an email report to the <strong>Admin Email List </strong>when there is a failure in creation, update, or deletion.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNSH8YQRNRNFC5E917X7P70">Send on Safeguard Trigger</h4></td>
+<td>Sends an email report to the email IDs configured in the <strong>Safeguard Email List</strong> and in the <strong>To</strong> list whenever the Destination Modification Safeguard is triggered.</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNSH8YRBJWWJX2GHJ4BWA4T">Send Details</h4></td>
+<td>
+<p>Sends the integration log report as a zipped text file. <br/><strong>Note</strong>: This file is sent as an email attachment only if at least one of the following options is selected:</p>
+<ul>
+<li data-list-item-id="e4736c79bb9d0713faa49853ccf34f62a">Send on Update</li>
+<li data-list-item-id="e46fdeab99e3856bf92c16068bb55b5be">Send on Error</li>
+<li data-list-item-id="eb31b313c048380c78b5c6c38d36eab2d">Send on Failure</li>
+<li data-list-item-id="eb126ca24420a07e4e49e55dea16510b6">Send on Safeguard Trigger</li>
+<li data-list-item-id="eb0e341ce68b7c245c4aea5838799d014">Send on Report Only</li>
+<li data-list-item-id="e377c77761cd7078f8e6ded93b94d8e9e">Send Always</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNSH8YRPWXR2NT4G3Y5S78W">Send CSV Report</h4></td>
+<td>
+<p>Sends the integration log report as a zipped CSV file. <br/><strong>Note</strong>: This file is sent as an email attachment only if the <strong>Send Details </strong>option is selected and at least one of the following options is selected:</p>
+<ul>
+<li data-list-item-id="e5c9c3d96f4485639c7e2b88576c3e484">Send on Update</li>
+<li data-list-item-id="ed2579b0a06cd41a186682741f851526a">Send on Error</li>
+<li data-list-item-id="e5eae127f4aff29a492995f33f53394fa">Send on Failure</li>
+<li data-list-item-id="e34db24721a260df79abab2718d5a905d">Send on Safeguard Trigger</li>
+<li data-list-item-id="e0acc9406dc044f3810b7ea0418d9caf1">Send on Report Only</li>
+<li data-list-item-id="e9331dac432fe7822dbbece31c96d334f">Send Always</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td><h4 id="h_01KNNSH8YRG1KG2AHGP75G8SBN">Send XLSX Report</h4></td>
+<td>Sends the integration log report as a zipped XLSX file.</td>
+</tr>
+</tbody></table></figure><h2 id="h_01KNNSFQ298HGKR9CVX7W3F8GW">Supervisions</h2><figure><table><tbody>
+<tr>
+<td><strong>Field</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td><h4 id="h_01KM27D94ZAM5HS7P7PKF36ZZ7">Enable Monitoring</h4></td>
+<td>
+<p>Select this checkbox to enable monitoring of changes proposed during integrations ensuring that updates to user profiles are reviewed and authorized before they are applied to the target application</p>
+<p>For further information on the monitoring configurations, refer to the <a href="https://support.aquera.com/hc/en-us/articles/33344350092951" rel="noopener noreferrer" target="_blank">Monitored Provisioning Setup and Reviews</a> guide.</p>
+</td>
+</tr>
+</tbody></table></figure><h2 id="h_01KNNTS98737QWDK2KKS5BKB5T">Mapping and Assignments</h2><p>The <strong>Mapping and Assignments</strong> tab consolidates the configuration options for setting the user naming attributes, specifying organizational unit (OU) assignment rules, and mapping attributes between Dayforce and AD. </p><h2 id="h_01J6Y6VJYTJBV9Z375CDHWSTT7">User Naming Attributes</h2><p>In Active Directory, the user naming attributes are User Principal Name (UPN), SAM Account Name (SAM), Common Name (CN), and Work Mail. These attributes are used to identify user objects in AD.</p><ul>
 <li data-list-item-id="e63f5e6e5804efa8f70727821ddab7b55">
 <strong>UPN</strong>: The User Principal Name (UPN) attribute is the user logon name (ULN) that is used to log on to a domain. The UPN must be unique in the forest. By convention, UPN should map to the user's email address. A UPN consists of a prefix (the user account name) and a suffix (a DNS domain name). The prefix is joined with the suffix using the @ symbol. The format of UPN is <em>username@DomainName</em>. For example, <em>barbarajensen@aquera.com</em><br/> </li>
 <li data-list-item-id="e9590d14dc8bb14aa3dc4b652ed448849">
@@ -155,7 +727,7 @@
 <strong>For Conditions and Assignments</strong>: Select this option to use JavaScript expressions for setting the conditions and the OU assignments.<br/><img alt="full exp.png" height="288" src="./assets/cd98592c30e3550e.bin" width="2412"/>
 </li>
 </ul>
-</li></ol><p>You can expand the Custom Expression editor area by clicking the <img alt="expand.png" height="15" src="./assets/c85c3e4e719adb40.bin" width="18"/> icon and then write the Javascript expressions.</p><p><strong>Note</strong>: Click <strong>Switch to Condition Builder</strong> if you want to switch out of the Expression mode.</p><h3 id="h_01KCG27YQWM4VR8P3RPRQK74MG">Set the Sequence of Evaluation of Rules</h3><p>You can reorder the OU assignment rules to set the sequence in which the OU rules will be evaluated. If a user does not satisfy an OU rule, the integration proceeds to the next OU rule in the sequence. You can change the sequence of an OU rule in one of the following ways:</p><ul>
+</li></ol><p>You can expand the Custom Expression editor area by clicking the <img alt="expand.png" height="15" src="./assets/c85c3e4e719adb40.bin" width="18"/> icon and then write the JavaScript expressions.</p><p><strong>Note</strong>: Click <strong>Switch to Condition Builder</strong> if you want to switch out of the Expression mode.</p><h3 id="h_01KCG27YQWM4VR8P3RPRQK74MG">Set the Sequence of Evaluation of Rules</h3><p>You can reorder the OU assignment rules to set the sequence in which the OU rules will be evaluated. If a user does not satisfy an OU rule, the integration proceeds to the next OU rule in the sequence. You can change the sequence of an OU rule in one of the following ways:</p><ul>
 <li data-list-item-id="e38c5c2b2c7b7765a5d18e51fa1ee71ea">Click and hold the drag handle icon (<img alt="priority-icon.png" height="20" src="./assets/a3a9b9b5531b281c.bin" width="18"/>) next to an OU rule and drag it to the desired position.</li>
 <li data-list-item-id="e0b2ebfa6215cc0201198d8258ee384da">Click on the sequence number next to an OU rule and enter the new sequence number to which the OU rule has to be positioned. The OU rules are re-sequenced accordingly.</li>
 </ul><h3 id="h_01KCG3WRW18Y2BHSHM6NM5H9M2">Import OU Rules</h3><p>You can import the OU rules from a CSV file. Click <strong>Import</strong> <strong>OU Rules</strong> &gt;<strong> Choose File </strong>to import a CSV file that contains OU assignment rules. The CSV file to be imported must have the following columns:</p><ul>
@@ -267,7 +839,7 @@
 </li>
 </ul>
 </li>
-</ul><h1 id="h_01K1X7GKQKGYQTTNQVH6GAFV18">Integration Execution Report in Excel Format</h1><p>When the integration runs, an integration execution report is generated in Excel format and sent as an attachment to the list of email addresses configured in <strong>To</strong> field under the <strong>Report Setings</strong> section of the <strong>Configuration</strong> tab.</p><p><strong>Note</strong>: The report is generated only if you have enabled the <strong>Send Reports </strong>option and configured the related fields.</p><p>The Excel workbook will have the following sheets:</p><figure><table><tbody>
+</ul><h1 id="h_01K1X7GKQKGYQTTNQVH6GAFV18">Integration Execution Report in Excel Format</h1><p>When the integration runs, an integration execution report is generated in Excel format and sent as an attachment to the list of email addresses configured in the <strong>Admin Email List</strong> field under the <strong>Admin Notification </strong>section of the <strong>Configuration</strong> tab.</p><p><strong>Note</strong>: The report is generated only if you have enabled the <strong>Send XLSX Report </strong>option.</p><p>The Excel workbook will have the following sheets:</p><figure><table><tbody>
 <tr>
 <td><strong>Sheet Name</strong></td>
 <td><strong>Details</strong></td>

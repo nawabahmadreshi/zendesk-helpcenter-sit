@@ -19,11 +19,11 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Active Directory / ServiceNow Group Sync Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the steps required to set up an integration that manages user memberships in Active Directory Security Groups and Distribution Lists (DLs) based on ServiceNow tickets. It enables automated addition, removal, and updating of group memberships, supports the creation of new distribution lists, ensures group type consistency between ServiceNow and Active Directory, and provides ticket reassignment in case of operation failures to streamline group management workflows.</p><p>To successfully manage groups in Active Directory, users must exist in both ServiceNow and Active Directory to ensure accurate group assignments and updates.</p><p>To identify user records across both systems, the integration uses the <strong>Employee number</strong> attribute from <strong>ServiceNow </strong>and matches it to the <strong>Employee ID</strong> in the <strong>Active Directory</strong> as a correlation attribute.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The ServiceNow / Active Directory integrations provide the following functions:</p><ul>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the steps required to set up an integration that manages user memberships in Active Directory Security Groups and Distribution Lists (DLs) based on ServiceNow tickets.</p><p>To successfully manage groups in Active Directory, users must exist in both ServiceNow and Active Directory to ensure accurate group assignments and updates.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The ServiceNow / Active Directory integrations provide the following functions:</p><ul>
 <li data-list-item-id="ee4816b3ab15f90bb2a409c415c36608c">
 <strong>Security Group Management</strong>: Automatically adds or removes users from Active Directory security groups based on ServiceNow tickets.</li>
 <li data-list-item-id="e9756fd04b8cfa4466491fde1ee405736">
-<strong>Distribution List Management</strong>: Automates provisioning of users in distribution lists, including creating new distribution lists or updating membership of existing distribution lists based on ServiceNow tickets.</li>
+<strong>Distribution List Management</strong>: Automates the creation of new distribution lists and adds users to both new and existing distribution lists based on ServiceNow ticket requests.</li>
 <li data-list-item-id="e675525421f58ba10d1af5bd2bf71840d">
 <strong>Group Type Validation</strong>: Ensures that requested group types from ServiceNow (Security Group or Distribution List) match the actual group type in Active Directory to prevent processing errors.</li>
 <li data-list-item-id="e08ea853453473cee5e45413a5dd63488">
@@ -40,7 +40,7 @@
 <strong>Active Directory (AD)</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
 </ul>
 </li>
-</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section explains how to connect ServiceNow with Active Directory to manage Security Groups and Distribution Lists (DLs). It guides you through creating the integration, setting your preferences, and defining how group memberships and operations are mapped between ServiceNow and Active Directory.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section explains how to connect ServiceNow with Active Directory to manage Security Groups and Distribution Lists (DLs). It guides you through creating the integration, setting your preferences, and defining how attributes are mapped between ServiceNow and Active Directory.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="efc0e91c2aa1d3fffc3d4446f81a5ee29">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="ec78369a80ee18edeeecece5635c1a27e">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="e3a863827a528b4940687f7511f2ef387">Click<strong> Create Integration</strong>.</li>
@@ -64,14 +64,14 @@
 <li data-list-item-id="e80e154964ca34b43deee65751c3b1916">
 <strong>Enable Ticket Reassignment For Failure</strong>: Select to automatically reassign the ticket to the configured group if the requested operation fails during the integration run. When enabled, the <a href="#h_01K35A8BW0AFVC2DSAZHQQXN72">Ticket Reassignment</a> section is displayed under the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Group Management</a> section.</li>
 <li data-list-item-id="e5accb2752877386a26c05c98ca782eb7">
-<strong>Enable Automated Closure of Related Tasks</strong>: Select to automatically close all associated tasks when the parent RITM is resolved.</li>
-</ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Group Management</h3><p>The <strong>Group Management</strong> section allows you to control how users are added to, updated in, or removed from Active Directory Security Groups and Distribution Lists (DLs) based on ServiceNow tickets.</p><h4 id="h_01KJCACEEY4B8Q3SJRP2S701X7">Group Management Settings</h4><p>Enable the following group management settings based on your requirements:</p><ul>
+<strong>Enable Automated Closure of Related Tasks</strong>: Select to automatically close all associated tasks when the parent RITM’s requested operation is successfully completed.</li>
+</ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Group Management</h3><p>The Group Management section allows you to control how users are managed in Active Directory Security Groups and Distribution Lists (DLs) based on ServiceNow tickets. It supports adding and removing users in security groups, as well as creating new distribution lists and adding users to both new and existing distribution lists.</p><h4 id="h_01KJCACEEY4B8Q3SJRP2S701X7">Group Management Settings</h4><p>Enable the following group management settings based on your requirements:</p><ul>
 <li data-list-item-id="ea1b68b7babb2b692b8bb57f8bf9b4d4c">
-<strong>Enable Security Group Management</strong>: Select to manage Active Directory security group memberships based on ServiceNow requests. When enabled, the <strong>Security Group Management Settings</strong> section is displayed for further configuration.</li>
+<strong>Enable Security Group Management</strong>: Select to manage Active Directory security group memberships based on ServiceNow requests. When enabled, the <a href="#h_01KJC5XNEZ1QQWAQ5E4JSNA7A6">Security Group Management Settings</a> section is displayed for further configuration.</li>
 <li data-list-item-id="eaa53f1b2ba08e5d1f3762c6195002d1b">
-<strong>Enable Distribution List Management</strong>: Select to manage Active Directory distribution list memberships based on ServiceNow requests. When enabled, the <strong>Distribution List Settings</strong> section is displayed for further configuration.</li>
+<strong>Enable Distribution List Management</strong>: Select to create and manage Active Directory distribution lists based on ServiceNow requests. When enabled, the <a href="#h_01KNRGEWH3ZRS0M6A63W6WBTX4">Distribution List Settings</a> section is displayed for further configuration.<br/><strong>Note</strong>: You can create new DLs and add users to existing ones. Users cannot be removed directly from a DL. To remove users, disable <strong>Enable Group Type Match</strong> and configure <strong>Security Group Management Settings</strong> with the DL selected as the group type.</li>
 <li data-list-item-id="e3fe367fa65d7b07612bb6f617b19cdbb">
-<strong>Enable Group Type Match</strong>: Select to ensure that the requested group type (Security Group or Distribution List) from ServiceNow matches the actual group type in Active Directory before processing. If there is a mismatch in the type, the integration will fail.</li>
+<strong>Enable Group Type Match</strong>: Select to ensure that the requested group type (Security Group or Distribution List) from ServiceNow matches the actual group type in Active Directory during processing. If there is a mismatch in the type, the integration will fail.</li>
 </ul><h4 id="h_01KNRGEWH35PQW9BRZMT91RBP8">User Correlation Settings</h4><p>Configure the following user correlation field settings:</p><ul>
 <li data-list-item-id="e820b49833768ab348e5ffbc83ce5c967">
 <strong>Select Source Attribute</strong>: Select an attribute in ServiceNow that matches the selected Active Directory attribute value to identify common users across ServiceNow and Active Directory. For example, select <strong>Employee number</strong> as the correlation attribute in ServiceNow.</li>
@@ -88,15 +88,15 @@
 <li data-list-item-id="eb91a4a578f9bc09e5315337344ca86f7">
 <strong>Select Option For Create New Group</strong>: Select the dropdown value of the operation field that indicates a new distribution list should be created.</li>
 <li data-list-item-id="ecd0b6dcbb9988243217ef43dc702529e">
-<strong>Select Option To Modify Member</strong>: Select the dropdown value of the operation field that indicates an existing distribution list should be updated.</li>
+<strong>Select Option To Modify Member</strong>: Select the dropdown value of the operation field that indicates an existing distribution list should be updated by adding users.</li>
 <li data-list-item-id="ecdb15acda7e9379e5f682a821c187dc2">
 <strong>Select Group Correlation Field</strong>: Select the ServiceNow field containing group names that match the Active Directory group name field to identify common groups across both systems.</li>
 <li data-list-item-id="e92de8886446edc6c045d75690759d1e0">
 <strong>AD Correlation Field</strong>: Select the Active Directory field containing group names that match the selected ServiceNow group name field to identify common groups across both systems.</li>
 <li data-list-item-id="e3d54a657e1a1d30f2bd1766a33c90683">
-<strong>Unique Identifier Field for Process</strong>: Select the ServiceNow ticket field that contains the group type values used to determine which groups should be processed.</li>
+<strong>Unique Identifier Field for Process</strong>: Select the ServiceNow ticket field that identifies the group type value for processing.</li>
 <li data-list-item-id="e5b007f659597e0f11161b4966f16f861">
-<strong>Unique Identifier Value for Process</strong>: Select the dropdown value of the group type field that indicates the group type to be processed, for example, <strong>DL</strong> for Distribution List.</li>
+<strong>Unique Identifier Value for Process</strong>: Select the dropdown value of the group type field that indicates which group type should be processed.</li>
 </ul><h4 id="h_01KJC5XNEZ1QQWAQ5E4JSNA7A6">Security Group Management Settings</h4><p>Configure the following settings for the security group management:</p><ul>
 <li data-list-item-id="e64c36be6150fe820e96d19f0ce635b93">
 <strong>Select Catalog</strong>: Select the ServiceNow catalog used for security-group-related requests.</li>
@@ -111,9 +111,9 @@
 <li data-list-item-id="eb0b9f81a05a1abf1bf89994c8b0d4e0c">
 <strong>Select User Field</strong>: Select the ServiceNow ticket field that identifies users whose security group membership will be managed.</li>
 <li data-list-item-id="e60e946841efb4d630adcd1826c14f3c9">
-<strong>Unique Identifier Field for Process</strong>: Select the ServiceNow ticket field that contains the group type values used to determine which groups should be processed.</li>
+<strong>Unique Identifier Field for Process</strong>: Select the ServiceNow ticket field that identifies the group type value for processing.</li>
 <li data-list-item-id="e7e615440614dab8dfb4491704a42cd1f">
-<strong>Unique Identifier Value for Process</strong>: Select the dropdown value of the group type field that indicates the group type to be processed, for example, select <strong>SG</strong> for Security Group.</li>
+<strong>Unique Identifier Value for Process</strong>: Select the dropdown value of the group type field that indicates which group type should be processed.</li>
 </ul><h3 id="h_01KJSG3B4TWY4Y0YHA7JYH681N">Logging</h3><p>The Logging section enables you to customize the log generation settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Logging</strong> settings in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e6f1b22344aefc169d794ec13add284c7">
 <strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
 <li data-list-item-id="efa80579753c517fcc7aaab98e73cf0cb">

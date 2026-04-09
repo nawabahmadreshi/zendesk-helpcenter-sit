@@ -19,24 +19,28 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Active Directory / ServiceNow Group Sync Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the steps required to set up an integration that synchronizes user data from ServiceNow to Active Directory and enables the writeback process from Active Directory to ServiceNow to support user lifecycle and group management.</p><p>To identify user records across both systems, the integration uses the <strong>Employee number</strong> attribute from <strong>ServiceNow </strong>and matches it to the <strong>Employee ID</strong> in the <strong>Active Directory</strong> as a correlation attribute.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The ServiceNow / Active Directory integrations provide the following functions:</p><ul>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the steps required to set up an integration that manages user memberships in Active Directory Security Groups and Distribution Lists (DLs) based on ServiceNow tickets. It enables automated addition, removal, and updating of group memberships, supports the creation of new distribution lists, ensures group type consistency between ServiceNow and Active Directory, and provides ticket reassignment in case of operation failures to streamline group management workflows.</p><p>To successfully manage groups in Active Directory, users must exist in both ServiceNow and Active Directory to ensure accurate group assignments and updates.</p><p>To identify user records across both systems, the integration uses the <strong>Employee number</strong> attribute from <strong>ServiceNow </strong>and matches it to the <strong>Employee ID</strong> in the <strong>Active Directory</strong> as a correlation attribute.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The ServiceNow / Active Directory integrations provide the following functions:</p><ul>
 <li data-list-item-id="ee4816b3ab15f90bb2a409c415c36608c">
-<strong>User Lifecycle Management</strong>: Handles user creation, updates, deactivation, and deletion from ServiceNow to Active Directory. If the <strong>Enable ServiceNow writeback</strong> feature is enabled, the integration can create, update, or deactivate user records in ServiceNow based on changes made in Active Directory</li>
+<strong>Security Group Management</strong>: Automatically adds or removes users from Active Directory security groups based on ServiceNow tickets.</li>
 <li data-list-item-id="e9756fd04b8cfa4466491fde1ee405736">
-<strong>Group Assignment</strong>: Assigns users to specific groups in Active Directory based on work location attributes like location, country, state, and city. Group assignments are ignored if the conditions are not met or if work location details are missing.</li>
+<strong>Distribution List Management</strong>: Automates provisioning of users in distribution lists, including creating new distribution lists or updating membership of existing distribution lists based on ServiceNow tickets.</li>
+<li data-list-item-id="e675525421f58ba10d1af5bd2bf71840d">
+<strong>Group Type Validation</strong>: Ensures that requested group types from ServiceNow (Security Group or Distribution List) match the actual group type in Active Directory to prevent processing errors.</li>
+<li data-list-item-id="e08ea853453473cee5e45413a5dd63488">
+<strong>Automated Ticket Reassignment</strong>: Reassigns ServiceNow tickets to a specified group if an integration fails, enabling prompt resolution without manual intervention.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="ec4d7cd5284b74009d1035dab3dcfc86c">
 <strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
 </li>
 <li data-list-item-id="ef191cb3d17955691b7008f3cc45d3644">
-<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:<ul>
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
 <li data-list-item-id="e9e07cb13235107c67693e847232f6179">
 <strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details.</li>
 <li data-list-item-id="e0484e5787730355eef6e758bcc855f5d">
 <strong>Active Directory (AD)</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
 </ul>
 </li>
-</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section describes the configuration required to integrate ServiceNow with Active Directory and enable the writeback process from Active Directory to ServiceNow. It outlines the steps to create the integration, configure integration preferences, and define how data is mapped.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section explains how to connect ServiceNow with Active Directory to manage Security Groups and Distribution Lists (DLs). It guides you through creating the integration, setting your preferences, and defining how group memberships and operations are mapped between ServiceNow and Active Directory.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="efc0e91c2aa1d3fffc3d4446f81a5ee29">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="ec78369a80ee18edeeecece5635c1a27e">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="e3a863827a528b4940687f7511f2ef387">Click<strong> Create Integration</strong>.</li>
@@ -50,15 +54,15 @@
 <li data-list-item-id="e39a2c203cac38f71982e25de9da53f92">
 <strong>Enable Report-Only Mode</strong>: Select to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
 <li data-list-item-id="e9331bbf505119b59895fd202c266f946">
-<strong>Enable Logging</strong>: Select to generate logs outlining data changes. When enabled, the <a href="#01KFD0RVZ9EM5G97GM5P4XPJHZ">Logging</a> section is displayed for further configuration.</li>
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes. When enabled, the <a href="#h_01KJSG3B4TWY4Y0YHA7JYH681N">Logging</a> section is displayed for further configuration.</li>
 <li data-list-item-id="ec6cc721a6e5c11d0144449ed4e6c4083">
 <strong>Enable Report Generation</strong>: Select to generate the integration report. When enabled, the <a href="#h_01KJCACEEY59F57BDZB9P806BK">Reporting</a> section is displayed for further configuration.</li>
 <li data-list-item-id="e9e7d2822002e4d95eb0f798e6fc0c2f8">
-<strong>Enable Notification</strong>: Select to enable the integration-related notifications. When enabled, the <a href="#h_01KJPK5XFJJ4APFAYTF6WSS6A2">Notifications</a> section is displayed for further configuration.</li>
+<strong>Enable Notification</strong>: Select to enable the integration-related notifications. When enabled, the <a href="#h_01KJPK5XFJJ4APFAYTF6WSS6A2">Notification</a> section is displayed for further configuration.</li>
 <li data-list-item-id="ecac564e064844a9d4d06f54f9e13094f">
 <strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics. When enabled, the <a href="#01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insights</a> section is displayed for further configuration.</li>
 <li data-list-item-id="e80e154964ca34b43deee65751c3b1916">
-<strong>Enable Ticket Reassignment For Failure</strong>: Select to automatically reassign the ticket to the configured group if the requested operation fails during the integration run. When enabled, the Ticket Reassignment section is displayed under the <strong>Group Management</strong> section.</li>
+<strong>Enable Ticket Reassignment For Failure</strong>: Select to automatically reassign the ticket to the configured group if the requested operation fails during the integration run. When enabled, the <a href="#h_01K35A8BW0AFVC2DSAZHQQXN72">Ticket Reassignment</a> section is displayed under the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Group Management</a> section.</li>
 <li data-list-item-id="e5accb2752877386a26c05c98ca782eb7">
 <strong>Enable Automated Closure of Related Tasks</strong>: Select to automatically close all associated tasks when the parent RITM is resolved.</li>
 </ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Group Management</h3><p>The <strong>Group Management</strong> section allows you to control how users are added to, updated in, or removed from Active Directory Security Groups and Distribution Lists (DLs) based on ServiceNow tickets.</p><h4 id="h_01KJCACEEY4B8Q3SJRP2S701X7">Group Management Settings</h4><p>Enable the following group management settings based on your requirements:</p><ul>
@@ -67,14 +71,14 @@
 <li data-list-item-id="eaa53f1b2ba08e5d1f3762c6195002d1b">
 <strong>Enable Distribution List Management</strong>: Select to manage Active Directory distribution list memberships based on ServiceNow requests. When enabled, the <strong>Distribution List Settings</strong> section is displayed for further configuration.</li>
 <li data-list-item-id="e3fe367fa65d7b07612bb6f617b19cdbb">
-<strong>Enable Group Type Match</strong>: Select to ensure that the requested group type (Security Group or Distribution List) from ServiceNow matches the actual group type in Active Directory before processing. If the types do not match, the integration will fail.</li>
+<strong>Enable Group Type Match</strong>: Select to ensure that the requested group type (Security Group or Distribution List) from ServiceNow matches the actual group type in Active Directory before processing. If there is a mismatch in the type, the integration will fail.</li>
 </ul><h4 id="h_01KNRGEWH35PQW9BRZMT91RBP8">User Correlation Settings</h4><p>Configure the following user correlation field settings:</p><ul>
 <li data-list-item-id="e820b49833768ab348e5ffbc83ce5c967">
 <strong>Select Source Attribute</strong>: Select an attribute in ServiceNow that matches the selected Active Directory attribute value to identify common users across ServiceNow and Active Directory. For example, select <strong>Employee number</strong> as the correlation attribute in ServiceNow.</li>
 <li data-list-item-id="e37ee0c46d0bf95402e9dadbf5580846a">
 <strong>Select Target Attribute</strong>: Select an attribute in Active Directory that matches the selected ServiceNow attribute value to identify common users across ServiceNow and Active Directory. For example, select <strong>Employee ID</strong> as the correlation attribute in Active Directory.</li>
 </ul><h4 id="h_01K35A8BW0AFVC2DSAZHQQXN72">Ticket Reassignment</h4><p>Configure the following settings for the reassignment of the ticket:</p><ul><li data-list-item-id="e25dc59255b970063527b8e4fe47403f4">
-<strong>Enter Group Name For Re-assignment</strong>: Enter the group name to reassign the RITM ticket if the requested operation fails during the integration run.</li></ul><h4 id="h_01KNRGEWH3ZRS0M6A63W6WBTX4">Distribution List Settings</h4><p>Configure the following settings for the distribution list management:</p><ul>
+<strong>Enter Group Name For Re-assignment</strong>: Enter the group name to reassign the RITM ticket if the requested operation fails during the integration run.</li></ul><h4 id="h_01KNRGEWH3ZRS0M6A63W6WBTX4">Distribution List Settings</h4><p>Configure the following settings to manage distribution lists:</p><ul>
 <li data-list-item-id="e0852eae39a96d729fdb49403456dacb6">
 <strong>Select Catalog</strong>: Select the ServiceNow catalog used for distribution-list-related requests.</li>
 <li data-list-item-id="ef8d351ce52d444f67762011e870132dd">
@@ -144,7 +148,7 @@
 </li></ul>
 </li>
 </ul>
-</li></ul><h3 id="h_01KJPK5XFJJ4APFAYTF6WSS6A2">Notifications</h3><p>The Notifications section enables you to customize the notification settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Notification</strong> settings is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>Configure the following settings for email notifications:</p><ul>
+</li></ul><h3 id="h_01KJPK5XFJJ4APFAYTF6WSS6A2">Notification</h3><p>The Notifications section enables you to customize the notification settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Notification</strong> settings is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>Configure the following settings for email notifications:</p><ul>
 <li data-list-item-id="ebb39753b8451965fc80a7cae05c32e6d">
 <strong>Send Email to Admin</strong>: Select to send email notifications to all admins. When enabled, the following field appears for further configuration.<ul><li data-list-item-id="e9b2c9e2417d33e7f31a9925dfee9dedc">
 <strong>Admin Email List</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li></ul>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Active Directory / ServiceNow Group Sync Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Active Directory / ServiceNow Group Sync Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the steps required to set up an integration that synchronizes user data from ServiceNow to Active Directory and enables the writeback process from Active Directory to ServiceNow to support user lifecycle and group management.</p><p>To identify user records across both systems, the integration uses the <strong>Employee number</strong> attribute from <strong>ServiceNow </strong>and matches it to the <strong>Employee ID</strong> in the <strong>Active Directory</strong> as a correlation attribute.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The ServiceNow / Active Directory integrations provide the following functions:</p><ul>
+<li data-list-item-id="ee4816b3ab15f90bb2a409c415c36608c">
+<strong>User Lifecycle Management</strong>: Handles user creation, updates, deactivation, and deletion from ServiceNow to Active Directory. If the <strong>Enable ServiceNow writeback</strong> feature is enabled, the integration can create, update, or deactivate user records in ServiceNow based on changes made in Active Directory</li>
+<li data-list-item-id="e9756fd04b8cfa4466491fde1ee405736">
+<strong>Group Assignment</strong>: Assigns users to specific groups in Active Directory based on work location attributes like location, country, state, and city. Group assignments are ignored if the conditions are not met or if work location details are missing.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ec4d7cd5284b74009d1035dab3dcfc86c">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="ef191cb3d17955691b7008f3cc45d3644">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal:<ul>
+<li data-list-item-id="e9e07cb13235107c67693e847232f6179">
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details.</li>
+<li data-list-item-id="e0484e5787730355eef6e758bcc855f5d">
+<strong>Active Directory (AD)</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section describes the configuration required to integrate ServiceNow with Active Directory and enable the writeback process from Active Directory to ServiceNow. It outlines the steps to create the integration, configure integration preferences, and define how data is mapped.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="efc0e91c2aa1d3fffc3d4446f81a5ee29">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ec78369a80ee18edeeecece5635c1a27e">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e3a863827a528b4940687f7511f2ef387">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e0d47ea6139cfa82273af1f7be0f710ff">Search for <strong>Active Directory / ServiceNow </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="e0fde23d823205f3c03e194058cba78bf">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e8f3fa9cf091808bc409c06aa6821b6c2">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e3238ea676d9e6b79e5b8be1184e0ea1d">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="e59aff1818b4e33b698e9cd7671ebcbbf">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KJC556XPVH8J5K1FE38DYNFW">Integration Scenarios</h4><p>Enable the following integration feature:</p><ul><li data-list-item-id="e51c06b2b6155612ca3f13857acc7a5b2">
+<strong>Enable Group Management</strong>: Select to enable group management from ServiceNow to Active Directory. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Group Management</a> section is displayed to configure further integration settings for group management.</li></ul><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e39a2c203cac38f71982e25de9da53f92">
+<strong>Enable Report-Only Mode</strong>: Select to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e9331bbf505119b59895fd202c266f946">
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes. When enabled, the <a href="#01KFD0RVZ9EM5G97GM5P4XPJHZ">Logging</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ec6cc721a6e5c11d0144449ed4e6c4083">
+<strong>Enable Report Generation</strong>: Select to generate the integration report. When enabled, the <a href="#h_01KJCACEEY59F57BDZB9P806BK">Reporting</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e9e7d2822002e4d95eb0f798e6fc0c2f8">
+<strong>Enable Notification</strong>: Select to enable the integration-related notifications. When enabled, the <a href="#h_01KJPK5XFJJ4APFAYTF6WSS6A2">Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ecac564e064844a9d4d06f54f9e13094f">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics. When enabled, the <a href="#01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insights</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e80e154964ca34b43deee65751c3b1916">
+<strong>Enable Ticket Reassignment For Failure</strong>: Select to automatically reassign the ticket to the configured group if the requested operation fails during the integration run. When enabled, the Ticket Reassignment section is displayed under the <strong>Group Management</strong> section.</li>
+<li data-list-item-id="e5accb2752877386a26c05c98ca782eb7">
+<strong>Enable Automated Closure of Related Tasks</strong>: Select to automatically close all associated tasks when the parent RITM is resolved.</li>
+</ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Group Management</h3><p>The <strong>Group Management</strong> section allows you to control how users are added to, updated in, or removed from Active Directory Security Groups and Distribution Lists (DLs) based on ServiceNow tickets.</p><h4 id="h_01KJCACEEY4B8Q3SJRP2S701X7">Group Management Settings</h4><p>Enable the following group management settings based on your requirements:</p><ul>
+<li data-list-item-id="ea1b68b7babb2b692b8bb57f8bf9b4d4c">
+<strong>Enable Security Group Management</strong>: Select to manage Active Directory security group memberships based on ServiceNow requests. When enabled, the <strong>Security Group Management Settings</strong> section is displayed for further configuration.</li>
+<li data-list-item-id="eaa53f1b2ba08e5d1f3762c6195002d1b">
+<strong>Enable Distribution List Management</strong>: Select to manage Active Directory distribution list memberships based on ServiceNow requests. When enabled, the <strong>Distribution List Settings</strong> section is displayed for further configuration.</li>
+<li data-list-item-id="e3fe367fa65d7b07612bb6f617b19cdbb">
+<strong>Enable Group Type Match</strong>: Select to ensure that the requested group type (Security Group or Distribution List) from ServiceNow matches the actual group type in Active Directory before processing. If the types do not match, the integration will fail.</li>
+</ul><h4 id="h_01KNRGEWH35PQW9BRZMT91RBP8">User Correlation Settings</h4><p>Configure the following correlation field settings:</p><ul>
+<li data-list-item-id="e820b49833768ab348e5ffbc83ce5c967">
+<strong>Select Source Attribute</strong>: Select an attribute in ServiceNow that matches the selected Active Directory attribute value to identify common users across ServiceNow and Active Directory. For example, select <strong>Employee number</strong> as the correlation attribute in ServiceNow.</li>
+<li data-list-item-id="e37ee0c46d0bf95402e9dadbf5580846a">
+<strong>Select Target Attribute</strong>: Select an attribute in Active Directory that matches the selected ServiceNow attribute value to identify common users across ServiceNow and Active Directory. For example, select <strong>Employee ID</strong> as the correlation attribute in Active Directory.</li>
+</ul><h4 id="h_01K35A8BW0AFVC2DSAZHQQXN72">Ticket Reassignment</h4><p>Configure the following settings for the reassignment of the ticket:</p><ul><li data-list-item-id="e25dc59255b970063527b8e4fe47403f4">
+<strong>Enter Group Name For Re-assignment</strong>: Enter the group name to reassign the RITM ticket if the requested operation fails during the integration run.</li></ul><h4 id="h_01KNRGEWH3ZRS0M6A63W6WBTX4">Distribution List Settings</h4><p>Configure the following user provisioning settings:</p><ul>
+<li data-list-item-id="e0852eae39a96d729fdb49403456dacb6">
+<strong>Select Catalog</strong>: Select the ServiceNow catalog that is used for distribution list requests. For example, select <strong>Create User Catalog</strong> to process only user creation-related requests.</li>
+<li data-list-item-id="ef8d351ce52d444f67762011e870132dd">
+<strong>Variable for user's first name</strong>: Select the ServiceNow catalog variable that identifies the user's first name.</li>
+<li data-list-item-id="efc2f8660b1dff7de5b7ad8b4a3b08b63">
+<strong>Variable for user's middle name</strong>: Select the ServiceNow catalog variable that identifies the user's middle name.</li>
+<li data-list-item-id="eb91a4a578f9bc09e5315337344ca86f7">
+<strong>Variable for user's last name</strong>: Select the ServiceNow catalog variable that identifies the user's last name.</li>
+<li data-list-item-id="ecd0b6dcbb9988243217ef43dc702529e">
+<strong>Variable for user's manager</strong>: Select the ServiceNow catalog variable that identifies the user’s manager information.</li>
+</ul><h4 id="h_01KJC5XNEZ1QQWAQ5E4JSNA7A6">Security Group Management Settings</h4><p>Configure the following settings related to user creation:</p><ul>
+<li data-list-item-id="e0eba5e1ee6a6f9f319e996927320de83">
+<strong>Select Catalog</strong>: Select the ServiceNow service catalog that is used for security group requests. For example, select <strong>Create User Catalog</strong> to process only user creation-related requests.</li>
+<li data-list-item-id="e708b1e1328b5bb3f9c8139e524c24cbb">
+<strong>Variable for user's first name</strong>: Select the ServiceNow catalog variable that identifies the user's first name.</li>
+<li data-list-item-id="e2d8f853ec4e0d31d218e1a8733c20c59">
+<strong>Variable for user's middle name</strong>: Select the ServiceNow catalog variable that identifies the user's middle name.</li>
+<li data-list-item-id="e684d8d28553da4e9776fb49896a60a91">
+<strong>Variable for user's last name</strong>: Select the ServiceNow catalog variable that identifies the user's last name.</li>
+<li data-list-item-id="eac407c82ae3110cc6041578e809e397a">
+<strong>Variable for user's manager</strong>: Select the ServiceNow catalog variable that identifies the user’s manager information.</li>
+</ul><h3 id="h_01KJSG3B4TWY4Y0YHA7JYH681N">Logging</h3><p>The Logging section enables you to customize the log generation settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e6f1b22344aefc169d794ec13add284c7">
+<strong>Log detail level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ed4ffb14b9506b2f6d171014e2471da67">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="efa80579753c517fcc7aaab98e73cf0cb">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+</ul>
+</li></ul><h3 id="h_01KJCACEEY59F57BDZB9P806BK">Reporting</h3><p>The Reporting section enables you to customize the report generation settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable report generation</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="ef0646c846daa7d32fe2aadbf33491318">
+<strong>Report detail level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ef89d6d9f2b82e048b6a1f91766f20abf">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ee33e2badc42864944e0a319ffe82aa7f">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e9a56b7ee7721b6404fb5b05dbb8b2495">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following fields are displayed once you select <strong>Custom</strong>:<ul><li data-list-item-id="e5e151dc339ecc986e0c899743e51d16f">
+<strong>Attribute filter</strong>: Select the attribute filter to include or exclude attributes in the report. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="ea70ce5cca606717b7681bb1cbf333d8d">
+<strong>Attributes to be included in report</strong>: Configure the attributes to be included in the report. This parameter is displayed only if the <strong>Included attributes</strong> option is selected in the <strong>Attribute filter</strong> parameter.</li>
+<li data-list-item-id="e37d5906fc662efbb1e06f0b3f59f4656">
+<strong>Attributes to be excluded in report</strong>: Configure the attributes to be excluded in the report. This parameter is displayed only if the <strong>Excluded attributes</strong> option is selected in the <strong>Attribute filter </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KJPK5XFJJ4APFAYTF6WSS6A2">Notifications</h3><p>The Notifications section enables you to customize the notification settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable notifications</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>Configure the following settings for email notifications:</p><ul>
+<li data-list-item-id="ebb39753b8451965fc80a7cae05c32e6d">
+<strong>Notify Admin via email</strong>: Select this checkbox to send email notifications to all admins. When enabled, the following field appears for further configuration.<ul><li data-list-item-id="e9b2c9e2417d33e7f31a9925dfee9dedc">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li></ul>
+</li>
+<li data-list-item-id="ea25201cc096cd28401960a0cd3cab579">
+<strong>Notification report detail level</strong>: Select the desired notification report detail level. The following are the available options:<ul>
+<li data-list-item-id="eae80b6124a36aa1fefd2d31450d97e16">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e4bacd250e6d2baef2a350fe57146c648">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e40c00df172ca314ce2c6879096be1de1">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul><li data-list-item-id="e8ef6090118206d8d9ef2c30838bbca25">
+<strong>Attribute filter</strong>: Select the attribute filter to include or exclude attributes in the notification report. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="ecfafdde2faa33eb76374733639dac4a3">
+<strong>Attributes to be included in notification report</strong>: Configure the attributes to be included in the notification report. This parameter is displayed only if the <strong>Included attributes</strong> option is selected in the <strong>Attribute filter</strong> parameter.</li>
+<li data-list-item-id="ea17c50c8ce599115e4a0bc412527795c">
+<strong>Attributes to be excluded in notification report</strong>: Configure the attributes to be excluded in the notification report. This parameter is displayed only if the <strong>Excluded attributes</strong> option is selected in the <strong>Attribute filter </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e5a030e6f68d9e0499102fb5fe52ddf11">
+<strong>Notify manager via email</strong>: Select this checkbox to send email notifications to the user's manager.</li>
+</ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insights</h3><p>The Log Insights section enables you to customize the log insight settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable log insights</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="ec6d65cb0fceb5fce0d64916153b251a4">
+<strong>Log Insights level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ef56644def7569cba78dd79085a3d3ac1">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="eb5578cb8a469bf08ada7b4d7f511ec7d">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e164bf7a2707400b539e6416b46da13eb">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following fields are displayed once you select <strong>Custom</strong>:<ul><li data-list-item-id="e8e7b2bb10173be3cb065fcfb234c6396">
+<strong>Attribute filter</strong>: Select the attribute filter to include or exclude attributes in the log insights. Based on your selection, the following fields are displayed:<ul>
+<li data-list-item-id="e0ed8de59cecb1bbfab3a515dfb4635e4">
+<strong>Attributes to be included in log insights</strong>: Configure the attributes to be included in the log insights. This parameter is displayed only if the <strong>Included attributes</strong> option is selected in the <strong>Attribute filter</strong> parameter.</li>
+<li data-list-item-id="e46c7bdef992c0a8850f9eced02a3a8aa">
+<strong>Attributes to be excluded in log insights</strong>: Configure the attributes to be excluded in the log insights. This parameter is displayed only if the <strong>Excluded attributes</strong> option is selected in the <strong>Attribute filter </strong>field.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h2 id="h_01KJQBZ2W357JNQX1FM9HFDPE0">Attribute Map</h2><p>The Attribute Map tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side, and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>
+<span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span><span></span>
+</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="e14536c1909452c2ffb5319327f996103">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="ead83066e9efe381ad45be41375fde7bb">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="e96628541bb4722f7fd1cd5d9b97f5f10">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="e2bb282d564b56cb69d2e3d19a68f2ad0">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="e8623ae267be5db8b107918ccf07f1bbe">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e0f209ced88b1c805324dd78be77e202a">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="e2756c2d96602530f442d09356b65a47b">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e65cdf54f261b6e3d1689cbded5548bdc">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="e148d0e9fe1ded8b21e20ff77c974cbef">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
+  </div>
+</body>
+</html>

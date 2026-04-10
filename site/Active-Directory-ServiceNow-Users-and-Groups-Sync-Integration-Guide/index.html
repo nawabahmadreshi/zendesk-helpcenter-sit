@@ -1,0 +1,349 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Active Directory / ServiceNow Users and Groups Sync Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Active Directory / ServiceNow Users and Groups Sync Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the steps required to set up an integration that synchronizes user data from ServiceNow to Active Directory and enables the writeback process from Active Directory to ServiceNow to support user lifecycle and group management.</p><p>To identify user records across both systems, the integration uses the <strong>Employee number</strong> attribute from <strong>ServiceNow </strong>and matches it to the <strong>Employee ID</strong> in the <strong>Active Directory</strong> as a correlation attribute.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The ServiceNow / Active Directory integrations provide the following functions:</p><ul>
+<li data-list-item-id="ef5efb1de165fbfbbc3582ea2ffe6379f">
+<strong>User Lifecycle Management</strong>: Handles user creation, updates, deactivation, and deletion from ServiceNow to Active Directory. If the <strong>Enable ServiceNow writeback</strong> feature is enabled, the integration can create, update, or deactivate user records in ServiceNow based on changes made in Active Directory</li>
+<li data-list-item-id="efc5b67604c7253208143337d7b265d13">
+<strong>Group Assignment</strong>: Assigns users to specific groups in Active Directory based on work location attributes like location, country, state, and city. Group assignments are ignored if the conditions are not met or if work location details are missing.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ecec3dcf93cc5294f870e826ccf823020">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e80aef70378464915c75e757bec56c709">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e9a292de2ec56744e8c398cee8dd1070d">
+<strong>ServiceNow</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details.</li>
+<li data-list-item-id="e7784c1c8329d088886b62e02904d75a5">
+<strong>Active Directory (AD)</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934" rel="noopener noreferrer" target="_blank">Active Directory (AD) Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section describes the configuration required to integrate ServiceNow with Active Directory and enable the writeback process from Active Directory to ServiceNow. It outlines the steps to create the integration, configure integration preferences, and define how data is mapped.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e9cd63c4fd36b012a55525d3d86279d6b">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e1cec88d0b184e247a37a40353e8046ab">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e26c122c561d85d1900f573ae06fb7ea2">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ec201969c71d66d10683247bd5816fb03">Search for <strong>Active Directory / ServiceNow </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="e621823acd05aa37f2acd47cff1a98b35">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e0fa1c1b51ee90baae3d27e3af1d458db">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ec871437b35271b72519f91322ea05e28">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="e2aaae6cdc81d34f693c11c0ce8706a93">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KJC556XPVH8J5K1FE38DYNFW">Integration Features</h4><p>Enable the following features based on your requirements:</p><ul>
+<li data-list-item-id="ebc75b944ef60bf42592af3ab85e13029">
+<strong>Enable user lifecycle management</strong>: Select to synchronize user data from ServiceNow to Active Directory. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Manage Users</a>, <a href="#h_01KJSG4251V483NS6N0BBFS9KP">Naming Policy</a>, and <a href="#h_01KJSD1S2JWXMP985BXBJ7Q4PM">Password Policy</a> sections are displayed, allowing you to configure additional integration settings and automate the creation, updating, deactivation, and deletion of users in Active Directory based on ServiceNow tickets.</li>
+<li data-list-item-id="eba401af344452d64e5a94717d5e7b0d3">
+<strong>Enable group assignment</strong>: Select to enable group assignments in Active Directory. When enabled, the <a href="#h_01KJYJR534NQZYWAK7H0X9NA4C">Group Assignment Rules</a> tab is displayed to configure further integration settings for the group assignment.</li>
+<li data-list-item-id="e791f663c8ce9d1f19ce331c91ab666f3">
+<strong>Enable ServiceNow writeback</strong>: Select to enable writeback of user records from Active Directory to ServiceNow. When enabled, the system can create, update, or deactivate user records in ServiceNow based on changes made in Active Directory. In this configuration, Active Directory acts as the source application, and ServiceNow acts as the target application.</li>
+</ul><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e355381a82927b6cc359e683b1846ae9f">
+<strong>Enable report-only mode</strong>: Select to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e7a923d7f2beea2698b673078ff8897a8">
+<strong>Enable logging</strong>: Select to generate logs outlining data changes. When enabled, the <a href="#01KFD0RVZ9EM5G97GM5P4XPJHZ">Logging</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ed67f565bfb8fc29228de53419cba50d9">
+<strong>Enable report generation</strong>: Select to generate the integration report. When enabled, the <a href="#h_01KJCACEEY59F57BDZB9P806BK">Reporting</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e29cec22234b289f15e742a500c7069fa">
+<strong>Enable notifications</strong>: Select to enable the integration-related notifications. When enabled, the <a href="#h_01KJPK5XFJJ4APFAYTF6WSS6A2">Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e66cca382169c0027a644b936d3b8a43c">
+<strong>Enable log insights</strong>: Select to visualize the integration-related metrics. When enabled, the <a href="#01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insights</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ed7678e4bb650831900d7714698df3843">
+<strong>Enable debug mode</strong>: Select to generate logs outlining data changes that would occur for debugging. When enabled, the <a href="#h_01KNPGAX4E2ZC0M4P7QQFSTVF4">Debug Mode</a> section is displayed for further configuration.</li>
+</ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Manage Users</h3><p>The <strong>Manage Users</strong> section allows you to configure user integration settings and automate the creation, updating, or deactivation of users in Active Directory based on ServiceNow tickets. </p><p><strong>Notes</strong>:</p><ul>
+<li data-list-item-id="e9caa2e593fd4c5571b83a5a5694d9358">Every user must have an <strong>Employee Number</strong>. This is the key identifier used by the integration. If it is missing, the system won’t be able to create or manage the user.</li>
+<li data-list-item-id="ee7d29928a0b472f64939f1ccb0c964b5">When a ticket is sent to a manager for approval (for inactive users), it depends on whether that user still exists. If the user gets deleted before the manager takes action, the system won’t be able to process the request. The manager will see a warning that the user no longer exists, and the ticket will remain open.</li>
+<li data-list-item-id="e399ec1e4773dc26548f64b375e7da2f5">If you update a user’s details (like their name) and, at the same time, try to assign them as a manager to a new user in the same integration run, it may not work. This happens because the system may not recognize the updated details immediately. To avoid this, make such changes in separate runs.</li>
+</ul><p>It has the following settings:</p><h4 id="h_01KJCACEEY4B8Q3SJRP2S701X7">Correlation Settings</h4><p>Configure the following correlation field settings:</p><ul>
+<li data-list-item-id="e6d40a1c8144a1f909b7de7623f7527ad">
+<strong>ServiceNow correlation attribute</strong>: Select an attribute in ServiceNow that matches the selected Active Directory attribute value to identify common users across ServiceNow and Active Directory. For example, select <strong>Employee number</strong> as the correlation attribute in ServiceNow.</li>
+<li data-list-item-id="ecfa76f5cccf182f235ab10ee8180abc3">
+<strong>AD correlation attribute</strong>: Select an attribute in Active Directory that matches the selected ServiceNow attribute value to identify common users across ServiceNow and Active Directory. For example, select <strong>employeeId</strong> as the correlation attribute in Active Directory.</li>
+</ul><h4 id="h_01K35A8BW0AFVC2DSAZHQQXN72">User Provisioning Settings</h4><p>Configure the following user provisioning settings:</p><ul>
+<li data-list-item-id="e3c41b47d3c8014db6118ce2d01b0a84a">
+<strong>Enable user creation</strong>: Select to create new user records in Active Directory based on requests submitted through the ServiceNow catalog. When enabled, the <a href="#h_01KJC5XNEZ1QQWAQ5E4JSNA7A6">User Creation Settings</a>, <a href="#h_01KJSG4251V483NS6N0BBFS9KP">Naming Policy</a>, and <a href="#h_01KJSD1S2JWXMP985BXBJ7Q4PM">Password Policy</a> sections appear for further configuration.</li>
+<li data-list-item-id="e7abd733308010148be90b81ee3392788">
+<strong>Enable user updation</strong>: Select to update existing user records in Active Directory based on requests submitted through the ServiceNow catalog. When enabled, the <a href="#h_01KJCACEEYVYVM0GVWWTAJ1AQ7">User Updation Settings</a> section appears for further configuration.</li>
+<li data-list-item-id="e8473132420999f881162589d0d4f2f81">
+<strong>Enable user deactivation</strong>: Select to deactivate user records in Active Directory based on requests submitted through the ServiceNow catalog. When enabled, the <a href="#h_01KJCB6WM1RKBRB9K1SK6204X9">User Deactivation Settings</a> section appears for further configuration.</li>
+<li data-list-item-id="e6dcc94cf7a6ea56aefd66e8b3a568c4a">
+<strong>Enable manager mapping</strong>: Select to map the user's manager. When enabled, the <strong>Variable for user's manager</strong> field appears in the <a href="#h_01KJC5XNEZ1QQWAQ5E4JSNA7A6">User Creation Settings</a> and <a href="#h_01KJCACEEYVYVM0GVWWTAJ1AQ7">User Updation Settings</a> for further configuration.</li>
+<li data-list-item-id="e4be25ae25d1fc3a59f00cc7da41c19fb">
+<strong>Enable future hire user activation</strong>: Select to activate users with a future hire date. These users will initially be created in Active Directory in a disabled state. When enabled, the <a href="#h_01KMD70678KJ57FAQ7W2FBCAZY">Future Hire Settings</a> section appears for further configuration.</li>
+<li data-list-item-id="e113783b880840b7b4838fa2b39150c56">
+<strong>Enable inactive user discovery</strong>: Select to identify AD users who have not logged in for a specified period. When enabled, the <a href="#h_01KMD73YA4D0AECSBBRHMJY2N7">Inactive User Discovery Settings</a> section appears for further configuration:</li>
+<li data-list-item-id="e8824f15eefe4360ba49b70ebbcc30373">
+<strong>Enable inactive user management</strong>: Select to manage AD users who have not logged in for a specified period, based on the manager’s actions in the ServiceNow ticket. When enabled, the <a href="#h_01KMD7419Z4SKADMAFVDTE4YTE">Inactive User Management Settings</a> section appears for further configuration.</li>
+<li data-list-item-id="eaad2f191a087626bec6683ef7515fad9">
+<strong>Enable deletion of disabled AD users</strong>: Select to automatically delete disabled OU users from Active Directory. If the <strong>Enable ServiceNow writeback</strong> option is enabled, the corresponding user in ServiceNow will also be deactivated when the deletion occurs. When enabled, the <a href="#h_01KMD7445RKSVRCMZV5F9GWGMW">User Deletion Settings</a> section appears for further configuration.</li>
+</ul><h4 id="h_01KJC5XNEZ1QQWAQ5E4JSNA7A6">User Creation Settings</h4><p>Configure the following settings related to user creation:</p><ul>
+<li data-list-item-id="e76f6cc1180f7384107bb277115ab2bc0">
+<strong>Service catalog</strong>: Select the ServiceNow service catalog that is used for user creation requests. For example, select <strong>Create User Catalog</strong> to process only user creation-related requests.</li>
+<li data-list-item-id="e5547c7e384c8c301aab30b581135e7c6">
+<strong>Variable for user's first name</strong>: Select the ServiceNow catalog variable that identifies the user's first name.</li>
+<li data-list-item-id="e65fda36a7684c0c05ddfc018840c34bb">
+<strong>Variable for user's middle name</strong>: Select the ServiceNow catalog variable that identifies the user's middle name.</li>
+<li data-list-item-id="e3c3dc096a42eb303a859dff50ce3cca7">
+<strong>Variable for user's last name</strong>: Select the ServiceNow catalog variable that identifies the user's last name.</li>
+<li data-list-item-id="e9c09129465bac008f95cf6752b04abe2">
+<strong>Variable for user's manager</strong>: Select the ServiceNow catalog variable that identifies the user’s manager information.</li>
+</ul><h4 id="h_01KJCACEEYVYVM0GVWWTAJ1AQ7">User Updation Settings</h4><p>Configure the following settings related to user updation:</p><ul>
+<li data-list-item-id="ea55334098cc8609b1ad0b13bea5ffcfc">
+<strong>Service catalog</strong>: Select the ServiceNow service catalog used for user update requests. For example, select <strong>Update User Catalog</strong> to process only user updation-related requests.</li>
+<li data-list-item-id="eb3bcc74faec6c5945cae494423061087">
+<strong>Variable to identify the user to update</strong>: Select the ServiceNow catalog variable that identifies the user whose record needs to be updated.</li>
+<li data-list-item-id="e9aefaca63d82f80b696b5c1d7af39035">
+<strong>Variable for user's manager</strong>: Select the ServiceNow catalog variable that identifies the user’s manager information.</li>
+</ul><h4 id="h_01KJCB6WM1RKBRB9K1SK6204X9">User Deactivation Settings</h4><p>Configure the following settings related to user deactivation:</p><ul>
+<li data-list-item-id="ed682fcb29cd380a92f2cd511fbc1f529">
+<strong>Service catalog</strong>: Select the ServiceNow service catalog that is used for user deactivation requests. For example, select <strong>Deactivation of User</strong> to process only user deactivation-related requests.</li>
+<li data-list-item-id="ed81ef8334aaa664d1283c8120ab53cfb">
+<strong>Variable to identify the user to deactivate</strong>: Select the ServiceNow catalog variable that identifies the user whose account needs to be deactivated.</li>
+</ul><h4 id="h_01KMD70678KJ57FAQ7W2FBCAZY">Future Hire Settings</h4><p>Configure the following future hire settings:</p><ul>
+<li data-list-item-id="e1f4dfba4be1ccc9afea3c217f5855165">
+<strong>Variable for user activation date</strong>: Select the ServiceNow catalog variable that contains the user’s start date.</li>
+<li data-list-item-id="e21aff6a6d64621064104ea67b246f16c">
+<strong>Days before onboarding to activation</strong>: Enter the number of days before the user’s onboarding date when the account should be automatically activated in Active Directory. For example, if you enter <em>3</em>, the integration will activate the user account three days before the configured start date.</li>
+</ul><h4 id="h_01KMD73YA4D0AECSBBRHMJY2N7">Inactive User Discovery Settings</h4><p>Configure the following settings to identify inactive users:</p><ul>
+<li data-list-item-id="e9332b8fd8445fc0289d4ee0acbb2f10d">
+<strong>Days since last login</strong>: Enter the number of days to look back from the current date to identify Active Directory users who have not logged in. For example, if you enter <em>90</em>, the integration will identify users who have not logged in within the past 90 days.</li>
+<li data-list-item-id="e89ad009c8ea1b63e430c9c3044b729cf">
+<strong>ServiceNow catalog for inactive user ticket creation</strong>: Choose the service catalog that will be used to create ServiceNow tickets for Active Directory inactive users. When inactive accounts are identified, a ticket will be auto-created under the selected service catalog and assigned to the user’s manager for action. For example, select <strong>User Action Requests</strong> to create inactive user tickets in that catalog. <br/><strong>Note</strong>: The ticket will be auto-created when a user exceeds the threshold specified in <strong>Days since last login</strong>.</li>
+<li data-list-item-id="e50ad8e59e84ce175e6fb93c2a99db404">
+<strong>Variable to identify inactive user</strong>: Choose the ServiceNow catalog variable that identifies the inactive user. For example, select <strong>Request For</strong>, which stores the inactive user record for which the manager must take action in ServiceNow.</li>
+</ul><h4 id="h_01KMD7419Z4SKADMAFVDTE4YTE">Inactive User Management Settings</h4><p>Configure the following settings for inactive user management:</p><ul>
+<li data-list-item-id="efe2a35649f3bd0580f7e1c3961431c4e">
+<strong>Service catalog</strong>: Select the ServiceNow service catalog used for manager user action requests. For example, select <strong>User Action Requests</strong> to process only user action request tickets.</li>
+<li data-list-item-id="ec3ce353dc214da8447a556f438f8cd5a">
+<strong>Variable to identify inactive user</strong>: Choose the ServiceNow catalog variable that identifies the inactive user. For example, select <strong>Request For to</strong> identify the user record on which the manager took action.</li>
+<li data-list-item-id="e408bbf38445fbdda4c2ada9b1096d9d2">
+<strong>Variable to take action for inactive users</strong>: Choose the ServiceNow catalog variable that contains the action taken by the manager for the inactive AD user. For example, select <strong>Action</strong>, which contains the action values applied to inactive users in Active Directory. In this case, the variable may contain values such as <strong>Active</strong>, <strong>Deactive</strong>, and <strong>Delete</strong>.<ul>
+<li data-list-item-id="e224d1ded20ed8fe22db4aa6ff1021975">
+<strong>Notes</strong>: <ul>
+<li data-list-item-id="e5be9d3d3d5f50b2a25504875f74d65a1">The available action values are dynamically pulled from the selected ServiceNow catalog variable. The values <strong>Active</strong>, <strong>Deactive</strong>, and <strong>Delete</strong> mentioned above are only examples. The actual values depend entirely on how the selected catalog variable is configured.</li>
+<li data-list-item-id="e562954b674d0d698d5f1abc805b5aa12">The selections in the <strong>Action value to keep the user active</strong>,  <strong>Action value to deactivate the user</strong>, and <strong>Action value to delete the user</strong> fields must be mutually exclusive. If any values overlap, the integration will fail validation.</li>
+</ul>
+</li>
+<li data-list-item-id="e8eb225069aa33f9aadd71aa2987f8ef3">
+<strong>Action value to keep the user active</strong>: Select the appropriate action value to apply to the inactive user account in Active Directory based on the manager selection in the action catalog to retain the user's access. For example, select <strong>Active</strong> if the manager selected <strong>Active</strong> in the action catalog.</li>
+<li data-list-item-id="ec300689c31280c8be23fa304b0278fda">
+<strong>Action value to deactivate the user</strong>: Select the action value that should be applied to the inactive user account in Active Directory based on the manager selection in the action catalog to deactivate the user. Once deactivated, the account is moved to the designated disabled OU. For example, select <strong>Deactive</strong> if the manager selected <strong>Deactive</strong> in the action catalog to deactivate the user.</li>
+<li data-list-item-id="e0b0f31b1b87e5cf65c010341db946574">
+<strong>Action value to delete the user</strong>: Select the action value that should be applied to the inactive user account in Active Directory based on the manager selection in the action catalog to delete the user. For example, select <strong>Delete</strong> if the manager selected <strong>Delete</strong> in the action catalog to delete the user.</li>
+</ul>
+</li>
+<li data-list-item-id="e41e727d257036ce82c18ba07b1a99d59">
+<strong>Auto-deactivation grace period</strong>: Enter the number of days to wait for manager approval in ServiceNow before the integration automatically deactivates the user in Active Directory. For example, enter <em>7</em> to automatically deactivate the user if the manager does not respond within 7 days. Once the account is deactivated, the user is moved to the designated disabled OU.</li>
+</ul><h4 id="h_01KMD7445RKSVRCMZV5F9GWGMW">User Deletion Settings</h4><p>Configure the following user deletion settings for disabled users:</p><ul><li data-list-item-id="ea2d79ba0117164af7cf06d414d6a1494">
+<strong>Days disabled before deletion</strong>: Enter the number of days a user account must remain in the disabled organizational unit in Active Directory before it is deleted. For example, if you enter <em>30</em>, the integration will delete user accounts that have been disabled in Active Directory for 30 days or more.</li></ul><h4 id="h_01KNPHHJVR3BATK66ESHZ58ADW">Ticket Management Settings</h4><p>Configure the following ticket management settings:</p><ul>
+<li data-list-item-id="ea72bc2d77c028deecd7edec1d2738872">
+<strong>RITM status field</strong>: Select the status field that contains the status values.</li>
+<li data-list-item-id="e15139cfd58193e9caf1205dd4e9d1a4c">
+<strong>RITM status to process</strong>: Select the status from the dropdown that the RITM must have to be processed. For example, select <strong>Open</strong>. Only RITMs with this status will be picked for processing.</li>
+<li data-list-item-id="ea0eae3ca46a15d637772aefabb82409e">
+<strong>Post update RITM status</strong>: Select the status from the dropdown to set in the RITM after successful processing. For example, select <strong>CLOSED_COMPLETE</strong>. When the RITM is processed successfully, its status will be automatically updated to <strong>CLOSED_COMPLETE</strong>.</li>
+</ul><h3 id="h_01KJSG4251V483NS6N0BBFS9KP">Naming Policy</h3><p>The Naming Policy section enables you to customize the naming policy settings for the new Active Directory users.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable user creation</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>Configure the following naming policy settings:</p><h4 id="h_01KJS35S7NDZ6Q5HTCPCM8TWQH">Generate sAMAccount Name</h4><p>Configure the following settings to generate a unique sAMAccount name:</p><ul><li data-list-item-id="e5d1c0dc1168c7169f32c73c079cd48ca">
+<strong>Create a policy to generate a SAMAccount name</strong>: Enter your prompt to create a policy for generating a unique sAMAccount name for new users using Aquera Intelligence. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide for more details.</li></ul><h4 id="h_01KJS7B0KYNC8TVV0MRA6HVNMB">Generate Common Name (CN)</h4><p>Configure the following settings to generate a unique common name:</p><ul><li data-list-item-id="eb183931e9e775555474285c714dfa4c9">
+<strong>Generate a CN using</strong>: Select the drop-down option for generating a unique common name for new users. The following are the available options:<ul>
+<li data-list-item-id="e1eed8e4aa86998fa06b8265d4a1f235c">
+<strong>Use sAMAccount name as CN</strong>: Select this option to use the sAMAccount name generated from the <strong>Generate sAMAccount Name</strong> section as the common name.</li>
+<li data-list-item-id="e7c0065616a2374e2e5f0f62756f4da8e">
+<strong>Create a policy to generate CN</strong>: Select this option to define a custom policy for generating the common name. When selected, the following setting appears to define your policy:<ul><li data-list-item-id="e4434f2bdf0e89e47cca2590967025296">
+<strong>Enter your prompt to generate a CN</strong>: Enter your prompt to create a policy for generating the common name for new users using Aquera Intelligence. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide for more details.</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KJS819S47H9Q0P73V6HZKMCV">Generate User Principal Name (UPN)</h4><p>Configure the following settings to generate a unique UPN:</p><ul><li data-list-item-id="e1550e47d4d08ea0077eebe53c0e97844">
+<strong>Generate a UPN using</strong>: Select the drop-down option for generating a unique user principal name for new users. The following are the available options:<ul>
+<li data-list-item-id="e2980dda3216016f45848907319c6a5df">
+<strong>Use sAMAccount name as UPN</strong>: Select this option to use the sAMAccount name generated from the <strong>Generate sAMAccount Name</strong> section as the user principal name.</li>
+<li data-list-item-id="ec165b0b8107ded2be89fc44150ea387f">
+<strong>Create a policy to generate UPN</strong>: Select this option to define a custom policy for generating the user principal name. When selected, the following setting appears to define your policy:<ul><li data-list-item-id="e885cc79ddbc4064970456478a6b4b6f6">
+<strong>Enter your prompt to generate a UPN</strong>: Enter your prompt to create a policy for generating the user principal name for new users using Aquera Intelligence. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide for more details.</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KJS7VTF1PS4HNNKQ8DN5NH1Q">Generate Email</h4><p>Configure the following settings to generate a unique email address:</p><ul><li data-list-item-id="eb2bbd14648cb6d67a95ee78a85d2cce0">
+<strong>Generate email using</strong>: Select the drop-down option for generating a unique email address for new users. The following are the available options:<ul>
+<li data-list-item-id="eab545a9e86e1207f0539dc31fc77ee4a">
+<strong>Use sAMAccount name as email</strong>: Select this option to use the sAMAccount name generated from the <strong>Generate sAMAccount Name</strong> section for the email generation.</li>
+<li data-list-item-id="ea99e3b2200b0c2e5ea57a26ad1bc1fbc">
+<strong>Use CN as email</strong>: Select this option to use the common name generated from the <strong>Generate Common Name (CN)</strong> section for the email generation.</li>
+<li data-list-item-id="e0811b196dc36234c394acfa19a77caee">
+<strong>Use UPN as email</strong>: Select this option to use the user principal name generated from the <strong>Generate</strong> <strong>User Principal Name (UPN)</strong> section for the email generation.</li>
+<li data-list-item-id="e7593fd81e56204ba03c3a39227606cd3">
+<strong>Create a policy to generate email</strong>: Select this option to define a custom policy for generating the email. When selected, the following setting appears to define your policy:<ul><li data-list-item-id="e395e78345dd943a6b8c0c9504fc8b811">
+<strong>Enter your prompt to generate an email</strong>: Enter your prompt to create a policy for generating the email for new users using Aquera Intelligence. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide for more details.</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KJS952MW19Q1P6BM2CZ0MSK1">Generate Proxy Address</h4><p>Configure the following settings to generate a proxy address:</p><ul>
+<li data-list-item-id="e8b7790deceb31677c98ccf5f5bd8e3d5">
+<strong>Use UPN as proxy address</strong>: Select to use the User Principal Name (UPN) as the proxy address in Active Directory when creating or updating user records. When enabled, the system will automatically assign the UPN as the proxy address.</li>
+<li data-list-item-id="e9818d02bd3bfff9a4e5f38b340ee192b">
+<strong>Use email as a proxy address</strong>: Select this option to use the user’s email address as their proxy address. When enabled, the email address will be added to the <strong>proxyAddress</strong> attribute in Active Directory. This allows the same email address to be used as an alias for mail routing and identification within Active Directory and Exchange environments.</li>
+</ul><h3 id="h_01KJSD1S2JWXMP985BXBJ7Q4PM">Password Policy</h3><p>The Password Policy section allows you to configure password settings for newly created Active Directory users.</p><p>Configure the following password policy settings:</p><ul><li data-list-item-id="efff5e3b7a804b1eeebff412d805c8c87">
+<strong data-end="2291" data-start="2269">Generate password</strong>: Select to automatically generate a secure password for each new Active Directory user. When enabled, the following fields appear for further configuration:<br/><strong>Note</strong>: Enabling this ensures each new user receives a randomly generated, policy-compliant password during provisioning.<ul><li data-end="2711" data-list-item-id="e7870a5d36c55528d48caa10a65f126b6" data-start="2513">
+<strong data-end="2533" data-start="2515">Password generation mode:</strong> Select the password generation method for new user accounts. The following options are available:<ul>
+<li data-end="2711" data-list-item-id="e532727ca6e72c8e4f2a5bc365856a04a" data-start="2513">
+<strong>Custom password policy</strong>: Choose this option to automatically generate a password based on predefined complexity and length requirements. When selected, the following fields appear for further configuration:<ul>
+<li data-end="2711" data-list-item-id="ed1159003ffa0791e4b5d2410c91c6130" data-start="2513">
+<strong>Password type</strong>: Select the desired password complexity level from the drop-down menu.<ul>
+<li data-end="2711" data-list-item-id="ef812b8d83c77a0c0e6be879e0b40f8cc" data-start="2513">
+<strong>Basic</strong>: Includes uppercase letters, lowercase letters, and digits.</li>
+<li data-end="2711" data-list-item-id="ec5928fa84ba92ee0212121da058767d2" data-start="2513">
+<strong>Advanced</strong>: Includes uppercase letters, lowercase letters, digits, and special characters.</li>
+</ul>
+</li>
+<li data-end="2881" data-list-item-id="e9613ed48e29b9aeb0e1cf5a725368d01" data-start="2717">
+<strong>Allowed special characters</strong>: Specify the set of special characters permitted in a user's password.</li>
+<li data-end="2881" data-list-item-id="e88635c916f88f6cbbdef694da81e4458" data-start="2717">
+<strong data-end="2739" data-start="2719">Password length: </strong>Specify the desired length of the generated password. For example, enter <em>14</em> to generate a 14-character password instead of the default length of 12.<br/><strong>Note</strong>: Ensure that this setting matches the password length policy in AD. If you enter 8 here, but the AD minimum requirement is 12, the request will not be processed.</li>
+</ul>
+</li>
+<li data-end="2881" data-list-item-id="eb5a40e0724b8c5ce31059f0a354d056e" data-start="2717">
+<strong>AI-generated password</strong>: Choose this option to create a secure, unique password using an AI-driven approach based on the provided passphrase using Aquera Intelligence. When selected, the following field appears for further configuration:<ul><li data-end="2881" data-list-item-id="ed9091d80dd82bab05f8bcd79d32ae490" data-start="2717">
+<strong>Enter your passphrase</strong>: Provide a passphrase to generate a secure, AI-based password. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide for more details.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li></ul><h3 id="h_01KJSG3B4TWY4Y0YHA7JYH681N">Logging</h3><p>The Logging section enables you to customize the log generation settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e936c1619d913109a4cd9229324e82f54">
+<strong>Log detail level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e970d920ecc1263a247efc0f28e746be7">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e8a044530e4dc97432c1b902ba950ef28">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+</ul>
+</li></ul><h3 id="h_01KJCACEEY59F57BDZB9P806BK">Reporting</h3><p>The Reporting section enables you to customize the report generation settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable report generation</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e88af8f26ff9e9e0a1397f1915323c392">
+<strong>Report detail level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eee77a5ffc3fa02b219c8c6fb4afe280c">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e5c0310702573717563263c9b33236913">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e1530238ab8670598ccb6d7387ca11373">
+<strong>Custom</strong>: Includes or excludes selected attributes. When selected, the following fields are displayed:<ul><li data-list-item-id="e51d3778c120f64bbbc63c9b14ae75c46">
+<strong>Attribute filter</strong>: Select the attribute filter to include or exclude attributes in the report. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="ef11979c349dd714cd941c793d987bb1d">
+<strong>Attributes to be included in report</strong>: Configure the attributes to be included in the report. This parameter is displayed only if the <strong>Included attributes</strong> option is selected in the <strong>Attribute filter</strong> parameter.</li>
+<li data-list-item-id="e0d0471a8240f94d15a22cc82a9651e81">
+<strong>Attributes to be excluded in report</strong>: Configure the attributes to be excluded in the report. This parameter is displayed only if the <strong>Excluded attributes</strong> option is selected in the <strong>Attribute filter </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KJPK5XFJJ4APFAYTF6WSS6A2">Notifications</h3><p>The Notifications section enables you to customize the notification settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable notifications</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>Configure the following settings for email notifications:</p><ul>
+<li data-list-item-id="e6a6a69a77e3bcd5fe2d2326eb79481d1">
+<strong>Notify Admin via email</strong>: Select to send email notifications to all admins. When enabled, the following field appears for further configuration.<ul><li data-list-item-id="ea6358f118bc29ae30580d5e6e98b905e">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li></ul>
+</li>
+<li data-list-item-id="ed6a1b5c462eac135ecf2e97a690aee6c">
+<strong>Notification report detail level</strong>: Select the desired notification report detail level. The following are the available options:<ul>
+<li data-list-item-id="edb31743b793c3b9377f1dd92ec06a95f">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e88b86a7a90a82a8b680f755d14ce928c">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ec6bc76da17b6ab3574b0e6a32ac09a65">
+<strong>Custom</strong>: Includes or excludes selected attributes. When selected, the following fields are displayed:<ul><li data-list-item-id="ecd3b93b8c6b3ec599afc26f661395eb5">
+<strong>Attribute filter</strong>: Select the attribute filter to include or exclude attributes in the notification report. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="e5523455f38933b22bf34baf46e150aeb">
+<strong>Attributes to be included in notification report</strong>: Configure the attributes to be included in the notification report. This parameter is displayed only if the <strong>Included attributes</strong> option is selected in the <strong>Attribute filter</strong> parameter.</li>
+<li data-list-item-id="ed1f28eb161c5d6504be0f2927b755311">
+<strong>Attributes to be excluded in notification report</strong>: Configure the attributes to be excluded in the notification report. This parameter is displayed only if the <strong>Excluded attributes</strong> option is selected in the <strong>Attribute filter </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="efa8ad278974b014fefe0e3eace236a84">
+<strong>Notify manager via email</strong>: Select to send email notifications to the user's manager.</li>
+</ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insights</h3><p>The Log Insights section enables you to customize the log insight settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable log insights</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e5634af6df5b5dd099221e03a6871b454">
+<strong>Log Insights detail level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e8e92f907dfdb36c3025bb2a0ceb62495">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e9dd08649921986a6e122a3c463bf64cd">
+<strong>Summary only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e8032355ee5e206781a2cc1657cb8af56">
+<strong>Custom</strong>: Includes or excludes selected attributes. When selected, the following fields are displayed:<ul><li data-list-item-id="ee15d357b25ec5c81855358e539a9c479">
+<strong>Attribute filter</strong>: Select the attribute filter to include or exclude attributes in the log insights. Based on your selection, the following fields are displayed:<ul>
+<li data-list-item-id="e079cd92b1cdc7f2ac378fdbcc315f608">
+<strong>Attributes to be included in log insights</strong>: Configure the attributes to be included in the log insights. This parameter is displayed only if the <strong>Included attributes</strong> option is selected in the <strong>Attribute filter</strong> parameter.</li>
+<li data-list-item-id="ea41b9a0f0e246385e0d47121d8d22352">
+<strong>Attributes to be excluded in log insights</strong>: Configure the attributes to be excluded in the log insights. This parameter is displayed only if the <strong>Excluded attributes</strong> option is selected in the <strong>Attribute filter </strong>field.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KNPGAX4E2ZC0M4P7QQFSTVF4">Debug Mode</h3><p>The Debug Mode section enables you to customize the debug settings.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable debug mode</strong> setting is enabled in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><p>It has the following settings:</p><p><strong>Service catalog RITM number(s)</strong>: Enter specific RITMs to process only those tickets.</p><h2 id="h_01K04HD998SCMWKJ7BWM43V581">OU Assignment Rules</h2><p>The OU Assignment Rules tab allows you to configure how OU assignments for all active users and disabled users are managed through this integration. In this section, you can define the specific OUs that determine how users are assigned.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e75d37cba1ce6ecfbdea250035c3b9f15">
+<strong>Enter OU for disabled users</strong>: Specify the OU to which users will be moved when their accounts are disabled.</li>
+<li data-list-item-id="e71abd9d8b6adcde32758d32163de7344">
+<strong>Enter OU for active users</strong>: Specify the OU where newly created users will be placed by default.</li>
+</ul><h2 id="h_01KJYJR534NQZYWAK7H0X9NA4C">Group Assignment Rules</h2><p>The Group Assignment Rules tab allows you to configure how group assignments are managed through this integration. In this tab, you can define conditions that determine how users are assigned to groups.</p><p>Perform the following steps to create a new group rule:</p><ol>
+<li data-list-item-id="e85db437b3d82a0d82cc9b2c6ff408756">Navigate to the <strong>Group Assignment Rules</strong> tab. The following fields are displayed:</li>
+<li data-list-item-id="e57972b39383efe61122e370b0807027e">Select the source table in the <strong>Source Table</strong> field to fetch all the columns from that table.</li>
+<li data-list-item-id="e1c7496ca0d9c935833cbfb37979f466f">Click <strong>Choose Attribute</strong> to view the list of available ServiceNow attributes that you can use to set conditions.</li>
+<li data-list-item-id="ed11b3a2c87929bb06ea7130ec4dc0da8">Search and select the attribute you want to use to define a condition. For example, select <strong>Country</strong>.</li>
+<li data-list-item-id="ec9a060d5d9d113aa82dbb6813f89a203">Select the attribute value to define the rule. If multiple values are provided, an <strong>OR</strong> condition is applied among them. For example, in the following sample condition, a user's country must be either <strong>India</strong> or the <strong>USA</strong> to satisfy this assignment rule.</li>
+<li data-list-item-id="e502e0419c56a1b41bb871a823e809d04">In the <strong>Group Name</strong> column, select the groups to which users who satisfy the specified condition should be assigned. The list displays all groups from the Active Directory application.</li>
+<li data-list-item-id="e29331adb1a40f994de600f87dc9104fe">If required to add another condition and assignment for the same selected attribute, click <strong>Add Row</strong>. You can add any number of rows within a rule.</li>
+<li data-list-item-id="ef6c3d136208cf37b65d625eb7afd5d2a">If required to include another attribute to the group assignment rule, click the <strong>+</strong> icon next to the selected attribute name. If multiple columns are added for a rule, the <strong>AND</strong> logic is applied between different columns. For example, in the following sample condition, a user’s country is <strong>India</strong><em>,</em> and the state is <strong>TN</strong>, the user who satisfies both conditions will be assigned to the configured groups. You can use multiple attributes and their corresponding values to define the group assignment rule.</li>
+<li data-list-item-id="e14974fa368aac2d3827c46c2ee1e2daa">[Optional] If you want to write a JavaScript expression to set the condition, click <strong>Switch to Expression</strong>.<br/><strong>Note</strong>: When you switch to <strong>Expression</strong> mode or back to <strong>Condition Builder</strong> mode, all configured conditions in the rule will be cleared.<ol>
+<li data-list-item-id="ee3531537820019d1cd9e8daafed59a77">Select one of the following based on your requirement:<ul>
+<li data-list-item-id="e1a478602066ec74c6060ae245a1990d7">
+<strong>For Conditions Only</strong>: Select this if you want to write a JavaScript expression only for the conditions.</li>
+<li data-list-item-id="eae853d038f05ed16cbc62fc7a2d837d4">
+<strong>For Conditions and Assignments</strong>: Select this if you want to write an expression for both conditions and assignments.</li>
+</ul>
+</li>
+<li data-list-item-id="e67fe0badf1a6f76edea0a7d681864169">Click <strong>Continue</strong> to configure the expression.</li>
+<li data-list-item-id="e135c555c286475257b7b05174a0d3292">
+<p>Enter the expression based on your selection:</p>
+<ul>
+<li data-list-item-id="e7338db4b197692a4ebcefaf662ce64b5">If <strong>For Conditions Only</strong> is selected, enter the expression for the conditions, and then select the group in the <strong>Group Name</strong> column.</li>
+<li data-list-item-id="e13048e31e07fbd7ea45417d8f00806ad">If <strong>For Conditions and Assignments</strong> is selected, enter the expression that defines both the conditions and the group assignment.</li>
+</ul>
+<p><strong>Note</strong>: Expressions can use attributes from both the source and destination applications. The configured expressions must always be evaluated to true or false. The prefix <strong>SOURCE</strong> must be used in an expression to represent an attribute in the source application, and <strong>DEST</strong> must be used to represent an attribute in the destination application. For example, <em>SOURCE.addresses[].locality</em>, <em>SOURCE.addresses[].country</em>, and <em>DEST.group.displayName</em>.</p>
+</li>
+</ol>
+</li>
+<li data-list-item-id="eeb82263f2e92cb883b79273eae4661d7">Click <strong>Add New Rule</strong> to add another assignment rule, as explained above.</li>
+<li data-list-item-id="e9844ff6fa6e3151e754f4a66c9381d77">Select the Active Directory attribute that stores the user’s group membership information in the <strong>AD user field for the group assignment</strong> field.</li>
+</ol><p><strong>Notes</strong>:</p><ul>
+<li data-list-item-id="e99c7a616727ec626358a155ab2558554">You can add any number of assignment rules. However, you can see only 5 rules on a single page. If you add more than 5 rules, navigation options will be available at the bottom of the page to navigate to other pages for configuring or viewing the remaining defined rules.</li>
+<li data-list-item-id="e76e13a9357fa80240fc7937a47120bfd">If required, click the <strong>Delete</strong> icon at the right end of the row to delete a row based on your requirement.</li>
+</ul><h2 id="h_01KJQBZ2W357JNQX1FM9HFDPE0">Attribute Map</h2><p>The Attribute Map tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side, and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>
+<span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</span><span></span>
+</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="ed84d4c29f4cb7d313bbdcd411c75ada5">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="ee7a6c4c1b1f34d5ee53e60cc6f629ab3">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="e6bb0c8c557ce4d93163ca70a20ed23eb">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="ec210764f2e73bd252fd294d9030497bf">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="ee3b50f62515fa28b3b45ed322b80fd85">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="ed81022bb8cd75a9ec43a10f690511330">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="e9b33369a3a7382d209e06187c218fb0a">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="effd59b7488a48945a1888b9760a08b47">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="ea19f47c0e2172f8bc3d4fc669465ce54">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
+  </div>
+</body>
+</html>

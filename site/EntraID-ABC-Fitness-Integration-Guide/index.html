@@ -1,0 +1,247 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EntraID / ABC Fitness Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>EntraID / ABC Fitness Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KMFGDCAS57FR4KR1ATCW5X8J">Overview</h1><p>The Aquera platform enables organizations to automate and scale identity data management by orchestrating integrations across enterprise systems. This integration facilitates automated employee provisioning from Microsoft Entra ID to ABC Fitness, ensuring consistent and reliable synchronization of employee data.</p><p>The integration retrieves users from Microsoft Entra ID based on configured filters and conditions. It evaluates each user against defined criteria, including source filters, sync conditions, and attribute mappings, to determine eligibility for processing.</p><p>Using configured correlation attributes, such as email addresses or external identifiers, the integration checks whether corresponding employee records exist in ABC Fitness. If no matching record is found, a new employee profile is created with the mapped attributes such as first name, last name, email, department, and club association. Department values are dynamically resolved to align with the target system’s structure, ensuring accurate assignment.</p><p>If a matching employee already exists, the integration skips the record to prevent duplicate creation. Similarly, users who do not meet the configured conditions or fail validation checks are excluded from processing.</p><p>This integration focuses on provisioning employee records while maintaining data consistency and operational efficiency across systems.</p><h3 data-end="268" data-section-id="3xldsw" data-start="251" id="h_01KP37TRPR5SP3J95QB3S02JNH">Key Functions</h3><p data-end="343" data-start="270">The Entra ID to ABC Fitness integration provides the following functions:</p><ul>
+<li data-list-item-id="ee0907c3a68f41e2e0597d8748d8edd1c"><p data-end="808" data-start="345"><strong data-end="408" data-start="345">Create employee records in ABC Fitness using Entra ID data: </strong>When a user is retrieved from Microsoft Entra ID and meets the configured criteria, such as sync mode, filters, and create conditions, the integration creates a corresponding employee record in ABC Fitness. The employee record is populated with key attributes, including first name, last name, email, department, club association, and other fields, which are mapped according to the configured attribute mappings.</p></li>
+<li data-list-item-id="ed62a3aea0a8436b355acee8d7370f36b"><p data-end="1191" data-start="810"><strong data-end="879" data-start="810">Prevent duplicate employee creation using correlation attributes: </strong>Before creating a new employee, the integration evaluates existing records in ABC Fitness using configured source and target correlation attributes, such as email or external identifiers. If a matching record is found, the integration skips creation to prevent duplicate entries and maintain data consistency.</p></li>
+<li data-list-item-id="e96d266ce747d3f3b9bbbaa522d2fdc09"><p data-end="1502" data-start="1193"><strong data-end="1255" data-start="1193">Apply filtering and conditions to control user processing: </strong>The integration processes users based on configured filters and conditions, including source filters, create conditions, and sync configurations. Only users who meet these conditions are considered for provisioning, while others are skipped.</p></li>
+<li data-list-item-id="e12462e98e5e6b433d717b0e57d56a556"><p data-end="1795" data-start="1504"><strong data-end="1572" data-start="1504">Map and transform Entra ID attributes to the ABC Fitness schema: </strong>User attributes from Microsoft Entra ID are mapped to the ABC Fitness employee schema using configurable attribute mappings. These mappings define how source attributes are transformed and populated in the target system.</p></li>
+<li data-list-item-id="e8b3571b5fbbf5e333e390328f937db69"><p data-end="2189" data-start="1797"><strong data-end="1848" data-start="1797">Resolve departments dynamically in ABC Fitness: </strong>The integration retrieves department data from ABC Fitness and dynamically maps Entra ID department values to corresponding department identifiers. This ensures that each employee is assigned to the correct department in the target system. If a valid department mapping is not found, the employee record is skipped based on configuration.</p></li>
+</ul><h2 data-end="110" data-section-id="lkxh6o" data-start="94" id="h_01KMFJABH1NFCAPAHT4ANFPWAW">Prerequisites</h2><p data-end="148" data-start="112">The following are the prerequisites:</p><ul>
+<li data-list-item-id="e102ba0f3cedf79d56d1c806178c0492e"><p data-end="427" data-start="150"><strong data-end="196" data-start="150">Tenant Account in the Aquera Admin Portal: </strong>You must have a tenant account with admin access in the Aquera Admin Portal. Visit <a data-end="305" data-start="282" href="https://admin.aquera.io" rel="noopener" target="_new">https://admin.aquera.io</a><a href="https://admin.aquera.io"><span aria-hidden="true"></span></a> to register. Contact your Aquera account manager to obtain access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a data-end="427" data-start="400" href="https://admin.eu.aquera.io/" rel="noopener" target="_new">https://admin.eu.aquera.io/</a><a href="https://admin.eu.aquera.io/"><span aria-hidden="true"></span></a></p></li>
+<li data-list-item-id="eb0e4a65050e872b49d611fa69a5a1ae8">
+<p data-end="540" data-start="429"><strong data-end="493" data-start="429">Configure Application Connectors in the Aquera Admin Portal: </strong>You must configure the following connectors:</p>
+<ul>
+<li data-end="1716" data-list-item-id="e797d7c5a58ab6e08f633107f93d96929" data-start="1339"><p data-end="1716" data-start="1341"><strong data-end="1367" data-start="1341">Microsoft 365 Entra ID: </strong>Add and configure the Microsoft Entra ID connector. This connector reads user data from Entra ID to create employees in ABC Fitness. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711-Microsoft-365-Configuration-Guide" rel="noopener noreferrer" target="_blank">Microsoft 365 Entra ID Configuration Guide</a> for details on app registration, Graph API permissions, and completing tenant consent.</p></li>
+<li data-list-item-id="eb88782e566fd8c4c8bbdf55f88d89bce"><p data-end="1032" data-start="790"><strong data-end="806" data-start="790">ABC Fitness: </strong>Add and configure the ABC Fitness connector with the required API credentials. This connector is used to create and manage employee records. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/14518155280407-ABC-Fitness-Configuration-Guide" rel="noopener noreferrer" target="_blank">ABC Fitness Configuration Guide</a> for authentication and setup details.</p></li>
+</ul>
+</li>
+</ul><h2 data-end="1059" data-section-id="1crf2m4" data-start="1039" id="h_01KMFJABH40T1MG5F6SYDD4B73">Integration Setup</h2><p data-end="1195" data-start="1061">This section outlines the configuration required to integrate Entra ID with ABC Fitness in the Aquera Admin Portal.</p><h3 data-end="1219" data-section-id="1r7l4d8" data-start="1197" id="h_01KMFJABH4YTC71BFX9HGFNTPJ">Create Integration</h3><p>Perform the following steps to create the integration:</p><ol>
+<li data-end="1288" data-list-item-id="e53fb15e6207ae95120d63b211e14319a" data-section-id="v8rplt" data-start="1251">Log in to the Aquera Admin Portal</li>
+<li data-end="1315" data-list-item-id="ef6b12dbe6703af0010f19d43fe55adc9" data-section-id="1vvf8c6" data-start="1289">Go to <strong data-end="1313" data-start="1297">Integrations</strong>
+</li>
+<li data-end="1348" data-list-item-id="e931a2fdfc1b38170da5d9c3678029644" data-section-id="11zh43g" data-start="1316">Click <strong data-end="1346" data-start="1324">Create Integration</strong>
+</li>
+<li data-end="1400" data-list-item-id="ef1fb8c70c1b141440519ae7dce087f70" data-section-id="1xbo2gz" data-start="1349">Search for <strong data-end="1389" data-start="1362">Entra ID / ABC Fitness</strong> in the search box next to the <strong>Explore Templates </strong>section. </li>
+<li data-list-item-id="ed22458dd3cafe17456d307144a5f1009">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-end="1433" data-list-item-id="eaaf524cf94f55e80e7d44a0f884c789d" data-section-id="mi63jf" data-start="1401">Enter a name and description for the integration.</li>
+<li data-end="1508" data-list-item-id="ee15c2a2c3b88c18c6de517efe060bf65" data-section-id="iyed3a" data-start="1434">Select connector instances:<ul>
+<li data-end="1490" data-list-item-id="ecd40fb9383b1f931042c36359ee11652" data-section-id="r9xk7x" data-start="1468"><strong>Microsoft Entra ID</strong></li>
+<li data-end="1508" data-list-item-id="e54bd3e0a169851fded7dec7b06aa0a08" data-section-id="uujw7s" data-start="1493"><strong>ABC Fitness</strong></li>
+</ul>
+</li>
+<li data-end="1562" data-list-item-id="e5124974c647e75716db382ba5fabb657" data-section-id="qq8aya" data-start="1509">Click <strong data-end="1529" data-start="1517">Continue</strong> to open the Configuration page.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h3 id="h_01KJC556XPVH8J5K1FE38DYNFW">Integration Scenarios</h3><p>Enable the following features based on your requirements:</p><ul><li data-list-item-id="e52840e3e14bb623129f5fef205078348"><p data-end="741" data-start="314"><strong data-end="355" data-start="314">Enable Employee Lifecycle Management: </strong>Select to process users from Microsoft Entra ID for employee provisioning in ABC Fitness based on configured conditions. For example, when selected, eligible users are evaluated during execution and created as employee records in ABC Fitness.</p></li></ul><h3 id="h_01KP3DG4V771QNRCPD298HDPYM">General Settings</h3><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="ec632c13cbc7a3b13ac380ac3c2d0906e">
+<strong>Enable Report-Only Mode:</strong> Select to generate a report detailing the data changes that would happen, but without applying them. For example, when enabled, the integration shows which users would be created but does not make any changes.</li>
+<li data-list-item-id="e552a305c5519b3bc47f8e12cad8ebda8">
+<strong>Enable Logging:</strong> Select to generate logs outlining data changes. For example, when enabled, you can review logs to see how each user was processed.</li>
+<li data-list-item-id="e2f85e1fc6858067b6904f01d8779df9b">
+<strong>Enable Notifications:</strong> Select to enable the integration-related notifications. For example, you receive alerts when the integration completes or fails.</li>
+<li data-list-item-id="e593700b17e1560831fdaea82443466ed">
+<strong>Enable Report Generation:</strong> Select to generate the integration report. For example, a CSV report is created showing created, skipped, and failed records.</li>
+<li data-list-item-id="eb2b572e036d0d9324d6b08b704ad5d65">
+<strong>Enable Log Insights:</strong> Select to visualize the integration-related metrics. For example, you can view trends such as the number of users processed over time.</li>
+<li data-list-item-id="e696affeb1bb70afd7d3f63ca6aac7f2d">
+<strong>Run Full Sync Days Interval:</strong> Defines how often a full sync is executed. For example, if set to <strong>7</strong>, a full sync runs every 7 days, while other runs may be incremental.</li>
+</ul><h3 id="h_01KP3DN8SMKH2GJD3FE4A7A00C">Manage Employees</h3><p>This section defines how users from Entra ID are identified, filtered, and created as employees in ABC Fitness.</p><h3 id="h_01KP3DN8SN4J3M8E8YXKTBK6TA">Correlation Settings</h3><p>These settings determine how users are matched between Entra ID and ABC Fitness to prevent duplicates:</p><ul>
+<li data-list-item-id="e48a81813959f2fa6e4a51ac71ec2e6d0">
+<strong>Source Correlation Attribute:</strong> Defines the attribute from Entra ID used to uniquely identify users. For example, <strong>onPremisesExtensionAttributes.extensionAttribute12</strong> is used as the unique identifier from Entra ID.</li>
+<li data-list-item-id="e3f61536c7574ba8c986386502f8e9595">
+<strong>Target Correlation Attribute:</strong> Defines the corresponding attribute in ABC Fitness used for matching. For example, a <strong>barcode</strong> is used to match existing employee records in ABC Fitness.</li>
+</ul><h3 id="h_01KP3DN8SPGZATYB7GQP4XXQE7">Provisioning Settings</h3><p>These settings control which users are eligible for employee creation:</p><ul><li data-list-item-id="e94a9cb1aa8147b438cd3926f5cdd7c35">
+<strong>Create Employee Condition:</strong> Specifies which users are eligible for employee creation. For example, when set to <strong>Active Only</strong>, only active Entra ID users are processed.</li></ul><h3 id="h_01KP3DN8SPH6QGAKR09X7ZYVQ7">Provisioning Threshold</h3><p>These settings control limits to manage processing and prevent excessive operations:</p><p><strong>Create Limit:</strong> Select the maximum number of employee records to be created in a single execution. The following options are available in the dropdown:</p><ul>
+<li data-list-item-id="e935ab7873e76c358cee381174eaf077a">
+<strong>Unlimited:</strong> Select this option to allow all eligible employee records to be created without restriction.</li>
+<li data-list-item-id="e192b11991f509700eeb02da77afb0f34">
+<strong>Value:</strong> Select this option to specify a limit. For example, a value of <strong>100</strong> allows up to 100 employee creations in a single execution.</li>
+<li data-list-item-id="e6d38903723814f2dd3f410e71c202d82">
+<strong>Import Limit:</strong> Select the maximum number of users to retrieve and process from Microsoft Entra ID in a single execution. The following options are available in the dropdown:<ul>
+<li data-list-item-id="e796ee8c1eee657875b6ed22fa5227622">
+<strong>Unlimited:</strong> Select this option to process all users matching the configured criteria without restriction.</li>
+<li data-list-item-id="e08204d69c143a805aa469796b0be00c0">
+<strong>Value:</strong> Select this option to specify a limit. For example, a value of <strong>500</strong> limits processing to 500 users in a single execution.</li>
+</ul>
+</li>
+</ul><h3 id="h_01KP3DPKTZWWZDPW9BH16MMWDH">Sensitive Fields</h3><p>This section defines which fields are treated as sensitive and handled securely in logs, reports, and processing.</p><p>Configure the following sensitive field settings:</p><ul>
+<li data-list-item-id="e54cec9512e85e4036dd9757f9d4c0977">
+<strong>PII Fields:</strong> Specifies personally identifiable information that should be masked or protected. For example, fields such as <strong>email</strong> or <strong>phoneNumber</strong> can be redacted to prevent exposure in logs.</li>
+<li data-list-item-id="edfa5ceb9a4683d9a71062b53deea7296">
+<strong>GUID Fields:</strong> Defines fields that contain unique identifiers. For example, fields like <strong>id</strong> or <strong>objectId</strong> can be marked to ensure proper handling and tracking.</li>
+<li data-list-item-id="e324c795dae1e0aee3f13ebe9e2de93b8">
+<strong>Employee ID Fields:</strong> Identifies fields used as employee identifiers. For example, fields such as <strong>employeeId</strong> or <strong>barcode</strong> can be specified to ensure consistent identification across systems.</li>
+</ul><h3 id="h_01KKXKNHW297KGFRCENNAR6GMR">Log Settings</h3><p>This section allows you to configure how integration execution data is logged for monitoring and troubleshooting.</p><p><strong>Note</strong>: The <strong>Log Settings</strong> section appears when you select the <strong>Enable Log Settings </strong>checkbox in the<strong> General Settings </strong>section of the<strong> Parameters </strong>tab.</p><p>Configure the following log settings:</p><ul>
+<li data-list-item-id="eabeaa19a5d3f62c49c31ee0c1831c5b9">
+<strong>Select Log Type:</strong> Select the type of data to include in logs. For example, choosing <strong>Employee Number with All Data</strong> includes employee number, operations, field names, and all values (PII and non-PII).</li>
+<li data-list-item-id="e6333c79eba295e452bfb58aa61a5a9e9">
+<strong>Select Log Level:</strong> Select the level of detail to include in logs.<br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="e9a0e2cc7137d7c1f2b90d110a554f551">
+<strong>Full:</strong> Includes all attribute details in the logs.</li>
+<li data-list-item-id="e42a0bf3ae90c8b69b70898b6daf35cc9">
+<strong>Include List:</strong> Includes only the attributes specified in the Custom Inclusion List field.<br/>If <strong>Include List</strong> is selected, the following field is displayed:<ul><li data-list-item-id="ea34f079068ee49bbb79597feb64dd418">
+<strong>Custom Inclusion List:</strong> Enter the attributes that should be included in logs. For example, entering <strong>firstName, lastName, email</strong> ensures only these fields are captured.</li></ul>
+</li>
+<li data-list-item-id="e164f931e73f0d6fddaf0fb2aed7a7984">
+<strong>Exclude List:</strong> Includes all attribute details except those specified in the Custom Exclusion List field.<br/>If <strong>Exclude List</strong> is selected, the following field is displayed:<ul><li data-list-item-id="efd769b738bc055b5a7bc3d4c7a481628">
+<strong>Custom Exclusion List:</strong> Enter the attributes that should be excluded from logs. For example, entering <strong>salary,</strong> and <strong>SSN</strong> ensures these fields are not captured.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KP3DWE9HMEVM76EQZC82SYPG">Report Settings</h3><p>This section allows you to configure how integration execution data is captured in reports for auditing and analysis.</p><p><strong>Note</strong>: The <strong>Report Settings</strong> section appears when you select the <strong>Enable Report Settings</strong> checkbox in the <strong>General Settings</strong> section of the <strong>Parameters</strong> tab.</p><p>Configure the following report settings:</p><ul>
+<li data-list-item-id="e33cf10c1b8ad7f9e1e854a5a87788fec">
+<strong>Select Report Type:</strong> Select the type of data to include in reports. For example, choosing <strong>Employee Number with All Data</strong> includes employee number, operations, field names, and all values (PII and non-PII).</li>
+<li data-list-item-id="e6ab3ceb517bc7b214895e693444a3b26">
+<strong>Select Report Level:</strong> Select the level of detail to include in reports. The following options are available in the dropdown:</li>
+<li data-list-item-id="eafddf53d41ee0c8420b3a0aad66a217d">
+<strong>Full:</strong> Includes all attribute details in the report.</li>
+<li data-list-item-id="e39ed488491507821909466f2d4ada8a2">
+<strong>Include List:</strong> Includes only the attributes specified in the Custom Inclusion List field. If the <strong>Include List</strong> is selected, the following field is displayed:<ul><li data-list-item-id="ee21ed409da1d7fd2f096cb2340f446e5">
+<strong>Custom Inclusion List:</strong> Enter the attributes that should be included in reports. For example, entering <strong>firstName, lastName, </strong>and<strong> email</strong> ensures only these fields are captured.</li></ul>
+</li>
+<li data-list-item-id="e59086dcadd582cca1be6306c263e89a0">
+<strong>Exclude List:</strong> Includes all attribute details except those specified in the Custom Exclusion List field. If the <strong>Exclude List</strong> is selected, the following field is displayed:<ul><li data-list-item-id="ebb7df3236bd9129811d4a2158c81786a">
+<strong>Custom Exclusion List:</strong> Enter the attributes that should be excluded from reports. For example, entering a <strong>salary and an SSN</strong> ensures that these fields are not captured.</li></ul>
+</li>
+</ul><h3 id="h_01KP3E4FS0DMWQZZRFHXABEY8J">Notifications</h3><p>This section allows you to configure email notifications for integration execution outcomes, including success, failure, and skipped records.</p><p><strong>Note</strong>: The <strong>Notification</strong> section appears when you select the <strong>Enable Notifications</strong> checkbox in the <strong>General Settings</strong> section of the <strong>Parameters</strong> tab.</p><p>Configure the following notification settings:</p><h3 id="h_01KP3E4FS10ZFX4YVF10B9BP4K">Notification Template Settings</h3><p>Configure the following notification template settings:</p><ul>
+<li data-list-item-id="e46450374f362b366e6ece4fafb0f4b96">
+<strong>Send Email Notification For Success:</strong> Enable to send email notifications when the integration completes successfully. For example, when enabled, a success report is sent after execution.</li>
+<li data-list-item-id="e16876ff72c61c869a7e7320d4c3cfcea">
+<strong>Send Email Notification For Failure:</strong> Enable to send email notifications when the integration fails. For example, when enabled, a failure alert is sent if errors occur.</li>
+<li data-list-item-id="eec95ba3d6d23ad4135fbc91bea55169a">
+<strong>Attach report to email:</strong> Enable to attach the generated report to notification emails. For example, when enabled, the CSV report is included in the email.</li>
+<li data-list-item-id="e57dd8a1eae50e7d69471ef0bf09f4fec">
+<strong>Send email notification for skipped records:</strong> Enable to send notifications when records are skipped. For example, users skipped due to filters or validation are reported via email.</li>
+<li data-list-item-id="e34b40b59c976e82891ff97ec6b18da8a">
+<strong>Merge All Reports:</strong> Enable to send a single combined email instead of separate emails. For example, success, failure, and skipped results are included in one email.</li>
+</ul><h3 id="h_01KP3E4FS32NQD6KH223WVMVB8">Success Notifications</h3><p>Configure the following success notifications settings:</p><ul>
+<li data-list-item-id="e1b87a346cc9c0228c9f2ae484b7e38a7">
+<strong>Success Notification Recipients:</strong> Enter email addresses that should receive success notification emails. For example, add admin@company.com to receive success reports.</li>
+<li data-list-item-id="e6d97820c1408afe228e167442a9b931a">
+<strong>Success Notification CC:</strong> Enter email addresses to include as CC for success notifications. For example, include teamlead@company.com.</li>
+<li data-list-item-id="eea39294a7ef0f5826a9d48f4d94e8b96">
+<strong>Success Email Subject:</strong> Enter the subject line used for success notification emails. For example, <strong>Entra ID to ABC Fitness Success Notification</strong>.</li>
+<li data-list-item-id="ec30684eadf2f94c63fcafa8430543c5f">
+<strong>Success Email Body:</strong> Enter the message content sent when the integration completes successfully. For example, include a summary of processed employees and a reference to the attached report.</li>
+</ul><h3 id="h_01KP3E4FS5QNYRPRHWNRX4PYP1">Failure Notifications</h3><p>Configure the following failure notification settings:</p><ul>
+<li data-list-item-id="ee89004a60a931d578509031b14d36d0f">
+<strong>Failure Notification Recipients:</strong> Enter email addresses that should receive failure notification emails. For example, add support@company.com to receive failure alerts.</li>
+<li data-list-item-id="e73bb8bd93f756c016e45baaba4fe2de4">
+<strong>Failure Notification CC:</strong> Enter email addresses to include as CC for failure notifications. For example, include itadmin@company.com.</li>
+<li data-list-item-id="e7c3bde729ecd06f06e211e993825f411">
+<strong>Failure Email Subject:</strong> Enter the subject line used for failure notification emails. For example, <strong>Entra ID to ABC Fitness Failure Notification</strong>.</li>
+<li data-list-item-id="ee752ac68b937d5fa24f292e8c4e4f2b1">
+<strong>Failure Email Body:</strong> Enter the message content sent when the integration fails. For example, include error details and required actions for resolution.</li>
+</ul><h3 id="h_01KP3E4FS6Q54MKMB1ASJCYCP2">Skipped Execution Notifications</h3><p>Configure the following skipped execution notification settings:</p><ul>
+<li data-list-item-id="e8de0dfb7ab5359eee87db0ba3b2c33b7">
+<strong>Skipped Notification Recipients:</strong> Enter email addresses that should receive skipped record notifications. For example, add ops@company.com to receive skipped record reports.</li>
+<li data-list-item-id="e97119793ac1c4f930d78d39f735e9727">
+<strong>Skipped Notification CC:</strong> Enter email addresses to include as CC for skipped notifications. For example, include teamlead@company.com.</li>
+<li data-list-item-id="effaef499aa31144e73ae5a5c8fd72aaf">
+<strong>Skipped Email Subject:</strong> Enter the subject line used for skipped record notifications. For example, <strong>Entra ID to ABC Fitness Skipped Records Notification</strong>.</li>
+<li data-list-item-id="e1e18aa0d1e7537d59524dd49d4f11865">
+<strong>Skipped Email Body:</strong> Enter the message content sent when records are skipped. For example, include details about skipped users and reasons for skipping.</li>
+</ul><h3 id="h_01KP3E4FS8TSEXWQVKBAZQ57BX">Notification Report Settings</h3><p>Configure the following notification report settings:</p><ul>
+<li data-list-item-id="ed432f30f6aecdc487f88170c28696bdf">
+<strong>Select Report Type:</strong> Select the type of data to include in notification reports. For example, choosing <strong>Employee Number with Non-PII Data</strong> includes employee number, operations, and selected non-PII values.</li>
+<li data-list-item-id="ed7a20352da75de4f8609ce94a09e670a">
+<strong>Select Report Level:</strong> Select the level of detail to include in notification reports. For example, selecting <strong>Full</strong> includes all relevant attribute details in the report.</li>
+</ul><h3 id="h_01KP3E4FS82HR47G8QJTWEYFKQ">Log Insights Settings</h3><p>This section allows you to configure analytics and dashboard visibility for integration activity and performance metrics.</p><p><strong>Note</strong>: The <strong>Log Insights</strong> section appears when you select the <strong>Enable log insights</strong> checkbox in the <strong>General Settings</strong> section of the <strong>Parameters</strong> tab.</p><p>Configure the following log insight settings:</p><ul>
+<li data-list-item-id="edc54f2c5b93b579b83b4db99536f2730">
+<strong>Insights dashboard name</strong>: Enter the name of the dashboard where integration analytics will be displayed. For example, entering ENTRA1 creates or updates a dashboard with that name to track execution metrics.</li>
+<li data-list-item-id="e06fe5285072a23e18ed89e57c9488ff3">
+<strong>Insights data type</strong>: Select the type of data to include in analytics logs. The following options are available:<ul>
+<li data-list-item-id="e6d85efdccebb565a1143334da66f0047">
+<strong>Minimum:</strong> Captures only operation-level data. For example, shows counts of created or skipped records without any field details.</li>
+<li data-list-item-id="e61c34617fabb6efa3d9a8af3b5efd2bc">
+<strong>Metadata:</strong> Captures operation details along with field names. For example, shows which fields were processed without including values.</li>
+<li data-list-item-id="eaccdef34cac098ea642a0585bfab9863">
+<strong>No GUID:</strong> Captures operation details with selected non-sensitive field values. For example, includes fields like <strong>department</strong> or <strong>title</strong> but excludes sensitive data.</li>
+<li data-list-item-id="efc9fa7a074e875a2d52483ddf63a9b35">
+<strong>GUID:</strong>  Captures detailed analytics, including identifiers and selected non-sensitive values. For example, includes <strong>employee ID</strong> along with operational and field-level details.</li>
+</ul>
+</li>
+<li data-list-item-id="e10de697e765e375cad48df63d27a53bd">
+<strong>Log Insights detail level:</strong> Select the level of detail to include in Log Insights. The following options are available in the dropdown:<ul>
+<li data-list-item-id="ecf3277c29c7f14a25562d4945e18a36e">
+<strong>Full details</strong>: All attribute details are displayed in the Log Insights.</li>
+<li data-list-item-id="ee63ee1e8891fe25deb667a23de917ea4">
+<strong>Custom inclusion list</strong>: Displays only the attributes specified in the Custom Inclusion List field. <br/>If <strong>the Custom inclusion</strong> list is selected, the following field is displayed:<ul><li data-list-item-id="e79220bc6c4886c78363c0458aa71dc16">
+<strong>Custom Inclusion List</strong>: Enter the attributes that should be included in Log Insights.</li></ul>
+</li>
+<li data-list-item-id="ec5474f2b1c4f3e4829f120e56c60c150">
+<strong>Custom exclusion list</strong>: Displays all attribute details except those specified in the Custom Exclusion List field. <br/>If the <strong>Custom exclusion</strong> list is selected, the following field is displayed:<ul><li data-list-item-id="ebabb6cd4323dcc97753921fd44b22c75">
+<strong>Custom Exclusion List</strong>: Enter the attributes that should be omitted from the Log Insights.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KMFRJ0QPS1JED0CWF4YXJWPN">Debug Mode</h3><p data-end="196" data-start="86">This section allows you to control debugging behavior and apply source-level filtering for targeted execution.</p><h3 data-end="216" data-section-id="1fzav4i" data-start="198" id="h_01KMFRJ0QSWMTN06X2MEGKX4FA">Debug Settings</h3><p>Configure the following Debug settings:</p><ul><li data-list-item-id="e8245afb8d9f9484b99005eb7a57b96c1">
+<p data-end="274" data-start="132"><strong data-end="147" data-start="132">Debug Mode:</strong> Select the level of logging detail for troubleshooting the integration. The following options are available in the dropdown:</p>
+<ul>
+<li data-end="333" data-list-item-id="e071d07ed32128fd4e0c649e2c60a9917" data-section-id="11i4p46" data-start="275">
+<strong data-end="286" data-start="277">None:</strong> Select this option to disable debug logging.</li>
+<li data-end="405" data-list-item-id="e339e7272da07903dfe3d4fd5ac3bd44e" data-section-id="1spgr47" data-start="334">
+<strong data-end="348" data-start="336">Minimal:</strong> Select this option to capture basic execution details.</li>
+<li data-end="493" data-list-item-id="e85f86b9542a949f52d008000adaff274" data-section-id="1lsthbt" data-start="406">
+<strong data-end="417" data-start="408">Deep:</strong> Select this option to capture detailed logs for in-depth troubleshooting.</li>
+<li data-end="586" data-list-item-id="e00848a98e1e2d6ccb386147750964b54" data-section-id="160m6ib" data-start="494">
+<strong data-end="507" data-start="496">Custom:</strong> Select this option to define specific logging behavior based on configuration.</li>
+</ul>
+</li></ul><h3 data-end="405" data-section-id="1ucmf4r" data-start="388" id="h_01KMFRJ0QT3XPYW1TWQ61J7CAC">Source Filter</h3><p data-end="498" data-start="407">This section allows you to restrict processing to specific users based on defined criteria.</p><ul>
+<li data-list-item-id="ea523f042841a3044ae73bb59b6b78fd4"><p data-end="702" data-start="500"><strong data-end="539" data-start="500">Enable Employee Sync Source Filter:</strong> Enable to process only users that match a specific filter condition. For example, when enabled, only users matching the defined attribute and value are processed.</p></li>
+<li data-list-item-id="e9768c00edfcfc528758d7e398f3bd883">
+<p data-end="862" data-start="704"><strong data-end="736" data-start="704">Employee Sync Source Filter:</strong> Select the attribute to filter users. For example, choosing <strong data-end="820" data-start="806">EmployeeID</strong> filter filters users by their employee ID.<br/>The following options are available in the dropdown:</p>
+<ul>
+<li data-end="1183" data-list-item-id="e7704a6f1333ff9a5278ca419c100e253" data-section-id="17py7ru" data-start="1101">
+<strong data-end="1118" data-start="1103">EmployeeID:</strong> Select this option to filter users by Employee ID.</li>
+<li data-end="1267" data-list-item-id="e5d00a8849fc413cdecb0c33fe2d9b6d0" data-section-id="1161efo" data-start="1184">
+<strong data-end="1201" data-start="1186">Expression:</strong> Select this option to define a custom filter using an expression.<ul><li data-list-item-id="e1f47375e38119e41bb60b981c67130b6"><p data-end="1024" data-start="864"><strong data-end="888" data-start="864">Source Filter Value:</strong> Enter the value or expression used to filter users from Microsoft Entra ID. For example, enter <strong data-end="1403" data-start="1394">12345</strong> to process only users with that Employee ID, or define an expression to filter users based on specific attribute conditions.</p></li></ul>
+</li>
+</ul>
+</li>
+</ul><h2 data-end="152" data-section-id="1bfsxqd" data-start="136" id="h_01KMFX5J0QQE4B4HRWF0S7YNVT">Attribute Map</h2><p data-end="349" data-start="154">The Entra ID to ABC Fitness integration maps Microsoft Entra ID attributes to ABC Fitness employee fields. You can modify the source attributes as needed to align with your business requirements.</p><p data-end="560" data-start="351">You can use JavaScript expressions to transform or construct values before mapping them to target attributes. Write the expression directly in the source field or use the expand option to define complex logic.</p><p data-end="676" data-start="562">All attributes marked with a red asterisk (*) are required fields for successful employee creation in ABC Fitness.</p><p data-end="821" data-start="678">After completing the source-to-target attribute mapping, click <strong data-end="757" data-start="741">Save Changes</strong> at the top-right corner of the page to apply the configuration.</p><p data-end="873" data-start="823">The attribute map displays a single mapping table:</p><h4 id="h_01KMFXHYATW0N5ASN6BHSTTKZ8">Employee Mapper</h4><p data-end="1132" data-start="896">This section defines how Entra ID user attributes are mapped to ABC Fitness employee fields. For example, attributes such as <strong data-end="1078" data-start="1021">firstName, lastName, email, departmentId, and barcode</strong> are mapped to create employee records in ABC Fitness.</p><h2 data-end="136" data-section-id="171fbhk" data-start="127" id="h_01KMFXJ482YABB0HF3K3BX0XQY">Tables</h2><p data-end="276" data-start="138">This section allows you to define and manage reference data used during integration to enrich or override attribute values in ABC Fitness.</p><p data-end="441" data-start="278">Tables store key–value pairs that the integration references at runtime when required data is not available in Entra ID or when additional mapping logic is needed.</p><h4 id="h_01KMFXJ4826F1X662B8EM96JZD">Available Tables</h4><p data-end="534" data-start="469"><strong>Note</strong>: The following tables represent a specific use case within the integration:</p><ul>
+<li data-list-item-id="e5475ff79bff98622d660aa74cca5159a"><p data-end="714" data-start="536"><strong data-end="564" data-start="536">EOSEmailExclusionTitles:</strong> Defines job titles that should be excluded from processing. For example, users with titles listed in this table are skipped during employee creation.</p></li>
+<li data-list-item-id="ec6df3055ac55e1991a8a7590d8bcd5e0"><p data-end="910" data-start="716"><strong data-end="742" data-start="716">locationCode_clubCode:</strong> Maps location codes from Entra ID to corresponding club codes in ABC Fitness. For example, a location code like <strong data-end="864" data-start="855">NYC01</strong> can be mapped to a club code such as <strong data-end="909" data-start="902">101</strong>.</p></li>
+</ul><h4 id="h_01KMFXJ483EEDRCGB6PGTK2VR4">Managing Table Data</h4><p data-end="1124" data-start="941">Click a table row to open the <strong data-end="987" data-start="971">Update Table</strong> window. Each row represents a key–value pair, where <strong data-end="1048" data-start="1040">Name</strong> is the lookup key and <strong data-end="1080" data-start="1071">Value</strong> is the mapped result used at execution time.</p><p data-end="1183" data-start="1126">You can manage table entries using the following options:</p><ul>
+<li data-list-item-id="edf3a358bcc44e68b88035dc3635bc452"><p data-end="1183" data-start="1126"><strong data-end="1197" data-start="1185">Add Row:</strong> Allows you to manually add a key–value pair. For example, add <strong data-end="1281" data-start="1260">Manager → Exclude</strong> to define a rule.</p></li>
+<li data-list-item-id="e6440dded1addafa8a7879616981d34e0"><p data-end="1183" data-start="1126"><strong data-end="1321" data-start="1301">Upload CSV File:</strong> Allows bulk upload of entries. The CSV must contain two columns: <strong data-end="1395" data-start="1387">NAME</strong> and <strong data-end="1409" data-start="1400">VALUE</strong>, where each row represents a key–value pair.</p></li>
+<li data-list-item-id="ebaa2561cd21db204a308cfd383a73e01"><p data-end="1183" data-start="1126"><strong data-end="1467" data-start="1456">Search:</strong> Allows you to quickly find specific entries within the table.</p></li>
+</ul><p data-end="1183" data-start="1126">After making changes, click <strong data-end="1567" data-start="1559">Save</strong> to apply updates.</p><p data-end="1791" data-start="1592"><strong data-end="1601" data-start="1592">Note:</strong> Each key (Name) must be unique and is used as the lookup identifier during integration. Key names can include letters, numbers, and most special characters, except <strong data-end="1771" data-start="1766">/</strong>, <strong data-end="1779" data-start="1773">\</strong>, and <strong data-end="1790" data-start="1785">"</strong>.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span><span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="e8216146c76abedf293e8deff1b725800">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="e44293074c78b7a29397b3894daadb90b">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="e4f967f4fbcf55b2f2a60172ebaf6448c">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="e31d5c12ed236d67aba336e15db70f409">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="efb2b11eaf4f12af22b9358a5a00b1a7d">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e16c8c625742269b333b06a8b087f34ac">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="ee0df18b4601b559b72d750b071becf85">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e73a0b84eaa6d8c27f21130b032cb4694">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="e601dd457d4bd209295e32d2ade03e169">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
+  </div>
+</body>
+</html>

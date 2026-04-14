@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce / Greenhouse Recruiting Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce / Greenhouse Recruiting Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines how to synchronize departments from Dayforce to Greenhouse Recruiting. The integration ensures that Greenhouse Recruiting maintains up-to-date department records that match your Dayforce, enabling accurate job postings and recruiter organization.</p><p>To identify user records across both systems, the integration uses the <strong>XRefCode</strong> attribute from <strong>Dayforce</strong> and matches it to the <strong>Name</strong> in <strong>Greenhouse Recruiting</strong> as a correlation attribute.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <strong>Dayforce</strong> to <strong>Greenhouse Recruiting</strong> integration provides the following functions:</p><ul>
+<li data-list-item-id="e643f2a8930eb89bd6d5be65b6c441fe0">Synchronizes department data from Dayforce to Greenhouse Recruiting</li>
+<li data-list-item-id="ec9060fdff429905e22d4ebccb3bccd00">Creates new departments in Greenhouse based on Dayforce records</li>
+<li data-list-item-id="e6aa7f6e7433f384bb5d51adfc3cd02ff">Updates existing Greenhouse departments when Dayforce data changes</li>
+<li data-list-item-id="eb0c9a4bd2f950a38c25947524a69b39a">Generates detailed logs and reports.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e1e426833a3d745349f04175117ddd943">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e1ad49b83da34a0048354c87762a1d19a">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ed37e1a1344054db72ea8a76fa755a450">
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853-Dayforce-Configuration-Guide" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for details.</li>
+<li data-list-item-id="ea512345ff09f711d9485db20ef092663">
+<strong>Greenhouse Recruiting</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/10462467749911-Greenhouse-Recruiting-Configuration-Guide" rel="noopener noreferrer" target="_blank">Greenhouse Recruiting Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push <strong>Job</strong> and <strong>Employee</strong> data from <strong>Dayforce</strong> to <strong>Greenhouse Recruiting</strong>.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e33cb7d8c295a526721f271f8286b3b65">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ed9b218bd55a562f975784f2255e92266">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e878f8ded5c57e62afed4154badb65c47">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ef38c1cb1d297da6916b6661f57818d8d">Search for <strong>Dayforce / Greenhouse Recruiting </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="edf4ae4ce2e39cb8bc2a12cbe42191ec1">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="ea1576286e747437b3bf383756b01f546">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e2970a4b1e837eee9d94d8e5c549ef56b">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="e9f494dc186d7c0cc7d7ce863884e613d">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4><p>Configure the following integration scenarios:</p><ul><li data-list-item-id="e3cc2699153b0d04404885b972409f154">
+<strong>Enable department sync</strong>: Select this checkbox to sync department data from Dayforce to Greenhouse Recruiting. When enabled, the <a href="#h_01K04HD998SCMWKJ7BWM43V581">Department Configuration</a> section is displayed for configuring additional integration settings.</li></ul><h4 id="h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="ec992ed4b0d14196d90b523dd31981bc4">
+<strong>Enable report-only mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e80fc1090aef6b3b5605056fce2da2fa7">
+<strong>Enable logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01KNRSHJ66RW8KG8MQVWT2BZT5">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e11e76868307e23ed7ab510d88b1861af">
+<strong>Enable notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01KNRH0CCKYTWKSDADWQVSDY3Y">Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e0f3d116fa25935b70aec4ce50a3e0042">
+<strong>Enable report generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#h_01KNRSTJN3X10V5Q7RX07KG1XG">Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e80ddb9ad52399e6c4cd3f6dad517e0af">
+<strong>Enable log insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the <a href="#h_01KNRSTJN3V91CYJFDB7FQ8XHH">Log Insights Settings</a> section is displayed for further configuration.</li>
+</ul><h3 id="h_01KGPAMEAW2HCGNSBF99C8ADNF">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if <strong>Enable logging</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><ul>
+<li data-list-item-id="e67429c823b55de2cecbc3c4a34f27f99">
+<strong>Select log type</strong>: Select the desired log type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="ed4c347a687f334ed37587d5a44ace747">
+<strong>Select log detail level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e724954370fe46f9bacc676513b47c54f">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e32d606b3d4d9eb6f0294e453c88a3612">
+<strong>Inclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="eeb83f23ba82d07b030785785687e4bcb">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the log.</li></ul>
+</li>
+<li data-list-item-id="eb880111409a3dde0f1f8684b4f26ee15">
+<strong>Exclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom exclusion list.</strong><ul><li data-list-item-id="e2a99196db2c9c455fd2d037aeab0139c">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the log.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e15389cc4f64cd4200e9bca9d97c4dd9f">
+<strong>PII fields</strong>: Enter the field names that contain personally identifiable information (PII).</li>
+<li data-list-item-id="ee8713c91f96dfc0c4029e7378b59b002">
+<strong>GUID fields</strong>: Enter the field names that contain globally unique identifiers (GUIDs).</li>
+<li data-list-item-id="ec053a45d7e7a6f1b28bf8f3279587faa">
+<strong>Employee ID fields</strong>: Enter the field names that contain employee IDs.</li>
+</ul><h3 id="01K5TY1G8QTYYA129P3KWESN2C">Report Settings</h3><p>The <strong>Report Settings</strong> section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable report generation</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><ul>
+<li data-list-item-id="e59806cc103400b9c2fd2c08952a0127d">
+<strong>Select report type</strong>: Select the desired report type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e80ffa06e76a77aabed58daaed2e095d6">
+<strong>Select report detail level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="e801639195f09a43433d9cfe1d1bbbadd">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e9b6b26becc2b7c5a9fada7985cc6e7d0">
+<strong>Inclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="e8c2a0b7f380b0e3a9316d318ae7d1b4d">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="ed3e839d3c80380bccfb6e84699a8a1e5">
+<strong>Exclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom exclusion list</strong>.<ul><li data-list-item-id="e225d2ff6c4c30dea2443604f9372ea4e">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="eee6b1a149e40942177a05851b515c8d2">
+<strong>PII fields</strong>: Enter the field names that contain personally identifiable information (PII).</li>
+<li data-list-item-id="e31df9baf3e324bc91513b0f2ca3b609c">
+<strong>GUID fields</strong>: Enter the field names that contain globally unique identifiers (GUIDs).</li>
+<li data-list-item-id="edc71c6b3a5765f6bd277b4b855f31204">
+<strong>Employee ID fields</strong>: Enter the field names that contain employee IDs.</li>
+</ul><h3 id="01K5TY2F66RQRGHM0D3B23C2S3">Notification Settings</h3><p>The <strong>Notification Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable notification</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><h4 id="h_01KNRH0CCKYTWKSDADWQVSDY3Y">Notification Template Settings</h4><p>Configure the following notification template settings:</p><ul>
+<li data-list-item-id="ef4a6e3ee88c455b3b8bc7318f5aac8a4">
+<strong>Send email notification for success</strong>: Select this checkbox to enable email notifications for successful integration. When enabled, the <a href="#01KFD1AMVYPNY4PY2ZB7A64VGC">Successful Integration Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eab54fe2d4fb21edde5b823577601d47b">
+<strong>Send email notification for failure</strong>: Select this checkbox to enable email notifications for failed integration. When enabled, the <a href="#h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failed Integration Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e5328a251978aa905bc99b6a3ca37370a">
+<strong>Attach report to email</strong>: Select this checkbox to attach the integration report to notification emails. When enabled, the <a href="#01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</a> section is displayed for further configuration.</li>
+</ul><h4 id="01KFD1AMVYPNY4PY2ZB7A64VGC">Successful Integration Notification Settings</h4><p>Configure the following notification settings for the successful integration:</p><ul>
+<li data-list-item-id="e20cd8180b31da5519bd8c83907c89362">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="eee1221997f3ab9d637ad53bca37fd40a">
+<strong>Additional recipients (CC): </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e9beb63703fec57735d8adb379f754157">
+<strong>Email subject on successful integration execution</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
+<li data-list-item-id="e4b78bf3b568f6f0d2a667105c1180ff3">
+<strong>Email body on successful integration execution</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+</ul><h4 id="h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failed Integration Notification Settings</h4><p>Configure the following notification settings for the failed integration:</p><ul>
+<li data-list-item-id="e3ba77ddd48caa19fd32582049f5dec42">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="ec2151325e3761196339a84ffb77d477f">
+<strong>Additional recipients (CC): </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="ea27027c40f7fafb75291d4f5efec7f21">
+<strong>Email subject on failed integration execution</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="e3d46e797b4a9faae3003e7511701ce0d">
+<strong>Email body on failed integration execution</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4><p>Configure the following settings for the notification reports:</p><ul>
+<li data-list-item-id="eee91375c90492b7148fc49af8f48cfd3">
+<strong>Select report type</strong>: Select the desired report type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e941a553b79ada1b28ebd15eed0fca991">
+<strong>Select report detail level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="ed0a58f6f7c0aa24a426486635aff6254">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e2d6bc199319d2dfb0212fac2e0956f09">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="e55ee16bec0c0748ccaf07c4e787dde4b">
+<strong>Inclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="e18703ab0c9225941f93e1651d8b2e53f">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="eacdf223de315eafff2c339688da37b51">
+<strong>Exclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom exclusion list</strong>.<ul><li data-list-item-id="e42f4f69485b8b9e4a9ee3d8209861cfa">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ee090d3e1ba1ef021695e28e0ddcf902c">
+<strong>PII fields</strong>: Enter the field names that contain personally identifiable information (PII).</li>
+<li data-list-item-id="eea7596bf79d043aa46bc50b30663f1f2">
+<strong>GUID fields</strong>: Enter the field names that contain globally unique identifiers (GUIDs).</li>
+<li data-list-item-id="e44e87df7cb2cfe3c9a12007e4854813d">
+<strong>Employee ID fields</strong>: Enter the field names that contain employee IDs.</li>
+</ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insight Settings</h3><p>The <strong>Log Insight Settings</strong> section enables you to customize the integration log insight settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Log Insights</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><ul>
+<li data-list-item-id="e60f10b2b95f53fd5d334f73fbb87ddcf">
+<strong>Dashboard Name</strong>: Enter the dashboard name for log insights</li>
+<li data-list-item-id="e5f4b5434aec51a9c8fb2ec78015e8143">
+<strong>Select Log Insight Type</strong>: Select the desired log insight type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e5a51f860bbb5cef97fff236def597dc1">
+<strong>Select log insight detail level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e76cfa39594852b8753488806a87ebdb1">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ed7474c1e4a35c3a806637e41e2a9cefc">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="edb55246c074d42b1ad9544194937bfc6">
+<strong>Inclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e39b5414fcffa85789a6a9aa6d4b5add0">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the log insights.</li></ul>
+</li>
+<li data-list-item-id="e8bda1fe27c5f96b1564021e540c77103">
+<strong>Exclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="e1041996debec9d65198f10799a685b20">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the log insights.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01K04HD998SCMWKJ7BWM43V581">Department Configuration</h2><p>The following section is displayed under the <strong>Department</strong> <strong>Configuration</strong> tab:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable department sync</strong> is enabled in the <a href="#h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</a> section.</p><h3 id="h_01KP5CE7FF276MAFECVTT2A1DN">Department Settings</h3><p>The <strong>Department Settings</strong> section enables you to customize the integration department settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="e892835a7a2704eb2baf0eaa4bcb34f2b">
+<strong>Dayforce Correlation Attribute: </strong>Select the Dayforce correlation attribute to distinctly find the associated Greenhouse Recruiting department. For example, <strong>XRefCode</strong>.</li>
+<li data-list-item-id="ef26584a8a9f270609dafb021539f8ea9">
+<strong>Greenhouse Recruiting Correlation Attribute: </strong>Select the Greenhouse Recruiting correlation attribute to distinctly find the associated Dayforce department. For example, <strong>Name</strong>.</li>
+<li data-list-item-id="e9778ed5a15c0948f72a1b448624209d1">
+<strong>Source Filter: </strong>Enter the Dayforce attribute to filter departments while retrieving from Dayforce. For example, <strong>XRefCode</strong>.</li>
+</ul><h3 id="h_01KP5CE7FFMAD1C9WZYK1KR55S">Department Attribute Map</h3><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side, and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01K06FVR3HY5TQCJK1AC2W07CZ">Tables</h2><p id="h_01J7XEGA5M57172Y4JT9508Q9D">In the Tables tab, you can add tables to the integration. Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span><span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p><p> </p>
+  </div>
+</body>
+</html>

@@ -19,9 +19,10 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>ADP Workforce Now / SolarWinds Service Desk Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, a ticket will be created in SolarWinds Service Desk for each new worker. If the ticket meets the integration settings for synchronizing worker data, a corresponding worker record will be created in ADP Workforce Now.</p><p data-end="381" data-start="81">Before creating a worker record in ADP Workforce Now, the email address of the SolarWinds Service Desk worker will be compared with existing ADP Workforce Now records. If a matching email is found, the worker’s status will be changed to <strong>Rehire</strong>, considering it as the same worker being rehired.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The ADP Workforce Now / SolarWinds Service Desk integration performs the following functions:</p><ul>
+<div>This guide applies to the latest public version of the integration (version 1.2.0).</div><h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><div><section data-scroll-anchor="true" data-testid="conversation-turn-4" data-turn="assistant" data-turn-id="request-WEB:407c4671-409a-408e-a7a4-7213bce214e8-1" dir="auto"><div><div><div><div data-message-author-role="assistant" data-message-id="af60e8f1-87b4-4c42-88b2-aa3b491eb96a" data-message-model-slug="gpt-5-3" data-turn-start-message="true" dir="auto" tabindex="0"><div><div><p data-end="273" data-is-last-node="" data-is-only-node="" data-start="0">When a worker is created in SolarWinds Service Desk, a ticket is automatically created, which triggers the integration. Based on the integration configuration, it identifies whether the worker is a new hire or a rehire, and then creates or updates the worker record in ADP Workforce Now.</p></div></div></div></div></div></div></section></div><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The ADP Workforce Now / SolarWinds Service Desk integration performs the following functions:</p><ul>
 <li data-list-item-id="e3b173885c088a734517fba9171e1e992">Creates new workers in ADP Workforce Now whenever new workers are added in SolarWinds Service Desk.</li>
 <li data-list-item-id="e6c3c91d1de6197abd52d22c392139a97">Identifies existing worker records in ADP Workforce Now before creating a new record and updates the status to <strong>Rehire</strong> if a matching record already exists.</li>
+<li data-list-item-id="e0658f5204b27b2d4c40b23b48ac02182">Generates a unique email address for each worker in SolarWinds Service Desk.</li>
 <li data-list-item-id="edc043fe56db89db972fa854997b56cfd">Supports full synchronization.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="eacb67b82e7fd6cee5076c2b68ef514c3">
@@ -35,7 +36,7 @@
 <strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
 </ul>
 </li>
-</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push user-related data from ADP Workforce Now / SolarWinds Service Desk.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push worker-related data from SolarWinds Service Desk to ADP Workforce Now.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="e2df65651534b6beebb11f1027cda1130">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="e9cbaaa73602c34850a2219a613154db7">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="ea6ba0f43657489b052c174ea71e0ef30">Click<strong> Create Integration</strong>.</li>
@@ -43,8 +44,8 @@
 <li data-list-item-id="eeafdf7a311db5a989970894852009253">Enter a name and a description for the integration.</li>
 <li data-list-item-id="ecb30188329915e9c2656b87040b76808">Select your <strong>ADP Workforce Now</strong> and <strong>SolarWinds Service Desk </strong>connector instances.</li>
 <li data-list-item-id="e36ea0737279963ae1b710d95ec874b05">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
-</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Scenario</h4><p>Enable the following feature based on your requirements:</p><ul data-end="1629" data-start="288"><li data-list-item-id="ea474170380f1ff5c20e67766062644c7">
-<strong>Enable Worker Onboarding</strong>: Select this checkbox to create worker records from SolarWinds Service Desk to ADP Workforce Now. When enabled, the <a href="#h_01KGMG4JM3JXCF60W9N6GEFS2V">Worker Management</a> section is displayed for further configuration.</li></ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following general settings:</p><ul>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Feature</h4><p>Enable the following feature based on your requirements:</p><ul data-end="1629" data-start="288"><li data-list-item-id="ea474170380f1ff5c20e67766062644c7">
+<strong>Enable worker onboarding</strong>: Select this checkbox to create worker records from SolarWinds Service Desk to ADP Workforce Now. When enabled, the <a href="#h_01KGMG4JM3JXCF60W9N6GEFS2V">Worker Management</a> section is displayed for further configuration.</li></ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following general settings:</p><ul>
 <li data-list-item-id="e071101e56f8953d4e61e8db5d7bd413c">
 <strong>Enable logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Log Settings</a> section is displayed for further configuration.</li>
 <li data-list-item-id="e3fa81295f1eaa0edf1d874ae9adcd10c">
@@ -64,10 +65,22 @@
 <span><strong>Ticket status to set after worker creation</strong></span><span>*</span>: Select a ticket status from the dropdown menu. Once the worker record is successfully created in ADP Workforce Now, the ticket status in SolarWinds Service Desk will be updated to the selected status.</li>
 <li data-list-item-id="efbd131cb2ec19b6eeb2d5966f528ac9a">
 <strong>Import limit</strong>: Enter the maximum number of worker records to be processed in a single integration execution. For example, entering 10 processes only includes the first ten worker records.</li>
+<li data-list-item-id="e9e1637e65e1f77ef18b5451714b1abb3">
+<span><strong>Generate unique email</strong></span>: Turn on this toggle button to generate a unique email address for new workers in SolarWinds Service Desk. <br/>When enabled, the following parameters are displayed:<ul>
+<li data-list-item-id="e9d5af80593fd58d524c0d792766f5410">
+<span><strong>Email domain</strong></span><span><strong>*</strong></span>: Enter the domain name to be used when generating unique email addresses for workers.</li>
+<li data-list-item-id="ebd506c5be587f2106f2d98060194dce8">
+<span><strong>Unique email pattern builder</strong></span>: Enter your prompt to define the format to be used while generating unique email IDs in SolarWinds Service Desk.<br/>After defining the format, click <strong>View Preview</strong> to view the output.</li>
+<li data-list-item-id="e916a50155564c7ea82e2d3f57b026aaa">
+<span><strong>SolarWinds Service Desk work email field</strong></span><span>*</span>: Select a SolarWinds Service Desk field from the dropdown menu to populate with the user’s work email generated by the integration. For example, if you select the <em>User Email</em> field, the generated work email will be populated in the selected field of the user record in SolarWinds Service Desk.</li>
+</ul>
+</li>
+<li data-list-item-id="e86a4fc73f8dffb949e57e40537c0d9c6">
+<span><strong>Worker personal email field (rehire identification)</strong></span>: Select a SolarWinds Service Desk field from the dropdown menu where the worker’s personal email ID is stored. This parameter helps identify whether the worker is a new hire or a rehire. Based on your selection, the integration will take the value from the selected field and compare it with user records in ADP Workforce Now. If the same value exists in any ADP Workforce Now user record, the worker will be considered a rehire. Otherwise, the worker will be considered a new hire.</li>
 </ul><h4 id="h_01KGM450J1YK3FN478G7X08MGN">ADP Workforce Now Settings</h4><p>Configure the following ADP Workforce Now settings:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul><li data-list-item-id="e6658d0b8dd2b09bb155287f751175126">
 <strong>Onboarding template</strong><span>*</span>: Select an ADP Workforce Now template from the dropdown menu. The worker records will be created in the selected template.</li></ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
 <li data-list-item-id="e4cb2c4cdeab21a5fdaf21b16c65f019e">
-<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Log Type</strong>: Select a log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select log type</strong>: Select a log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
 <ul>
 <li data-list-item-id="e95a36e2e294018e25be296a3c1639322">
 <strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
@@ -84,7 +97,7 @@
 </ul>
 </li>
 <li data-list-item-id="e21e2e687a6b05cdc7611a04c2e706524">
-<strong> Select Log Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<strong> Select the log detail level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
 <li data-list-item-id="e43354ba216289d0be24c6c6fe38b3a72">
 <strong>Full</strong>: Select this option to include all attributes in the log.</li>
 <li data-list-item-id="e0aae4fb85dbd208d3a11cf116c5bd5c2">
@@ -99,7 +112,7 @@
 </li>
 </ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable report generation</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
 <li data-list-item-id="e6630b335a8513f180ce06adab274ebd2">
-<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Report Type</strong>: Select a report type. This will decide the level of detail to be included in reports.<br/>The following are the available options:</p>
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select report type</strong>: Select a report type. This will decide the level of detail to be included in reports.<br/>The following are the available options:</p>
 <ul>
 <li data-list-item-id="e66d0b929e3b3e57dc5a81895efd48f44">
 <strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
@@ -116,7 +129,7 @@
 </ul>
 </li>
 <li data-list-item-id="e283ad9782fcb2b20b81027dd1fe9d301">
-<strong>Select Report Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<strong>Select the report detail level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
 <li data-list-item-id="ec0b237f17ad3e6195f8af520645f0b82">
 <strong>Full</strong>: Select this option to include all attributes in the report.</li>
 <li data-list-item-id="ec240a49e2a7871d119bd37f27803a962">
@@ -131,29 +144,29 @@
 </li>
 </ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable notifications</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KMD5HX6RZDKPDAS75W3C2BAC">Notification Template Settings</h4><p>Configure the following settings to customize notifications:</p><ul>
 <li data-list-item-id="eae4ec76273caaac757c7eae800336a7c">
-<strong>Send Email Notification For Success</strong>: Select this checkbox to send a notification on successful worker creation. When enabled, the Worker Creation Notifications section is displayed for further configuration.</li>
+<strong>Send notification on successful worker creation</strong>: Select this checkbox to send a notification on successful worker creation. When enabled, the Worker Creation Notifications section is displayed for further configuration.</li>
 <li data-list-item-id="e4d1d2ec2a27d69e6fad04817635c746c">
-<strong>Send Email Notification For Failure</strong>: Select this checkbox to send a notification on worker creation failure. When enabled, the Worker creation failure notifications section is displayed for further configuration.</li>
+<strong>Send a notification on worker creation failure</strong>: Select this checkbox to send a notification on worker creation failure. When enabled, the Worker creation failure notifications section is displayed for further configuration.</li>
 <li data-list-item-id="e85c59b2da8e2fff6e57bc2ca29db8b95">
-<strong>Attach to report to email</strong>: Select this checkbox to receive an email notification with a report for each integration execution.</li>
-</ul><h4 id="h_01KMDB9FBA9XQX58JJ5R0BJGRS">Success Execution</h4><p>Configure the following settings for successful worker creation notifications:</p><ul>
+<strong>Send integration report via email</strong>: Select this checkbox to receive an email notification with a report for each integration execution.</li>
+</ul><h4 id="h_01KMDB9FBA9XQX58JJ5R0BJGRS">Successful Integration Notification Settings</h4><p>Configure the following settings for successful worker creation notifications:</p><ul>
 <li data-list-item-id="e5996d525351f1d1a089c4e0ae77e6c4b">
-<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
+<strong>Admin's email address</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
 <li data-list-item-id="ef5af87c009b4ea9e612d568b30d2e633">
-<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<strong>Additional recipients (CC)</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
 <li data-list-item-id="e0aad40f30d170e6618862a24557fd518">
-<strong>Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<strong>Email subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
 <li data-list-item-id="ee8c842d819304177f6a52a27eeb50785">
-<strong>Integration Execution Success Email Body</strong>: Enter the content that must be used as the email body for notifications sent upon successful integration execution.</li>
-</ul><h4 id="h_01KMF55H58M5ND9REFBS3NRMB5">Failure Execution</h4><p>Configure the following settings for failed worker creation notifications:</p><ul>
+<strong>Email body</strong>: Enter the content that must be used as the email body for notifications sent upon successful integration execution.</li>
+</ul><h4 id="h_01KPN5MWV5EFQS83VXCJZ7GZFK">Failed Integration Notification Settings</h4><p>Configure the following settings for failed worker creation notifications:</p><ul>
 <li data-list-item-id="edf22cfd9f90dc376df0636a99c8e265d">
-<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration.</li>
 <li data-list-item-id="ebe1a501d35398d8df816fcd424bfe6db">
-<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<strong> Additional recipients (CC)</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
 <li data-list-item-id="ec54448bb327f1407b0309b900f032762">
-<strong>Email Subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
+<strong>Email subject</strong>: Enter the content that must be used as the email subject for email notifications.</li>
 <li data-list-item-id="ef841b20dee413ec0ec31d5bfb623601c">
-<strong>Email Body</strong>: Enter the content that must be used as the email body for notifications sent upon successful integration execution.</li>
+<strong>Email body</strong>: Enter the content that must be used as the email body for notifications sent upon successful integration execution.</li>
 </ul><h4 id="h_01KMF2X3G32JK6ZPBW74RWAJ7K">Notification Report Settings</h4><p>Configure the following report settings:</p><ul>
 <li data-list-item-id="e0d5745eeb130ea45cddb09d721d8853f">
 <p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Report Type</strong>: Select a notification type. This will decide the level of detail to be included in notifications.<br/>The following are the available options:</p>
@@ -188,9 +201,9 @@
 </li>
 </ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>This section enables you to customize the log insight settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
 <li data-list-item-id="eea895428436120a9d6e644a83d68dca5">
-<strong>Enter Dashboard Name</strong>: Enter the name of the log insights dashboard.</li>
+<strong>Enter dashboard name</strong>: Enter the name of the log insights dashboard.</li>
 <li data-list-item-id="ea7d07da4e5680f3e7b49e96057d66516">
-<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select analytics Type</strong>: Select a analytics type. This will decide the level of detail to be included in log insights.<br/>The following are the available options:</p>
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select analytics type</strong>: Select an analytics type. This will decide the level of detail to be included in log insights.<br/>The following are the available options:</p>
 <ul>
 <li data-list-item-id="e0d70891622ebbafdd930bf4a6eab58d7">
 <strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
@@ -207,7 +220,7 @@
 </ul>
 </li>
 <li data-list-item-id="ea433d728be9077f52e37ed17f25659e5">
-<strong data-end="185" data-start="147">Select analytics Level</strong>: Select the log insights detail level from the dropdown menu. The following are the available options:<ul>
+<strong data-end="185" data-start="147">Select analytics detail level</strong>: Select the log insights detail level from the dropdown menu. The following are the available options:<ul>
 <li data-list-item-id="e7ced6b285aa3ca821d6f3a215c9a3bdc">
 <strong data-end="440" data-start="423">Full</strong>: Select this option to include all attributes in the log insights.</li>
 <li data-list-item-id="ed9c266d6c4b24d5b2f17a98fb944c854">
@@ -221,7 +234,7 @@
 </ul>
 </li>
 </ul><h3 id="h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Settings</h3><p>This section enables you to customize the debug mode settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable debug mode</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul><li data-list-item-id="e5caae3a4479a0302b7913e4673961782">
-<strong>Incident ID</strong><span>*</span>: Enter the incident ID of the ticket to be debugged.</li></ul><h2 id="h_01KGS7GWR0HGV51CVV377A1WX4">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01KGHMQNFNBCR5J9J93JC1KRMP">Tables</h2><p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the Jira Service Management Cloud application, and you want to update a value for that attribute in Active Directory. Based on your requirement, you can add any number of tables in the integration.</p><p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a>section in the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for details.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+<strong>Incident ID</strong><span>*</span>: Enter the incident ID of the ticket to be debugged.</li></ul><h2 id="h_01KGS7GWR0HGV51CVV377A1WX4">Attribute Map</h2><p>The <strong>Attribute Mapper</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><h3 id="h_01KJ9R144MH0HSVY3G5ABDGVA6">Onboard Mapper</h3><p>This section enables you to define how data must be mapped from SolarWinds Service Desk to ADP Workforce Now. Based on your configuration, SolarWinds Service Desk workers are mapped and created in ADP Workforce Now user records.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h3 id="h_01KJA0WZY0D50CT7T6Y9EKTJCC">Rehire Mapper</h3><p>This section enables you to define how data must be mapped from SolarWinds Service Desk to ADP Workforce Now. Based on your configuration, SolarWinds Service Desk workers are mapped and if the worker record is available in ADP Workforce Now, the worker will be considered as rehire.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01KGHMQNFNBCR5J9J93JC1KRMP">Tables</h2><p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the Jira Service Management Cloud application, and you want to update a value for that attribute in Active Directory. Based on your requirement, you can add any number of tables in the integration.</p><p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a>section in the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for details.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
   </div>
 </body>
 </html>

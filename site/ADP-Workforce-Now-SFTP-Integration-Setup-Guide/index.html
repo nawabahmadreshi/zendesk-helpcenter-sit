@@ -19,9 +19,18 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>ADP Workforce Now / SFTP Integration Setup Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize iForms from iCIMS to the forms in Dayforce. When the status of a Workflow iForm changes in iCIMS, the Workflow form and the corresponding person forms are added to the respective user record in Dayforce. This integration is triggered when the status of an iForm changes in iCIMS.</p><p>To identify matching employee records across both systems, the integration uses the <strong>SSN</strong> attribute value.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The Dayforce / iCIMS Forms Sync integration performs the following functions:</p><ul>
-<li data-list-item-id="e5f1d5dc96f4c7c4d2dd3cae13d348efe">Processes events from iCIMS that include Workflow and Person iForms.</li>
-<li data-list-item-id="eb3a882b19a268f87fb08258e9e3a6dab">Converts the iForms data received from iCIMS to a PDF format and uploads it to the corresponding user record in Dayforce.</li>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize candidates and workers data from ADP Workforce Now to an SFTP server. It creates a CSV file containing the data of workers and candidates in a specific SFTP location. The integration also supports writing back of work email, work phone number, and custom attributes from an SFTP location to ADP Workforce Now. For this, the integration reads the data from a CSV file stored in a specific SFTP location.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The ADP Workforce Now / SFTP integration performs the following functions:</p><ul>
+<li data-list-item-id="e5f1d5dc96f4c7c4d2dd3cae13d348efe">Retrieves the data of candidates and workers from ADP Workforce Now and generates a CSV file in a specific SFTP location.<ul>
+<li data-list-item-id="effdfd66755ccf02a6a02f4aa71483f60">You can define which candidate statuses must be included for processing by the integration.</li>
+<li data-list-item-id="ee31404d1038c86a1a6d09c7affe1c2c3">Full synchronization is always performed for the candidate data. For worker data, you can configure the integration to run either a full or incremental sync.</li>
+<li data-list-item-id="e62ef8649869e91ab318270f8edcaafd9">
+<p>You can set the CSV file location and the CSV file name in the integration settings.</p>
+<p><strong>Note</strong>: The SFTP server name is configured in the FTP Generic connector in the Aquera Admin Portal.</p>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e5b9f872a608377ac274646ba4bb95d96">Writes back the worker email, work phone number, and any custom attributes from a CSV file to ADP Workforce Now, based on the integration settings.<ul><li data-list-item-id="e530b2fc34e2901e504033bb0b3905634">You can configure the CSV file location and the CSV file name from which the integration must read the data to be written back to ADP.</li></ul>
+</li>
 <li data-list-item-id="e6012949fbfca5becc8c1a4c2f7c6afc4">Generates reports and logs, and sends notification emails based on the integration settings.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="e6a18aeac75e3e0d6898ec1690bf0f8bc">
@@ -30,22 +39,22 @@
 <li data-list-item-id="eba8f201eeeeb574f642cffc43e341c12">
 <strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
 <li data-list-item-id="eda7eb1f2079c6ddd6a5d652edca773f0">
-<strong>iCIMS</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360056231174" rel="noopener noreferrer" target="_blank">iCIMS Configuration Guide</a> for configuration details.</li>
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
 <li data-list-item-id="eeff69b54ec880ddf10411a4861e46046">
-<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for configuration details.</li>
+<strong>FTP Generic</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360058816934" rel="noopener noreferrer" target="_blank">FTP Generic Configuration Guide</a> for configuration details.</li>
 </ul>
 </li>
 <li data-list-item-id="e81cea911d168bcf0ede59beadfaf7df4">
-<strong>Setup Event Notification Rules</strong>: You must set up event notification rules in iCIMS to send the events with the iForm details to Aquera for processing.</li>
+<strong>Prepare CSV File with the Appropriate Headers:</strong> Make sure that a CSV file with the appropriate column headers is created and placed in the SFTP location, which you will configure in the integration settings. This is necessary for populating the CSV header column names on the attribute mapping pages for candidate and worker sync.</li>
 </ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize Workflow iForms and Person iForms from iCIMS to Dayforce.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="eb9d202be95399804e104940ebb8f182c">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="e055ec5886115b082927c5c7265f34877">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="e28940690baec890de9bedc2b17352cf4">Click<strong> Create Integration</strong>.</li>
-<li data-list-item-id="efdaca0c7bd652520f6dc18ecdba19b34">Select<strong> Dayforce / iCIMS Forms Sync</strong>.</li>
+<li data-list-item-id="efdaca0c7bd652520f6dc18ecdba19b34">Select<strong> ADP Workforce Now / SFTP</strong>.</li>
 <li data-list-item-id="eec8fc2b552b9d1c5804e2cff0425f78f">Enter a name and a description for the integration.</li>
-<li data-list-item-id="e3439c166f455fd4720c86fcc05a2a865">Select your <strong>iCIMS </strong>and<strong> Dayforce </strong>connector instances.</li>
+<li data-list-item-id="e3439c166f455fd4720c86fcc05a2a865">Select your <strong>ADP Workforce Now </strong>and<strong> FTP Generic </strong>connector instances.</li>
 <li data-list-item-id="e16c858b1170770d3b13878ef6e7dd65c">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
-</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source (iCIMS) and target (Dayforce) application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and settings according to your use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Scenarios</h4><p>Enable the following feature:</p><ul data-end="1629" data-start="288"><li data-list-item-id="e9d49546af05a87ed3ee376e8dba75ee1">
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the ADP Workforce Now and FTP Generic application connectors that you have selected for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and settings according to your use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Scenarios</h4><p>Enable the following feature:</p><ul data-end="1629" data-start="288"><li data-list-item-id="e9d49546af05a87ed3ee376e8dba75ee1">
 <strong>Select integration modules</strong>: Select <strong>Enable Form Sync</strong> to synchronize iForms from iCIMS to Dayforce. When selected, the <a href="#h_01KGMG4JM3JXCF60W9N6GEFS2V">Forms Sync Settings</a> section is displayed for further configuration.<br/><strong>Note</strong>: This setting is mandatory for the integration.</li></ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following general settings:</p><ul>
 <li data-list-item-id="e2d94ddceda3ae8d9787a9836dd2edb56">
 <strong>Report only</strong>: Turn on this toggle to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>

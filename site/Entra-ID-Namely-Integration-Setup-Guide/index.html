@@ -20,22 +20,12 @@
     <h1>Entra ID / Namely Integration Setup Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
 <h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize employees from Namely to Entra ID. It also provides options to configure rules for assigning users to groups and for assigning licenses to users. </p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The Entra ID / Namely integration performs the following functions:</p><ul>
-<li data-list-item-id="ec624f57d1e1a6a34c8834f578e3163ce">Retrieves the data of employees from Namely and provisions them as users in Entra ID.<ul>
-<li data-list-item-id="ed5c8074994bb017ae58f63ef96ec53c6">Generates a unique UPN, email address, and password for each user, depending on the configuration.</li>
-<li data-list-item-id="eb4fe5baf1d6f5e64d50232d583898dda">Assigns users to groups in Entra ID according to the configured rules.</li>
-<li data-list-item-id="e433c10585933d73776a599f3a451caa0">Assigns a license to users based on the configured rules.</li>
-</ul>
+<li data-list-item-id="ec624f57d1e1a6a34c8834f578e3163ce">Retrieves the data of employees from Namely and provisions them as users in Entra ID.<ul><li data-list-item-id="ed5c8074994bb017ae58f63ef96ec53c6">For new users, the integration generates a unique UPN, email address, and password for each user, depending on the configuration.</li></ul>
 </li>
-<li data-list-item-id="e74871bbd5a587f41ff670f4383c0b9f0"> <ul>
-<li data-list-item-id="ec94f347efc53611968008d00688203a7">Full synchronization is always performed for the candidate data. For worker data, you can configure the integration to run either a full or incremental sync.</li>
-<li data-list-item-id="eb7bcc9baf174d9554fa5e8a08f834d49">
-<p>You can set the CSV file location and the CSV file name in the integration settings.</p>
-<p><strong>Note</strong>: The SFTP server name is configured in the FTP Generic connector in the Aquera Admin Portal.</p>
-</li>
-</ul>
-</li>
-<li data-list-item-id="e7418c466a207800d66e16537f80274ad">Writes back the worker email, work phone number, and any custom attributes from a CSV file to ADP Workforce Now, based on the integration settings.<ul><li data-list-item-id="e7b47ce9d25b94323922234552cc25e6b">You can configure the CSV file location and the CSV file name from which the integration must read the data to be written back to ADP.</li></ul>
-</li>
+<li data-list-item-id="eb4fe5baf1d6f5e64d50232d583898dda">Updates or deactivates Entra ID users based on the conditions configured in the integration.</li>
+<li data-list-item-id="ea09112acd49a4d03ff6a0c4ae4742d83">Assigns users to Entra ID groups or removes them based on the configured rules.</li>
+<li data-list-item-id="e38d5e6f9034ed160994d9910eeebcd5c">Assigns a license to users or removes it based on the configured rules.</li>
+<li data-list-item-id="e2ea1cd16a130636aff091ec35c844d0c">Supports onboarding and offboarding of users in Entra ID based on the date offset configured in the integration.</li>
 <li data-list-item-id="ea08501f5f68ca95067b2c3352bd72ead">Generates reports and logs, and sends notification emails based on the integration settings.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="e4565efc8f68a9a9bb463d9368ed89540">
@@ -44,31 +34,29 @@
 <li data-list-item-id="ec3b369e7116de1a9b4e2b6e251a09cf4">
 <strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
 <li data-list-item-id="e4b60e95209824e4c2537ffb9d88bd4bc">
-<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
+<strong>Namely</strong>: For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/360021221234" rel="noopener noreferrer" target="_blank">Namely Configuration Guide</a>.</li>
 <li data-list-item-id="e144405882eceea4581a32d4a5634657f">
-<strong>FTP Generic</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360058816934" rel="noopener noreferrer" target="_blank">FTP Generic Configuration Guide</a> for configuration details.</li>
+<strong>Entra ID</strong>: For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> or the <a href="https://support.aquera.com/hc/en-us/articles/16828093288727" rel="noopener noreferrer" target="_blank">Microsoft 365 App Registration Configuration Guide</a>, depending on the type of authentication to be used for the connector.</li>
 </ul>
 </li>
-<li data-list-item-id="ebda926ccb9cdd265ecea59a1d5c11b9b">
-<strong>Prepare CSV File with the Appropriate Headers:</strong> Make sure that a CSV file with the appropriate column headers is created and placed in the SFTP location, which you will configure in the integration settings. This is necessary for populating the CSV header column names on the attribute mapping pages for candidate and worker sync.</li>
-</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize Workflow iForms and Person iForms from iCIMS to Dayforce.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize employees from Namely to Entra ID.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="eb1dbbd16b5ca89345dd867a9eac18fc1">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="e59f44d4cf368e78f0d300a04fb9ce619">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="e309153b60498b9b470fa11fca824c0e9">Click<strong> Create Integration</strong>.</li>
-<li data-list-item-id="e29a46f50900d6ee9fb0d8aa2bcf43042">Select<strong> ADP Workforce Now / SFTP</strong>.</li>
+<li data-list-item-id="e29a46f50900d6ee9fb0d8aa2bcf43042">Select<strong> Entra ID / Namely</strong>.</li>
 <li data-list-item-id="ece2fe2aa6c83620f9db2247b3cf7a0b1">Enter a name and a description for the integration.</li>
-<li data-list-item-id="e2d62bf25e5ab6b4f180a8e4b75a21e7a">Select your <strong>ADP Workforce Now </strong>and<strong> FTP Generic </strong>connector instances.</li>
+<li data-list-item-id="e2d62bf25e5ab6b4f180a8e4b75a21e7a">Select your <strong>Namely </strong>and<strong> Entra ID </strong>connector instances.</li>
 <li data-list-item-id="e6bff2c0cdc9270da8402d02223d46dd8">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
-</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the ADP Workforce Now and FTP Generic application connectors that you have selected for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and settings according to your use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Scenarios</h4><p>Enable the following features based on your requirements:</p><ul>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the Namely and Entra ID application connectors that you have selected for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and settings according to your use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4><p>Enable the following features based on your requirements:</p><ul>
 <li data-list-item-id="ebd44953c590029adaef79e869a409099">
-<strong>Enable workers sync</strong>: Select this checkbox to sync worker data from ADP Workforce Now to the SFTP server. When selected, the <strong>Worker Sync Settings</strong> section and the <strong>Worker to SFTP</strong> attribute map setting section are displayed for further configuration. If this checkbox is not selected, the worker data will not be retrieved and processed by the integration.</li>
+<strong>Enable user management</strong>: Select this checkbox to sync user data from Namely to Entra ID. When selected, the <strong>User Management</strong> section and the <strong>Target User Map</strong> attribute map setting section are displayed for further configuration. If this checkbox is not selected, the user data will not be retrieved and processed by the integration.<br/><strong>Note</strong>: This checkbox must be selected for the user sync.</li>
 <li data-list-item-id="ed856f705592d6027717d8a770e390520">
-<strong>Enable candidate management</strong>: Select this checkbox to sync candidate data from ADP Workforce Now to the SFTP server. When selected, the <strong>Candidate Management</strong> section and the <strong>Candidate to SFTP</strong> attribute map setting section are displayed for further configuration. If this checkbox is not selected, the candidate data will not be retrieved and processed by the integration.</li>
-<li data-list-item-id="e47c9a23290d41a6aabdcd8af8674be7e">
-<strong>Enable writeback</strong>: Select this checkbox to enable the integration to write back the worker email, work phone number, and any custom attributes from a CSV file in the SFTP server to ADP Workforce Now. When selected, the <strong>Writeback Settings </strong>section and the <strong>Writeback Map</strong> attribute map setting section are displayed for further configuration.</li>
+<strong>Enable User Date Offset</strong>: Select this checkbox to enable date offset for user onboarding and offboarding operations in Entra ID. When selected, the <strong>User Date Offset </strong>section is displayed to set the onboarding and offboarding offset days and time. If this checkbox is not selected, the users will be onboarded or offboarded immediately during the next integration run, after the corresponding event occurs in Namely.</li>
+<li data-list-item-id="e96e4003f6d8f46bf0ce851bd0e955ef4">
+<strong>Enable Entra Group Management</strong>: Select this checkbox to enable assigning and removing users from Entra ID groups. When selected, the <strong>Group Rules</strong> tab is displayed to set up rules for group assignments. If this checkbox is not selected, user assignments to groups will not be supported.</li>
+<li data-list-item-id="e48d83dbf32dcf0de0d9f4bb55fc553d4">
+<strong>Enable Entra License Management</strong>: Select this checkbox to enable assigning and removing licenses for Entra ID users. When selected, the <strong>License Rules</strong> tab is displayed to set up rules for license assignments. If this checkbox is not selected, license assignments to users will not be supported.</li>
 </ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following general settings:</p><ul>
-<li data-list-item-id="e27422d76069d5b461511bc0313677bb3">
-<strong>SFTP Write File Path</strong>: Specify the folder path in the SFTP server where the integration must create the CSV file containing the worker data and candidate data. For example, <em>Aquera/ADPData/dataexport.csv</em><br/><strong>Note</strong>: The SFTP Server name is configured on the FTP Generic connector configuration page.</li>
 <li data-list-item-id="e299a689d33476279aa5da2455aad9492">
 <strong>Enable report-only mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
 <li data-list-item-id="e67bb57fb5fe2cf7662886ce57c95d35c">
@@ -79,22 +67,21 @@
 <strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When selected, the <strong>Log Insights</strong> section is displayed for further configuration.</li>
 <li data-list-item-id="e0e0df154036a34de3f277c502e0e4472">
 <strong>Enable notifications</strong>: Select this checkbox to enable integration-related notifications. When selected, the <strong>Notifications</strong> section is displayed for further configuration.</li>
-</ul><h4 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Synchronization Settings</h4><p>This section enables you to configure the integration to run in full sync or incremental sync mode.</p><ul>
-<li data-list-item-id="e015109e8817a0d889674444eb6f249c1">
-<strong>Enable incremental mode</strong>: Select this checkbox to run the integration in incremental mode. When selected, the integration retrieves and processes only the worker data that have been added or modified in ADP since the last integration execution. When this checkbox is not selected, the integration performs a full sync and processes all worker records during each run.<br/><strong>Note</strong>: Candidate data is always processed using a full sync, regardless of this setting.</li>
-<li data-list-item-id="e853f3606eb19eec4225a557d00adb513">
-<strong>Full sync frequency</strong>: The frequency by which the integration must run in full sync mode when the incremental mode is enabled. For example, if the integration is scheduled to run every 6 hours and the <strong>Full sync frequency</strong> is set to daily, the integration will run in incremental mode every 6 hours and perform a full sync once every day.<br/><strong>Note</strong>: This setting is displayed only if you have selected the <strong>Enable incremental mode</strong> checkbox.</li>
-</ul><h3 id="h_01KPTQH26P3CR5WMNQEXQES2C0">Worker Sync Settings</h3><p>This section details the following settings for synchronizing the worker data.</p><ul>
+</ul><h4 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Synchronization Settings</h4><p>This section enables you to configure the integration to run in full sync or incremental sync mode.</p><ul><li data-list-item-id="e853f3606eb19eec4225a557d00adb513">
+<strong>Full sync frequency</strong>: Select the frequency by which the integration must run in full sync mode, where all user profiles will be synced from Namely to Entra ID during integration runs. Select <strong>None</strong> to run the integration in incremental mode, where only the user profile changes in Namely since the last integration run will be processed by the integration.</li></ul><h3 id="h_01KPTQH26P3CR5WMNQEXQES2C0">User Management</h3><p>This section details the following settings for synchronizing the user data.</p><h4 id="h_01KPZ3WYP3Y687Y87QFYRDDJ1A">Source Filter</h4><ul>
 <li data-list-item-id="eb990d665393f931c1db24c7b46675ba8">
-<strong>Source filter</strong>: This setting enables you to filter worker record(s) from ADP Workforce Now and sync only the filtered worker records to the SFTP server. You can filter by <em>Associate ID,</em> <em>Position ID</em>, or select <strong>Custom</strong> to define a JavaScript-based filter expression. Select <strong>None</strong> to apply no filtering and include all worker records.</li>
-<li data-list-item-id="e9965850f719f4f2c03800b5a151d00f6">
-<strong>Source filter value</strong>: Enter the Associate ID or the Position ID to filter a worker record, based on your selection in <strong>Source Filter</strong>. This field is displayed only if you have selected <em>Filter by Associate ID</em> or <em>Filter by Position ID</em> in <strong>Source Filter</strong>.</li>
-<li data-list-item-id="e528cdfffb1d51abec3c0d611c0e0cc6f">
-<strong>Custom source filter expression</strong>: Provide the JavaScript expression to filter the worker records from ADP. This field is displayed only if you have selected <em>Custom</em> in <strong>Source Filter</strong>.</li>
+<strong>Source filter</strong>: This setting enables you to filter user record(s) from Namely and sync only the filtered worker records to Entra ID. You can filter by email ID, or select <strong>Custom</strong> to define a JavaScript-based filter expression. Select <strong>None</strong> to apply no filtering and include all user records.</li>
+<li data-list-item-id="e376578995bcde1aad44ea7b6208ca6c7">
+<strong>Email</strong>: Enter the email ID to filter a user record. This field is displayed only if you have selected <em>Email</em> in <strong>Source Filter</strong>.</li>
+<li data-list-item-id="ef06f7b99055ec156ef1dbc1a62e52b57">
+<strong>Custom source filter expression</strong>: Provide the JavaScript expression to filter the user records from Namely. This field is displayed only if you have selected <em>Custom</em> in <strong>Source Filter</strong>.</li>
+</ul><h4 id="h_01KPZ3XJ5V5RYQZ75X6V7KM7KM">Safeguard Limits</h4><ul>
 <li data-list-item-id="ebd7f89ce0677a4a249f4ce9540b6e640">
-<strong>Enable import limit</strong>: Select <em>Yes</em> to limit the number of worker records processed in a single integration run. Select <em>No</em> if you do not want to set a limit.</li>
+<strong>Enable import limit</strong>: Select <em>Yes</em> to limit the number of user records processed in a single integration run. Select <em>No</em> if you do not want to set a limit.</li>
 <li data-list-item-id="ea084c6e15179a620f72fc8b52ebc38f2">
-<strong>Import Limit</strong>: Enter the maximum number of worker records that are allowed to be processed by the integration in a single run. This setting is displayed only if you have configured <em>Yes</em> in <strong>Enable import limit</strong>.</li>
+<strong>Import limit</strong>: Enter the maximum number of user records that are allowed to be processed by the integration in a single run. This setting is displayed only if you have configured <em>Yes</em> in <strong>Enable import limit</strong>.</li>
+<li data-list-item-id="e429f7cb1c4c0071fb87e049f1ea07b40">
+<strong>Limit type</strong>: Indicate whether the <strong>Import limit</strong> that you have set is a count of user records or a percentage of user records.</li>
 </ul><h3 id="h_01KPTV18DWNCW5GP7F2TQR9K2B">Candidate Management</h3><p>This section details the setting for synchronizing the candidate data.</p><ul><li data-list-item-id="e152eb01c99e27e1ac3fac7f509a0e36d">
 <strong>Include candidates with application status</strong>: Select the application statuses of candidates in ADP Workforce Now that must be included in the sync to the SFTP server.</li></ul><h3 id="h_01KPTV18DW0BVDJTPJJ3STD47Z">Writeback Settings</h3><p>This section details the following settings for writing back data from the SFTP server to ADP Workforce Now:</p><ul>
 <li data-list-item-id="e892d8d762f06104cd0dd976599bdf4a9">

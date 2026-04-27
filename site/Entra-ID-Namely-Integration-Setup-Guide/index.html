@@ -173,16 +173,53 @@
 <strong>Offboarding offset priority</strong>: Shows <em>UTC</em> as the standard timezone. UTC ensures all offboarding time calculations are standardized regardless of the user location.</li>
 <li data-list-item-id="e26f82fe4f19d4f8cde0870655718d2cd">
 <strong>Offboarding offset time</strong>: Select the exact time of the day after which users will become eligible for offboarding in Entra ID. Users who meet the offboarding date offset criteria will be deprovisioned only when the integration runs as per its defined schedule, and at or after the configured time.</li>
-</ul><h2 id="h_01KPTV18DWG3VBTF717Q0AMST6">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab enables you to configure the user attribute mappings from Namely to Entra ID. The user attribute map will be displayed only if you have selected <strong>Enable user management</strong> in the <strong>Parameters</strong> section.</p><h2 id="h_01KPWFHC772R0J1BBNZDRRME5H">Group Rules</h2><p>The <strong>Group Rules</strong> tab provides options to configure how group memberships must be handled through this integration. </p><h3 id="h_01KQ6X33G7W7RDPKAX1CRPAREG">Group Assignment Rules</h3><p>You can set up rules for assigning users to the EntraID groups. In each rule, you can set conditions that control how users are assigned to groups.</p><p>Perform the following procedure to create group assignment rules:</p><ol>
+</ul><h2 id="h_01KPTV18DWG3VBTF717Q0AMST6">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab enables you to configure the user attribute mappings from Namely to Entra ID. The user attribute map will be displayed only if you have selected <strong>Enable user management</strong> in the <strong>Parameters</strong> section.</p><h2 id="h_01KQ70EAMGYJ63NA72H8NF3DHJ">Group Rules</h2><p>The <strong>Group Rules</strong> tab provides options to configure how group memberships must be handled through this integration. </p><h3 id="h_01KQ70EG7WE97W5S09BV62VABM">Group Assignment Rules</h3><p>You can set up rules for assigning users to the Entra ID groups. In each rule, you can set conditions that control how users are assigned to groups.</p><p>Perform the following procedure to create group assignment rules:</p><ol>
 <li data-list-item-id="e85a369c0347becd354fb74d0787369ae">Define the conditions for assignment to groups using one of the following ways:<ul>
-<li data-list-item-id="e833b1bafc7fd9847188fbeb3117cbef6">Using Condition Builder</li>
-<li data-list-item-id="e662b974baa0627def869895c4194f172">Using Expressions</li>
+<li data-list-item-id="e833b1bafc7fd9847188fbeb3117cbef6"><a href="#h_01KM0H9RTRKRPWDXNTDVVVD7FR">Using Condition Builder</a></li>
+<li data-list-item-id="e662b974baa0627def869895c4194f172"><a href="#h_01KM0HAHDDAJMYYBC477MCE3Z9">Using Expressions</a></li>
 </ul>
 </li>
 <li data-list-item-id="eb1180ff2817d28ba7c5df43950d7cf53">If required, click <strong>Add Row</strong> to add another condition within the same rule. When multiple rows are added within a rule, an <strong>OR </strong>condition is applied to the rows. That means, for each user, the integration evaluates the conditions in each row sequentially. If the conditions defined in a row are satisfied for a user, the user is assigned to that group and the remaining rows in the rule are not evaluated for that user.</li>
 <li data-list-item-id="e2ccb3c528bf4f286952a5556ebb823a7">If required, click <strong>Add New Rule</strong> to add another rule with a set of rows/conditions for group assignments. When multiple rules are set, the integration evaluates every rule for each user.</li>
-<li data-list-item-id="eeaddd98eacee21bc97c2b3476c0a571a">[Optional] Select Remove Groups on Deactivation to remove a user from any Entra ID groups when they are deactivated in Namely.</li>
-</ol><p> </p><h3 id="h_01KMMWWZASCF14V76882FQNPZ5">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> parameter in the <strong>Parameters</strong> section.</p><ul>
+<li data-list-item-id="eeaddd98eacee21bc97c2b3476c0a571a">
+<em>[Optional]</em> Select <strong>Remove groups on deactivation</strong> to remove a user from any Entra ID groups when they are deactivated in Namely. If this checkbox is not selected, the deactivated users will be retained in the Entra ID groups.</li>
+<li data-list-item-id="e5486e4f4b131800ac35594e6ee83797f">
+<em>[Optional]</em> Select<strong> Enable group revocation</strong> to remove users from their groups when they do not satisfy the rule conditions specified for that group assignment. This setting is effective only if the conditions are set using expressions and not using the condition builder. If this checkbox is not selected, the users will be retained in the groups even if they do not satisfy the rule conditions.</li>
+</ol><h4 id="h_01KM0H9RTRKRPWDXNTDVVVD7FR">Using Condition Builder</h4><p>The Condition Builder is the default view for configuring rules. A blank row is displayed by default for configuring the first set of conditions.</p><ol>
+<li data-list-item-id="ea06957f3e72c294beb9769d839ba33ba">Click on <strong>Choose Attribute</strong> to select a Namely user attribute that you want to use in the condition.</li>
+<li data-list-item-id="e529f957622e07f8efb36476c97f70078">After selecting the attribute, select the value(s) of the attribute. Any Namely user that matches the specified attribute values (OR operation) will be assigned to the group when the integration runs.</li>
+<li data-list-item-id="e3bbbf7a0c9f0e0e0fc91c47ed9f508c0">If required, add conditions with more attributes and values by clicking the + icon. When multiple attributes are added within the same row, those attribute conditions are evaluated using an AND operation. Only users who match all the specified conditions will be assigned to the group.</li>
+<li data-list-item-id="ec94aa60f54aa70aea010a50f8db618c3">In the <strong>Group</strong> <strong>Assignments</strong> field, select the Entra ID groups where users satisfying the conditions will be placed.</li>
+</ol><h4 id="h_01KM0HAHDDAJMYYBC477MCE3Z9">Using Expressions</h4><p>Follow this procedure to set the rules using JavaScript expressions. A blank row is displayed by default for configuring the first set of conditions.</p><ol><li data-list-item-id="ee3b877898f61d500fcc86adeb5014022">Click <strong>Switch to Expression</strong>. The following options are displayed:<ul>
+<li data-list-item-id="e52080abc24a869dad8354356516cbac9">
+<strong>For Conditions Only</strong>: Select this option to use JavaScript expressions for setting the conditions. You must select the corresponding group from the <strong>Group</strong> <strong>Assignments</strong> field.</li>
+<li data-list-item-id="eafcdbe16b77197b1f394a63747c13ef7">
+<strong>For Conditions and Assignments</strong>: Select this option to use JavaScript expressions for setting the conditions and the group assignments.</li>
+</ul>
+</li></ol><h2 id="h_01KPWFHC772R0J1BBNZDRRME5H">License Rules</h2><p>The <strong>License Rules</strong> tab provides options to configure how user licenses must be handled through this integration. </p><h3 id="h_01KQ6X33G7W7RDPKAX1CRPAREG">License Assignment Rules</h3><p>You can set up rules for assigning Entra ID licenses to users. In each rule, you can set conditions that control how licenses are assigned to users.</p><p>Perform the following procedure to create license assignment rules:</p><ol>
+<li data-list-item-id="ee2ccdb1019ae349a95babfdf3d2edd49">Define the conditions for license assignment to users using one of the following ways:<ul>
+<li data-list-item-id="ebfe9c051a640c2a051c781bb83c251fe"><a href="#h_01KQ70FA33YSJEP1Z9GR50TH3X">Using Condition Builder</a></li>
+<li data-list-item-id="ec1d394391a0d017dba564533934e31a4"><a href="#h_01KQ70FEMDKQ3X9E5437GYC6NT">Using Expressions</a></li>
+</ul>
+</li>
+<li data-list-item-id="e8a9df940adcffe89be4693a37852ae36">If required, click <strong>Add Row</strong> to add another condition within the same rule. When multiple rows are added within a rule, an <strong>OR </strong>condition is applied to the rows. That means, for each user, the integration evaluates the conditions in each row sequentially. If the conditions defined in a row are satisfied for a user, the license is assigned to that user and the remaining rows in the rule are not evaluated for that user.</li>
+<li data-list-item-id="e6e2325dbada484341e087a2c5645826d">If required, click <strong>Add New Rule</strong> to add another rule with a set of rows/conditions for license assignments. When multiple rules are set, the integration evaluates every rule for each user.</li>
+<li data-list-item-id="eb56558a720d00306ab3ea26681467c70">
+<em>[Optional]</em> Select <strong>Remove licenses on deactivation</strong> to remove a license from any Entra ID user when they are deactivated in Namely. If this checkbox is not selected, the license will be retained for the deactivated users.</li>
+<li data-list-item-id="e3aa8b933b8c9ec7a1295ae0dd5be7de7">
+<em>[Optional]</em> Select<strong> Enable license revocation</strong> to remove licenses from users when they do not satisfy the rule conditions specified for that license assignment. This setting is effective only if the conditions are set using expressions and not using the condition builder. If this checkbox is not selected, the licenses will be retained for the users even if they do not satisfy the rule conditions.</li>
+</ol><h4 id="h_01KQ70FA33YSJEP1Z9GR50TH3X">Using Condition Builder</h4><p>The Condition Builder is the default view for configuring rules. A blank row is displayed by default for configuring the first set of conditions.</p><ol>
+<li data-list-item-id="e8784b1342055087c34f0956e132e8ac8">Click on <strong>Choose Attribute</strong> to select a Namely user attribute that you want to use in the condition.</li>
+<li data-list-item-id="e77bea161d178934d131c98b129dcbfb4">After selecting the attribute, select the value(s) of the attribute. Any Namely user that matches the specified attribute values (OR operation) will be assigned the license when the integration runs.</li>
+<li data-list-item-id="e2a2370420e1fa18f0ba02596078702fc">If required, add conditions with more attributes and values by clicking the + icon. When multiple attributes are added within the same row, those attribute conditions are evaluated using an AND operation. Only users who match all the specified conditions will be assigned the license.</li>
+<li data-list-item-id="eb3f8d4f4b21a073c0d0f5386d9ad7cc1">In the <strong>License</strong> <strong>Assignments</strong> field, select the Entra ID licenses that must be assigned to users satisfying the conditions.</li>
+</ol><h4 id="h_01KQ70FEMDKQ3X9E5437GYC6NT">Using Expressions</h4><p>Follow this procedure to set the rules using JavaScript expressions. A blank row is displayed by default for configuring the first set of conditions.</p><ol><li data-list-item-id="ee5483559e5d68b41c5f3e276441f2b47">Click <strong>Switch to Expression</strong>. The following options are displayed:<ul>
+<li data-list-item-id="ef8e2a95c92e67a6cb5134a2d77b694d3">
+<strong>For Conditions Only</strong>: Select this option to use JavaScript expressions for setting the conditions. You must select the corresponding license from the <strong>License</strong> <strong>Assignments</strong> field.</li>
+<li data-list-item-id="ecd160cdeb6d8d9318f5c432046085709">
+<strong>For Conditions and Assignments</strong>: Select this option to use JavaScript expressions for setting the conditions and the license assignments.<br/> </li>
+</ul>
+</li></ol><h3 id="h_01KMMWWZASCF14V76882FQNPZ5">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> parameter in the <strong>Parameters</strong> section.</p><ul>
 <li data-list-item-id="ea89cb2ee247575ebbfaf481155c6f019"><p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Log Type</strong>: Select a log type. This will decide the level of detail to be included in logs. For example, choosing <strong>Employee Number with All Data</strong> includes employee number, operations, field names, and all values (PII and non-PII).</p></li>
 <li data-list-item-id="e6caf8149b5c6669b70d0177eb8fd7023">
 <strong> Select Log Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
@@ -203,7 +240,7 @@
 <li data-list-item-id="e2b8050defb4c8b50f622cae28a409951">
 <strong>Enter GUID fields</strong>: Enter the fields that contain globally unique identifiers to ensure they are handled correctly in logs.</li>
 <li data-list-item-id="ebe70bb2c73a4b4d745d0a1ef17841bbd">
-<strong>Enter EmployeeId fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in logs. For example, adding <strong>associateId</strong> ensures the employee identifier is included in logs.</li>
+<strong>Enter EmployeeId fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in logs.</li>
 </ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable report generation</strong> parameter in the <strong>Parameters</strong> section.</p><ul>
 <li data-list-item-id="e4a727792f5347c075caddfca30e9a4f2"><p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Report Type</strong>: Select a report type. This will decide the level of detail to be included in reports. For example, choosing <strong>Employee Number with All Data</strong> includes employee number, operations, field names, and all values (PII and non-PII).</p></li>
 <li data-list-item-id="e5c6fb6ac10fae9aef70cf7b407bf9d6d">
@@ -225,7 +262,7 @@
 <li data-list-item-id="e17ae9342e3e085cb33e8cf4ffde532e7">
 <strong>Enter GUID fields</strong>: Enter the fields that contain globally unique identifiers to ensure they are handled correctly in reports.</li>
 <li data-list-item-id="ee9eb210cf23904ea93b007bf0f4af31d">
-<strong>Enter EmployeeId fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in logs. For example, adding <strong>associateId</strong> ensures the employee identifier is included in reports.</li>
+<strong>Enter EmployeeId fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in logs.</li>
 </ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable notifications</strong> setting in the <strong>Parameters</strong> section.</p><h4 id="h_01KMD5HX6RZDKPDAS75W3C2BAC">Notification Template Settings</h4><p>Configure the following settings to customize notifications:</p><ul>
 <li data-list-item-id="e875a9132d3ba691f3ffd28d3e9a9e6aa">
 <strong>Send email notifications for success</strong>: Select this checkbox to send an email notification on successful integration runs. When selected, the <strong>Success Execution</strong> section is displayed for further configuration.</li>
@@ -251,29 +288,50 @@
 <strong>Email Subject</strong>: Enter the content that must be used as the subject in email notifications.</li>
 <li data-list-item-id="eefe0ec4df962d57a493594c7649047a3">
 <strong>Email Body</strong>: Enter the content that must be used as the email body for notifications sent upon failed form syncs.</li>
-</ul><h4 id="h_01KMF2X3G32JK6ZPBW74RWAJ7K">Notification Report Settings</h4><p>Configure the following email notification report settings:</p><ul>
-<li data-list-item-id="e8f8abcaebdb4cec815d72429e712f789">
-<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Report Type</strong>: Select a notification report type. This will decide the level of detail to be included in the report in the email notifications.<br/>The following are the available options:</p>
-<ul>
-<li data-list-item-id="e106b3003ac61c9ec2595781f647382d3">
-<strong>Minimum</strong>: Select this option to include only operation details.</li>
-<li data-list-item-id="e9e4351f624a60822e9d918732119bf5f">
-<strong>Metadata</strong>: Select this option to include operation details and attribute names.<br/><strong>Note</strong>: You may ignore the other options in the drop-down list.</li>
-</ul>
+</ul><h4 id="h_01KMF2X3G32JK6ZPBW74RWAJ7K">Create Notification</h4><p>Configure the following email notification settings for user creations:</p><ul>
+<li data-list-item-id="e32b406e5c947f323303f390282a27cea">
+<strong>Send email on user creation</strong>: Select this checkbox to send email notifications on user creations. When this checkbox is selected, the following settings are displayed. When the checkbox is not selected, email notifications will not be sent for the user creations in Entra ID.</li>
+<li data-list-item-id="ef974e6f2ea5b47cdd0ae028a1542d471">
+<strong>Notification Recipients</strong>: Select <strong>Personal Email </strong>if you want the created user to be notified on their personal email address. Select <strong>Manager Email </strong>if you want the manager of the created user to be notified on their work email address. </li>
+<li data-list-item-id="e554c00db5e9743717ce9ac1541459132">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful user creations.</li>
+<li data-list-item-id="e452eccb8536ff311b41272b1f3a32e4b">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="eab7cc2bd5c2511d0c5566bb072389389">
+<strong>Email Subject</strong>: Enter the content that must be used as the subject in email notifications.<br/><strong>Note</strong>: You can insert variable names, such as user attributes, in the email subject. The variable names will be replaced with the attribute values in the email notification. The variable names must be enclosed in {{}}. For example, <em>{{first_name}}, {{userPrincipalName}}</em>
 </li>
-<li data-list-item-id="e1b53278729a9fa49e9207cbc67e6a534">
-<strong>Select Report Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
-<li data-list-item-id="eaac4bceafd0e7c07313c30e07e9ad3df">
-<strong>Full</strong>: Select this option to include all attributes in the notification report.</li>
-<li data-list-item-id="e2083758756be5391836e6f8247cc59d7">
-<strong>Include List</strong>: Select this option to include specific attributes in the notification report.<ul><li data-list-item-id="eb7e58b57a7d91dc9d0bb1f9e3a9dd789">
-<strong>Custom Inclusion List</strong>: Enter the attributes to be included in the notification report. This parameter is available only if you select <strong>Include List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+<li data-list-item-id="e5f8fdec23035edef55f356953f2b9db0">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications.<br/><strong>Note</strong>: You can insert variable names, such as user attributes, in the email body. The variable names will be replaced with the attribute values in the email notification. The variable names must be enclosed in {{}}. For example, <em>{{first_name}}, {{userPrincipalName}}</em>
 </li>
-<li data-list-item-id="e47851aa680f9c1ac18fc45bd871d5a71">
-<strong>Exclude List</strong>: Select this option to exclude specific attributes from the notification report.<ul><li data-list-item-id="e7f31d5bfdeff42b47c2da1da6b028fe1">
-<strong>Custom Exclusion List</strong>: Enter the attributes to be excluded from the notification report. This parameter is available only if you select <strong>Exclude List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+</ul><h4 id="h_01KQ71VR7Z6WZCHQCH96SZ5RE9">Update Notification</h4><p>Configure the following email notification settings for user updates:</p><ul>
+<li data-list-item-id="e059b8b6b82e257f11d616abcbe3ecdcf">
+<strong>Send email on user update</strong>: Select this checkbox to send email notifications on user updates. When this checkbox is selected, the following settings are displayed. When the checkbox is not selected, email notifications will not be sent for the user updates in Entra ID.</li>
+<li data-list-item-id="e04f21441b5872af28eb0e0f7d88a5c22">
+<strong>Notification Recipients</strong>: Select <strong>Personal Email </strong>if you want the updated user to be notified on their personal email address. Select <strong>Manager Email </strong>if you want the manager of the updated user to be notified on their work email address. </li>
+<li data-list-item-id="e0fa70b3326c833439b362add8ccc5447">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful user updates.</li>
+<li data-list-item-id="ec214ac6385481394af93fae885723953">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e7ef99ee22df1f2972690bf867caef0d0">
+<strong>Email Subject</strong>: Enter the content that must be used as the subject in email notifications.<br/><strong>Note</strong>: You can insert variable names, such as user attributes, in the email subject. The variable names will be replaced with the attribute values in the email notification. The variable names must be enclosed in {{}}. For example, <em>{{first_name}}, {{userPrincipalName}}</em>
 </li>
-</ul>
+<li data-list-item-id="e0b3bbe3b8fe7b022df5c040381cb5f4b">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications.<br/><strong>Note</strong>: You can insert variable names, such as user attributes, in the email body. The variable names will be replaced with the attribute values in the email notification. The variable names must be enclosed in {{}}. For example, <em>{{first_name}}, {{userPrincipalName}}</em>
+</li>
+</ul><h4 id="h_01KQ71VR7ZQNYG5V6ZNPRNMWMB">Deactivate Notification</h4><p>Configure the following email notification settings for user deactivations:</p><ul>
+<li data-list-item-id="e373809e0977d6231db78ba58d73d2549">
+<strong>Send email on user deactivate</strong>: Select this checkbox to send email notifications on user deactivations. When this checkbox is selected, the following settings are displayed. When the checkbox is not selected, email notifications will not be sent for the user deactivations in Entra ID.</li>
+<li data-list-item-id="e8124cbef928bf6aed04ae2ca11b22b91">
+<strong>Notification Recipients</strong>: Select <strong>Personal Email </strong>if you want the deactivated user to be notified on their personal email address. Select <strong>Manager Email </strong>if you want the manager of the deactivated user to be notified on their work email address. </li>
+<li data-list-item-id="e4a38dd4fae1e93efa82a6aa9f90d2e4c">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful user deactivations.</li>
+<li data-list-item-id="eeda960c2f9b9dce33aff701ff3c04131">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="ee6f1f4b686e92012479d4a66ef9ef3f0">
+<strong>Email Subject</strong>: Enter the content that must be used as the subject in email notifications.<br/><strong>Note</strong>: You can insert variable names, such as user attributes, in the email subject. The variable names will be replaced with the attribute values in the email notification. The variable names must be enclosed in {{}}. For example, <em>{{first_name}}, {{userPrincipalName}}</em>
+</li>
+<li data-list-item-id="ee78cd81ed1593f1637bf21df4b184e89">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications.<br/><strong>Note</strong>: You can insert variable names, such as user attributes, in the email body. The variable names will be replaced with the attribute values in the email notification. The variable names must be enclosed in {{}}. For example, <em>{{first_name}}, {{userPrincipalName}}</em>
 </li>
 </ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>This section enables you to customize the <strong>Log Insights</strong> settings for viewing and analyzing the integration data. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
 <li data-list-item-id="e6cd47d6dc7401866ee690dbfa70fefc3">
@@ -301,7 +359,7 @@
 </li>
 </ul>
 </li>
-</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>The integration can be sheduled to run automatically at specified intervals. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for details. </p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>The integration can be scheduled to run automatically at specified intervals. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for details. </p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
   </div>
 </body>
 </html>

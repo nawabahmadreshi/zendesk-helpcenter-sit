@@ -1,0 +1,252 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Microsoft SQL Server / Oracle Cloud HCM Integration Guide - Draft</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Microsoft SQL Server / Oracle Cloud HCM Integration Guide - Draft</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>The Oracle Cloud HCM to SQL Server integration extracts the workers, payroll, departments, and personal contacts resource types and their selected attributes from the Oracle Cloud HCM app, and creates tables in the configured SQL Server database.</p><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="efe76d54ec8192bf559246d221672464b">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e2a2c8e548561a3634f21b0f0a2b19e58">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal for integration:<ul>
+<li data-list-item-id="ee0bd7aacec54a47c131721cb5c9e860a">
+<strong>Oracle Cloud HCM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360014797914" rel="noopener noreferrer" target="_blank">Oracle Cloud HCM Configuration Guide</a> for details.</li>
+<li data-list-item-id="e9324b92e1c7fe462c3a6191f36166197">
+<strong>Microsoft SQL Server</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360047261253" rel="noopener noreferrer" target="_blank">Microsoft SQL Server Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li data-list-item-id="e8017aa2f03e6b7ad218c5be112735878">If <em>Dynamic Data Masking</em> is enabled on the SQL Server, ensure that the SQL Server user configured for the Aquera integration is granted the <em>UNMASK</em> permission using the following query:<br/><strong>GRANT UNMASK TO &lt;dbUserName&gt;;</strong>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines the configuration required to integrate Oracle Cloud HCM with Microsoft SQL Server, enabling seamless transfer of pre-hire (candidate) and worker data from Oracle Cloud HCM to SQL Server.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e8e1d062ee2ee87cea264f098bf53b04d">Perform the following steps to create the integration:</li>
+<li data-list-item-id="e61f99776f5e79339d9b7f3e771cdb1cf">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e261ef9d0faf5d46c86ec86aa9c3cb11c">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e6b9dae7967e5f441329fdf43bef1511c">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e5b5e1c5f60d44ea53feb37a1777c6c14">Search for <strong>Oracle Cloud HCM / Microsoft SQL Server </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="e1a5d8e84238dfd32f78c73a3a3a36257">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="eb90fd5411a59c3c184cec47561e70822">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ebb43ca318af96a0777fce3e7bd06c2ca">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="e0271db37af492a7a46be392d319129d3">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Operational Settings</h3><p>The <strong>Operational Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="e10cf0796c426e71e779017586dc9b836">
+<strong>Report Only mode</strong>: Select to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e04f0d6d8db917797fd96c5ba8d323abf">
+<strong>Enable Logging</strong>: Select to display the <strong>Log level</strong> dropdown menu. Enabling logging generates logs outlining data changes.</li>
+<li data-list-item-id="e34a573bd2721a76e35a187e3fc163447">
+<strong>Log Level</strong>: Select the level of detail to include in the integration logs from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e47599e8dd29888b04ea64a7cd3502889">
+<strong>Minimum - Operations only; no GUID or fields</strong>: Include operation details in the logs. Any field names and GUIDs are excluded.</li>
+<li data-list-item-id="ecabbbc73b7287000d73e0348ac14038a">
+<strong>Metadata - Operations + field names; no GUID</strong>: Include operation details and field names in the logs. GUIDs are excluded.</li>
+<li data-list-item-id="e93ab40d936c6d53f7ac202e0f8784477">
+<strong>Non-PII Data - Operations + field names + selected non-PII values; no GUID</strong>: Include operation details, field names, and selected non-PII values in the logs. GUIDs are excluded.</li>
+<li data-list-item-id="e37e40a96f88f52872ac956985772d40d">
+<strong>GUID with Non-PII Data - GUID + operations + field names + selected non-PII values</strong>: Include GUIDs with operation details, field names, and selected non-PII values in the logs.</li>
+<li data-list-item-id="e17a8328289793e9def77fe6d8ff7d557">
+<strong>Employee Number with Non-PIl Data - Employee # + operations + field names + selected non-PII values</strong>: Include employee numbers, operation details, field names, and selected non-PII values in the logs.</li>
+<li data-list-item-id="e1c76056c097660f7b083aab7e666d7bb">
+<strong>Employee Number with All Data - Employee # + operations + field names + all values (PII + Non-PII)</strong>:<strong> I</strong>nclude employee numbers, operation details, field names, and all values, including both PII and non-PII data, in the logs.</li>
+</ul>
+</li>
+<li data-list-item-id="e4eb37606bbfbe3e47f44b250562fdf5a">
+<strong>Enable Reporting</strong>: Select to display the <strong>Reporting Type </strong>and <strong>Report Format Type </strong>fields. Enabling reporting generates integration reports.</li>
+<li data-list-item-id="eda6ec8c03f1f3100d8492b7f7599e89b">
+<strong>Reporting Type</strong>: Choose the level of detail to include in the integration reports from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e37fb1398e7de263c44bd61bdf55ac3fa">
+<strong>Minimum - Operations only; no GUID or fields</strong>: Include operation details in the report. Any field names and GUIDs are excluded.</li>
+<li data-list-item-id="e46e9df8149f6833bc0bc9feec3fb1771">
+<strong>Metadata - Operations + field names; no GUID</strong>: Include operation details and field names in the report. GUIDs are excluded.</li>
+<li data-list-item-id="ed14fe66f4f344fd112f7c8ad645bf36f">
+<strong>Non-PII Data - Operations + field names + selected non-PII values; no GUID</strong>: Include operation details, field names, and selected non-PII values in the report. GUIDs are excluded.</li>
+<li data-list-item-id="e4f93b825b0ff54d116c6565c7d9ee892">
+<strong>GUID with Non-PII Data - GUID + operations + field names + selected non-PII values</strong>: Include GUIDs with operation details, field names, and selected non-PII values in the report.</li>
+<li data-list-item-id="e4cbff704919e199672c8cc2ae51374a8">
+<strong>Employee Number with Non-PIl Data - Employee # + operations + field names + selected non-PII values</strong>: Include employee numbers, operation details, field names, and selected non-PII values in the report.</li>
+<li data-list-item-id="ea4a52b87c2d273f76c347845369bd78c">
+<strong>Employee Number with All Data - Employee # + operations + field names + all values (PII + Non-PII)</strong>:<strong> I</strong>nclude employee numbers, operation details, field names, and all values, including both PII and non-PII data, in the report.</li>
+</ul>
+</li>
+<li data-list-item-id="e8f0a8bc4fd1058851ce29c997f5942f0">
+<strong>Report Format Type</strong>: Select the format in which the integration report is created. The available options are CSV and Excel.</li>
+<li data-list-item-id="edc6827d47bdf4b786d991897a39dab86">
+<strong>Enable Log Insights</strong>: Select to display the <strong>Log Insights Level </strong>dropdown menu. Enabling log insights generates dashboards.</li>
+<li data-list-item-id="ea06c46775dfc0ebb12e67ecd277f44cd">
+<strong>Log Insights Level</strong>: Select the level of detail to include in the log insights dashboard from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ec16d0472a070ecba6d417f66737d4be9">
+<strong>Minimum - Operations only; no GUID or fields</strong>: Include operation details in the log insights dashboard. Any field names and GUIDs are excluded.</li>
+<li data-list-item-id="e2e8dc342fb8e244dab0ce6bbce697fbd">
+<strong>Metadata - Operations + field names; no GUID</strong>: Include operation details and field names in the log insights dashboard. GUIDs are excluded.</li>
+<li data-list-item-id="e0024c7ad67f7a3b4d0d90741f2d6d260">
+<strong>Non-PII Data - Operations + field names + selected non-PII values; no GUID</strong>: Include operation details, field names, and selected non-PII values in the log insights dashboard. GUIDs are excluded.</li>
+<li data-list-item-id="e5d90ea9a5f7c8bef5aadd541e01e71df">
+<strong>GUID with Non-PII Data - GUID + operations + field names + selected non-PII values</strong>: Include GUIDs with operation details, field names, and selected non-PII values in the log insights dashboard.</li>
+<li data-list-item-id="e44a13a7094945dbb97b2aa2a92279ce6">
+<strong>Employee Number with Non-PIl Data - Employee # + operations + field names + selected non-PII values</strong>: Include employee numbers, operation details, field names, and selected non-PII values in the log insights dashboard.</li>
+<li data-list-item-id="e410062d415fba828a976db79c8502571">
+<strong>Employee Number with All Data - Employee # + operations + field names + all values (PII + Non-PII)</strong>:<strong> I</strong>nclude employee numbers, operation details, field names, and all values, including both PII and non-PII data, in the log insights dashboard.</li>
+</ul>
+</li>
+</ul><h3 id="h_01KFDNVV411T92KRVN0G17H9D2">Notification Center</h3><p>The <strong>Notification Center</strong> section enables you to customize email notification settings for the integration. It has the following sections:</p><h4 id="h_01KFDPQC99R8SX4J34G4REV4M3">Notification Settings</h4><p>Set up the following email notification setting:</p><p><strong>Enable Email Notification</strong>: Select to enable email notifications for the integration.</p><h4 id="h_01KFDPWRK3JBR0HV1SHVH6ZA32">Email Notification - Success</h4><p>Set up the following integration success email notification settings:</p><ul>
+<li data-list-item-id="e39da9bb0f9f1b2f77da752a8a8ff2c4f">
+<strong>Send To</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li data-list-item-id="e39fca28541a0ca8cc85f78a36fcd3042">
+<strong>Subject Line</strong>: Enter the content that must be used as the email subject.</li>
+<li data-list-item-id="e8c9513c22d98ebb667ae28e8af6cf2b1">
+<strong>Email Template - Success</strong>: Enter the content for the email body to use for notifications sent upon successful integration execution.</li>
+<li data-list-item-id="e78b2e306a8bf7938e0496cfafbc20109">
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a report for all successful integration runs.</li>
+<li data-list-item-id="ead02f4f153af19bfc6297214cb0c8ade">
+<strong>Select Report Format</strong>: Select the format of the integration report. The available options are CSV and Excel.</li>
+</ul><h4 id="h_01KFDPX0TC9016VNCP6C29YPND">Email Notification - Failure</h4><p>Set up the following integration failure email notification settings:</p><ul>
+<li data-list-item-id="e483ec236fb33e26c54263782487d8d04">
+<strong>Send To</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li data-list-item-id="e8dd66fc1cc385723eb35fbdfe9278b83">
+<strong>Subject Line</strong>: Enter the content that must be used as the email subject</li>
+<li data-list-item-id="e1a30da873f2d1f03fd39887cff3b3d50">
+<strong>Email Template - Failure</strong>: Enter the content that must be used as the email body in the notifications sent for integration errors</li>
+<li data-list-item-id="eb46b4c185797b438c799d9e84ad631dd">
+<strong>Send Integration Report via Email</strong>: Select to receive email notification with a report for all unsuccessful integration runs.</li>
+<li data-list-item-id="e5af211fb2799544a8136377febc9597a">
+<strong>Select Report Format</strong>: Select the format of the integration report. The available options are CSV and Excel.</li>
+</ul><h2 id="h_01KFDNSZES3BV0H74QJHGBG6BV">Data Mapping</h2><p>Configure the following data mapping settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Source Setting</h4><p>Configure the following source settings:</p><ul>
+<li data-list-item-id="e09f8ed2e9af2c2bfab66b8885efb8623">
+<strong>Select Source Application</strong>: Select the configured Oracle Cloud HCM app.</li>
+<li data-list-item-id="ed1fb85ce8bc5c904ec68f59f4d102b4b">
+<strong>Workers</strong>: Select to display the worker-related fields.</li>
+<li data-list-item-id="e514c055dbfdda42a08021c9843400272">
+<strong>Workers Columns</strong>: Select the worker attributes from the dropdown menu to create the respective columns in the SQL server database.</li>
+<li data-list-item-id="e52ababbdb29402ff16b024f4b2910043">
+<strong>Addresses</strong>: Select to display the <strong>Addresses Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e51793ad5b013360f434f6d22eaaa72e9">
+<strong>Addresses Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e8795465b98b1070450532622373458c3">
+<strong>Emails</strong>: Select to display the <strong>Emails Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e4e366844ae8bd4e64677313fe1912658">
+<strong>Emails Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e203db30a81ddd8934d868fac38b38cde">
+<strong>External Identifiers</strong>: Select to display the <strong>External Identifiers Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e73c3def45562c495f49c0a398917e290">
+<strong>External Identifiers Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e851b257c5cfb2bdc3c15f34f8325f98b">
+<strong>Names</strong>: Select to display the <strong>Names Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e523a1af21fdf1301d5de86e7a0d6b925">
+<strong>Names Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e598c1863ed94eb0cd76df5402e755988">
+<strong>Passports</strong>: Select to display the <strong>Pay Statement Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e05bcd4050d5153483a0bd90f6b798f73">
+<strong>Passports Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e38cc1cf3e62b3d60cdd779c59be7ab9a">
+<strong>Phones</strong>: Select to display the <strong>Phones Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e640a4064115791e10ba376968e62b0ac">
+<strong>Phones Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e8db82255209d94411e5838cda565db8a">
+<strong>Work Relationships</strong>: Select to display the <strong>Work Relationships Columns</strong> dropdown menu.</li>
+<li data-list-item-id="eba48dd844d7449556bb7f29f691d31e0">
+<strong>Work Relationships Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="ecc2fb471a552820a2f895fc90df39d60">
+<strong>Assignments</strong>: Select to display the <strong>Assignments Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e044e26de55cf8308bb0a7d4febbc3ac1">
+<strong>Assignments Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e91148c493d388f64e3482bbc54f9e0c4">
+<strong>Contracts</strong>: Select to display the <strong>Contracts Columns</strong> dropdown menu.</li>
+<li data-list-item-id="ef8ccbe4d58867785841ff9b2c9563fc8">
+<strong>Contracts Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e0bdcd1ae49f7c9524288a659219b3250">
+<strong>All Reports</strong>: Select to display the <strong>All Reports Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e89a99b6afa3711a28689c638433e7ea1">
+<strong>All Reports Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="ea4440a93bb6e45799b100602ba0384ab">
+<strong>Grade Steps</strong>: Select to display the <strong>Payment Summary Statutory Deductions Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e49915a1e411044cacff30cd4a6d67891">
+<strong>Grade Steps Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="edd41579f7eae1084d5588c7e789c8083">
+<strong>Managers</strong>: Select to display the <strong>Managers Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e3a8eb158ad0056122fe2e3914b37cb4b">
+<strong>Managers Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="eff5a9a55fc9387cf23565159ad675392">
+<strong>Representatives</strong>: Select to display the <strong>Representatives Columns</strong> dropdown menu.</li>
+<li data-list-item-id="eb6bc2d9fd5268b2c0bfbfc1b3cacbeda">
+<strong>Representatives Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="efeaccaf61e1139e3c635a73447153c4e">
+<strong>Work Measures</strong>: Select to display the <strong>Work Measures Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e7ca47f0dd7309fd5d306512f3177ac8a">
+<strong>Work Measures Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e4348c5ba2ef432f38c2b937e9cf66969">
+<strong>Departments</strong>: Select to display the department-related fields.</li>
+<li data-list-item-id="ed76d6069803ec60aa3eba8c42897e030">
+<strong>Departments Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e1b862028baf34d3aadcce1a060f39fbd">
+<strong>Department Extra Info</strong>: Select to display the <strong>Department Extra Info Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e396228a9b970e8d1ad0629c991e179a3">
+<strong>Department Extra Info Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="ebe575ffd8cc4ffbb08bd8b56f3b8471c">
+<strong>Jobs</strong>: Select to display the job-related fields.</li>
+<li data-list-item-id="eba4e882d2c98d7687abf3ba90c0f5b7e">
+<strong>Jobs Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="ec6b21249ed41bd08b767660f38b5ec6f">
+<strong>Job Valid Grades</strong>: Select to display the <strong>Jobs Valid Grades Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e2b65222e0d51527817c43ab09db83af4">
+<strong>Jobs Valid Grades Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e6b6459a8c01aaf54b686fa1035c5ab4e">
+<strong>Positions</strong>: Select to display the position-related fields.</li>
+<li data-list-item-id="eff1721d91c89ee3923b89269a3de36a1">
+<strong>Positions Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e5cbc29f98c39cba2864d77b95ab3731c">
+<strong>Position Valid Grades</strong>: Select to display the <strong>Position Valid Grades Columns</strong> dropdown menu.</li>
+<li data-list-item-id="e04ebb94552a262be417f3454f9223168">
+<strong>Position Valid Grades Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="eb0158da6e8e80b25c937fd68ad3a4b7c">
+<strong>Grades</strong>: Select to display the grade-related fields.</li>
+<li data-list-item-id="e6ec5f09f52d75d99ccd6a3ab883baf9e">
+<strong>Grades Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+<li data-list-item-id="e73a54d587d47373402201176fffa5257">
+<strong>Grade Step Items</strong>: Select to display the <strong>Grade Step Items Columns</strong> dropdown menu.</li>
+<li data-list-item-id="eb3f0e5fb379657ad7f61980450f39239">
+<strong>Grade Step Items Columns</strong>: Select the attributes from the dropdown menu to create the respective columns in the SQL Server database.</li>
+</ul><h4 id="h_01K04B51EEX43EAV95YABBP3F5">Target Setting</h4><p>Configure the following target settings:</p><ul>
+<li data-list-item-id="e28c3fd9ba689242a276e9d821a1f082a">
+<strong>Select Target Application</strong>: Select the configured Microsoft SQL Server app.</li>
+<li data-list-item-id="ea2d5d0736bd171499ec80f05be1757e9">
+<strong>Select Database</strong>: Select the database from the dropdown menu for the configured SQL server.</li>
+<li data-list-item-id="e61eceeb0ff28cd4bf2eed0b922ffac94">
+<strong>Select Schema</strong>: Select the corresponding desired schema from the dropdown menu.</li>
+<li data-list-item-id="e65a8a71c9876aa20787edc0e3dfd67a8">
+<strong>Choose Slowly Changing Dimension (SCD) Type</strong>: Select the SCD type to write the data in the selected database. The integration currently supports only SCD-2. <br/>SCD-2 retains the latest data along with the full history. With SCD-2, a new row is inserted into the SQL database for every change, maintaining unlimited history.</li>
+</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically at your chosen time interval. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01KJCK47F7K0E2S5DKA8201FZN">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="e0c5dc296deaefdf4d22f99254c0a8f67">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="e8e5975cac385987526dacbe2ef1911a6">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="e6f8629d3b15b3dff54b2ffee54a684af">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="e3d882bfb41e2c8a0662b9fef0cc2b8b9">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="e7702ef05c87d39f279a406b5163164ca">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="ed2cf39d35e181c6177fbe5cf6b064cda">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="e7177f3080f7a8e7f74134135aa57d1f9">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e5d98fee40c085eb958da9806bc4cebb1">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current and upgraded version numbers are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="eb0549b1458a1f6905a717db16fb4772a">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol><h1 id="h_01KK1QZYWNFS5NHNPFR2DE6V61">Troubleshooting</h1><p>This section discusses issues that might occur during integration runs and the steps to resolve them.</p><p><strong>Issue</strong>: The data retrieved by the integration from the SQL Server is masked. <br/><br/><strong>Resolution</strong>: This issue occurs when the database user account used by the integration lacks permission to unmask the masked data retrieved from the SQL Server database. You can grant the unmask permission to the database user using the following SQL query:</p><pre><code>GRANT UNMASK TO &lt;dbUserName&gt;;</code></pre>
+  </div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Watchdog Setup Guide: ADP Workforce Now to Entra ID Integration</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Watchdog Setup Guide: ADP Workforce Now to Entra ID Integration</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KQ76HHB2M37ZK1Z123XGQTPK">Overview</h1><p>Aquera Watchdog is a monitoring and validation tool designed to identify data synchronization issues between integrated applications. It operates independently of the Aquera integration and analyzes application events to detect inconsistencies between source and target systems.</p><p>After an integration execution is completed, you can run the Watchdog to retrieve the event logs, analyze the activities, and report any anomalies or data discrepancies across the applications. For example, if a user is created in the source application, Watchdog checks for a corresponding user provisioning event in the target application and reports an anomaly if no matching event is found. Aquera Watchdog helps ensure guaranteed delivery of events across integrated systems by continuously monitoring and validating data synchronization between the source and target applications.</p><p>When you run the integration Watchdog, a dashboard is generated with a consolidated view of the activities across the systems, including any detected anomalies. The dashboard can be accessed through the <strong>Insights</strong> module. Refer to the <a href="#h_01KQ9AKSTAGRHHECR0BZP7CA26">Insights Dashboard </a>section for the details captured in the dashboard.</p><p>Watchdog ensures data consistency across systems, provides visibility into sync failures, and helps proactively identify and resolve integration issues. </p><p>This guide provides details on how to configure and run the Watchdog for the integration that synchronizes worker data from ADP Workforce Now to user accounts in Entra ID.</p><div><div tabindex="-1"><div><div data-message-author-role="assistant" data-message-id="7849f3d7-b20e-427d-a8f5-918de3614a9f" data-message-model-slug="gpt-5-thinking" dir="auto"><div><div>
+<h1 id="h_01K2F6ANZ30WMRWZ3HS0H8MAZN">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li data-list-item-id="e663aea71f853188cc95a79f3fc1453fc">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin Portal. Visit <a href="https://admin.aquera.io">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access. <br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="ebb434914baf52779e732ac32d247e2e4">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin Portal to connect to those applications for retrieving the event logs:<ul>
+<li data-list-item-id="e55c7baf23b33e659358454ba6911e6b2">
+<strong>ADP Workforce Now</strong>: Ensure you add and configure the ADP Workforce Now connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li data-list-item-id="edb27d9f5a9e2ff2e25f8f1da915d8a45">
+<strong>Microsoft 365</strong>: Ensure you add and configure the Microsoft 365 connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711">Microsoft 365 Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+</div></div></div></div></div></div><h1 data-end="19" data-start="0" id="h_01K4Q5Q7MJ7FEQ698CCEKVYVD8">Watchdog Setup</h1><p data-end="143" data-start="21">This section describes how to configure the Watchdog that monitors the user sync from ADP Workforce Now to Entra ID.</p><h2 data-end="166" data-start="145" id="h_01K4Q5Q7MKCGADBKQRW7EFMD4T">Create Integration Watchdog</h2><p data-end="213" data-start="168">Follow these steps to create the integration watchdog:</p><ol data-end="675" data-start="215">
+<li data-end="258" data-list-item-id="e3ff45ec12651e9ddf83fae0a89c215e1" data-start="215"><p data-end="258" data-start="218">Log in to the <strong>Aquera Admin Portal</strong>.</p></li>
+<li data-end="306" data-list-item-id="e63593bb97aabbf7bd7999c20ed64b639" data-start="259"><p data-end="306" data-start="262">In the left panel, go to <strong data-end="303" data-start="287">Integrations</strong>.</p></li>
+<li data-end="341" data-list-item-id="e9017e9756d0934f84e71800ffa1e8713" data-start="307"><p data-end="341" data-start="310">Click <strong data-end="338" data-start="316">Create Integration</strong>.</p></li>
+<li data-end="425" data-list-item-id="e3217dca0e4aed8eeaf72ddab717b9b39" data-start="342"><p data-end="425" data-start="345">Select <strong>ADP Workforce Now / Entra ID [Watchdog]</strong>.</p></li>
+<li data-end="488" data-list-item-id="ecc9e9b3ab4f246acc6dda2f5cfaffd76" data-start="426"><p data-end="488" data-start="429">Enter a name and description for the integration.</p></li>
+<li data-end="617" data-list-item-id="ef2c98e5ed8a94e230984a56c89871a8a" data-start="489"><p data-end="617" data-start="492">Choose your <strong>ADP Workforce Now</strong> and <strong data-end="577" data-start="564">Microsoft 365</strong> connector instances.</p></li>
+<li data-end="675" data-list-item-id="ed42c258080b8ca07a309cad63688cdef" data-start="618"><p data-end="675" data-start="621">Click <strong data-end="639" data-start="627">Continue</strong> to open the <strong data-end="669" data-start="652">Configuration</strong> page.</p></li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the ADP Workforce Now and Microsoft 365 connectors that you have selected while creating the integration watchdog. This section enables you to search and select a different instance of the application connectors, if required.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the Watchdog settings according to your use case. It has the following settings:</p><ul>
+<li data-list-item-id="ef2939923982e0669911465e1a512e39a">
+<strong>ADP Workforce Now matching attribute</strong>: Select the ADP Workforce Now worker attribute that must be used to uniquely identify a worker record and match with an Entra ID user record.</li>
+<li data-list-item-id="ee2a58d2c1607bf73f2e1a5087fee1a76">
+<strong>Entra ID matching attribute</strong>: Select the corresponding Entra ID user attribute that is used to match against the selected ADP Workforce Now attribute to identify the correct Entra ID user record.</li>
+<li data-list-item-id="e46953ff8922de6b2d7cb7436f6457dff">
+<strong>Logs lookback period (days)</strong>: Specify the number of past days for which the event logs must be retrieved from ADP Workforce Now and Entra ID. These logs are used by Watchdog to compare and analyze the events across both systems.</li>
+</ul><h2 id="h_01KQ7DS5DDR5Y7K4VM0Z4F7SJ8">Schedule</h2><p>The integration Watchdog can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details. </p><h1 id="h_01KQ9AKSTAGRHHECR0BZP7CA26">Watchdog Insights</h1><p>This section details the data covered in the dashboard created by the Watchdog for the ADP Workforce Now to Entra ID integration. </p><ol>
+<li data-list-item-id="ed082b23ca82f551cf3c6e581ba9b7f00">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e280272f4190b0964f2bbe8b8a75a5bd6">Navigate to <strong>Insights</strong>.</li>
+<li data-list-item-id="e50e5968a9176d62c39dba4902626daff">Click on the integration watchdog name, for example, <em>ADP Workforce Now Entra ID Watchdog. </em>The dashboards are displayed.</li>
+</ol><p>The dashboard provides a comprehensive view of workforce events and their synchronization across ADP Workforce Now and Entra ID. It includes the following insights:</p><ul>
+<li data-list-item-id="e8c2ad3bc9ff1f52315fb4847a319863d">Displays the count of Joiner, Mover, and Leaver events in ADP Workforce Now, along with corresponding user creations, updates, and deactivations in Entra ID. This helps identify any discrepancies in user data between the two systems.</li>
+<li data-list-item-id="e9cd9aafe2140efc8e15400769e5d9f56">A checklist that verifies whether a corresponding Entra ID user record has been created for each employee added in ADP Workforce Now.</li>
+<li data-list-item-id="e78f7b299347fb84cabb69ea198823050">A timeline view illustrating a worker’s journey, from hiring in ADP Workforce Now to account creation in Entra ID, and from termination to account deactivation.</li>
+<li data-list-item-id="e47144ea07ed56c2b6565f875896117f1">A dashboard showing the upcoming hires and terminations, categorised by departments</li>
+<li data-list-item-id="ea744b585563ec673f7b80ca2cec7f89a">A trend graph that provides visibility into synchronization patterns or gaps between HR and directory events.</li>
+<li data-list-item-id="eeca45a052bbcdc7d2015d698d3a803ec">A pie chart showing the percentage distribution of workers across different departments.</li>
+<li data-list-item-id="e18df0a2dcf381532934054ae12f2f9d9">A horizontal bar chart showing the distribution of workers across various managers.</li>
+<li data-list-item-id="e5af4356883809cd3c60010a2c2d40b7d">Insights into workforce distribution by geographic location, and by department and country.</li>
+<li data-list-item-id="e27602b15dd12ed6aec05c9594d74d8c7">A line chart illustrating hiring trends compared to employee terminations over time.</li>
+<li data-list-item-id="ecb327a52d232949a6a11cbcead7f068e">Detailed logs of events in the ADP Workforce Now and Entra ID directory.</li>
+</ul><p>The following are some sample snapshots of the dashboard:</p><figure><img alt="DB1.png" height="1256" src="./assets/086f3ff4fae5ba87.bin" width="2488"/></figure><figure><img alt="DB2.png" height="1424" src="./assets/0bf95933a0f646f8.bin" width="2340"/></figure><figure><img alt="DB3.png" height="1302" src="./assets/0be5bd73f290a3c9.bin" width="2392"/></figure><figure><img alt="DB4.png" height="1524" src="./assets/0785a3414bf11cd0.bin" width="2468"/></figure><figure><img alt="DB5.png" height="1128" src="./assets/1a133d0d1e0fa118.bin" width="2356"/></figure><figure><img alt="DB7.png" height="636" src="./assets/eeb24dbc4c5851c7.bin" width="2108"/></figure><p> </p><p> </p>
+  </div>
+</body>
+</html>

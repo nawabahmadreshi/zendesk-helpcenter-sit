@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Watchdog Setup Guide: Dayforce to Entra ID Integration</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Watchdog Setup Guide: Dayforce to Entra ID Integration</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KQ76HHB2M37ZK1Z123XGQTPK">Overview</h1><p>Aquera Watchdog is a monitoring and validation tool designed to identify data synchronization issues between integrated applications. It operates independently of the Aquera integration and analyzes application events to detect inconsistencies between source and target systems.</p><p>After an integration execution is completed, you can run the Watchdog to retrieve the event logs, analyze the activities, and report any anomalies or data discrepancies across the applications. For example, if a user is created in the source application, Watchdog checks for a corresponding user provisioning event in the target application and reports an anomaly if no matching event is found. Aquera Watchdog helps ensure guaranteed delivery of events across integrated systems by continuously monitoring and validating data synchronization between the source and target applications.</p><p>When you run the integration Watchdog, a dashboard is generated with a consolidated view of the activities across the systems, including any detected anomalies. The dashboard can be accessed through the <strong>Insights</strong> module. Refer to the <a href="#h_01KQ9AKSTAGRHHECR0BZP7CA26">Watchdog Insights </a>section for the details captured in the dashboard.</p><p>Watchdog ensures data consistency across systems, provides visibility into sync failures, and helps proactively identify and resolve integration issues. </p><p>This guide provides details on how to configure and run the Watchdog for the integration that synchronizes employee data from Dayforce to user accounts in Entra ID.</p><div><div tabindex="-1"><div><div data-message-author-role="assistant" data-message-id="7849f3d7-b20e-427d-a8f5-918de3614a9f" data-message-model-slug="gpt-5-thinking" dir="auto"><div><div>
+<h1 id="h_01K2F6ANZ30WMRWZ3HS0H8MAZN">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li data-list-item-id="e35be945203277eaa6dd82de3ca92aacb">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin Portal. Visit <a href="https://admin.aquera.io">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access. <br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e509fd5b27f31022453ca10170c7dc155">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin Portal to connect to those applications for retrieving the event logs:<ul>
+<li data-list-item-id="ea5e3a4276096625f3579a5c138b0e600">
+<strong>Dayforce</strong>: Ensure you add and configure the Dayforce connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for details.</li>
+<li data-list-item-id="e843ff1d783358097f645fcf334a5e2dc">
+<strong>Microsoft 365</strong>: Ensure you add and configure the Microsoft 365 connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711">Microsoft 365 Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+</div></div></div></div></div></div><h1 data-end="19" data-start="0" id="h_01K4Q5Q7MJ7FEQ698CCEKVYVD8">Watchdog Setup</h1><p data-end="143" data-start="21">This section describes how to configure the Watchdog that monitors the user sync from Dayforce to Entra ID.</p><h2 data-end="166" data-start="145" id="h_01K4Q5Q7MKCGADBKQRW7EFMD4T">Create Integration Watchdog</h2><p data-end="213" data-start="168">Follow these steps to create the integration watchdog:</p><ol data-end="675" data-start="215">
+<li data-end="258" data-list-item-id="e07792d720e9377e7f13bf6000f189f5f" data-start="215"><p data-end="258" data-start="218">Log in to the <strong>Aquera Admin Portal</strong>.</p></li>
+<li data-end="306" data-list-item-id="e13f618504bdbf07cdf37266eb82c1f0d" data-start="259"><p data-end="306" data-start="262">In the left panel, go to <strong data-end="303" data-start="287">Integrations</strong>.</p></li>
+<li data-end="341" data-list-item-id="e0280bbbc439dedd55fc4a8e3881964f7" data-start="307"><p data-end="341" data-start="310">Click <strong data-end="338" data-start="316">Create Integration</strong>.</p></li>
+<li data-end="425" data-list-item-id="eac40fed90bd598c2b74e4b447f24e41b" data-start="342"><p data-end="425" data-start="345">Select <strong>Dayforce / Entra ID [Watchdog]</strong>.</p></li>
+<li data-end="488" data-list-item-id="e8432c4d70c41292f931dd9195c89d577" data-start="426"><p data-end="488" data-start="429">Enter a name and description for the integration.</p></li>
+<li data-end="617" data-list-item-id="e51044bccefdecd4c8e8205a746fdffaf" data-start="489"><p data-end="617" data-start="492">Choose your <strong>Dayforce</strong> and <strong data-end="577" data-start="564">Microsoft 365</strong> connector instances.</p></li>
+<li data-end="675" data-list-item-id="eb62801d1dda49242a5dd86c76954a728" data-start="618"><p data-end="675" data-start="621">Click <strong data-end="639" data-start="627">Continue</strong> to open the <strong data-end="669" data-start="652">Configuration</strong> page.</p></li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the Dayforce and Microsoft 365 connectors that you have selected while creating the integration watchdog. This section enables you to search and select a different instance of the application connectors, if required.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the Watchdog settings according to your use case. It has the following settings:</p><ul>
+<li data-list-item-id="ef2097d54bae2098bed3a36ac9d1ff780">
+<strong>Dayforce matching attribute</strong>: Select the Dayforce employee attribute that must be used to uniquely identify an employee record and match with an Entra ID user record.</li>
+<li data-list-item-id="e1d16964180da4d02aa6137b7885a6964">
+<strong>Entra ID matching attribute</strong>: Select the corresponding Entra ID user attribute that is used to match against the selected Dayforce attribute to identify the correct Entra ID user record.</li>
+<li data-list-item-id="ebcae39cc5109b4bf0def7e514c8e9e9a">
+<strong>Logs lookback period (days)</strong>: Specify the number of past days for which the event logs must be retrieved from Dayforce and Entra ID. These logs are used by Watchdog to compare and analyze the events across both systems.</li>
+</ul><h2 id="h_01KQ7DS5DDR5Y7K4VM0Z4F7SJ8">Schedule</h2><p>The integration Watchdog can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details. </p><h1 id="h_01KQ9AKSTAGRHHECR0BZP7CA26">Watchdog Insights</h1><p>This section details the data covered in the dashboard created by the Watchdog for the ADP Workforce Now to Entra ID integration. </p><ol>
+<li data-list-item-id="ed4bf61536651464f012a9f2ef64e5577">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e1b8f4f3f6b3a554ca3b4e44c33c6fc28">Navigate to <strong>Insights</strong>.</li>
+<li data-list-item-id="ef65e79bd5ff15a9933e71de34401b125">Click on the integration watchdog name, for example, <em>Dayforce to Entra ID Watchdog. </em>The dashboards are displayed.</li>
+</ol><p>The dashboard provides a comprehensive view of workforce events and their synchronization across Dayforce and Entra ID. It includes the following insights:</p><ul>
+<li data-list-item-id="e2e3b73238bf262a442ac8731ae65c83f">Displays the count of Joiner, Mover, and Leaver events in Dayforce, along with corresponding user creations, updates, and deactivations in Entra ID. This helps identify any discrepancies in user data between the two systems.</li>
+<li data-list-item-id="e3820d4130adea79304437d9879ef3c7b">A checklist that verifies whether a corresponding Entra ID user record has been created for each employee added in Dayforce.</li>
+<li data-list-item-id="ea32e935952b9258b902f197deb8bdfe7">A timeline view illustrating a worker’s journey, from hiring in Dayforce to account creation in Entra ID, and from termination to account deactivation.</li>
+<li data-list-item-id="e7375bde3a7d6e90d6cb5853c3ee51076">A dashboard showing the upcoming hires and terminations, categorized by departments</li>
+<li data-list-item-id="e60235b9d28c3f5d975ef25afe2aa5e2f">A trend graph that provides visibility into synchronization patterns or gaps between HR and directory events.</li>
+<li data-list-item-id="e698d3ab47dda36c2e82c58b1ae0f1204">A geographical map showing the number of Entra ID user logins across various locations.</li>
+<li data-list-item-id="e060e0544882a739760d2045406ff5aeb">A list of Entra ID applications with the highest number of user logins.</li>
+<li data-list-item-id="e45e1be3c29e9e043d5e4bc45df6662de">The list of users who have been inactive for a long time.</li>
+<li data-list-item-id="ee2aec5cf082a1d990e61c1115fcc899d">A trend graph showing the most frequently accessed applications over a period of time.</li>
+<li data-list-item-id="e0b3fdb4125f97a1fbe9b381509cff657">A pie chart showing the percentage distribution of workers across different departments.</li>
+<li data-list-item-id="e953fdcc73e2a63deeb843af3961853bc">A horizontal bar chart showing the distribution of workers across various managers.</li>
+<li data-list-item-id="e15ba4c89a73a0ba6e6910295210a7139">Insights into workforce distribution by geographic location, and by department and country.</li>
+<li data-list-item-id="e72500fba568df6dec9f4e07a97271d94">A line chart illustrating hiring trends compared to employee terminations over time.</li>
+<li data-list-item-id="e27e2a14a144c002aebc68dfe9aeee5ec">Detailed logs of events in the Dayforce application and the Entra ID directory.</li>
+</ul><p>The following are some sample snapshots of the dashboard:</p><figure><img alt="DB1.png" height="1256" src="./assets/e93abd26c135a289.bin" width="2488"/></figure><figure><img alt="DB2.png" height="1424" src="./assets/70a3d6e7237d6cdc.bin" width="2340"/></figure><figure><img alt="DB3.png" height="1302" src="./assets/aa3dadebaac4f1f9.bin" width="2392"/></figure><figure><img alt="DB4.png" height="1524" src="./assets/1c55e59f37dfb7ae.bin" width="2468"/></figure><figure><img alt="DB5.png" height="1128" src="./assets/74bed378b36ce5b5.bin" width="2356"/></figure><figure><img alt="DB7.png" height="636" src="./assets/b7322c3b126af57b.bin" width="2108"/></figure><p> </p><p> </p>
+  </div>
+</body>
+</html>

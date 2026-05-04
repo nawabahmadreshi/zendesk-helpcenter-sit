@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NEIM / Hybrid Integration Setup Guide [ In progress]</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>NEIM / Hybrid Integration Setup Guide [ In progress]</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize contractors from NEIM to Active Directory and Entra ID. </p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The NEIM / Hybrid integration performs the following functions:</p><ul>
+<li data-list-item-id="ed0a243d400bd09462aa37269ff07fcd7">Retrieves the data of contractors from NEIM and provisions them as users in Active Directory, which are then synced to Entra ID, based on the configured integration settings.<ul>
+<li data-list-item-id="e2c8f9991832b537240bab1521daee37a">For new users, the integration generates a unique sAMAccountName, Common Name (CN), User Principal Name (UPN), and email address, depending on the configuration.</li>
+<li data-list-item-id="e0a931a67fdd23f20cac4c2610035d7cb">Generates a random password or a password based on a configured password policy for each new users.</li>
+<li data-list-item-id="e93e48436623cc30931b754ecd3da3d59">Assigns users to Entra ID groups and Active Directory groups and Organizational Units (OUs) based on the assignment rules configured in the integration.</li>
+<li data-list-item-id="efc09a93a8b797833fc0e1cf6ee7b550e">Assigns Entra ID licenses to users based on the assignment rules configured in the integration.</li>
+</ul>
+</li>
+<li data-list-item-id="e54ca93389c56f805efd7a814ab3ae678">Updates or deactivates users in Active Directory and Entra ID based on the conditions configured in the integration.</li>
+<li data-list-item-id="e52a01bb2be3b6b9712c9087d6695d55d">Removes users from Active Directory and Entra ID groups based on the configured rules.</li>
+<li data-list-item-id="ef8869ac3f302ff94a313f136fd0482d8">Removes license from Entra ID users based on the configured rules.</li>
+<li data-list-item-id="ea5866b33f91ace06aa3b7232a66196cc">Generates reports and logs, and sends notification emails based on the integration settings.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="eb340fa1d3a30987244dff62c55595db6">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
+</li>
+<li data-list-item-id="ecfd3b586603326a3a89ea11dadabc5d1">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="eaa0aad447b3fa5c42154dc0257ef6eeb">
+<strong>Aquera Contractor</strong>: For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/35025335553559" rel="noopener noreferrer" target="_blank">Aquera Contractor Configuration Guide</a>.</li>
+<li data-list-item-id="edf2200cfe9cdef76ced27f534f0d5d24">
+<strong>Active Directory</strong>:  For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/26093919567255" rel="noopener noreferrer" target="_blank">Active Directory (AD) Version 8 Configuration Guide</a>.</li>
+<li data-list-item-id="e3d0c06c71134ba805f23bd0cc711b887">
+<strong>Entra ID</strong>: For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> or the <a href="https://support.aquera.com/hc/en-us/articles/16828093288727" rel="noopener noreferrer" target="_blank">Microsoft 365 App Registration Configuration Guide</a>, depending on the type of authentication to be used for the connector.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize contractors from NEIM to Active Directory and Entra ID.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e542d5c13d56db512ef557ad5613cc7ee">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ecbe841944b7225a32d90de80be9a02d6">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e629315df90b7c71c61047e6add221d18">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ebb61605e4eae9cbe5f307cc2d7f2117c">Select<strong> NEIM / Hybrid</strong>.</li>
+<li data-list-item-id="ec0249828db4dffde0cad982c39e6a63b">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ec7ed13dbd290558ac07acc6cf185bf28">Click <strong>Continue</strong>. The <strong>Overview</strong> page is displayed to start configuring the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Overview</h2><p>The <strong>Overview</strong> tab provides a summary of the capabilities of the integration and also allows you to enable the core integration features. It has the following sections:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Features</h3><p>The <strong>Features</strong> section provides options to enable or disable the following integration features:</p><ul>
+<li data-list-item-id="e4a179b63962694e0b8e85718b4443f0c">
+<strong>Enable Entra ID for NEI Management</strong>: Enable this toggle for the integration to support synchronizing contractors from NEIM to Entra ID.</li>
+<li data-list-item-id="eb3724caec8fe089f74fdd49e323fdcdc">
+<strong>Enable Active Directory for NEI Management</strong>: Enable this toggle for the integration to support synchronizing contractors from NEIM to Active Directory.</li>
+<li data-list-item-id="ecd72c5246f45210c91a014f0acf387e4">
+<strong>Enable Notification Management</strong>: Enable this toggle for the integration to send email notifications on integration runs.</li>
+</ul><h2 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">NEIM</h2><p>The <strong>NEIM</strong> tab provides options to select the NEIM application and filter the contractors.</p><ul>
+<li data-list-item-id="e4cab6729b85ecf3e3a743d95fde893f2">
+<strong>Select your NEI application instance</strong>: Select the Aquera Contractor application connector configured in the Aquera Admin portal.</li>
+<li data-list-item-id="e8f12abb90cb34a5294e5c39814e271ff">
+<strong>Enable filtering contractors</strong>: Enable this toggle to allow filtering contractors. When enabled, the following two settings are displayed.</li>
+<li data-list-item-id="e0aef73f16aa463615c72622012af6230">
+<strong>Filter contractors by</strong>: Select <strong>Status</strong> to filter contractors by their status in NEIM. Currently, the integration supports filtering contractors only by their status.</li>
+<li data-list-item-id="ee4061d8957c487843d9daa92f0532f7c">
+<strong>Contractor Statuses</strong>: Select the contractor statuses that must be considered for synchronizing to Active Directory and Entra ID. Only the candidates with the selected statuses will be synced to the directories.</li>
+</ul><h2 id="h_01KQEJHTGQ7HATYQ4XHDSHGJD4">Directory</h2><p>The <strong>Directory</strong> tab provides options to select your Active Directory and Entra ID application instances and to set the rules for filtering the contractors to be considered for provisioning to the directories.</p><h3 id="h_01KQEJSE25RZE79JYSJZG7HETZ">Directory Settings</h3><p>The <strong>Directory Settings</strong> section enables you to configure the settings for selecting the directory instances, selecting the password policies, and setting the directory assignment rules.</p><h4 id="h_01KQEJTD4DM7KZ8QP1FCC5M1FT">Application Configuration</h4><ul>
+<li data-list-item-id="e4328d01d5ed81ad85173f041f5ae8665">
+<strong>Active Directory</strong>: Select the Active Directory application connector instance to be used for creating users in Active Directory.</li>
+<li data-list-item-id="e49b293da5cdcff75ad7a2968c3a3c894">
+<strong>Enforce custom password policy for AD users</strong>: Enable this toggle to use a custom password policy that is configured in this integration for generating passwords for the users that will be created in Active Directory. When enabled, the <strong>Select password policy</strong> drop-down is displayed. When disabled, a random password will be generated by the integration, and the password does not follow any specific password policy.</li>
+<li data-list-item-id="e65bbbebc941d52b85123eabf0a96832c">
+<strong>Select password policy</strong>: Select the password policy that will be used by the integration to generate the password for Active Directory users.</li>
+<li data-list-item-id="e5b67e0de9264fb43c149ad845d292af8">
+<strong>Entra ID</strong>: Select the Microsoft 365 application connector to be used for creating users in Entra ID.</li>
+<li data-list-item-id="e920c33c054572aa7136d41e5c1223fb8">
+<strong>Enforce custom password policy for Entra ID users</strong>: Enable this toggle to use a custom password policy that is configured in this integration for generating passwords for the users that will be created in Entra ID. When enabled, the <strong>Select password policy</strong> drop-down is displayed. When disabled, a random password will be generated by the integration, and the password does not follow any specific password policy.</li>
+<li data-list-item-id="e35f8d7900de8d163e2a248972191e7ea">
+<strong>Select password policy</strong>: Select the password policy that will be used by the integration to generate the password for Entra ID users.</li>
+</ul><h4 id="h_01KQEJV67EC9F13F01D33R0397">Directory Assignment Rule</h4><ul>
+<li data-list-item-id="e7dc1bc972bd7da2079bc9b10b84e2c2c">
+<strong>Enable directory assignment rules</strong>: Enable this toggle to set rules for evaluating the eligibility of contractors that must be created in the directories. When disabled, all contractors satisfying the filter condition will be provisioned to the directories.</li>
+<li data-list-item-id="ed3208191a25969134607118174b61855">
+<strong>Directory assignment rules</strong>: Set the rules for identifying the contractors to be provisioned to the directories. <strong>Currently, only Hybrid directory provisioning is supported; that is, the eligible contractors will be created in Active Directory, which will be synced to Entra ID via Microsoft Entra Connect.</strong> Refer to the following <a href="#h_01KQEQJBZMMX10N6YSFZ5G2WZ0">Setting Directory Assignment Rules</a> section for details.</li>
+</ul><h5 id="h_01KQEQJBZMMX10N6YSFZ5G2WZ0">Setting Directory Assignment Rules</h5><p>Follow this procedure to set up directory assignment rules for contractors based on the attribute values received from NEIM:</p><ol>
+<li data-list-item-id="ea06957f3e72c294beb9769d839ba33ba">Click on <strong>Choose Attribute</strong> to select an NEIM contractor attribute that you want to use in the condition.</li>
+<li data-list-item-id="e529f957622e07f8efb36476c97f70078">After selecting the attribute, select the value(s) of the attribute. Any NEIM contractor that matches the specified attribute values (OR operation) will be added to the directory when the integration runs.</li>
+<li data-list-item-id="e3bbbf7a0c9f0e0e0fc91c47ed9f508c0">If required, add conditions with more attributes and values by clicking <strong>Add Attribute</strong>. When multiple attributes are added within the same row, those attribute conditions are evaluated using an AND operation. Only contractors who match all the specified conditions will be added to the directory.</li>
+<li data-list-item-id="ec94aa60f54aa70aea010a50f8db618c3">In the <strong>Directory</strong> field, select <strong>Hybrid Directory Provisioning</strong>.</li>
+<li data-list-item-id="eb1180ff2817d28ba7c5df43950d7cf53">If required, click <strong>Add Row</strong> to add another condition within the same rule. When multiple rows are added within a rule, an <strong>OR </strong>condition is applied to the rows. That means, for each contractor, the integration evaluates the conditions in each row sequentially. If the conditions defined in a row are satisfied for a contractor, the contractor is added to the directory and the remaining rows in the rule are not evaluated for that contractor.</li>
+<li data-list-item-id="e2ccb3c528bf4f286952a5556ebb823a7">If required, click the + icon to add another rule with a set of rows/conditions. When multiple rules are set, the integration evaluates every rule for each contractor.</li>
+</ol><h3 id="h_01KQF1JNQC31RRR07EP4PRCBGX">Active Directory Sync Settings</h3><p>This section enables you to configure the NEIM contractor to Active Directory user correlation settings, and the mapping from NEIM contractor attributes to Active Directory user attributes. It also provides options to enable group assignment rules and OU assignment rules.</p><h4 id="h_01KQF26YXD6HHGMC55C06H8APM">Account Correlation Settings</h4><ul>
+<li data-list-item-id="ea5215dbfe048a9025798863ab80e8d9a">
+<strong>Enable user match settings</strong>: Enable this toggle to set conditions for matching contractors with users in the directory. The following option is displayed.</li>
+<li data-list-item-id="e6c9958b9444b10fdd83c5acba26b7406">
+<strong>Matching condition</strong>: Select an option that indicates the NEIM and Active Directory attributes that must be considered to find the directory user that matches with a contractor.<ul>
+<li data-list-item-id="e72d98357012acc3fe75700feebbc183c">If you select <strong>Match users using custom attributes</strong>, the <strong>NEIM matching attribute</strong> and the <strong>Active Directory matching attribute</strong> fields are displayed.</li>
+<li data-list-item-id="e5067278fa5c6e76f9b592a510f4769e9">If you select <strong>Use AI expression builder</strong>, the <strong>Match expression</strong> field is displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="eac9513f2c3496e70ee22f77252ed5a00">
+<strong>NEIM matching attribute</strong>: Select the contractor attribute that is used for finding a matching user record in the directory.</li>
+<li data-list-item-id="e994e24208f2184ae92fe7feeed2300e3">
+<strong>Active Directory matching attribute</strong>: Select the corresponding user attribute in Active Directory that must be used for finding the matching user record.</li>
+<li data-list-item-id="e553a9654e2e8270be4b2d575aed277f5">
+<strong>Match expression</strong>: Enter the prompt for matching contractors with users. This is an AI Prompt field that uses Aquera Intelligence (AI Assistant) to form the matching expression. For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+</ul><h4 id="h_01KQF8JPNP2Y5Y69YY489TR3YS">Account Creation Settings</h4><ul><li data-list-item-id="e3c6907314ea14126896f89e5ce1e3a07">
+<strong>Groups / OUs Assignment Policy</strong>: Select whether you want to enable policies for assigning groups and OUs for Active Directory users.</li></ul><h4 id="h_01KQF969ECYZMK3HHMVDP862Z8">Attribute Mapping</h4><p>This section enables you to set the mapping from contractor attributes to the Active Directory user attributes. The values of the user attributes are set and updated based on this mapping.</p><h3 id="h_01KQFBRW5621FC4C8KSW7WR4JA">Entra ID Sync Settings</h3><p>This section enables you to configure the NEIM contractor to Entra ID user correlation settings, and the mapping from NEIM contractor attributes to Entra ID user attributes. It also provides options to enable group assignment rules and license assignment rules.</p><h4 id="h_01KQFBRW5697K3H1DXDHK09T2J">Account Correlation Settings</h4><ul>
+<li data-list-item-id="e4b2238756edcd82eddef757855f457ca">
+<strong>Enable user match settings</strong>: Enable this toggle to set conditions for matching contractors with users in the Entra ID directory. The following option is displayed.</li>
+<li data-list-item-id="ec06c6aa5f2505a36c938e3e919f81eff">
+<strong>Matching condition</strong>: Select an option that indicates the NEIM and Entra ID attributes that must be considered to find the directory user that matches with a contractor.<ul>
+<li data-list-item-id="e8285b8b8d90faa0618bb22e167d9bd8e">If you select <strong>Match users using custom attributes</strong>, the <strong>NEIM matching attribute</strong> and the <strong>Entra ID matching attribute</strong> fields are displayed.</li>
+<li data-list-item-id="e69b97332e280f216d2f34e49736f6402">If you select <strong>Use AI expression builder</strong>, the <strong>Match expression</strong> field is displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="ec99e241309c83ca36e800411528e7ff3">
+<strong>NEIM matching attribute</strong>: Select the contractor attribute that is used for finding a matching user record in the Entra ID directory.</li>
+<li data-list-item-id="ec67ef08d579dc4529d78c09233ce3267">
+<strong>Entra ID matching attribute</strong>: Select the corresponding user attribute in Entra ID that must be used for finding the matching user record.</li>
+<li data-list-item-id="e356cc69af37c49e931b167477c25ade3">
+<strong>Match expression</strong>: Enter the prompt for matching contractors with users. This is an AI Prompt field that uses Aquera Intelligence (AI Assistant) to form the matching expression. For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+</ul><h4 id="h_01KQFBRW564VRNVCS2HBZ639ZA">Account Creation Settings</h4><ul><li data-list-item-id="e5da96c4e294af3d480b855557b0d4744">
+<strong>Groups / License Assignment Policy</strong>: Select whether you want to enable policies for assigning groups and licenses for Entra ID users.</li></ul><h4 id="h_01KQFBRW56AQ4R48R31X4RH8XR">Attribute Mapping</h4><p>This section enables you to set the mapping from contractor attributes to the Entra ID user attributes. The values of the user attributes are set and updated based on this mapping.</p><h2 id="h_01KQF97XXQR4CRHYPFC8R9F0Z9">Policy</h2><p>The <strong>Policy</strong> tab enables you to set the OU assignment rules, group assignment rules, license assignment rules, unique user naming policy, and password policy.</p><h3 id="h_01KQF9DA5TJHA6QDK0WK6MW1KY">Assignment Rules</h3><h4 id="h_01KQFAKNCJ8XGBPW2ERMHWFEJB">Default OU Assignment Rules</h4><ul>
+<li data-list-item-id="e5e9df0754a1e0c3a24e33aac35e41ffc">
+<strong>Assign Users to Default OU</strong>: Enable this option to assign all users created in Active Directory to a default OU. When enabled, the <strong>New users default OU</strong> field is displayed.</li>
+<li data-list-item-id="e8db7ed8597e068b88855b567d2c2170f">
+<strong>New users default OU</strong>: Select the default OU to which all new users must be assigned.</li>
+<li data-list-item-id="eeb64c56b7cd42ad980085b5e3d51acca">
+<strong>Assign terminated users to default OU</strong>: Enable this option to assign all users terminated in NEIM to a default OU. When enabled, the <strong>Terminated users default OU</strong> field is displayed.</li>
+<li data-list-item-id="e6ecfcbc9412525e0daef3d56e28fc203">
+<strong>Terminated users default OU</strong>: Select the default OU to which all terminated NEIM users must be assigned.</li>
+</ul><h4 id="h_01KQRMCR0NBDCZ8HY5JV4EVG6B">OU Assignment Rules</h4><ul><li data-list-item-id="e12aab1aad6c1fc8755a0e71a13aa21eb">
+<strong>OU assignment rules</strong>: Set the rules for identifying the contractors to be provisioned to the OUs. Refer to the following <a href="#h_01KQRMCHCCGB793QHK8NZFBHP9">Setting OU Assignment Rules</a> section for details.</li></ul><h5 id="h_01KQRMCHCCGB793QHK8NZFBHP9">Setting OU Assignment Rules</h5><p>Follow this procedure to set up OU assignment rules for contractors based on the attribute values received from NEIM:</p><ol>
+<li data-list-item-id="e0590206970a040c07aff4d14d166270f">Click on <strong>Choose Attribute</strong> to select an NEIM contractor attribute that you want to use in the condition.</li>
+<li data-list-item-id="e0cd35b41860c3f2e4980d15ce41d869f">After selecting the attribute, select the value(s) of the attribute. Any NEIM contractor that matches the specified attribute values (OR operation) will be added to the OU when the integration runs.</li>
+<li data-list-item-id="e06d80230fec1df714c2d65a6f7a38d82">If required, add conditions with more attributes and values by clicking <strong>Add Attribute</strong>. When multiple attributes are added within the same row, those attribute conditions are evaluated using an AND operation. Only contractors who match all the specified conditions will be added to the OU.</li>
+<li data-list-item-id="e2ddda436a445651ba4abfbf6ec6845be">In the <strong>Organizational Unit (OU)</strong> field, select the OU to which users matching the specified conditions must be assigned.</li>
+<li data-list-item-id="ea51b9cda43d4bea6be5d028550cb0183">If required, click <strong>Add Row</strong> to add another condition within the same rule. When multiple rows are added within a rule, an <strong>OR </strong>condition is applied to the rows. That means, for each contractor, the integration evaluates the conditions in each row sequentially. If the conditions defined in a row are satisfied for a contractor, the contractor is added to that OU and the remaining rows in the rule are not evaluated for that contractor.</li>
+<li data-list-item-id="e361a012b85e160b7bf9d97dfc49b55f0">If required, click the + icon to add another rule with a set of rows/conditions. When multiple rules are set, the integration evaluates every rule for each contractor.</li>
+</ol><h4 id="h_01KQRMKMXN1PNZ7H7VJPQ723R1">Active Directory Group Assignment Rules</h4><ul><li data-list-item-id="e0a1ea88012784df73fbe10e31558be83">
+<strong>Group assignment rules</strong>: Set the rules for identifying the contractors to be provisioned to the Active Directory groups. Refer to the following <a href="#h_01KQRMCHCCGB793QHK8NZFBHP9">Setting OU Assignment Rules</a> section for details.</li></ul><h5 id="h_01KQRMKT7X1ZXA5ZG17QC7Y0DM">Setting Active Directory Group Assignment Rules</h5><p>Follow this procedure to set up group assignment rules for contractors based on the attribute values received from NEIM:</p><ol>
+<li data-list-item-id="e9c03699bc1e0245fae087e980b0a1c6c">Click on <strong>Choose Attribute</strong> to select an NEIM contractor attribute that you want to use in the condition.</li>
+<li data-list-item-id="eff448853aca006ecb811d2b6d1671863">After selecting the attribute, select the value(s) of the attribute. Any NEIM contractor that matches the specified attribute values (OR operation) will be added to the AD group when the integration runs.</li>
+<li data-list-item-id="e2d8e623851256a1fe318401f5eb76600">If required, add conditions with more attributes and values by clicking <strong>Add Attribute</strong>. When multiple attributes are added within the same row, those attribute conditions are evaluated using an AND operation. Only contractors who match all the specified conditions will be added to the group.</li>
+<li data-list-item-id="e5a080670e1573f978f5963d4a37908af">In the <strong>Groups</strong> field, select the Active Directory group to which users matching the specified conditions must be assigned.</li>
+<li data-list-item-id="e4f26f057e88ff9a5154f9adc0b6ff538">If required, click <strong>Add Row</strong> to add another condition within the same rule. When multiple rows are added within a rule, an <strong>OR </strong>condition is applied to the rows. That means, for each contractor, the integration evaluates the conditions in each row sequentially. If the conditions defined in a row are satisfied for a contractor, the contractor is added to that group and the remaining rows in the rule are not evaluated for that contractor.</li>
+<li data-list-item-id="e90c61ddb68fb9cd516a637b93851d81b">If required, click the + icon to add another rule with a set of rows/conditions. When multiple rules are set, the integration evaluates every rule for each contractor.</li>
+</ol><h4 id="h_01KQRXSA4QB3R3AD6JQTCP8A7V">Entra ID Group and License Assignment Rules</h4><ul><li data-list-item-id="ef8eb3dd8332f3e71e77c97143ba8f192">
+<strong>Group / License assignment rules</strong>: Set the rules for identifying the contractors to be provisioned to the Active Directory groups. Refer to the following <a href="#h_01KQRMCHCCGB793QHK8NZFBHP9">Setting OU Assignment Rules</a> section for details.</li></ul><h5 id="h_01KQRXSA4Q03360N68JZ1TSYRS">Setting Group and License Assignment Rules</h5><p>Follow this procedure to set up group and license assignment rules for contractors based on the attribute values received from NEIM:</p><ol>
+<li data-list-item-id="edb94e746d516021d1be4acb9b8d419b9">Click on <strong>Choose Attribute</strong> to select an NEIM contractor attribute that you want to use in the condition.</li>
+<li data-list-item-id="e33d7f29fd91d3e7534322b20a3e22d33">After selecting the attribute, select the value(s) of the attribute. Any NEIM contractor that matches the specified attribute values (OR operation) will be added to the Entra ID group and license when the integration runs.</li>
+<li data-list-item-id="ea7665249a8dbd141f37499fd1fea0c9d">If required, add conditions with more attributes and values by clicking <strong>Add Attribute</strong>. When multiple attributes are added within the same row, those attribute conditions are evaluated using an AND operation. Only contractors who match all the specified conditions will be assigned the group and license.</li>
+<li data-list-item-id="ebeab192e85f627e2dfef5e7512e72913">In the <strong>Groups</strong> field, select the Entra ID group to which users matching the specified conditions must be assigned.</li>
+<li data-list-item-id="e2a3b1f5776e3f4111908024e6ccf6026">In the <strong>License</strong> field, select the Entra ID license that must be assigned to the user.</li>
+<li data-list-item-id="e5bebc76a8c456919f641b96d4888c138">If required, click <strong>Add Row</strong> to add another condition within the same rule. When multiple rows are added within a rule, an <strong>OR </strong>condition is applied to the rows. That means, for each contractor, the integration evaluates the conditions in each row sequentially. If the conditions defined in a row are satisfied for a contractor, the contractor is assigned that group and license, and the remaining rows in the rule are not evaluated for that contractor.</li>
+<li data-list-item-id="e28d8f8bfc2eed849be73eba986328a95">If required, click the + icon to add another rule with a set of rows/conditions. When multiple rules are set, the integration evaluates every rule for each contractor.</li>
+</ol><h3 id="h_01KQRSRTRTYXXE6HTHHT3RPZTB">Naming Policy</h3><p>This section details the settings for generating unique SAM Account Name, User Principal Name (UPN), Common Name (CN), and email while creating users in Active Directory and Entra ID:</p><h4 id="h_01KQRSXAPV2Q3AZ0X74JWT4KAN">Naming Policy Settings</h4><ul>
+<li data-list-item-id="e2726336ba515a43919d787b2953dbe75">
+<strong>Generate SAM Account Name</strong>: Enable this toggle for the integration to generate the SAM Account Name for a new user in Active Directory. When enabled, the <strong>SAM Account Name Generation Settings</strong> section is displayed for further configuration.</li>
+<li data-list-item-id="e27828cbaf189a462725f63ae50cf3258">
+<strong>Generate Common Name</strong>: Enable this toggle for the integration to generate the Common Name (CN) for a new user in Active Directory. When enabled, the <strong>CN Generation Settings</strong> section is displayed for further configuration.</li>
+<li data-list-item-id="eccfcccf9c55497b6d25bb3fae7a8c0c7">
+<strong>Generate User Principal Name (UPN)</strong>: Enable this toggle for the integration to generate the UPN for a new user in Active Directory. This UPN will be synced to Entra ID via Entra Connect. When enabled, the <strong>UPN Generation Settings</strong> section is displayed for further configuration.</li>
+<li data-list-item-id="e9286553c22786de13b4adfad1bc5243e">
+<strong>Generate email</strong>:  Enable this toggle for the integration to generate the email address for a new user in Active Directory. This email address will be synced to Entra ID via Entra Connect. When enabled, the <strong>Email Generation Settings</strong> section is displayed for further configuration.</li>
+</ul><h4 id="h_01KQRTCVKYR2Q4MWW9XBTN70BR">SAM Account Name Generation Settings</h4><ul>
+<li data-list-item-id="e249a977e2368e77a0caa60f6a0374e4a">
+<strong>Unique SAM Account Name generation pattern</strong>: Select the pattern that must be followed for generating a unique SAM Account Name for new users created in Active Directory. If a different pattern has to be followed for the SAM Account Name, select <strong>Custom</strong> from the list. </li>
+<li data-list-item-id="eeb030a1e61a0760656d0f21be3b864e8">
+<strong>Custom pattern for SAM Account Name</strong>: Enter the prompt for generating a unique SAM Account Name for Active Directory users. This field is displayed only if you have selected <strong>Custom</strong> from the <strong>Unique SAM Account Name generation pattern</strong> field. This is an AI Prompt field that uses Aquera Intelligence (AI Assistant) to generate SAM Account Names during integration runs. For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+</ul><h4 id="h_01KQRVDQGK3Q6D0XSXGFF0R16V">CN Generation Settings</h4><ul>
+<li data-list-item-id="e6166c6135f63eb9f368959179aa3b736">
+<strong>Unique CN generation pattern</strong>: Select the pattern that must be followed for generating a unique CN for new users created in Active Directory. If a different pattern has to be followed for the CN, select <strong>Custom</strong> from the list. </li>
+<li data-list-item-id="ee05171c681a436609b717a0695e523cc">
+<strong>Custom pattern for CN</strong>: Enter the prompt for generating a unique CN for Active Directory users. This field is displayed only if you have selected <strong>Custom</strong> from the <strong>Unique CN generation pattern</strong> field. This is an AI Prompt field that uses Aquera Intelligence (AI Assistant) to generate CNs during integration runs. For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+</ul><h4 id="h_01KQRXSA4QX42S5VJAF554HQYM">UPN Generation Settings</h4><ul>
+<li data-list-item-id="ebc64fe97b2a0dc67c192b60191f8465f">
+<strong>Unique UPN generation pattern</strong>: Select the pattern that must be followed for generating a unique UPN for new users created in Active Directory, which will be synced to Entra ID. If a different pattern has to be followed for the UPN, select <strong>Custom</strong> from the list. </li>
+<li data-list-item-id="e1df733e5358a8ee29bf9f011129d0699">
+<strong>Custom pattern for UPN</strong>: Enter the prompt for generating a unique UPN for Active Directory users. This field is displayed only if you have selected <strong>Custom</strong> from the <strong>Unique UPN generation pattern</strong> field. This is an AI Prompt field that uses Aquera Intelligence (AI Assistant) to generate UPNs during integration runs. For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+</ul><h4 id="h_01KQRXSA4QW0EX77S8NC1DJP92">Email Generation Settings</h4><ul>
+<li data-list-item-id="e651c14c6d38af940ecd59649b76e2daf">
+<strong>Unique email generation pattern</strong>: Select the pattern that must be followed for generating a unique email address for new users created in Active Directory, which will be synced to Entra ID. If a different pattern has to be followed for the UPN, select <strong>Custom</strong> from the list. </li>
+<li data-list-item-id="e2bee025a2684203e46e3f31df1c78387">
+<strong>Custom pattern for email</strong>: Enter the prompt for generating a unique email address for Active Directory users. This field is displayed only if you have selected <strong>Custom</strong> from the <strong>Unique email generation pattern</strong> field. This is an AI Prompt field that uses Aquera Intelligence (AI Assistant) to generate email addresses during integration runs. For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711" rel="noopener noreferrer" target="_blank">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+</ul><h3 id="h_01KQRVT3RBRKZD3NHJ31CFE0XP">Password Policy</h3><p>This section enables you to add password policies that can be followed for users created in Active Directory and Entra ID.</p><h4 id="h_01KQRW6P5B2Q8QWTWPRRR2BCHK">Password Policy Settings</h4><p>This section enables you to add multiple password policies. In the <a href="#h_01KQEJTD4DM7KZ8QP1FCC5M1FT">Application Configuration</a> section, you can assign a password policy that is configured here.  </p><h5 id="h_01KQRWAGS0GTTTR9459FP8AFG8">Adding a Password Policy</h5><p>Click + (Add instance) to create a new password policy.</p><p>Enter the following details:</p><figure><table><tbody>
+<tr>
+<td><strong>Field Name</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>Policy Name</td>
+<td>Provide a name for the password policy. For example, <em>Active Directory Users Password</em> <em>Policy</em>
+</td>
+</tr>
+<tr>
+<td>Maximum password length</td>
+<td>Specify the maximum number of characters that are allowed in the password.</td>
+</tr>
+<tr>
+<td>Minimum password policy</td>
+<td>Specify the minimum number of characters that must be present in the password.</td>
+</tr>
+<tr>
+<td>Password complexity requirements</td>
+<td>Select the variety of characters that must be included in the password. </td>
+</tr>
+<tr>
+<td>Allowed special characters</td>
+<td>Select the special characters that are allowed in the password. This field is displayed only if you have selected <em>Require special characters</em> in the <strong>Password complexity requirements</strong> field.</td>
+</tr>
+</tbody></table></figure><p> </p><h3 id="h_01KQ6NS444PZJ29BH3PQB26C0T"> </h3><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>The integration can be scheduled to run automatically at specified intervals. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for details. </p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+  </div>
+</body>
+</html>

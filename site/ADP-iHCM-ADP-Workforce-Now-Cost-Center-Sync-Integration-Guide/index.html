@@ -20,9 +20,11 @@
     <h1>ADP iHCM / ADP Workforce Now Cost Center Sync Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
 <h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize the following cost center attributes from ADP Workforce Now to ADP iHCM: Cost center code value, Cost center short name, and Effective date.</p><p>To identify cost center records across both systems, the integration uses the <strong>Cost Center Code</strong> attribute from ADP Workforce Now and matches it to the <strong>Cost Center Code</strong> available in the ADP iHCM.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The ADP iHCM / ADP Workforce Now Cost Center Sync integration performs the following functions:</p><ul>
-<li data-list-item-id="e4d6af3146c3019d12d76529d7125bfcb">Creates new cost centers in ADP iHCM when new cost centers are added in ADP Workforce Now.</li>
+<li data-list-item-id="e4d6af3146c3019d12d76529d7125bfcb">Reads cost center data from the Cost Center or the Department validation table in ADP Workforce Now, based on the integration configuration.</li>
+<li data-list-item-id="e65c03742b53dcddfa3e360cb061c361f">Reads data from a specific company code in ADP Workforce Now.</li>
+<li data-list-item-id="e6b14b6f8da05b4e74df2150884e1a5a3">Creates new cost centers in ADP iHCM when new cost centers are added in ADP Workforce Now.</li>
 <li data-list-item-id="ea0c2dc79036903c43727bbe5f2e45602">Updates cost center details in ADP iHCM when any changes are made to the existing cost centers in ADP Workforce Now.</li>
-<li data-list-item-id="e46dd1d20f36d767a5145cd4375a4838c">Deletes the corresponding cost centers in ADP iHCM when cost centers are deleted in ADP Workforce Now.</li>
+<li data-list-item-id="e46dd1d20f36d767a5145cd4375a4838c">Retrieves, creates, and updates cost center records based on the limits set in the integration.</li>
 <li data-list-item-id="e8099f433abbeced37702ad64d0f6ab1c">Performs full synchronization of cost centers on each integration run.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="e7fbb30f2d40e0ff04150f1beaea120c6">
@@ -58,27 +60,50 @@
 <strong>Enable Log Insights</strong>: Turn on this toggle to visualize the integration-related metrics. When the toggle is on, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
 <li data-list-item-id="e623ec903b6b3d3b1a7218d0ea185006b">
 <strong>Enable debug mode</strong>: Turn on this toggle to generate logs outlining data changes that would occur, for debugging. When the toggle is on, the <a href="#h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Settings</a> section is displayed for further configuration.</li>
-</ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Cost Centers</h3><p>The <strong>Manage Cost Centers</strong> section allows you to customize the settings to manage cost center synchronizations based on your use case.</p><p><strong>Note</strong>: This section appears only if you have turned on the <strong>Enable Cost Center Life Cycle Management</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">Correlation Settings</h4><p>This section shows the source and target attributes that are used for identifying the matching cost center records across the source and target applications. </p><ul>
+</ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Cost Centers</h3><p>The <strong>Manage Cost Centers</strong> section allows you to customize the settings to manage cost center synchronizations based on your use case.</p><p><strong>Note</strong>: This section appears only if you have turned on the <strong>Enable Cost Center Life Cycle Management</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">Cost Center Settings</h4><p>This section enables you to configure the settings related to the cost center data and the company code.</p><ul>
+<li data-list-item-id="e798921a180eaeffddd186535b5d503c6">
+<strong>Select validation table</strong>: Select the validation table in ADP Workforce Now that must be used by the integration to read the cost center data. <ul>
+<li data-list-item-id="e0663405141384f4ecea1a220f2e8ea73">If you select <em>Cost Centers</em>, the cost center data will be retrieved from the Cost Center validation table in your ADP Workforce Now instance.</li>
+<li data-list-item-id="ebb707d405e940545877c03977d7c2d52">If you select <em>Departments</em>, the cost center data will be retrieved from the Department validation table in your ADP Workforce Now instance.</li>
+</ul>
+</li>
+<li data-list-item-id="e49514735a5c21f13ed8fc472615aba12">
+<strong>Select company code</strong>: Select a company code in ADP Workforce Now from which the cost center data must be retrieved.</li>
+</ul><h4 id="h_01KQVMYBGQVNVAWK8JY6JC9VHE">Correlation Settings</h4><p>This section shows the source and target attributes that are used for identifying the matching cost center records across the source and target applications. </p><ul>
 <li data-list-item-id="e21eb697747208f7721f3a9c00d89814d">
 <span><strong>Source correlation attribute</strong></span>: Displays the cost center attribute that will be used to identify a unique cost center record in ADP Workforce Now. </li>
 <li data-list-item-id="efe94c6f97a9acab189a03dc9cd194fe5">
 <span><strong>Target correlation attribute</strong></span>: Displays the cost center attribute that will be used to identify the corresponding cost center record in ADP iHCM. </li>
-</ul><h4 id="h_01KMMM7K00V0ETTP6KJQ26Y8DW">Provisioning Settings</h4><p>This section provides the settings to enable creation, update, and deletion of cost center records.</p><ul>
+</ul><h4 id="h_01KMMM7K00V0ETTP6KJQ26Y8DW">Provisioning Settings</h4><p>This section provides the settings to enable creation and update of cost center records.</p><ul>
 <li data-list-item-id="e2f741e9056f43926807db4f25097d1dc">
 <strong>Create cost centers</strong>: Turn on this toggle to allow the integration to create cost centers in ADP iHCM. When the toggle is off, the integration will not create cost centers in ADP iHCM.</li>
 <li data-list-item-id="e278245fd089ab009bc675f19e2ab2399">
 <strong>Update cost centers</strong>: Turn on this toggle to allow the integration to update cost centers in ADP iHCM. When the toggle is off, the integration will not update cost centers in ADP iHCM.</li>
-<li data-list-item-id="e1606011a26282b1c35425b0db6533bcc">
-<strong>Delete cost centers</strong>: Turn on this toggle to allow the integration to delete cost centers in ADP iHCM. When the toggle is off, the integration will not delete cost centers in ADP iHCM.<br/><strong>Note</strong>: When the <strong>Fetch Limit</strong> is configured, the cost center deletion operations will not be performed. Since the number of records retrieved from the source is limited, the integration cannot identify the actual number of records that are missing in the source.</li>
-</ul><h4 id="h_01KMMMGEBSKPCF8YW78AQ9HEVX">Provisioning Threshold</h4><p>This section provides the settings to limit the number of cost center records that will be created, updated, or deleted in ADP iHCM.</p><ul>
+</ul><h4 id="h_01KMMMGEBSKPCF8YW78AQ9HEVX">Provisioning Threshold</h4><p>This section provides the settings to limit the number of cost center records that will be retrieved from Workforce Now and that will be created or updated in ADP iHCM.</p><ul>
 <li data-list-item-id="e7f4d63b26cbe1e8c45d8e4d2d2f80294">
-<strong>Fetch limit</strong>: Enter the maximum number of cost center records that must be retrieved from ADP Workforce Now in a single integration run. </li>
+<strong>Fetch limit mode</strong>: Select whether you want to limit the number of cost center records that must be retrieved from ADP Workforce Now in a single integration run. <ul>
+<li data-list-item-id="e199633eb00f221e5f26b1a4379efa5bc">If you select <em>Unlimited</em>, all cost center data will be retrieved.</li>
+<li data-list-item-id="e4bdd7987311824336735b64cd6be7c34">If you select <em>Value</em>, you can set a limit to the number of cost center records that will be retrieved.</li>
+</ul>
+</li>
 <li data-list-item-id="ea121d2f59e3570ec169d65ec55c98d4e">
-<strong>Create limit</strong>: Enter the maximum number of cost center records that are allowed to be created in ADP iHCM in a single integration run. If you enter <em>0</em>, no cost center records will be created. To allow unlimited creations of cost centers, enter <em>-1</em><br/><strong>Note</strong>: This field is displayed only if the <strong>Create cost centers </strong>toggle is turned on.</li>
-<li data-list-item-id="e5f6be98ca236b473b716954e8ad062db">
-<strong>Update limit</strong>: Enter the maximum number of cost center records that are allowed to be updated in ADP iHCM in a single integration run. If you enter <em>0</em>, no cost center records will be updated. To allow unlimited updates of cost centers, enter <em>-1</em><br/><strong>Note</strong>: This field is displayed only if the <strong>Update cost centers </strong>toggle is turned on.</li>
-<li data-list-item-id="e22410848d838bd859ae30e431121039c">
-<strong>Delete limit:</strong> Enter the maximum number of cost center records that are allowed to be deleted in ADP iHCM in a single integration run. If you enter <em>0</em>, no cost center records will be deleted. To allow unlimited deletions of cost centers, enter <em>-1</em><br/><strong>Note</strong>: This field is displayed only if the <strong>Delete cost centers </strong>toggle is turned on.</li>
+<strong>Fetch limit</strong>: Enter the maximum number of cost center records that will be retrieved from ADP Workforce Now in a single integration run. This field is displayed only if you have selected <em>Value</em> in the <strong>Fetch limit mode</strong> drop-down.</li>
+<li data-list-item-id="e3d3b2fa8ee25b28bfd364a2891bc82ff">
+<strong>Create limit mode</strong>: Select whether you want to limit the number of cost center records that will be created in iHCM in a single integration run. This field is displayed only if the <strong>Create cost centers </strong>toggle is turned on.<ul>
+<li data-list-item-id="ea8db0e0563dcec36a8f3770cfe70f924">If you select <em>Unlimited</em>, all the new cost centers from Workforce Now will be created in iHCM.</li>
+<li data-list-item-id="e12878699c52933c6b3975c8c44ebbd69">If you select <em>Value</em>, you can set a limit to the number of cost center records that will be created.</li>
+</ul>
+</li>
+<li data-list-item-id="e7b473cea043bea620a8cd9761afc0123">
+<strong>Create limit</strong>: Enter the maximum number of cost center records that are allowed to be created in ADP iHCM in a single integration run. This field is displayed only if you have selected <em>Value</em> in the <strong>Create limit mode</strong> drop-down.</li>
+<li data-list-item-id="e1a07440cd1487478745a27a51fe08539">
+<strong>Update limit mode</strong>: Select whether you want to limit the number of cost center records that will be updated in iHCM in a single integration run. This field is displayed only if the <strong>Update cost centers </strong>toggle is turned on.<ul>
+<li data-list-item-id="e8c6b7a5128fb583b4fe6f6fb6e7bd41a">If you select <em>Unlimited</em>, all the modified cost center data will be updated in iHCM.</li>
+<li data-list-item-id="e8b32f98c45b641f7e6e597e12eaede38">If you select <em>Value</em>, you can set a limit to the number of cost center records that will be updated.</li>
+</ul>
+</li>
+<li data-list-item-id="e39a805d3bb6d34768453499e4cb460fd">
+<strong>Update limit</strong>: Enter the maximum number of cost center records that are allowed to be updated in ADP iHCM in a single integration run. This field is displayed only if you have selected <em>Value</em> in the <strong>Update limit mode</strong> drop-down.</li>
 </ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Sensitive Fields</h3><p>This section enables you to set any sensitive (PII -Personally Identifiable Information) fields processed by the integration. Currently, the integration does not handle any PII data, so you can skip this section.</p><h3 id="h_01KMMWWZASCF14V76882FQNPZ5">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
 <li data-list-item-id="e017362ac7f7c4fc70c3772742ecfc9f7">
 <p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Log Type</strong>: Select a log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>

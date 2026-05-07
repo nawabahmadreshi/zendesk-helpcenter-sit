@@ -20,10 +20,10 @@
     <h1>ADP Workforce Now API Central / Entra ID Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
 <h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the configuration for the ADP Workforce Now API Central/Entra ID integration. This integration automates provisioning across ADP Workforce Now API Central and Microsoft Entra ID. It synchronizes users and candidate data, manages group assignments, and handles onboarding, updates, and terminations. It also supports automated access assignments and provides detailed notifications, logs, and reports.</p><p>To identify user records across both systems, the integration uses candidate attributes from the <strong>ADP Workforce Now API Central </strong>and matches them to user attributes<strong> </strong>in <strong>Entra ID</strong> as a correlation attribute.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <strong>ADP Workforce Now API Central / Entra ID</strong> integration provides the following functions:</p><ul>
-<li data-list-item-id="e9493adb51bb52b28410b79afd775c5b0">Creation of user</li>
-<li data-list-item-id="e8621af26ae6f338fe1cb3001644f50f8">Updation of user</li>
-<li data-list-item-id="e523bf98e20b49056f94accc93f0a2901">Deactivation of user</li>
-<li data-list-item-id="e4cd127908ae3224227be6f3abdb31d8d">Deletion of user</li>
+<li data-list-item-id="e9493adb51bb52b28410b79afd775c5b0">Creation of users</li>
+<li data-list-item-id="e8621af26ae6f338fe1cb3001644f50f8">Update the users</li>
+<li data-list-item-id="e523bf98e20b49056f94accc93f0a2901">Deactivation of users</li>
+<li data-list-item-id="e4cd127908ae3224227be6f3abdb31d8d">Deletion of users</li>
 <li data-list-item-id="eb131e16c92b38611f56471d6bf7823c1">Group Assignment</li>
 <li data-list-item-id="e220288d83906a1e83635678fec5845bf">Group Revocation</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
@@ -63,46 +63,42 @@
 <strong>Entra ID Application</strong>: Select the Active Directory application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.<br/><strong>Note</strong>: This field identifies the Active Directory application that enables provisioning and synchronization between Dayforce and Active Directory.</li>
 <li data-list-item-id="e143f8fbf23e864419a5d61fead4fdf41">
 <strong>Enforce Custom Entra ID Password Policy</strong>: Select to generate passwords for new users according to the custom Entra ID policies defined in the <strong>Policy</strong> &gt; <strong data-end="131" data-start="112">Password Policy</strong> section. By default, the integration generates a random password for new users. When enabled, the following field is displayed:<ul><li data-list-item-id="e2480ec803c82396e7668f865b3486444">
-<strong>Select Entra ID Password Policy</strong><strong>:</strong> Select the password policy to be used for this integration. All password policies created in the Password Policy section are available for selection. If you do not find your password policy in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul>
+<strong>Select Entra ID Password Policy:</strong> Select the password policy to be used for this integration. All password policies created in the Password Policy section are available for selection. If you do not find your password policy in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul>
 </li>
 </ul><h3 id="h_01KQYY3KS9RVC41JZNCFTDB7W6">Groups Settings</h3><p>This section allows you to configure group settings for users. </p><h4 id="h_01KQYY5BYS218GEN8QJGBZ8PA1">Candidates Group Configuration</h4><p>The following fields are available for configuration in this section:</p><ul>
 <li data-list-item-id="eb8ceff4823238db89925cf3e21559aee">
-<strong>Remove extra groups assigned to the user during the update</strong>: Select this checkbox to remove users from groups when the user is deleted.</li>
+<strong>Remove extra groups assigned to the user during the update</strong>: Select this to remove users from groups where they already exist but are not included in the group assignments after the group rules are evaluated.</li>
 <li data-list-item-id="e49116e44e01cd11ebe06d76ced213762">
-<strong>Remove user from groups on deactivation</strong>: Select this checkbox to remove users from groups when the user is deactivated.</li>
+<strong>Remove user from groups on deactivation</strong>: Select this to automatically remove the user from all assigned groups when the user account is deactivated (disabled).</li>
+</ul><h3 id="h_01KR0P5K5CB2W1KZKPK5XAY6W8">Manage Candidate - Entra ID</h3><p>This section enables you to configure account correlation and account activation, deactivation, and update settings, as well as define attribute mappings.</p><h4 id="h_01KR0P5K5C58VT2NA0E82V536W">Account Correlation Settings</h4><p>The following fields are available for configuration in this section:</p><ul>
 <li data-list-item-id="ed496dbb66d95afb209d35d5042c0b84e">
-<strong>Transfer group ownership to manager on deactivation or deletion</strong>: Select this checkbox to automatically remove a user's group ownership and assign it to their manager when the user is deactivated or deleted. This applies only when the user is the only owner of the group.<strong>Entra ID Application</strong>: Select the Entra ID application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.<br/><strong>Note</strong>: This field identifies the Entra ID application that enables provisioning and synchronization between Dayforce and Entra ID.</li>
+<strong>Correlation Attribute from Source Application</strong>: Select the correlation attribute from ADP Workforce Now API Central. The available options are <strong>Email</strong>, <strong>Person OID</strong>, and <strong>Associate OID</strong>.</li>
 <li data-list-item-id="e1523bcf7edb0e8052dda156d235f4842">
-<strong>Generate custom passwords for users provisioned to Entra ID</strong>: Enable this option to generate passwords for new users according to the custom Entra ID policies defined in the <strong data-end="131" data-start="112">Password Policy</strong> section. By default, the integration generates a random password for new users. When enabled, the following field is displayed:<ul><li data-list-item-id="e92c32478cc2bf677a15a55589a46b790">
-<strong>Entra ID password policy</strong>: Select the password policy to be used for this integration. All password policies created in the Password Policy section are available for selection. If you do not find your password policy in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul>
-</li>
-<li data-list-item-id="e2a223711428f81fd9c18bf3583ca6f6b">
-<strong>Entra ID enterprise application name</strong>: Select the enterprise application that you have created in your Azure portal for this integration. Click the refresh icon next to the field to retrieve all enterprise applications available in your Azure portal.<br/><strong>Note</strong>: This field identifies the enterprise application created in the Azure portal to drive provisioning for this integration.</li>
-<li data-list-item-id="ec769ef073e24719d99d277557a623272">
-<strong>Target application</strong>: Select the target application connector where records will be provisioned. For example, if your use case is to provision user records from Entra ID to the Box application, select the Box connector that you have created in the Aquera Admin portal for this integration. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available target application connectors.</li>
-<li data-list-item-id="e49d26dac1ac9ef42fd26b020cc12b1db">
-<strong>Customize how users are matched between Entra ID and the target application</strong>: By default, user records are matched using the <strong>User Principal Name (UPN)</strong> in Entra ID and the <strong>Username</strong> in the target application. Turn on this toggle button to use a different source and target attribute for correlation. When enabled, the following fields are displayed for further configuration:<ul>
-<li data-list-item-id="e31e91ccdcd116545c72088b8fb09b331">
-<strong>Entra ID attribute for matching users</strong>: Select the correlation attribute in Entra ID that uniquely identifies a user record in your target application. For example, select <em>employeeId</em> if you want to use it to match user records in the target application.</li>
-<li data-list-item-id="edb4b9a90c3bab8e084381aa3c46f73ea">
-<strong>Target application attribute for matching users</strong>: Select an attribute in the target application that matches the selected Entra ID attribute value to identify common users. For example, select <em>ENT.employeeNumber</em> if you want to use it to match user records in Entra ID.</li>
-</ul>
-</li>
-<li data-list-item-id="e5e566e01880d5c6e5f6dc80860e47871">
-<strong>Automatically generate password for new users</strong>: Turn on this toggle button if your use case requires generating a password for new users in the target application. When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="e724f5a19370f48468f11212c46dab2d6">
-<strong>Method for password generation</strong>: Select the method to generate passwords. This defines how passwords should be generated. The available options are as follows:<ul>
-<li data-list-item-id="e23403432c8e6bc12d9619766ff044d41">
-<strong>Generate Random Password</strong>: Select this if you want passwords to be generated automatically by the system.</li>
-<li data-list-item-id="e1680b357c5101aee7dbe57e979c0e4e0">
-<strong>Generate Password Using Policy</strong>: Select this if you want passwords to be generated based on a defined password policy. When selected, the following field is displayed for further configuration:<ul><li data-list-item-id="ec0ba35a67e64ed049fe4a863699d27c0">
-<strong>Policy for password generation</strong>: Select the password policy to be used for this integration. All password policies created in the <a href="#h_01KH0TD0YN440QFMS1M2XSJAHQ">Policy</a> tab will be available for selection.</li></ul>
-</li>
-</ul>
-</li></ul>
-</li>
-<li data-list-item-id="e6340f6b4754b75bbe2a28b33806d239d">
-<strong>Attribute Mapper</strong>: This section allows you to control how each attribute is synchronized between Entra ID and the target application.<br/>Source attributes are listed on the left side and the target attributes are listed on the right side of the page. You can modify only the source attributes as needed, to align with your specific use case.<br/>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. You can enter the expression directly in the source attribute field or click the expand icon to write a longer expression.<br/>Attributes marked with a red asterisk (<span>*</span>) are required for successful provisioning.<br/>The <strong>Search Attributes</strong> field allows you to filter the list of available attributes for mapping.<br/>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
-</ul><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KQYY6C1YRWSPC4CG2PD2S95F">Global Settings</h4><p>Configure the following global settings:</p><ul>
+<strong>Correlation Attributes from Target Application</strong>: Select the correlation attribute from ADP Workforce Now API Central. The available options are <strong>User principal name</strong>, <strong>Email</strong>, <strong>Other emails</strong>, and <strong>On-premises Extension attribute 1</strong>.</li>
+</ul><h4 id="h_01KR0P5K5CW9PZXM41AKX8KYPQ">Account Activation Settings</h4><p>The following fields are available for configuration in this section:</p><ul>
+<li data-list-item-id="e8bb3e10ad474d251e8be049d4584f62a">
+<strong>Account Assignment Policy</strong>: </li>
+<li data-list-item-id="ec2e03cbef7972eb23b0fa07828a1642b">
+<strong>Force password change on first login</strong>: </li>
+<li data-list-item-id="e2cadca13d94f2d6035045c22398e391e">
+<strong>Enable Account Activation Limit</strong>: </li>
+<li data-list-item-id="e9952a0b90cde6a0064a497619f23a426">
+<strong>Set the Creation Limit</strong>: </li>
+</ul><h4 id="h_01KR0P5K5C239BD2RAVFHANG8S">Account Update Settings</h4><p>The following fields are available for configuration in this section:</p><ul>
+<li data-list-item-id="ef38da294d54d3c5967a9c76499eab443">
+<strong>Account Assignment Policy</strong>: </li>
+<li data-list-item-id="e2c08e6bda9a00511b36170149e1994a7">
+<strong>Enable Account Updation Limit</strong>: </li>
+<li data-list-item-id="e883f595be6ea941118a0e75f5a5cf59b">
+<strong>Set the Update Limit</strong>: </li>
+</ul><h4 id="h_01KR0P5K5CCPY4K3TXN0WZAQF4">Account Deactivation Settings</h4><p>The following fields are available for configuration in this section:</p><ul>
+<li data-list-item-id="e0abd6ed1073a90e00a227255536695f0">
+<strong>Enable Account Deactivation Limit</strong>: </li>
+<li data-list-item-id="e104f244735fe2bfff64c3eda1c448689">
+<strong>Set the </strong><strong>Deactivation</strong><strong> Limit</strong>: </li>
+<li data-list-item-id="e1797e6ab11fd70fda0988c7189bd11f2">
+<strong>On Deactivation, Perform Actions on Candidate</strong>: </li>
+</ul><h4 id="h_01KR0P5K5DFVJ82375NXJF0Z2M">Attribute Mapping</h4><p>This section allows you to control how each attribute is synchronized between ADP Workforce Now and Entra ID.<br/>Source attributes are listed on the left, and target attributes on the right. You can modify only the source attributes as needed to align with your specific use case.<br/>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. You can enter the expression directly in the source attribute field or click the expand icon to write a longer expression.<br/>Attributes marked with a red asterisk (<span>*</span>) are required for successful provisioning.<br/>The <strong>Search Attributes</strong> field allows you to filter the list of available attributes for mapping.<br/>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</p><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Policy</h2><p>The following sections are displayed under the <strong>Policy </strong>tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Access Rules</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Naming Policy</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h3 id="h_01KR0NT88RR9ZVGAK5VJ4PZ6GC">Password Policy</h3><p> </p><h4 id="h_01KQYY6C1YRWSPC4CG2PD2S95F">Global Settings</h4><p>Configure the following global settings:</p><ul>
 <li data-list-item-id="ed0774ca5f09b4fc2596cc959fb47cb5e">
 <strong>Enable Report Generation</strong>: Select to generate the integration report.</li>
 <li data-list-item-id="e530d6ef19a65510ab60ca3db2bb62cf1">

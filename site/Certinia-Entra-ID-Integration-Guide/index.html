@@ -20,14 +20,76 @@
     <h1>Certinia / Entra ID Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
 <p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This guide covers the end-to-end tasks in setting up the integration to sync Users data from Entra ID to the <strong>Users</strong> and <strong>Contacts</strong> in Entra ID.</p><p>To identify records across both systems, the integration uses an internal unique ID of Users<strong> </strong>from <strong>Certinia</strong>, and matches it to the <strong>External ID</strong> of Users in <strong>Entra ID </strong>as a correlation attribute.</p><h2 id="h_01KAG54HSP2Q7S6CJSHBK2WNZM">Key Functions</h2><p>The <strong>Certinia</strong> to <strong>Entra ID </strong>integration automates identity lifecycle management with the following primary capabilities:</p><ul>
-<li data-list-item-id="ec3e0ff5933570c9016e7b958dfce1114">Syncs Users and Contacts records from Certinia into the Entra ID User .</li>
-<li data-list-item-id="ec897cd6eaf904bbdf94d302a47e47601">Updates the email ID of workers from Okta to the ADP Workforce Now application (Writeback).</li>
-<li data-list-item-id="e33b7970c5d39e18a183f52d2e90472de">Creates new custom attributes in Okta.</li>
-<li data-list-item-id="e76ac147048e24a8f11d14dbfe7ee34ff">Allows records to be synchronized based on the specified date offset and time zone.</li>
-<li data-list-item-id="e9dad9da1479c86ce0ff8e2ee6e9e33e3">Deletes the user records upon deactivation in Okta.</li>
-<li data-list-item-id="e21cba094bd84500966726760a03d9253">Automatically generates unique usernames and email IDs in Okta.</li>
-<li data-list-item-id="e24996548b870a720a765b283f575bb7c">Manages group assignments in Okta.</li>
+<li data-list-item-id="ec3e0ff5933570c9016e7b958dfce1114">Syncs Users and Contacts records from Certinia into the Entra ID User.</li>
+<li data-list-item-id="e33b7970c5d39e18a183f52d2e90472de">Creates new contact attributes in Certinia.</li>
+<li data-list-item-id="e9dad9da1479c86ce0ff8e2ee6e9e33e3">Deletes the user records upon deactivation in Entra ID.</li>
+<li data-list-item-id="e21cba094bd84500966726760a03d9253">Automatically generates unique usernames and email IDs in Entra ID.</li>
+<li data-list-item-id="e24996548b870a720a765b283f575bb7c">Manages group assignments in Entra ID.</li>
+</ul><h2 id="h_01J6RM7PH3DX54S93ABHZ8J2X8">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e7fae2084db0840edc880d16f73bd8ddc">
+<strong>Admin Access to Entra ID</strong>: You must have admin access to your Entra ID instance. You can visit the Entra ID portal to get access to an Entra ID instance.</li>
+<li data-list-item-id="e81eb84c938db5f76057c00aafd5c331c">
+<strong>Tenant Account in the Aquera Admin Portal</strong>: You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e78f92551e8eca00272a6127cf4069b18">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin portal to integrate with Entra ID:<ul>
+<li data-list-item-id="e1cea9f63556f8c6c214f4c867cb3785c">
+<strong>Certinia</strong>: Ensure that you configure the Certinia connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/36964719019671-Certinia-Configuration-Guide" rel="noopener noreferrer" target="_blank">Certinia Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="ec4b19cea23e7b5212d69ba73124a53be">
+<strong>Entra ID</strong>: Ensure that you configure the Okta connector in the Aquera Admin portal.</li>
 </ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section details the configuration and mapping process for integrating Certinia with Entra ID. It outlines the steps to create the integration, set up integration preferences, and define how worker data is mapped from Certinia to Entra ID.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ecd011cb2de69316b880c966d4372c5e9">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ea1b82881b40e672da76475bc0764e558">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ea905bfac63bd81a46caecc65373826ee">Click<strong> </strong><strong>Create Integration</strong>.</li>
+<li data-list-item-id="ea199d319ed7992db84527d22bc84f22b">Select <strong>Certinia / Entra ID</strong>.</li>
+<li data-list-item-id="e67c0041ad95aa7b63e8a4b2e9fa78aaf">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ee141be94e27201f427d08e774e801e85">Select your Certinia and Entra ID connector instances.</li>
+<li data-list-item-id="eb2f4d9baabd6b8d1cff0cc8192922196">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01K3TMT9CQB86XXAZ9FY9M1QYW">Configuration</h2><p>On the <strong>Configuration</strong> page, the following sections are displayed:</p><h3 id="h_01K3TMW0YGBNCAV57V69WX0VWV">Applications</h3><p>The <strong>Applications</strong> section displays the Certinia and Entra ID application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and general settings according to your specific use case.</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4><p>Enable the following features based on your requirements:</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e7159da60c386b1f97f920590a9fd9356">
+<strong>Enable Manage User Lifecycle Management</strong>: Enabling this checkbox configures user lifecycle management as a destination.</li>
+<li data-list-item-id="ec038cbd74621db36d1c9b1b59c66958c">
+<strong>Enable Manage Contact Lifecycle Management</strong>: Enabling this checkbox configures contact lifecycle management as a destination.</li>
+<li data-list-item-id="e1ff0b6bf53a0d6b24a93c0b9dc61ef3f">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e07589255f2c1c37b5fa73e758b55094e">
+<strong>Enable Logging:</strong> Select this checkbox to generate logs outlining the data changes made during the integration process.</li>
+<li data-list-item-id="e79bf28739bcd9cd4f39c7d3faefe497a">
+<strong>Enable Notifications:</strong> Select this checkbox to enable integration-related notifications, keeping users informed of integration activity and updates.</li>
+<li data-list-item-id="e9d8cf94c686a8babf9ca82e802230280">
+<strong>Enable Reporting:</strong> Select this checkbox to activate reporting for the integration, providing insights into the data processed during execution.</li>
+<li data-list-item-id="e4438f9bae3212bfec12661d0e7169f1c">
+<strong>Enable Log Insights:</strong> Select this checkbox to visualize the integration-related metrics, offering a detailed view of log data and performance indicators.</li>
+<li data-list-item-id="e983bba4334082b5a130b562a37621d5f">
+<strong>Enable Incremental Mode:</strong> Select this checkbox to enable incremental mode, ensuring that only the most recently changed records are processed during each integration run.</li>
+</ul><h3 id="01K4A9WTC4984KJ3X6ABQ5B8WR">User Life Cycle</h3><p>The <strong>User Life Cycle</strong> section enables you to customize the integration settings for user life cycle management according to your specific use case.<br/><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Manage User Lifecycle Management</strong> setting in the <strong>Parameters</strong> section.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e2cbbd1f380db0ee436a492004a94c887">
+<strong>Enable Creations:</strong> Select this checkbox to enable the creation of user records during the integration process.</li>
+<li data-list-item-id="e381e4b8eda85bb430b60b1680f957c9d">
+<strong>Enable Updates</strong>: Select this checkbox to enable updates to existing user records, ensuring that any changes are reflected during the integration run.</li>
+<li data-list-item-id="efb83c86500fba09710de847409a61030">
+<strong>Enable Terminations</strong>: Select this checkbox to enable the termination of user records, allowing the integration to process and apply termination events accordingly.</li>
+<li data-list-item-id="efc2db77b5d7a0e686c9c01f8b7013b74">
+<strong>Map Manager:</strong> Select this checkbox to enable the mapping of the manager attribute to the corresponding user records during the integration process.</li>
+</ul><h4 id="h_01KR0JN5BMWTANVCFG91BND6AD">Match Expression</h4><p>These settings determine how users are matched between Entra ID and Certinia:</p><ul>
+<li data-list-item-id="e408f8eb6c22d53c29c4d7ac1e15f5242">
+<strong>Source Correlation attribute</strong>: Defines the attribute from Entra ID used to uniquely identify users. For example, <strong>User Principle Name</strong> is used as the unique identifier from Entra ID.</li>
+<li data-list-item-id="efeffb321e768bd99ff7f70493833ac1b">
+<strong>Destination correlation attribute</strong>: Defines the corresponding attribute in Certinia used for matching. For example, a <strong>Username </strong>is used to match existing employee records in Certinia.</li>
+</ul><h4 id="h_01KR0K4Q8SHRN3XQT8XSCDSY61">Manage Create Conditions</h4><ul>
+<li data-list-item-id="e822db823df4c8ba0a2fede32431bafda">
+<strong>Switch to Expression Mode</strong>: Enable this checkbox to switch the create condition to expression mode, allowing the use of custom expressions to define creation criteria. Provide a JavaScript expression to identify the Users to be created or updated.<br/><strong>Note</strong>: This parameter is available only if you select <strong>Switch to Expression Mode</strong> in the <strong>Manage Create conditions</strong><strong> to be Created/Updated </strong>in Certinia<strong>.</strong>
+</li>
+<li data-list-item-id="ebb987c8b1fbc3e906bc961f07a73a1b5">
+<strong>Create Condition: </strong>Enter the condition used to determine whether a given user record should be created during the integration process. By default, this is set to <strong>Create All Users</strong>, which ensures all user records are processed for creation.</li>
+</ul><h4 id="h_01KR0KKRGFR3S392A1PXCSW7ZM">Manage Update Conditions</h4><ul>
+<li data-list-item-id="ec069283d90ec5ccec422a4058bb093a3">
+<strong>Switch to Expression Mode</strong>: Enable this checkbox to switch the update condition to expression mode, allowing the use of custom expressions to define update criteria. Provide a JavaScript expression to identify the Users to be updated.<br/><strong>Note</strong>: This parameter is available only if <strong>Switch to Expression Mode</strong> is selected in the <strong>Manage Update Conditions</strong> section.</li>
+<li data-list-item-id="eadb4b208c2ef948b3abae7719cb7a211">
+<strong>Update Condition: </strong>Enter the condition used to determine whether a given user record should be updated during the integration process. By default, this is set to <strong>Update All Users</strong>, which ensures all user records are processed for creation.</li>
+</ul><h4 id="h_01KR0KRSXPH65MG7JGHQD4CE15">Manage Termination conditions</h4><ul><li data-list-item-id="e6e363498a0e0da8f8ab9b90a539b08aa">
+<strong>Termination Condition</strong>: Enter the condition used to determine whether a given user record should be terminated during the integration process.</li></ul><h3 id="h_01KR0M2Y0BWTBK7PGFX56QXPMQ">Contact Life cycle</h3><p>The <strong>Contact Life Cycle</strong> section enables you to customize the integration settings for contact life cycle management according to your specific use case.<br/><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Manage Contact Lifecycle Management</strong> setting in the <strong>Parameters</strong> section.</p><p> </p><p> </p><p> </p><p> </p>
   </div>
 </body>
 </html>

@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dynamics365-ERP / UKG Ready Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dynamics365-ERP / UKG Ready Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, any users created, updated, or terminated in Entra ID are automatically updated in Microsoft Dynamics 365 based on the defined schedule.</p><p>To identify user records across both systems from Entra ID to Microsoft Dynamics 365, the integration uses the attribute configured in the <strong>Entra ID Correlation Attribute</strong> parameter in Entra ID and matches it to the attribute configured in the <strong>Microsoft Dynamics 365 Finance and Operations Correlation Attribute</strong> parameter in Microsoft Dynamics 365 as a correlation attribute.</p><h2 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h2><p>The Dynamics 365 / Entra ID Integration performs the following functions:</p><ul>
+<li data-list-item-id="e634cc2be2753f67634d148db048edd66">Synchronizes user records from Entra ID to Microsoft Dynamics 365.</li>
+<li data-list-item-id="ea0a14da17bdf0406b683fe35370fffef">Creates new HR workers and system users in Microsoft Dynamics 365 when they are added in Entra ID.</li>
+<li data-list-item-id="e84b55cad6ee14b10e537fa8d28cd7acf">Updates existing HR worker and system user records in Microsoft Dynamics 365 when the corresponding user information changes in Entra ID.</li>
+<li data-list-item-id="ed44211bc86a164eeb8da3eef5ab3eb15">Terminates the HR worker and system user records in Microsoft Dynamics 365 when the corresponding user records are deleted from the Entra ID.</li>
+<li data-list-item-id="e990ed9c48f053d08c239711254ff2cf4">Supports both full synchronization and incremental synchronization to process only changed records.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e678d0c372604313c18d9c8d8843d587c">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
+</li>
+<li data-list-item-id="e2bf1625534d3917519d1071cc18efb9b">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="eb98ab7306006b6bf4cb2d595d170b2d5">
+<strong>Entra </strong><span><strong>ID</strong></span>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/32091350086423" rel="noopener noreferrer" target="_blank">Entra ID Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="ebafb5f6f8fd27e35c0ac0c0d42d16b87">
+<span><strong>Microsoft Dynamics 365</strong></span>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/18360122783639" rel="noopener noreferrer" target="_blank">Microsoft Dynamics 365 Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push user-related data from Entra ID to Microsoft Dynamics 365.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e01ab3a433aa87344069ccd11af0a1e04">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e97898e1f17915909f808c0269a68e8f7">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ef2d41be5cd6c467bc3ac497894f57df8">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e4d79d0edb562bf7a20bdcb800e220633">Select<strong> Dynamics365-ERP / UKG Ready</strong>.</li>
+<li data-list-item-id="eee76d026682f1bc2e8fcaeaad76ac0a8">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e92e4298921d2212e0954c8808da343e1">Select your <strong>Microsoft Dynamics 365</strong> and UKG Ready connector instances.</li>
+<li data-list-item-id="e1d8ec9d5ed58124303410606ea7089d6">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4><p>Enable the following feature based on your requirements:</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e6b0beed2b0555bca385603aa56d00cda">
+<span><strong>Manage Employees</strong></span>: Select this checkbox to synchronize employees data from <strong>UKG Ready</strong> to <strong>Microsoft Dynamics 365</strong>. When enabled, the Manage Employees section is displayed for further configuration.</li>
+<li data-list-item-id="e93960f31e226c97b19ca525f3e854359">
+<span><strong>Manage System Users</strong></span>: Select this checkbox to synchronize the system user's data from <strong>UKG Ready</strong> to <strong>Microsoft Dynamics 365</strong>. When enabled, the Manage System Users section is displayed for further configuration.</li>
+</ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">
+<span>Execution</span> Features</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="ee7e36b15376d39e100fe2dd97c580937">
+<strong>Enable Report-Only Mode</strong>: Select to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e2ca7bc24ed035aa40087a90b022383c2">
+<strong>Enable Logging</strong>: Select to generate logs outlining data changes. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Logging Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eceb4cf1e3eac5891a0f178cac44427b3">
+<strong>Enable Notifications</strong>: Select to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e43a0ebf6cfef086b7310a00450863abc">
+<strong>Enable Report Generation</strong>: Select to generate the integration report. When enabled, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e9acf3f36db3f8071edf23287d25fae8c">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ee9ed4cc855a4542b76459f4a14863a5e">
+<strong>Enable Log Insights</strong>: Select to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights Settings</a> section is displayed for further configuration.</li>
+</ul><h4 id="h_01KRBE398RT4DW1DRFHPA8VBH9">
+<span>Synchronization</span> Settings</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e6de6dfff833a5fabebe187faf91dbb8c">
+<strong>Full Sync Frequency</strong>: Select an option from the dropdown menu to define the full sync frequency. For example, if you select <em>Once a Day</em>, the integration will execute a full sync only once each day. Select <em>Custom</em> to customize the full sync frequency. When selected, the following parameter is displayed:<ul><li data-list-item-id="edd812c43d116d8f6be0981712053dbfd">
+<strong>Custom Full Sync Interval (days)</strong>: Enter the number of days between each full sync. For example, if you enter 10 in the field, a full sync will be executed every 10 days.</li></ul>
+</li>
+<li data-list-item-id="e42cc69b2834afe2df714af9f9b8daa4e">
+<strong>Enable No-Instance Testing Mode</strong>:</li>
+</ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Employees</h3><p>This section enables you to customize the integration settings for managing employees according to your specific use cases.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">Correlation Settings</h4><p>Configure the following settings:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e04faf3f766ab620ad3dbcd39163643ef">
+<span><strong> </strong></span><span><strong>Source Correlation Attribute</strong></span><span>*</span>: Select the UKG Ready attribute to distinctly find the associated Microsoft Dynamics 365 employee record. For example, <em>EmployeeId</em>.</li>
+<li data-list-item-id="ee7e2d5f7d159cae3b465aea5c13d75a6">
+<span><strong>Target Correlation Attribute</strong></span><span>*</span>: Select the Microsoft Dynamics 365 attribute to distinctly find the associated UKG Ready employee record. For example, <em>PersonnelNumber</em>.</li>
+</ul><h4 id="h_01KHNR86JVZTAQ5FH2VMSSCEZ5">
+<span>Source</span> Filter</h4><p>Configure the following settings to filter employee records in UKG Ready.</p><ul>
+<li data-list-item-id="edbc9f8d886598e657f4f543508dfc0a3">
+<span><strong>Source Filter</strong></span>: Select an attribute to filter UKG Ready users for provisioning to the Microsoft Dynamics 365 application. For example, if you select <em>EmployeeId</em>, UKG Ready users will be filtered based on this attribute.</li>
+<li data-list-item-id="e1f92072020255a182479ec074b3f1e1d">
+<span><strong>Source filter Value</strong></span>: Enter the value by which UKG Ready users must be filtered for the attribute selected in the <strong>Source</strong> <strong>Filter</strong> parameter. For example, if you enter <em>EMP001</em>, UKG Ready users with this employee number will be filtered and provisioned to the Microsoft Dynamics 365 application.</li>
+</ul><h4 id="h_01KHNMP7V37BGNDT0PQTYGM99V">Create Settings</h4><p>Configure the following settings to apply a condition for creating employee records from UKG Ready to Microsoft Dynamics 365.</p><ul><li data-list-item-id="ed83fbecd8805c9a138864548d29dfac3">
+<strong>Create Condition Type</strong>: Select a condition to specify which UKG Ready employee records must be created in the Microsoft Dynamics 365 application. Only employee records that satisfy this condition will be created in the Microsoft Dynamics 365 application. The available options are <em>None</em> and <em>Basic</em>. Select None if you . Select Basic if you want to filter UKG Ready users by status before creating them in the Microsoft Dynamics 365 application. The following parameter is displayed when the <em>Basic</em> option is selected:<ul><li data-list-item-id="e1d9225a73f798f0b8d0072c01119fed5">
+<strong>Eligible Worker Statuses for Create</strong>: Select one or more worker statuses from the dropdown menu. For example, if you select <em>Active</em>, only users with the Active status are filtered and created in the Microsoft Dynamics 365 application.</li></ul>
+</li></ul><h4 id="h_01KRBE398RFT0C8PAAQE6C3B0V">Provisioning Settings</h4><p>Configure the following settings to apply a condition for provisioning employee records from Entra ID to Microsoft Dynamics 365.</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul>
+<li data-list-item-id="ef9b706c7c920bbd7b1376d073e1a38f3">
+<strong>Create Condition</strong><span>*</span>: Select a condition to specify which Entra ID employee records must be created in the Microsoft Dynamics 365 application. Only employee records that satisfy this condition will be created in the Microsoft Dynamics 365 application. For example, if you select <em>Active Only</em>, only employees with an active status are provisioned in the Microsoft Dynamics 365 application. </li>
+<li data-list-item-id="e58d05957f814d3e835e917e1b51dd92d">
+<strong>Update Condition</strong><span>*</span>: Select a condition to specify which Entra ID employee records must be updated in the Microsoft Dynamics application. Only employee records that satisfy this condition will be updated in the Microsoft Dynamics 365 application. For example, if you select <em>ALL</em>, all Entra ID employee records will be updated to the Microsoft Dynamics 365 application.</li>
+</ul><h4 id="h_01KHNR86JVSS2AZXF2B8AGHB5E">Provisioning Threshold</h4><p>Configure the following settings to limit the employee records provisioned from Entra ID to Microsoft Dynamics 365.</p><ul>
+<li data-list-item-id="e0a382e5239ee355ddc03931ac49fdc37">
+<strong>Create Limit</strong>: Enter the maximum number of employee records that can be created from Entra ID to Microsoft Dynamics 365 in a single integration run. For example, entering 7 allows only 7 employee records to be created in a single integration run.</li>
+<li data-list-item-id="e142b7771226c856c933da27c60696f55">
+<strong>Update Limit</strong>: Enter the maximum number of employee records that can be updated from Entra ID to Microsoft Dynamics 365 in a single integration run. For example, entering 5 updates only 5 employee records in a single integration run.</li>
+</ul><h3 id="h_01KKBMXVHB7WJDCHSC4ACBW4XT">System Users Management</h3><p>This section enables you to customize the integration settings for system user management according to your specific use cases.</p><h4 id="h_01KHNR86JVFMC64ERZV9VCKCEH">Correlation Settings</h4><p>Configure the following settings:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e0da5868a8bfb824947e23c9175d882fc">
+<strong>Entra ID Correlation Attribute</strong><span>*</span>: Select the Entra ID attribute to distinctly find the associated Microsoft Dynamics 365 user record. For example, <em>Display Name</em>.</li>
+<li data-list-item-id="e79cdb6af4985f40b8836821cb37a71c0">
+<strong>Microsoft Dynamics 365 Finance and Operations</strong> <strong>Correlation Attribute</strong><span>*</span>: Select the Microsoft Dynamics 365 attribute to distinctly find the associated Entra ID user record. For example, <em>UserID</em>.</li>
+</ul><h4 id="h_01KHNR86JV4CP6MH76CAPA1ZH4">Source Filter Settings</h4><p>Configure the following settings to filter employee records in Entra ID.</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul><li data-list-item-id="ec23f5739b2651518646a072122a95272">
+<strong>Enable User Filter</strong>: Select this checkbox to filter a specific user record from Entra ID. When enabled, the following parameters are displayed:<ul>
+<li data-list-item-id="e6f9a88727630e396d4c72b8b537a9471">
+<span><strong>Filter Attribute</strong></span><span>*</span>: Select an attribute to filter Entra ID users for provisioning to the Microsoft Dynamics 365 application. For example, if you select Employee ID, Entra ID users will be filtered based on this attribute.</li>
+<li data-list-item-id="efdd67c9f3776e811e1b4035d44d5e057">
+<span><strong>Attribute value</strong></span>: Enter the value by which Entra ID users must be filtered for the attribute selected in the <strong>Filter Attribute</strong> parameter. For example, if you select EMP001, users with this employee number will be filtered and provisioned to the Microsoft Dynamics 365 application.</li>
+</ul>
+</li></ul><h4 id="h_01KJCSZ76EHRYTAC6GARWBPXWK">Provisioning Settings</h4><p>Configure the following settings to apply a condition for provisioning employee records from Entra ID to Microsoft Dynamics 365.</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul>
+<li data-list-item-id="e7775a6e2e8ff87d8475075250b971288">
+<strong>Create Condition</strong><span>*</span>: Select a condition to specify which Entra ID user records must be created in the Microsoft Dynamics 365 application. Only user records that satisfy this condition will be created in the Microsoft Dynamics 365 application. For example, if you select <em>Active Only</em>, only users with an active status are provisioned in the Microsoft Dynamics 365 application.</li>
+<li data-list-item-id="e9af42248834d5846f310e4008fe968ca">
+<strong>Update Condition</strong><span>*</span>: Select a condition to specify which Entra ID user records must be updated in the Microsoft Dynamics 365 application. Only user records that satisfy this condition will be updated in the Microsoft Dynamics 365 application. For example, if you select <em>ALL</em>, all Entra ID user records will be updated to the Microsoft Dynamics 365 application.</li>
+<li data-list-item-id="e770246d4966a8fcf14d6e8220b443897">
+<strong>Terminatation Condition</strong><span>*</span>: Select a condition to specify which Entra ID user records must be deleted in the Microsoft Dynamics 365 application. Only user records that satisfy this condition will be deleted in the Microsoft Dynamics 365 application. For example, if you select <em>Inactive Only</em>, only users with an inactive status are deleted from the Microsoft Dynamics 365 application.</li>
+</ul><h4 id="h_01KJCSZ76EZXHZKE1TQS5K186B">Provisioning Threshold</h4><p>Configure the following settings to limit the employee records provisioned from Entra ID to Microsoft Dynamics 365.</p><ul>
+<li data-list-item-id="e6ae3523c4ac0f0e4e10c402649b1e74f">
+<strong>Create Limit</strong>: Enter the maximum number of user records that can be created from Entra ID to Microsoft Dynamics 365 in a single integration run. For example, entering 7 allows only 7 user records to be created in a single integration run.</li>
+<li data-list-item-id="e46ac393932551df6b5e27a02622bee39">
+<strong>Update Limit</strong>: Enter the maximum number of user records that can be updated from Entra ID to Microsoft Dynamics 365 in a single integration run. For example, entering 5 updates only 5 user records in a single integration run.</li>
+<li data-list-item-id="eb71642394493e7ff3a4cf8a59b6776db">
+<strong>Deactivation Limit</strong>: Enter the maximum number of user records that can be deactivated from Entra ID to Microsoft Dynamics 365 in a single integration run. For example, entering 10 allows only 10 user records to be deleted in a single integration run.</li>
+</ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification<span> Settings</span>
+</h3><p>The <strong>Notifications Settings</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Notifications</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><h4 id="h_01KGHF6DZYKTRFQSB4B1QVYWAS">Notification Report Settings</h4><p>Configure the following settings:</p><ul><li data-list-item-id="e9ab04c6d6f4094e8e355fa86d28feb1f">
+<span><strong> Send the Notification Summary Report As An Attachment:</strong></span> Select this checkbox to receive an email notification with a report for each integration execution. When enabled, the following parameters and the <strong>Notification Template</strong> section are displayed for further configuration.<ul>
+<li data-list-item-id="e8366628bf70ba7448ef3ec8836ab1e74">
+<span><strong>Select the Notification Report Detail Level</strong></span><span>*</span>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e77db447c0ba7d0790e7b672008e66d81">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e5d0b9d77dc7e9cf7eda7a2c69cf03f2c">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="efc482f6b5d620c459e3095be2042cb24">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul><li data-list-item-id="e9088a74c523398ac4fea29ba73593d04">
+<strong>Select Custom Mode</strong><span>*</span>: Select the attribute filter to include or exclude attributes in the email report. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="e7cb7539ab5acc88d79a806543d63c581">
+<strong>Attributes Inclusion List</strong>: Enter the attributes to be included in the email report. This parameter is available only if you select <strong>Inclusion List</strong> in the <strong>Select Custom Mode </strong>parameter.</li>
+<li data-list-item-id="e02366a97323797cdacf1d9c2700683c6">
+<strong>Exclusion Attribute List</strong>: Enter the attributes to be excluded from the email report. This parameter is available only if you select <strong>Exclusion List</strong> in the <strong>Select Custom Mode </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e91bdaf95ae0393b79965004e2e7a36d3">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values for each event when choosing the Full Details or Custom option.</li>
+<li data-list-item-id="e21e08a73ed7140b6bcf2e05e3d7a7262">
+<strong>Alert Aquera Support On </strong><span><strong>Integration </strong></span><strong>Failures</strong>: Select this checkbox to send a notification alert to the Aquera support on Integration failures.</li>
+</ul>
+</li></ul><h4 id="h_01KJCSZ76EG6G02NECNPM0QZ80"><span>Notification Template</span></h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e10a15d41953f9a93b963dc17b8bfc37d">
+<span><strong>Email </strong></span><strong>Recipients</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
+<li data-list-item-id="e6c59743c83d162a8178135db77a79b0e">
+<strong>CC</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e1c427e3b04f217006ad5281fdbcf366d">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for sending email notifications.</li>
+<li data-list-item-id="ea10a3353a27335d4956fbef34a1d9fde">
+<strong>Email Body</strong>: Enter the content that must be used as the email body for sending email notifications.</li>
+<li data-list-item-id="ec396ae9f05fdaeb101a4e0cabe4aade4">
+<strong>Restrict to this Domain</strong>: Enter the domain name to restrict notifications to email addresses from this domain.</li>
+</ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting Settings</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Report Generation</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul><li data-list-item-id="e468092c0b1e9835a5a1f7b0128b0463c">
+<strong>Report Detail Level</strong><span>*</span>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e13e9f198ae54d3153b201127fc9d314c">
+<strong>Summary</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="eb2ff8c6f1afa694b4ef2abc953aa83c9">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e86cb1c80d8695c71b788fb1ed2f09328">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e5fb8cb230ade6166d643dd884e67f947">
+<strong>Attribute Filter</strong><span>*</span>: Select the attribute filter to include or exclude attributes in the report. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="e741e75abfb814ad9e296d8a05754a9be">
+<strong>Included Attributes</strong>: Enter the attributes to be included in the report. This parameter is available only if you select <strong>Inclusion List</strong> in the <strong>Attribute Filter </strong>parameter.</li>
+<li data-list-item-id="e0d4aa1e046954ba1d2eb321143007ad2">
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the report. This parameter is available only if you select <strong>Exclusion List</strong> in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li>
+<li data-list-item-id="e1d6e00b1d0aaee4040f02251a1b19b2b">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to populate the attribute values for each event when choosing the <em>Full Details</em> or <em>Custom</em> option.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights Settings</h3><p>This section enables you to customize the log insight settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul><li data-list-item-id="eb5262018565237c0535b75ec7e1524da">
+<strong data-end="185" data-start="147">Select the Log Insight Level</strong><span>*</span><strong data-end="185" data-start="147">:</strong> Select the log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e41d26a8b807c0f172abacc2a727f43c2">
+<strong data-end="337" data-start="320">Summary</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e1b64145e5b0509cdf16ee1dbaa58acdc">
+<strong data-end="440" data-start="423">Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ef71e497d12be5326f14c0aa55d26b6dc">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e1836e20f06bdde9c095a4338785324c5">
+<strong>Custom Insight Level</strong><span>*</span>: Select the attribute filter to include or exclude attributes in the log insights. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="e3a65e82e9ec0d1064e6d01f3ee2de1fe">
+<strong>Attributes Inclusion List</strong>: Enter the attributes to be included in the log insights. This parameter is available only if you select <strong>Inclusion List</strong> in the <strong>Custom Insight Level </strong>parameter.</li>
+<li data-list-item-id="e09ab7387c7a6be72fae7e6c522fa16de">
+<strong>Exclusion Attributes List</strong>: Enter the attributes to be excluded from the log insights. This parameter is available only if you select <strong>Exclusion List</strong> in the <strong>Custom Insight Level </strong>parameter.</li>
+</ul>
+</li>
+<li data-list-item-id="ebb5ed569e28915bdd4475bcbf450aff5">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values for each event when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Logging Settings</h3><p>The <strong>Logging Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Logging</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul><li data-list-item-id="ea0fc7bd818883983d4d053f928692e9a">
+<span><strong>Select the Log Detail Level</strong></span><span>*</span>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ef193e520486109b03bfd2ade05612028">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e1d64948ec93cb3a38b5a100dc48c6399">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e8e5be8c3072b2fee98aabdd6f773a341">
+<strong>Custom</strong>: Includes or excludes selected attribute details. The following parameters are displayed once you select <strong>Custom</strong>:<ul><li data-list-item-id="e4022784d47ade860898c3066e70072fb">
+<strong>Attribute Filter</strong><span>*</span>: Select the attribute filter to include or exclude attributes from the logs. Based on your selection, the following parameters are displayed:<ul>
+<li data-list-item-id="eccdd236a4b4cc955f51f9c33f1bdd696">
+<strong>Included Attributes</strong>: Enter the attributes to be included in the log. This parameter is available only if you select <strong>Inclusion List</strong> in the <strong>Attribute Filter </strong>parameter.</li>
+<li data-list-item-id="eff42668c0155070816681bd097346937">
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the log. This parameter is available only if you select <strong>Exclusion List</strong> in the <strong>Attribute Filter </strong>parameter.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e0f5ad0554b29b7af9dd2866fd82a5287">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values for each event when choosing the <strong>Full Details</strong> or <strong>Custom</strong> option.</li>
+</ul>
+</li></ul><h2 id="h_01KGS7GWR0HGV51CVV377A1WX4">Attribute Map</h2><p>The <strong>Attribute Mapper</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><h3 id="h_01KJ9R144MH0HSVY3G5ABDGVA6">EntraID to D365 Employees</h3><p>This section enables you to define how employees data must be mapped from Entra ID to Microsoft Dynamics 365. Based on your configuration, Entra ID employee details are mapped to Microsoft Dynamics 365 employee records.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h3 id="h_01KJA0WZY0D50CT7T6Y9EKTJCC">Entra Users to D365 Users</h3><p>This section allows you to define how users data must be mapped from Entra ID to Microsoft Dynamics 365. Based on your configuration, Entra ID user details are mapped to Microsoft Dynamics 365 user records.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01KGHMQNFNBCR5J9J93JC1KRMP">Tables</h2><p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the Jira Service Management Cloud application, and you want to update a value for that attribute in Active Directory. Based on your requirement, you can add any number of tables in the integration.</p><p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a> section in the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for details.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

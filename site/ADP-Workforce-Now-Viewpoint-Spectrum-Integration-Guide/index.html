@@ -19,13 +19,22 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>ADP Workforce Now / Viewpoint Spectrum Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize the following cost center attributes from ADP Workforce Now to ADP iHCM: Cost center code value, Cost center short name, and Effective date.</p><p>To identify cost center records across both systems, the integration uses the <strong>Cost Center Code</strong> attribute from ADP Workforce Now and matches it to the <strong>Cost Center Code</strong> available in the ADP iHCM.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The ADP iHCM / ADP Workforce Now Cost Center Sync integration performs the following functions:</p><ul>
-<li data-list-item-id="e3a01ea3a6ac1aafc2b2eced91641e7b6">Reads cost center data from the Cost Center or the Department validation table in ADP Workforce Now, based on the integration configuration.</li>
-<li data-list-item-id="e5ed9a00f09f426cb688c2ef4f7554295">Reads data from a specific company code in ADP Workforce Now.</li>
-<li data-list-item-id="ef0527c39d9da745a21ceaf5262c91abe">Creates new cost centers in ADP iHCM when new cost centers are added in ADP Workforce Now.</li>
-<li data-list-item-id="e5efa553ed58b8f46150c768c0d74047c">Updates cost center details in ADP iHCM when any changes are made to the existing cost centers in ADP Workforce Now.</li>
-<li data-list-item-id="e22a95b811e4073ced4f0948bc2ffe816">Retrieves, creates, and updates cost center records based on the limits set in the integration.</li>
-<li data-list-item-id="ec56e15494f747709af20e448c2730123">Performs full synchronization of cost centers on each integration run.</li>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize data of workers from ADP Workforce Now to users in Viewpoint Spectrum.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The ADP Workforce Now / Viewpoint Spectrum integration performs the following functions:</p><ul>
+<li data-list-item-id="e3a01ea3a6ac1aafc2b2eced91641e7b6">Retrieves the data of workers from ADP Workforce Now and synchronizes the data to a specific company code in Viewpoint Spectrum<ul>
+<li data-list-item-id="ecb990687bd2e93beae54a2c4c06abf8d">Supports filtering the data of a specific ADP worker by their Position ID or Associate ID</li>
+<li data-list-item-id="e7186c2cf194ff40ddeea103daccf254e">Supports filtering workers' data based on their statuses, for creations and updates in Viewpoint Spectrum</li>
+</ul>
+</li>
+<li data-list-item-id="e5ed9a00f09f426cb688c2ef4f7554295">Creates and updates users in Viewpoint Spectrum<ul>
+<li data-list-item-id="e8534348300d8fd7c3c7fbd0b35f19b47">Creates new users in Viewpoint Spectrum when new workers are added in ADP Workforce Now</li>
+<li data-list-item-id="e87e77ef67dc5e164bae00daf0a151594">Updates user details in Viewpoint Spectrum when any changes are made to the existing workers in ADP Workforce Now</li>
+<li data-list-item-id="ed59c6492fb902548f33afde2f6cc5ded">Supports configuring conditions for creating and updating users</li>
+</ul>
+</li>
+<li data-list-item-id="e22a95b811e4073ced4f0948bc2ffe816">Retrieves workers and creates and updates users based on the limits set in the integration</li>
+<li data-list-item-id="ec56e15494f747709af20e448c2730123">Performs full synchronization or incremental synchronization of workers based on the configuration</li>
+<li data-list-item-id="ecb5e4f5324c117f3c26d08984a856e40">Generates logs, reports, and analytics dashboards based on the configurations</li>
+<li data-list-item-id="e9c3b96d34dd67e40ba56204706ba9b95">Sends notification emails with reports on each integration run based on the configuration.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="eaa648eab0a04c9a2c440bc942e295898">
 <strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
@@ -33,34 +42,49 @@
 <li data-list-item-id="e0abcbdb47df8c031c6fc01e8ad917675">
 <strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
 <li data-list-item-id="e8306f38177c5deb3f0aebc5eab14a6d3">
-<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
+<strong>ADP Workforce Now - API Central</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/21457610148375" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide for ADP API Central Customers</a> for configuration details.</li>
 <li data-list-item-id="eac4c13553748d10fd9e14545783ef768">
-<strong>ADP iHCM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/16804103956759" rel="noopener noreferrer" target="_blank">ADP iHCM Configuration Guide</a> for configuration details.</li>
+<strong>Viewpoint Spectrum</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/28380042570135" rel="noopener noreferrer" target="_blank">Viewpoint Spectrum Configuration Guide</a> for configuration details.</li>
 </ul>
 </li>
-</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize cost center data from ADP Workforce Now to ADP iHCM.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e0f44e698cbd56fb94d6628bb9bb3c173">
+<strong>CSV File Containing the Data of Viewpoint Spectrum Users</strong>: Make sure that a CSV file containing the data of users is downloaded from your Viewpoint Spectrum instance. This file is required for the integration to import and match the user records available in Viewpoint Spectrum.</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize worker data from ADP Workforce Now to user data in Viewpoint Spectrum.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="e2d88320adcca366058744afdfcb46eae">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="e03df0cbbf36d9b37a86c31b2490af4e3">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="e4859292a6b98e4d6f94d8847b09c4622">Click<strong> Create Integration</strong>.</li>
-<li data-list-item-id="e0da0b6203a887f3e6c5df88ebea94915">Select<strong> ADP iHCM / ADP Workforce Now Cost Center Sync</strong>.</li>
+<li data-list-item-id="e0da0b6203a887f3e6c5df88ebea94915">Select<strong> ADP Workforce Now / Viewpoint Spectrum</strong>.</li>
 <li data-list-item-id="e1c7b7efe454a53da325ad71ee59753db">Enter a name and a description for the integration.</li>
-<li data-list-item-id="e30bab7921dada01b98376289110b7cfa">Select your <strong>ADP iHCM </strong>and<strong> ADP Workforce Now </strong>connector instances.</li>
+<li data-list-item-id="e30bab7921dada01b98376289110b7cfa">Select your<strong> ADP Workforce Now </strong>and<strong> Viewpoint Spectrum </strong>connector instances.</li>
 <li data-list-item-id="ea344d9eb7947b274b3b840893353bad4">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
-</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source (ADP Workforce Now) and target (ADP iHCM) application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and settings according to your use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4><p>Enable the following feature based on your requirements:</p><ul data-end="1629" data-start="288"><li data-list-item-id="e934a26bc8629081603b00b68d2588358">
-<strong>Enable Cost Center Life Cycle Management</strong>: Turn on this toggle to synchronize the cost center data from ADP Workforce Now to ADP iHCM. When turned on, the <a href="#h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Cost Centers</a> section is displayed for further configuration.<br/><strong>Note</strong>: This setting is mandatory for the integration.</li></ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following general settings:</p><ul>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the ADP Workforce Now API Central and Viewpoint Spectrum application connectors used for the integration. This section allows you to search and update these application connectors, if required.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and settings according to your use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4><p>This section provides options to enable the user lifecycle management.</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e934a26bc8629081603b00b68d2588358">
+<strong>Enable User Lifecycle Management</strong>: Turn on this toggle to synchronize the worker data from ADP Workforce Now to users in Viewpoint Spectrum. This is a mandatory setting for this integration. When turned on, the <a href="#h_01KGMG4JM3JXCF60W9N6GEFS2V">Worker Sync Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e604e3064570aa65ba28da860d2d0b3b2">
+<strong>Select the user type to be synced</strong>: Select <strong>Workers</strong> to synchronize the data of the user type, <em>Workers</em>, from ADP Workforce Now to Viewpoint Spectrum. This is a mandatory setting for this integration.</li>
+</ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following general settings:</p><ul>
 <li data-list-item-id="e5b6330dd6778d0efa76a471008df2725">
-<strong>Report only</strong>: Turn on this toggle to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<strong>Debugging</strong>: Turn on this toggle to add the details of the API calls in the integration execution logs, for debugging purposes. The details include the API request, the parameters passed in the request, and the response code.</li>
+<li data-list-item-id="e5f57d5ab151e25408be6149223f18cfe">
+<strong>Advanced debugging</strong>: Turn on this toggle to add extensive details to the integration execution logs for debugging purposes. In addition to the API request, the parameters passed in the request, and the response code, the API response body will also be available in the logs.</li>
+<li data-list-item-id="e00a5c5512dc7d2d05102f0321267a6ce">
+<strong>Report-only mode</strong>: Turn on this toggle to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e782b300d4ae8780b5e7ea6caf8c39b35">
+<strong>Debug mode</strong>: Turn on this toggle to filter a single worker record, for testing purposes. When the toggle is on, the <a href="#h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Settings</a> section is displayed for further configuration.</li>
 <li data-list-item-id="e442097b0fa3696a22420d843a35181c7">
-<strong>Enable logging</strong>: Turn on this toggle to generate logs outlining data changes. When the toggle is on, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Log Settings</a> section is displayed for further configuration.</li>
+<strong>Logging</strong>: Turn on this toggle to generate logs outlining data changes. When the toggle is on, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Log Settings</a> section is displayed for further configuration.</li>
 <li data-list-item-id="eb082cf7c8cd5999a960bdbae4bbc10f0">
-<strong>Enable notifications</strong>: Turn on this toggle to enable integration-related notifications. When the toggle is on, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
+<strong>Email notifications</strong>: Turn on this toggle to enable integration-related notifications. When the toggle is on, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
 <li data-list-item-id="e68f8809d218c374a6fe58381b9848148">
-<strong>Enable report generation</strong>: Turn on this toggle to generate the integration report. When the toggle is on, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</a> section is displayed for further configuration.</li>
+<strong>Report generation</strong>: Turn on this toggle to generate the integration report. When the toggle is on, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</a> section is displayed for further configuration.</li>
 <li data-list-item-id="e833d384da523ae2f267a62b8d19c2d76">
-<strong>Enable Log Insights</strong>: Turn on this toggle to visualize the integration-related metrics. When the toggle is on, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
-<li data-list-item-id="eaa2add95679bec0d1d7121b4e0df096b">
-<strong>Enable debug mode</strong>: Turn on this toggle to generate logs outlining data changes that would occur, for debugging. When the toggle is on, the <a href="#h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Settings</a> section is displayed for further configuration.</li>
-</ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Cost Centers</h3><p>The <strong>Manage Cost Centers</strong> section allows you to customize the settings to manage cost center synchronizations based on your use case.</p><p><strong>Note</strong>: This section appears only if you have turned on the <strong>Enable Cost Center Life Cycle Management</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">Cost Center Settings</h4><p>This section enables you to configure the settings related to the cost center data and the company code.</p><ul>
+<strong>Insights</strong>: Turn on this toggle to visualize the integration-related metrics. When the toggle is on, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+</ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Application Configurations</h3><p>This section enables you to set the configurations specific to the Viewpoint Spectrum application.</p><ul>
+<li data-list-item-id="e711615002b17acc61858efd5e18bad2c">
+<strong>Company Code</strong>: Enter the company code in your Viewpoint Spectrum instance to which the worker data from ADP must be synced.</li>
+<li data-list-item-id="e1f672fd7a968e66b9bd6e0dd0e8db140">
+<strong>Upload Viewpoint Spectrum employees CSV file</strong>: Click <strong>Browse File</strong> and select the CSV file containing the data of employees in Viewpoint Spectrum. This file is required to identify the matching user records and to determine the users that must be created in Viewpoint Spectrum. <br/><strong>Note</strong>: Make sure that whenever any modifications are made to the user data directly in the Viewpoint Spectrum application through the UI, a new CSV file must be downloaded with the latest user data, and that file must be uploaded. </li>
+</ul><h3 id="h_01KRGAQHMKDXHEHE5NM9ZCVBZ5">Worker Sync Settings</h3><p>The <strong>Worker Sync Settings</strong> section allows you to customize the settings to manage cost center synchronizations based on your use case.</p><p><strong>Note</strong>: This section appears only if you have turned on the <strong>Enable Cost Center Life Cycle Management</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">Cost Center Settings</h4><p>This section enables you to configure the settings related to the cost center data and the company code.</p><ul>
 <li data-list-item-id="eb3646de0d3ed936314281e458c33e06b">
 <strong>Select validation table</strong>: Select the validation table in ADP Workforce Now that must be used by the integration to read the cost center data. <ul>
 <li data-list-item-id="e8a0d9d0b5f87bd7bbdaa162f2921ce4d">If you select <em>Cost Centers</em>, the cost center data will be retrieved from the Cost Center validation table in your ADP Workforce Now instance.</li>
@@ -229,11 +253,11 @@
 </li>
 </ul>
 </li>
-</ul><h3 id="h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Mode</h3><p>This section enables you to customize the settings for debugging the integration setup.</p><p><strong>Note</strong>: This section appears only if you have turned on the <strong>Enable Debug Mode</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. </p><h4 id="h_01KMMWQQRF8166YPHRS870BX9H">Source Filter</h4><ul>
+</ul><h3 id="h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Settings</h3><p>This section enables you to customize the settings for debugging the integration setup.</p><p><strong>Note</strong>: This section appears only if you have turned on the<strong> Debug Mode</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. </p><h4 id="h_01KMMWQQRF8166YPHRS870BX9H">Source Filter</h4><ul>
 <li data-list-item-id="ed82c86f85e77074c5ae8416dda58ae09">
-<strong>Enable source filter</strong>: Turn on this toggle to filter a specific cost center record and then run the integration for debugging purposes.</li>
+<strong>Select the source filter</strong>: .</li>
 <li data-list-item-id="e2748e0f42dc0ec588fba431e17854d5c">
-<strong>Filter query</strong>: Enter the expression that must be used to filter a cost center record from ADP Workforce Now. For example: <em>nameCode.code eq "01234SE"</em><br/><strong>Note</strong>: This setting is effective only if you have turned on the <strong>Enable source filter</strong> toggle.</li>
+<strong>Source filter value</strong>: Enter the Associate ID or the Position ID to filter a worker record from ADP Workforce Now. </li>
 </ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
   </div>
 </body>

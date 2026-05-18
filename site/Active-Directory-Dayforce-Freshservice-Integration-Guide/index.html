@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Active Directory / Dayforce / Freshservice Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Active Directory / Dayforce / Freshservice Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KRWT240N6DTDENY3ZWVR2FVK">Overview</h1><p>The Aquera platform enables your organization to automate identity lifecycle management by synchronizing employee data across HR, directory, and IT service management systems.</p><p>This integration automates identity lifecycle processes between Dayforce, Active Directory, and Freshservice. Dayforce acts as the source of truth for employee data, Active Directory stores and manages user accounts, and Freshservice manages approval-driven journeys for sensitive provisioning actions.</p><p>Dayforce changes flow downstream automatically. When an action requires approval, Freshservice journeys are used to gate the Active Directory operation before the account is created, updated, or deactivated.</p><p>This integration supports user onboarding, employee updates, offboarding, name changes, group assignments, manager assignments, termination handling, logging, reporting, and report-only execution.</p><h2 id="h_01KRWT32ZXT09PDMVFRT62WWC5">Key Functions</h2><p>This integration automates identity lifecycle management with the following primary capabilities:</p><ul>
+<li data-list-item-id="e54c1143c66de21b3f227c143b8f37fa4">Retrieves employee records from Dayforce.</li>
+<li data-list-item-id="e16430bc609078a62ac4f0b89027e980e">Creates new Active Directory accounts for eligible Dayforce workers.</li>
+<li data-list-item-id="e0472bbdf184edf73592541e359082b5b">Updates existing Active Directory users when Dayforce attributes change.</li>
+<li data-list-item-id="ec304f6df6a0f9a93024755669347043e">Routes onboarding, employee update, offboarding, and name change requests through Freshservice journeys when approval is required.</li>
+<li data-list-item-id="e99590cd78a5b7dae99bcf98b0f961018">Processes approved Freshservice journeys and applies the approved changes to Active Directory.</li>
+<li data-list-item-id="ee9d56932c875504a5935244a384ae70f">Deactivates or terminates Active Directory users when workers become inactive in Dayforce.</li>
+<li data-list-item-id="e77c6c076ac13b00d523c974de5774dee">Assigns and removes Active Directory groups.</li>
+<li data-list-item-id="e8adef1ad37ec4d27d07027db1ab600fe">Assigns and removes managers in Active Directory.</li>
+<li data-list-item-id="e0efefb1e2acc5ded8e50a16aba1a9117">Handles duplicate users across Active Directory domains.</li>
+<li data-list-item-id="e6ca3657691d856c6f29df253ba17740f">Supports report-only mode to simulate changes without applying them.</li>
+<li data-list-item-id="ea4474204020691ceeaaee8ab0ea9133d">Generates logs, reports, and execution summaries.</li>
+</ul><h2 id="h_01KRWT5RZGKJ14TJBXWXWSEWJZ">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e5c5c313c7c4a3a6f942f4098539eaae3">
+<strong>Tenant Account in the Aquera Admin Portal</strong>: You must have a tenant account with admin access in the Aquera Admin portal.</li>
+<li data-list-item-id="e543d288eed48d68a3e36cfaad3d2617c">
+<strong>Dayforce Application Connector in the Aquera Admin Portal</strong>: You must configure the Dayforce application connector that will be used to retrieve employee records.</li>
+<li data-list-item-id="e5e459cd35224f933336a4084d8baccf1">
+<strong>Active Directory Application Connector in the Aquera Admin Portal</strong>: You must configure the Active Directory connector that will be used to create, update, disable, and manage users.</li>
+<li data-list-item-id="e45b17ac5513ca71d81b8fa01d9b6fc2f">
+<strong>Freshservice Application Connector in the Aquera Admin Portal</strong>: You must configure the Freshservice connector that will be used to retrieve journey forms, journey requests, activities, and approval statuses.</li>
+<li data-list-item-id="e2608aa9ddf35e0f9be52e69190640dfb">
+<strong>Required Active Directory Permissions</strong>: The configured Active Directory connector must have permissions to create users, update users, disable users, manage groups, assign managers, remove managers, and reset passwords, depending on the enabled use cases.</li>
+</ul><h1 id="h_01KRWTFS4A0J3PQY4JJ949BHBK">Integration Setup</h1><p>This section details the configuration process for integrating Dayforce, Active Directory, and Freshservice. It outlines the steps to create the integration, configure applications, define run parameters, set source filters, configure Freshservice journey approval gates, define Active Directory provisioning behavior, and configure termination handling.</p><h2 id="h_01KRWTG9XBKFWS4N731EX6Y7Q9">Create Integration</h2><p>Perform the following steps to create the integration:</p><ul>
+<li data-list-item-id="e15f644d7fbfbfa470416ad9ab5596cc3">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e0ef4f8a35ba9e4a516908d306cfab3f1">Navigate to Integrations from the left side panel.</li>
+<li data-list-item-id="edfe148a30cafdd956480926e4008d34d">Click Create Integration.</li>
+<li data-list-item-id="e9a1c7fdefb2d9fa3d0cb024afbbae59e">Search for Active Directory / Dayforce / Freshservice in the search box next to the <strong>Explore Templates</strong> section, and then select it to create a new integration.</li>
+<li data-list-item-id="eef022edc5f8e657c3c9212d05a65225f">Enter a name and description for the integration.</li>
+<li data-list-item-id="ed48858ab1e3ed8e1b06731e3386b3424">Click Continue.</li>
+</ul><p>This guide covers the following tabs:</p><ul>
+<li data-list-item-id="e2f84f2637b7bc8c5f8e5c5a47d0dc3e2">Overview</li>
+<li data-list-item-id="eb4f5e14797642000a707d068e76594d1">Configuration</li>
+<li data-list-item-id="e5e9e67c69a304646d3356c6638f77508">Dayforce</li>
+<li data-list-item-id="e41080e42af471f95a896a88f96f6b13d">Freshservice</li>
+<li data-list-item-id="e370b56bed7ad641f747dcc7d2aec07b6">Active Directory</li>
+<li data-list-item-id="ea29effb080be9aa554002c00e71cd1ae"> </li>
+</ul><h2 id="h_01KRWTJTMV1X5498149M780PWC">Overview</h2><p>This tab displays an introduction to the integration and explains how the integration is organized.</p><p>The About Overview section explains that the integration automates identity lifecycle management between Dayforce, Active Directory, and Freshservice.</p><p>Dayforce is used as the employee source of truth. Active Directory is used to manage user accounts. Freshservice is used to manage IT-driven approval workflows before sensitive Active Directory writes are performed.</p><p>The integration performs the following actions during each run:</p><ul>
+<li data-list-item-id="e2e49bf7727df23111d5236b93278b254">Reconciles a Dayforce employee snapshot against Active Directory and Freshservice.</li>
+<li data-list-item-id="e815809e61870de7d8fc76f3299e472dd">Creates Active Directory accounts for new hires or routes them through an onboarding journey.</li>
+<li data-list-item-id="ef729da22a489af56d5d2cc1c8a955afd">Updates existing Active Directory users when Dayforce attributes change.</li>
+<li data-list-item-id="e4987690b9e79b9063734dc7d18647101">Routes employee updates, name changes, and offboarding through Freshservice journeys when configured.</li>
+<li data-list-item-id="e8863f431457db4a946bab2691c25be88">Deactivates inactive Dayforce workers in Active Directory immediately or on the configured effective date.</li>
+<li data-list-item-id="edb87b59d291cd2f259a38c9d218e3c7b">Keeps manager assignments and group memberships synchronized.</li>
+</ul><h2 id="h_01KRWTME9GJHFXSQAF1BPSYJQV">Configuration</h2><p>Navigate to the Configuration tab to configure application connections and top-level run parameters.<br/>The following sections are displayed on the page:</p><ul>
+<li data-list-item-id="e9c50129219b356e14b02acbe5523dac0">Applications</li>
+<li data-list-item-id="e97f565809eac4802e087e38bdf8bc7a2">Parameters</li>
+</ul><h3 id="h_01KRWTNE90HGTG4EG77BZ7BNNB">Applications</h3><p data-end="5895" data-start="5809">This section enables you to select the application connectors used by the integration.</p><p data-end="5948" data-start="5897">The following fields are displayed in this section:</p><ul data-end="6294" data-start="5950">
+<li data-end="6055" data-list-item-id="eb6cfcd9ef1eed2474e0c2fde631c12a1" data-section-id="wvyb3e" data-start="5950">
+<strong data-end="5965" data-start="5952">Dayforce:</strong> Select the Dayforce application connector that will be used to retrieve employee records.</li>
+<li data-end="6179" data-list-item-id="e593d2cd9b99fd6ea0f3c80d1f69a11bf" data-section-id="180o0gt" data-start="6056">
+<strong data-end="6065" data-start="6058">AD:</strong> Select the Active Directory application connector that will be used to create, update, disable, and manage users.</li>
+<li data-end="6294" data-list-item-id="eb648fef6b71cd86b684e13075ec2eecd" data-section-id="2iyu52" data-start="6180">
+<strong data-end="6202" data-start="6182">Freshservice V4:</strong> Select the Freshservice connector that will be used to create and process journey requests.</li>
+</ul><p data-end="6398" data-start="6296">After selecting the required applications, click <strong data-end="6361" data-start="6345">Save Changes</strong> at the top-right corner of the page.</p><h3 id="h_01KRWTP3YS6452424DYYSBB5YA">Parameters</h3><p data-end="6505" data-start="6415">This section enables you to configure the top-level operating behavior of the integration.</p><p data-end="6560" data-start="6507">The following settings are displayed in this section:</p><ul data-end="8351" data-start="6562">
+<li data-end="6809" data-list-item-id="ebbe89fc1b4229a0f86866e2ccc9d514b" data-section-id="bmzehn" data-start="6562">
+<strong data-end="6592" data-start="6564">Enable Report-Only Mode:</strong> Select this checkbox to generate a report detailing the data changes that would happen without applying them. When enabled, create, update, termination, group, manager, and Freshservice journey actions are simulated.</li>
+<li data-end="6916" data-list-item-id="e50323c76451d5df0f00804b861d21697" data-section-id="yshw40" data-start="6810">
+<strong data-end="6831" data-start="6812">Enable Logging:</strong> Select this checkbox to generate logs outlining data changes and execution activity.</li>
+<li data-end="7010" data-list-item-id="e3a2059fe0a8c9860d6c30bfc79854221" data-section-id="78rucm" data-start="6917">
+<strong data-end="6944" data-start="6919">Enable Notifications:</strong> Select this checkbox to enable integration-related notifications.</li>
+<li data-end="7098" data-list-item-id="e368b52ebec62c1efa2ccd5edd98a9c8d" data-section-id="hvs0xz" data-start="7011">
+<strong data-end="7042" data-start="7013">Enable Report Generation:</strong> Select this checkbox to generate an integration report.</li>
+<li data-end="7310" data-list-item-id="ec033d1fd23a190b2807990a0e6bc204f" data-section-id="1y0ydd4" data-start="7099">
+<strong data-end="7140" data-start="7101">Execute Full Sync (Dayforce to AD):</strong> Select this checkbox to execute a full sync from Dayforce to Active Directory. If this option is not selected, only recently updated records from Dayforce are retrieved.</li>
+<li data-end="7650" data-list-item-id="ea5aa389f446188981e834f33ec73b34b" data-section-id="zf08xd" data-start="7311">
+<strong data-end="7354" data-start="7313">Enable Provisioning via Freshservice:</strong> Select this checkbox to enable monitored provisioning through Freshservice. If this option is selected, configured Freshservice journeys are used to gate sensitive Active Directory operations. If this option is not selected, direct synchronization from Dayforce to Active Directory is performed.</li>
+<li data-end="7840" data-list-item-id="ecf9cfa067c09318d7f0b25f1fec58f5b" data-section-id="1yfs512" data-start="7651">
+<strong data-end="7696" data-start="7653">Enable Freshservice Journeys Full Sync:</strong> Select this checkbox to fetch all Freshservice journeys. If this option is not selected, only recently created or updated journeys are fetched.</li>
+<li data-end="8047" data-list-item-id="e173f6b7e0004db6202e2f2240293bbe5" data-section-id="sjnzz9" data-start="7841">
+<strong data-end="7919" data-start="7843">Provide lookback period to fetch journeys in incremental mode (in Days):</strong> Enter the number of days to look back while fetching Freshservice journeys in incremental mode. The value must be 1 or greater.</li>
+<li data-end="8204" data-list-item-id="ec5be513aee08141afc041e9f28a04442" data-section-id="mi323s" data-start="8048">
+<strong data-end="8081" data-start="8050">Dayforce Correlation Field:</strong> Select the Dayforce attribute used to match employees with Active Directory users. For example, select <strong data-end="8203" data-start="8185">EmployeeNumber</strong>.</li>
+<li data-end="8351" data-list-item-id="eca960b99727066b84a9b8bff28947c05" data-section-id="1eb2h5u" data-start="8205">
+<strong data-end="8232" data-start="8207">AD Correlation Field:</strong> Select the Active Directory attribute used to match users with Dayforce employees. For example, select <strong data-end="8350" data-start="8336">employeeID</strong>.</li>
+</ul><p data-end="8536" data-start="8353"><strong>Note</strong>: The Dayforce and Active Directory correlation fields are required. The integration uses these fields to determine whether a Dayforce employee already exists in Active Directory.</p><p data-end="8595" data-start="8538">After configuring the parameters, click <strong data-end="8594" data-start="8578">Save Changes</strong>.</p><h2 id="h_01KRWTPTRGVCW2XW3GH7ER2M6P">Dayforce</h2><p data-end="8725" data-start="8610">Navigate to the <strong data-end="8638" data-start="8626">Dayforce</strong> tab to define which Dayforce workers are considered for processing. It includes source filters, active status filters, inactive status filters, and an optional custom JavaScript expression.</p><p data-end="9054" data-start="9017">The following sections are displayed:</p><ul data-end="9104" data-start="9056">
+<li data-end="9073" data-list-item-id="e9eb0711e30077ed06e1e25c6654f7faa" data-section-id="14zk4fk" data-start="9056">Source Settings</li>
+<li data-end="9104" data-list-item-id="ee151828aeea6077d80233e9d48d8d1f4" data-section-id="flkd65" data-start="9074">Account Status Configuration</li>
+</ul><h3 id="h_01KRWTQSAJPYQ6RCB6FAYRKP8X">Source Settings</h3><p data-end="9230" data-start="9126">This section controls which Dayforce workers are considered after employees are retrieved from Dayforce.</p><p data-end="9265" data-start="9232">The following field is displayed:</p><ul data-end="9590" data-start="9267"><li data-end="9590" data-list-item-id="e320f1154c0b33aa827c7c7050f1a85fe" data-section-id="iw1mcg" data-start="9267">
+<strong data-end="9300" data-start="9269">Filter for User Processing:</strong> Select the filter that must be applied after Dayforce worker retrieval. The available options include:<ul data-end="9590" data-start="9406">
+<li data-end="9491" data-list-item-id="edf2bfd5af47b857314fedad570709d43" data-section-id="1qtekmi" data-start="9406">
+<strong data-end="9426" data-start="9408">All Employees:</strong> Select this option to consider all retrieved Dayforce employees.</li>
+<li data-end="9590" data-list-item-id="e1b3beaf13b3b918e5501435464ca4f78" data-section-id="hvmmk1" data-start="9494">
+<strong data-end="9507" data-start="9496">Custom:</strong> Select this option to define a custom JavaScript expression for filtering workers.</li>
+</ul>
+</li></ul><p data-end="9652" data-start="9592">If <strong data-end="9605" data-start="9595">Custom</strong> is selected, the following field is displayed:</p><ul data-end="9813" data-start="9654"><li data-end="9813" data-list-item-id="e82a1bf43a329c546de06a01a9708d6bc" data-section-id="1ucbxij" data-start="9654">
+<strong data-end="9681" data-start="9656">Custom Source Filter:</strong> Enter a JavaScript expression to filter employees for processing in Active Directory. Use <code data-end="9780" data-start="9772">worker</code> as the object in the expression.</li></ul><p data-end="9823" data-start="9815">Example:</p><pre data-end="9874" data-start="9825"><code>worker.department === "Finance"</code></pre><h3 id="h_01KRWTQSAPR8TY78H4DDMW099T">Account Status Configuration</h3><p data-end="10008" data-start="9909">This section identifies which Dayforce employment statuses should be considered active or inactive.</p><p data-end="10045" data-start="10010">The following fields are displayed:</p><ul data-end="10358" data-start="10047">
+<li data-end="10198" data-list-item-id="e93f6b0734ceba8e8a97e14824281b855" data-section-id="1haiy2y" data-start="10047">
+<strong data-end="10081" data-start="10049">Active Statuses in Dayforce:</strong> Select the employment statuses that must be considered active for the source filter. For example, select <strong data-end="10197" data-start="10187">ACTIVE</strong>.</li>
+<li data-end="10358" data-list-item-id="eb6ced60eec088b7199b1309cef8fca1f" data-section-id="lsyarf" data-start="10199">
+<strong data-end="10235" data-start="10201">Inactive Statuses in Dayforce:</strong> Select the employment statuses that must be considered inactive for the source filter. For example, select <strong data-end="10357" data-start="10343">TERMINATED</strong>.</li>
+</ul><p data-end="10501" data-start="10360">If you do not find the required status values in the list, click the refresh icon available next to the field to reload the available values.</p><h2 data-end="10518" data-section-id="bf5qeq" data-start="10503" id="h_01KRWTQSARP0JSWMBGTXN16MDE">Freshservice</h2><p data-end="10604" data-start="10520">Navigate to the <strong data-end="10552" data-start="10536">Freshservice</strong> tab to configure approval-driven journey workflows.</p><p data-end="10655" data-start="10606">The following sections are displayed on the page:</p><ul data-end="10716" data-start="10657">
+<li data-end="10669" data-list-item-id="e50547f7504a44a78e8cee05cb4a8a960" data-section-id="2re103" data-start="10657">Onboarding</li>
+<li data-end="10688" data-list-item-id="e7cdd0c033c167dcd94a7db11817dc008" data-section-id="19vumfc" data-start="10670">Employee Updates</li>
+<li data-end="10702" data-list-item-id="e3babf389533d09c40acb24f0100b82b9" data-section-id="qooivx" data-start="10689">Offboarding</li>
+<li data-end="10716" data-list-item-id="e4266fe24b11211c67a598b805d61fc71" data-section-id="12owyw9" data-start="10703">Name Change</li>
+</ul><p data-end="10982" data-start="10718">Freshservice journeys are used when provisioning through Freshservice is enabled in the <strong data-end="10823" data-start="10806">Configuration</strong> tab. The integration creates or processes journey requests and waits for the configured approval activity before writing approved changes to Active Directory.</p><h3 id="h_01KRWTQSASKT2A8VTST34FCAV1">Onboarding</h3><p data-end="11157" data-start="10999">The <strong data-end="11017" data-start="11003">Onboarding</strong> section configures the Freshservice journey used when a new active worker exists in Dayforce but does not have an Active Directory account.</p><p data-end="11196" data-start="11159">The following settings are displayed:</p><ul data-end="13574" data-start="11198">
+<li data-end="11310" data-list-item-id="eb760e02f6ae8a4b930ba8317d45017d9" data-section-id="1l1aok5" data-start="11198">
+<strong data-end="11231" data-start="11200">Enable Employee Onboarding:</strong> Turn on this toggle button to enable employee onboarding through Freshservice.</li>
+<li data-end="11587" data-list-item-id="e1d5b26e9f3121213d02c909e2fbf12ff" data-section-id="15dtw8r" data-start="11311">
+<strong data-end="11380" data-start="11313">Enable Dayforce user sync to AD on Onboarding journey approval:</strong> Select this checkbox to synchronize the approved onboarding journey attributes to Active Directory. If this option is not selected, the onboarding journey attributes will not be written to Active Directory.</li>
+<li data-end="11784" data-list-item-id="edca317c3a471662948c1079b9d81e757" data-section-id="hnfw5m" data-start="11588">
+<strong data-end="11625" data-start="11590">Select Onboarding Journey Form:</strong> Select the Freshservice journey form used to request onboarding for new hires. Click the refresh icon next to the field to reload the available journey forms.</li>
+<li data-end="12053" data-list-item-id="e8396f3b0de261789a2e418d9ad4d579d" data-section-id="n5o9zu" data-start="11785">
+<strong data-end="11884" data-start="11787">Previous journey form names to lookup for onboarding journey requests, if form names updated:</strong> Enter previous onboarding journey form names if the form name has changed. This allows the integration to find journey requests that were created with older form names.</li>
+<li data-end="12278" data-list-item-id="e6c6b99bf215a211828af7a00425adb2d" data-section-id="199zce3" data-start="12054">
+<strong data-end="12087" data-start="12056">Onboarding Correlation Key:</strong> Select the field in the Freshservice journey request that stores the Dayforce correlation value. This is typically the employee number and is used to match approved journeys back to workers.</li>
+<li data-end="12488" data-list-item-id="e8ab58d811f26892138541a7d1e53ee9f" data-section-id="1697g0l" data-start="12279">
+<strong data-end="12352" data-start="12281">Select status to fetch Onboarding Journey Requests (Post-Approval):</strong> Select the Freshservice journey request statuses that should be fetched for onboarding processing. For example, select <strong data-end="12487" data-start="12472">IN_PROGRESS</strong>.</li>
+<li data-end="12639" data-list-item-id="e8bceeb0ed3f81c16e69a4c6ecd579549" data-section-id="oc4790" data-start="12489">
+<strong data-end="12555" data-start="12491">Select journey activity to consider for Onboarding Approval:</strong> Select the journey activity used to determine whether onboarding has been approved.</li>
+<li data-end="12858" data-list-item-id="e526ab33c9b269585d867ee7cadbe69ec" data-section-id="wenx23" data-start="12640">
+<strong data-end="12717" data-start="12642">Provide activity name for Onboarding Journeys to check approval status:</strong> Enter the activity name that must be checked for approval. The integration checks whether the journey activity contains the configured text.</li>
+<li data-end="12934" data-list-item-id="e1be84dad1f09db59131935fa1a67c2e1" data-section-id="1apafme" data-start="12859">
+<strong data-end="12874" data-start="12861">Approval:</strong> Select the activity attribute used for approval evaluation.</li>
+<li data-end="13113" data-list-item-id="edc930ee5fbd7161e7850ccf5fabce70e" data-section-id="9mrc79" data-start="12935">
+<strong data-end="13010" data-start="12937">Select activity approval which is considered approved for onboarding:</strong> Select the approval status value that should be considered approved. For example, select <strong data-end="13112" data-start="13100">Approved</strong>.</li>
+<li data-end="13211" data-list-item-id="e53145cfa53fd48553fed781f5355e7f7" data-section-id="1729ro3" data-start="13114">
+<strong data-end="13139" data-start="13116">Enable User Filter:</strong> Select this checkbox to filter users for onboarding journey processing.</li>
+<li data-end="13354" data-list-item-id="ecbd5a90143975f4f254ef561e6bb332b" data-section-id="8pl234" data-start="13212">
+<strong data-end="13256" data-start="13214">Provide JS Expression to filter Users:</strong> Enter a JavaScript expression to filter onboarding journey users. Use <code data-end="13335" data-start="13327">worker</code>in the expression.</li>
+<li data-end="13465" data-list-item-id="e1e8b7ad9a0d640ddb176af822d5f19d5" data-section-id="12v0q8f" data-start="13355">
+<strong data-end="13374" data-start="13357">Enable Limit:</strong> Select this checkbox to limit the number of onboarding journeys processed in a single run.</li>
+<li data-end="13574" data-list-item-id="e2a0a1d70ec9367ce72570b3e32f3d87d" data-section-id="z2fnio" data-start="13466">
+<strong data-end="13514" data-start="13468">Provide count to process limited Journeys:</strong> Enter the maximum number of onboarding journeys to process.</li>
+</ul><p data-end="13767" data-start="13576">Note: The onboarding correlation key is required when onboarding is enabled. Without the correlation key, the integration cannot match approved Freshservice journeys back to Dayforce workers.</p><h3 id="h_01KRWTQSAZSEGMFEV39H3BZ0E5">Employee Updates</h3><p data-end="13990" data-start="13790">The <strong data-end="13814" data-start="13794">Employee Updates</strong> section configures the Freshservice journey used when an existing Active Directory user has Dayforce attribute changes such as department, manager, location, or title changes.</p><p data-end="14029" data-start="13992">The following settings are displayed:</p><ul data-end="15989" data-start="14031">
+<li data-end="14145" data-list-item-id="eee54b2f3f7f2357f33bccf62164c3719" data-section-id="j7dtdx" data-start="14031">
+<strong data-end="14061" data-start="14033">Enable Employee Updates:</strong> Turn on this toggle button to enable employee update journeys through Freshservice.</li>
+<li data-end="14381" data-list-item-id="e126b261e76d691d6651ccccfb90b5305" data-section-id="awt1p9" data-start="14146">
+<strong data-end="14179" data-start="14148">Enable journeys sync to AD:</strong> Select this checkbox to synchronize approved employee update journey attributes to Active Directory. If this option is not selected, approved journey attributes will not be written to Active Directory.</li>
+<li data-end="14505" data-list-item-id="e44609dfa31714c2dfaba99d5c9be436c" data-section-id="it1jvw" data-start="14382">
+<strong data-end="14425" data-start="14384">Select Employee Updates Journey Form:</strong> Select the Freshservice journey form used to request employee update workflows.</li>
+<li data-end="14691" data-list-item-id="e934a9e97308fc64a5e11c762e6f640aa" data-section-id="1729tjw" data-start="14506">
+<strong data-end="14611" data-start="14508">Previous journey form names to lookup for employee updates journey requests, if form names updated:</strong>Enter previous employee update journey form names if the form name has changed.</li>
+<li data-end="14821" data-list-item-id="e331b600f0247e266790b612dc5b049fc" data-section-id="1dpwevs" data-start="14692">
+<strong data-end="14731" data-start="14694">Employee Updates Correlation Key:</strong> Select the Freshservice journey request field that stores the Dayforce correlation value.</li>
+<li data-end="14988" data-list-item-id="e79fbfc67f98a3892f435b5fac9989c10" data-section-id="1ahzxwp" data-start="14822">
+<strong data-end="14892" data-start="14824">Select status to fetch Updates Journey Requests (Post-Approval):</strong> Select the Freshservice journey statuses that should be fetched for employee update processing.</li>
+<li data-end="15145" data-list-item-id="e13cacdc244bb5a3d32cb623e715b0f7c" data-section-id="10bsd0c" data-start="14989">
+<strong data-end="15061" data-start="14991">Select journey activity to consider for Employee Updates Approval:</strong> Select the journey activity used to determine whether the update has been approved.</li>
+<li data-end="15288" data-list-item-id="ef0a7a2a25af58e96c1815dac4cf55c7f" data-section-id="17p3pfm" data-start="15146">
+<strong data-end="15229" data-start="15148">Provide activity name for Employee Updates Journeys to check approval status:</strong> Enter the activity name that must be checked for approval.</li>
+<li data-end="15364" data-list-item-id="efbdfa25bb56ce0e0833a178961240b1d" data-section-id="1apafme" data-start="15289">
+<strong data-end="15304" data-start="15291">Approval:</strong> Select the activity attribute used for approval evaluation.</li>
+<li data-end="15513" data-list-item-id="e9ab50c93b32e199add15658dcf0613c1" data-section-id="p8ha7p" data-start="15365">
+<strong data-end="15444" data-start="15367">Select approval status which is considered approved for employee updates:</strong> Select the approval status value that should be considered approved.</li>
+<li data-end="15616" data-list-item-id="ebd1c4b168f1bdb365f35682fba7bb335" data-section-id="1fhu8pn" data-start="15514">
+<strong data-end="15539" data-start="15516">Enable User Filter:</strong> Select this checkbox to filter users for employee update journey processing.</li>
+<li data-end="15759" data-list-item-id="e95cd3c3ee4c262deef782219d2bfa619" data-section-id="dieh7t" data-start="15617">
+<strong data-end="15661" data-start="15619">Provide JS Expression to filter Users:</strong> Enter a JavaScript expression to filter employee update journeys. Use <code data-end="15740" data-start="15732">worker</code>in the expression.</li>
+<li data-end="15875" data-list-item-id="eaa279b896c5e89f388bf0331ef2f9e2d" data-section-id="16b0gkn" data-start="15760">
+<strong data-end="15779" data-start="15762">Enable Limit:</strong> Select this checkbox to limit the number of employee update journeys processed in a single run.</li>
+<li data-end="15989" data-list-item-id="ebe7d47ae11173acbdd2445e9dc8f2439" data-section-id="1nnofjs" data-start="15876">
+<strong data-end="15924" data-start="15878">Provide count to process limited Journeys:</strong> Enter the maximum number of employee update journeys to process.</li>
+</ul><h3 id="h_01KRWTQSB3JSCCQFX9KF94WPRX">Offboarding</h3><p data-end="16198" data-start="16007">The <strong data-end="16026" data-start="16011">Offboarding</strong> section configures the Freshservice journey used when a Dayforce worker becomes inactive and termination requires approval before the Active Directory account is disabled.</p><p data-end="16237" data-start="16200">The following settings are displayed:</p><ul data-end="17903" data-start="16239">
+<li data-end="16353" data-list-item-id="e9297633de46af843061b51f4c7093875" data-section-id="rr5n05" data-start="16239">
+<strong data-end="16273" data-start="16241">Enable Employee Offboarding:</strong> Turn on this toggle button to enable employee offboarding through Freshservice.</li>
+<li data-end="16484" data-list-item-id="e1d475de7c34cbd8a6fb1c88d5e3d7a8d" data-section-id="lep11w" data-start="16354">
+<strong data-end="16387" data-start="16356">Enable journeys sync to AD:</strong> Select this checkbox to synchronize approved offboarding journey attributes to Active Directory.</li>
+<li data-end="16599" data-list-item-id="e05ffa27541d58f3cdd8a7fa8eeb79cfa" data-section-id="qdfijj" data-start="16485">
+<strong data-end="16523" data-start="16487">Select Offboarding Journey Form:</strong> Select the Freshservice journey form used to request offboarding workflows.</li>
+<li data-end="16776" data-list-item-id="ef9c0fa5836635c8e79ad366311d2639e" data-section-id="1sefyhb" data-start="16600">
+<strong data-end="16700" data-start="16602">Previous journey form names to lookup for offboarding journey requests, if form names updated:</strong> Enter previous offboarding journey form names if the form name has changed.</li>
+<li data-end="16901" data-list-item-id="e5ceb7cc49f83a961d74f09d2bf1170aa" data-section-id="4f1031" data-start="16777">
+<strong data-end="16811" data-start="16779">Offboarding Correlation Key:</strong> Select the Freshservice journey request field that stores the Dayforce correlation value.</li>
+<li data-end="17068" data-list-item-id="eddb3422f186d5381a2606ede7b04eefa" data-section-id="1w0dku0" data-start="16902">
+<strong data-end="16976" data-start="16904">Select status to fetch Offboarding Journey Requests (Post-Approval):</strong> Select the Freshservice journey statuses that should be fetched for offboarding processing.</li>
+<li data-end="17221" data-list-item-id="e224bc99fc8c2c46d5b16275b33f3ce25" data-section-id="hwtth0" data-start="17069">
+<strong data-end="17136" data-start="17071">Select journey activity to consider for Offboarding Approval:</strong> Select the journey activity used to determine whether offboarding has been approved.</li>
+<li data-end="17297" data-list-item-id="eedf1698f410c512b90f25ff4992cec50" data-section-id="1apafme" data-start="17222">
+<strong data-end="17237" data-start="17224">Approval:</strong> Select the activity attribute used for approval evaluation.</li>
+<li data-end="17443" data-list-item-id="e83bb19ee30d4d2df0ec826d67dcac235" data-section-id="1y6qqwp" data-start="17298">
+<strong data-end="17374" data-start="17300">Select activity approval which is considered approved for offboarding:</strong> Select the approval status value that should be considered approved.</li>
+<li data-end="17542" data-list-item-id="e5b68c0b295d63dfa8d77377cd808b754" data-section-id="1xyqt8d" data-start="17444">
+<strong data-end="17469" data-start="17446">Enable User Filter:</strong> Select this checkbox to filter users for offboarding journey processing.</li>
+<li data-end="17681" data-list-item-id="e38d33d26995a511c4695806fc97e2015" data-section-id="scdonj" data-start="17543">
+<strong data-end="17587" data-start="17545">Provide JS Expression to filter Users:</strong> Enter a JavaScript expression to filter offboarding journeys. Use <code data-end="17662" data-start="17654">worker</code> in the expression.</li>
+<li data-end="17793" data-list-item-id="ed39dd0fc54a56aaa0161019e2203687e" data-section-id="mos9vl" data-start="17682">
+<strong data-end="17701" data-start="17684">Enable Limit:</strong> Select this checkbox to limit the number of offboarding journeys processed in a single run.</li>
+<li data-end="17903" data-list-item-id="e557d2cab2ab7d2eec0964730aa76695d" data-section-id="186nhi6" data-start="17794">
+<strong data-end="17842" data-start="17796">Provide count to process limited Journeys:</strong> Enter the maximum number of offboarding journeys to process.</li>
+</ul><p data-end="18086" data-start="17905">When an offboarding journey is approved, the integration evaluates the termination timing and disables the Active Directory account when the configured termination condition is met.</p><h3 id="h_01KRWTQSB8E1422QH80RZG4Q8F">Name Change</h3><p data-end="18220" data-start="18104">The <strong data-end="18123" data-start="18108">Name Change</strong> section configures the Freshservice journey used when a worker’s legal name changes in Dayforce.</p><p data-end="18259" data-start="18222">The following settings are displayed:</p><ul data-end="20065" data-start="18261">
+<li data-end="18375" data-list-item-id="e12f7f29e5ca30ac53ac8a542008c4c32" data-section-id="1miijmc" data-start="18261">
+<strong data-end="18295" data-start="18263">Enable Employee Name Change:</strong> Turn on this toggle button to enable name change journeys through Freshservice.</li>
+<li data-end="18506" data-list-item-id="efb96b4d0694cd5dc88f68a538dd4b428" data-section-id="ytsfeo" data-start="18376">
+<strong data-end="18409" data-start="18378">Enable journeys sync to AD:</strong> Select this checkbox to synchronize approved name change journey attributes to Active Directory.</li>
+<li data-end="18621" data-list-item-id="ee1d15cbe415748e43441985703ec73de" data-section-id="3t1ein" data-start="18507">
+<strong data-end="18545" data-start="18509">Select Name Change Journey Form:</strong> Select the Freshservice journey form used to request name change workflows.</li>
+<li data-end="18798" data-list-item-id="eb56a1faec6c6fe899e752e5a0c6f9bc3" data-section-id="1izyvrj" data-start="18622">
+<strong data-end="18722" data-start="18624">Previous journey form names to lookup for name change journey requests, if form names updated:</strong> Enter previous name change journey form names if the form name has changed.</li>
+<li data-end="18923" data-list-item-id="e1923be9264e088cc2b2a4c5804d66220" data-section-id="nqryhl" data-start="18799">
+<strong data-end="18833" data-start="18801">Name Change Correlation Key:</strong> Select the Freshservice journey request field that stores the Dayforce correlation value.</li>
+<li data-end="19090" data-list-item-id="ecc8bff8e420178f151a9f223a77cc711" data-section-id="1w2xxp4" data-start="18924">
+<strong data-end="18998" data-start="18926">Select status to fetch Name Change Journey Requests (Post-Approval):</strong> Select the Freshservice journey statuses that should be fetched for name change processing.</li>
+<li data-end="19247" data-list-item-id="eb7889d4f9cc3f4d43b57892b366d5cb9" data-section-id="1dx62lp" data-start="19091">
+<strong data-end="19158" data-start="19093">Select journey activity to consider for Name Change Approval:</strong> Select the journey activity used to determine whether the name change has been approved.</li>
+<li data-end="19385" data-list-item-id="e5aadb670df68eba2720045cd313bb3e1" data-section-id="dkk143" data-start="19248">
+<strong data-end="19326" data-start="19250">Provide activity name for Name Change Journeys to check approval status:</strong> Enter the activity name that must be checked for approval.</li>
+<li data-end="19461" data-list-item-id="e1329fa20b5489385d8db23114285156d" data-section-id="1apafme" data-start="19386">
+<strong data-end="19401" data-start="19388">Approval:</strong> Select the activity attribute used for approval evaluation.</li>
+<li data-end="19605" data-list-item-id="ea4d4d136e55a1e3ba504fdac2f9045cc" data-section-id="1wqfxuc" data-start="19462">
+<strong data-end="19536" data-start="19464">Select activity status which is considered approved for name change:</strong> Select the activity status value that should be considered approved.</li>
+<li data-end="19704" data-list-item-id="e6da4f9ce57053cf1a40ea848acdccd26" data-section-id="gh819l" data-start="19606">
+<strong data-end="19631" data-start="19608">Enable User Filter:</strong> Select this checkbox to filter users for name change journey processing.</li>
+<li data-end="19843" data-list-item-id="e6654ac2d5762501c0afb83758341cc21" data-section-id="1ezu8ez" data-start="19705">
+<strong data-end="19749" data-start="19707">Provide JS Expression to filter Users:</strong> Enter a JavaScript expression to filter name change journeys. Use <code data-end="19824" data-start="19816">worker</code> in the expression.</li>
+<li data-end="19955" data-list-item-id="e669096c377a38d423f31b51e309c7e3d" data-section-id="171jllh" data-start="19844">
+<strong data-end="19863" data-start="19846">Enable Limit:</strong> Select this checkbox to limit the number of name change journeys processed in a single run.</li>
+<li data-end="20065" data-list-item-id="e459582f9d1855ff964d03c5360ba9afb" data-section-id="1ygyhqi" data-start="19956">
+<strong data-end="20004" data-start="19958">Provide count to process limited Journeys:</strong> Enter the maximum number of name change journeys to process.</li>
+</ul><h2 id="h_01KRWTQSBCZ5072T1J6SGJG0S8">Active Directory</h2><p data-end="20181" data-start="20088">Navigate to the <strong data-end="20124" data-start="20104">Active Directory</strong> tab to configure Active Directory provisioning behavior.</p><p data-end="20409" data-start="20271">This tab controls create and update behavior, manager assignment, group assignment, duplicate account handling, and processing limits.</p><p data-end="20448" data-start="20411">The following sections are displayed:</p><ul data-end="20499" data-start="20450">
+<li data-end="20470" data-list-item-id="ed8b0adc28c2b12cb4d430c355006e3bc" data-section-id="jbixkp" data-start="20450">User Sync Features</li>
+<li data-end="20499" data-list-item-id="e8300d459303aeba7247c76a105c4b830" data-section-id="10mtnn0" data-start="20471">Manage Limit Configuration</li>
+</ul><h3 id="h_01KRWTQSBEQGF99887SBMBHF73">User Sync Features</h3><p data-end="20616" data-start="20524">This section allows you to enable or disable Active Directory user synchronization features.</p><p data-end="20655" data-start="20618">The following settings are displayed:</p><ul data-end="22129" data-start="20657">
+<li data-end="20765" data-list-item-id="e252c98c97e8f31f9f93e518098f1a071" data-section-id="1tbaxb6" data-start="20657">
+<strong data-end="20688" data-start="20659">Enable Group Assignments:</strong> Turn on this toggle button to assign groups to users during synchronization.</li>
+<li data-end="20894" data-list-item-id="e91ae250eda33b3b0c73c3ac7583052a9" data-section-id="k5ap1k" data-start="20766">
+<strong data-end="20793" data-start="20768">Enable Group Removal:</strong> Turn on this toggle button to remove extra or redundant group assignments that are no longer needed.</li>
+<li data-end="21007" data-list-item-id="e601fb3acba2543601fccb60fef3e2e87" data-section-id="rag8te" data-start="20895">
+<strong data-end="20928" data-start="20897">Enable Manager Assignments:</strong> Turn on this toggle button to assign managers to users during synchronization.</li>
+<li data-end="21118" data-list-item-id="e9b605cff98c3b9d269c49b26b3ad6660" data-section-id="1kyvpai" data-start="21008">
+<strong data-end="21037" data-start="21010">Enable Manager Removal:</strong> Turn on this toggle button to remove assigned managers from users when required.</li>
+<li data-end="21378" data-list-item-id="ea3df952eea0cc14f40f44b036b77225c" data-section-id="1h7u4tq" data-start="21119">
+<strong data-end="21169" data-start="21121">Deactivate Duplicate Users in Other Domains:</strong> Turn on this toggle button to deactivate user accounts in other Active Directory domains when a duplicate user with the same correlation key is found. If disabled, only the primary domain account is affected.</li>
+<li data-end="21615" data-list-item-id="e9d514815813e2c51705ae3c502a4a1a0" data-section-id="ygakhx" data-start="21379">
+<strong data-end="21427" data-start="21381">Delete Duplicate Users from Other Domains:</strong> Turn on this toggle button to permanently delete duplicate user accounts in other Active Directory domains. This action is irreversible. If disabled, duplicate users are only deactivated.</li>
+<li data-end="21867" data-list-item-id="e5ab3cf11ae770433d2d8827173bd5a9e" data-section-id="n5nuvj" data-start="21616">
+<strong data-end="21683" data-start="21618">Sync Title Updates Directly To AD on Worker’s Reorganization:</strong> Turn on this toggle button to update the title directly in Active Directory when a worker is reorganized, instead of routing the update through a Freshservice employee update journey.</li>
+<li data-end="22129" data-list-item-id="e568fb416307c13a597367916cf765b7d" data-section-id="1p2wj9r" data-start="21868">
+<strong data-end="21940" data-start="21870">Sync Department Updates Directly To AD on Worker’s Reorganization:</strong> Turn on this toggle button to update the department directly in Active Directory when a worker is reorganized, instead of routing the update through a Freshservice employee update journey.</li>
+</ul><h3 id="h_01KRWTQSBGBGS8TPD6Q9CVYWCG">Manage Limit Configuration</h3><p data-end="22295" data-start="22162">This section allows you to limit the number of Active Directory create, update, and termination operations performed in a single run.</p><p data-end="22334" data-start="22297">The following settings are displayed:</p><ul data-end="23288" data-start="22336">
+<li data-end="22457" data-list-item-id="eec2bd2bfd3a07dcb0896a34d98eb6cf3" data-section-id="1tazjo7" data-start="22336">
+<strong data-end="22356" data-start="22338">Limit Creates:</strong> Turn on this toggle button to cap the number of Active Directory user accounts created during a run.</li>
+<li data-end="22579" data-list-item-id="e2b560484803c6fb85186d543df3c4d9c" data-section-id="1892yon" data-start="22458">
+<strong data-end="22478" data-start="22460">Limit Updates:</strong> Turn on this toggle button to cap the number of Active Directory user accounts updated during a run.</li>
+<li data-end="22710" data-list-item-id="e00e367db90e470c234cae3808f9b6ddb" data-section-id="au13iz" data-start="22580">
+<strong data-end="22605" data-start="22582">Limit Terminations:</strong> Turn on this toggle button to cap the number of Active Directory user accounts deactivated during a run.</li>
+<li data-end="22873" data-list-item-id="e6daf7f6a06fa80499693f34c9fcab75a" data-section-id="1s5rve3" data-start="22711">
+<strong data-end="22732" data-start="22713">Creation Limit:</strong> Enter the maximum number of users that can be created in a single run. Once this limit is reached, additional create operations are skipped.</li>
+<li data-end="23060" data-list-item-id="edab1e99533c72888b0e20de787b184b4" data-section-id="1cpm3zy" data-start="22874">
+<strong data-end="22893" data-start="22876">Update Limit:</strong> Enter the maximum number of users that can be updated in a single run. Once this limit is reached, remaining workers are skipped and re-evaluated during the next run.</li>
+<li data-end="23288" data-list-item-id="e6cf2537a3eb7f1a923b83d0dc6db82a3" data-section-id="18kw8ww" data-start="23061">
+<strong data-end="23085" data-start="23063">Termination Limit:</strong> Enter the maximum number of Active Directory users that can be deactivated in a single run. Once this limit is reached, remaining termination candidates are skipped and re-evaluated during the next run.</li>
+</ul><p data-end="23386" data-start="23290">Note: Use limit settings to prevent accidental bulk creation, update, or termination operations.</p><h2 data-end="23409" data-section-id="19kygm3" data-start="23388" id="h_01KRWTQSBJRWP18HXWBPK8AXP9">Termination Config</h2><p data-end="23524" data-start="23411">Navigate to the <strong data-end="23449" data-start="23427">Termination Config</strong> tab to configure how terminated employees are handled in Active Directory.</p><p data-end="23573" data-start="23526">The following section is displayed on the page:</p><ul data-end="23597" data-start="23575"><li data-end="23597" data-list-item-id="ea6e252367c5648b4a033a21712519cd0" data-section-id="4k4dbt" data-start="23575">Termination Settings</li></ul><h3 id="h_01KRWTQSBKVABV4A4XYP5EAAMX">Termination Settings</h3><p data-end="23777" data-start="23624">This section controls whether terminated Dayforce workers are deactivated in Active Directory and which cleanup actions are performed during termination.</p><p data-end="23816" data-start="23779">The following settings are displayed:</p><ul data-end="24524" data-start="23818">
+<li data-end="23949" data-list-item-id="ecbfd6a69de386a7ec205ffde5b61ce9e" data-section-id="105na62" data-start="23818">
+<strong data-end="23843" data-start="23820">Allow Terminations:</strong> Turn on this toggle button to automatically terminate, disable, or deprovision users in Active Directory.</li>
+<li data-end="24090" data-list-item-id="eb65e74a5689c32fc7f4ebbe7e761ecce" data-section-id="1lmh3mi" data-start="23950">
+<strong data-end="24000" data-start="23952">Enable Managers Removal on User Termination:</strong> Turn on this toggle button to remove the manager assigned to the user during termination.</li>
+<li data-end="24375" data-list-item-id="e3353a301c8df90c1c45e2e3500a6a410" data-section-id="18z5gvl" data-start="24091">
+<strong data-end="24152" data-start="24093">Enable setting Random Password for User on Termination:</strong> Turn on this toggle button to set a random password during user termination in Active Directory. The generated password uses 12 characters and includes uppercase letters, lowercase letters, numbers, and special characters.</li>
+<li data-end="24524" data-list-item-id="e40bd1b94db5c5e1ba099ab4ae5cad182" data-section-id="1yps1z6" data-start="24376">
+<strong data-end="24424" data-start="24378">Enable Groups Removal on User Termination:</strong> Turn on this toggle button to remove group memberships during user termination in Active Directory.</li>
+</ul><p data-end="24807" data-start="24526">During execution, the integration evaluates Dayforce termination information and determines whether the user should be deactivated immediately or kept pending for a future run. If the termination condition has not yet been met, the worker remains pending and is re-evaluated later.</p><h1 id="h_01KRWTQSBM9Y8YRV9X2STBZ5HE">Execute Integration</h1><p data-end="24918" data-start="24833">You can execute the integration manually after completing the required configuration.</p><p data-end="24975" data-start="24920">Perform the following steps to execute the integration:</p><ol data-end="25093" data-start="24977">
+<li data-end="25008" data-list-item-id="eb4e4bc9b05a0c864455547e43f6fa126" data-section-id="a0wgo8" data-start="24977">Configure the required tabs.</li>
+<li data-end="25071" data-list-item-id="e23d797e7180b040bffdf9afe6a6389e4" data-section-id="1554koz" data-start="25009">Click <strong data-end="25034" data-start="25018">Save Changes</strong> at the top-right corner of the page.</li>
+<li data-end="25093" data-list-item-id="e53b17d80f344cace19370554c908c92e" data-section-id="vxxf3b" data-start="25072">Click <strong data-end="25092" data-start="25081">Execute</strong>.</li>
+</ol><p data-end="25160" data-start="25095">During execution, the integration performs the following actions:</p><ol data-end="26177" data-start="25162">
+<li data-end="25222" data-list-item-id="ec5c6366c56562b67707f5340c1c6a262" data-section-id="5nf606" data-start="25162">Logs the execution properties and configured preferences.</li>
+<li data-end="25288" data-list-item-id="e689ca79b59bce92fe33089d726830bc7" data-section-id="1ncxj9t" data-start="25223">Determines whether the run is a full sync or incremental sync.</li>
+<li data-end="25333" data-list-item-id="e6ef05640183fd4e61e2558117be09ca9" data-section-id="zzoku8" data-start="25289">Retrieves employee records from Dayforce.</li>
+<li data-end="25384" data-list-item-id="e7ff4a0ce57419fb1a9c506afd77fff66" data-section-id="ndnq1l" data-start="25334">Applies the configured Dayforce source filters.</li>
+<li data-end="25439" data-list-item-id="e425640345a36b5daf698e740db5de62e" data-section-id="16ly5w6" data-start="25385">Connects to the configured Active Directory domain.</li>
+<li data-end="25530" data-list-item-id="e9edf4f6df1c2c97babf921df993e0b16" data-section-id="ah8ml" data-start="25440">Prefetches Active Directory users during full runs when no source filter is configured.</li>
+<li data-end="25587" data-list-item-id="e8faab63ce9e2e55c5b93f7a4fa7a6e7c" data-section-id="1cu0qdw" data-start="25531">Processes pending termination records, if applicable.</li>
+<li data-end="25696" data-list-item-id="e246311975a6c222e4edd16ad700d0ae8" data-section-id="gnffjz" data-start="25588">Processes approved Freshservice journeys for onboarding, employee updates, name changes, and offboarding.</li>
+<li data-end="25756" data-list-item-id="e22f1443ee8e2cf67fb87af10a0df2a6f" data-section-id="kvv5bi" data-start="25697">Evaluates each Dayforce worker against Active Directory.</li>
+<li data-end="25846" data-list-item-id="e39b9f1aee0f3ee09140d2edda7603200" data-section-id="b5wm67" data-start="25757">Creates, updates, skips, or terminates Active Directory users based on configuration.</li>
+<li data-end="25933" data-list-item-id="e299a9745f8b74eb2cfc1cb4cc4ec9be2" data-section-id="enblt5" data-start="25847">Creates or processes Freshservice journeys when monitored provisioning is enabled.</li>
+<li data-end="26036" data-list-item-id="e3d6cce910f92c0a4903c7daac54b7821" data-section-id="s6bq02" data-start="25934">Applies manager assignments, manager removals, group assignments, and group removals when enabled.</li>
+<li data-end="26123" data-list-item-id="e7b6f1e871d1bdce5aa5b771d99e006e5" data-section-id="1c254rd" data-start="26037">Applies duplicate user handling based on the configured Active Directory settings.</li>
+<li data-end="26177" data-list-item-id="e2cb7c4a83e0e54032be47184134c8861" data-section-id="cfle9t" data-start="26124">Generates execution logs, summaries, and reports.</li>
+</ol><h2 data-end="26207" data-section-id="sb55rx" data-start="26179" id="h_01KRWTQSBQKPKS95HW4H8SZ7NX">Report-Only Mode Behavior</h2><p data-end="26312" data-start="26209">If <strong data-end="26239" data-start="26212">Enable Report-Only Mode</strong> is selected, the integration does not apply changes to Active Directory.</p><p data-end="26377" data-start="26314">In report-only mode, the integration simulates actions such as:</p><ul data-end="26570" data-start="26379">
+<li data-end="26395" data-list-item-id="e6d135277ebae8f33b478fc4862bb06f8" data-section-id="1et4697" data-start="26379">Creating users</li>
+<li data-end="26412" data-list-item-id="e1e681bdca9b6d68d5bcbcc1ca35dc75e" data-section-id="budb4u" data-start="26396">Updating users</li>
+<li data-end="26432" data-list-item-id="ef32eaf0ff34c7540abe6b6a0ab6e158a" data-section-id="actxzq" data-start="26413">Terminating users</li>
+<li data-end="26465" data-list-item-id="ef514f867c077594b954f438274a62500" data-section-id="1nh4xtp" data-start="26433">Creating Freshservice journeys</li>
+<li data-end="26486" data-list-item-id="efaef727e39c23933ad8f0b7828fa5096" data-section-id="glvpt5" data-start="26466">Assigning managers</li>
+<li data-end="26506" data-list-item-id="e6a75e137c9a8ec539d3343ccadffb187" data-section-id="1amcjsb" data-start="26487">Removing managers</li>
+<li data-end="26525" data-list-item-id="e7fff4b736bdd13c93585caa346cb63d5" data-section-id="11qey79" data-start="26507">Assigning groups</li>
+<li data-end="26543" data-list-item-id="e4ef2ecc3269843beda3a83c4c4470ccf" data-section-id="w6m67b" data-start="26526">Removing groups</li>
+<li data-end="26570" data-list-item-id="e725dfb644e63c102ee572060cfa1ddf4" data-section-id="kyzz5e" data-start="26544">Handling duplicate users</li>
+</ul><p data-end="26726" data-start="26572">The simulated results are included in logs and reports so that administrators can review the expected changes before running the integration in live mode.</p><h1 id="h_01KRWTQSBS2P2ZMP9C2QS11DHN">Additional Options</h1><p data-end="26953" data-is-last-node="" data-is-only-node="" data-start="26751">Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, modifying, deleting, viewing logs, and downloading reports.</p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p>
+  </div>
+</body>
+</html>

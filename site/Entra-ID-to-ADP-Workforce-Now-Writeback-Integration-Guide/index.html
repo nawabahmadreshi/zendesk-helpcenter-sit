@@ -19,17 +19,9 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Entra ID to ADP Workforce Now Writeback Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize contractors from NEIM to Active Directory and Entra ID. </p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The NEIM / Hybrid integration performs the following functions:</p><ul>
-<li data-list-item-id="e233b4e5ab33c2e7741259f2517146a13">Retrieves the data of contractors from NEIM and provisions them as users in Active Directory, which are then synced to Entra ID, based on the configured integration settings.<ul>
-<li data-list-item-id="e574d08a323698734a03238d61817522b">For new users, the integration generates a unique sAMAccountName, Common Name (CN), User Principal Name (UPN), and email address, depending on the configuration.</li>
-<li data-list-item-id="e486ce9a95fb2cc3977c294705e9355f3">Generates a random password or a password based on a configured password policy for each new users.</li>
-<li data-list-item-id="ecf32c92f711fa75915cf7762f6ebe140">Assigns users to Entra ID groups and Active Directory groups and Organizational Units (OUs) based on the assignment rules configured in the integration.</li>
-<li data-list-item-id="e7323d1401484bb3fa37c9b4a61de7b64">Assigns Entra ID licenses to users based on the assignment rules configured in the integration.</li>
-</ul>
-</li>
-<li data-list-item-id="e3f20768451ef0299fc1cf8532723ad70">Updates or deactivates users in Active Directory and Entra ID based on the conditions configured in the integration.</li>
-<li data-list-item-id="e0196fb12dcc4da47baf94931d168ec1f">Removes users from Active Directory and Entra ID groups based on the configured rules.</li>
-<li data-list-item-id="ef887724f036164c393ef0a4c297f75a3">Removes license from Entra ID users based on the configured rules.</li>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to write back business email addresses and business phone numbers of users created in Entra ID to ADP Workforce Now. </p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The <strong>Entra ID to ADP Workforce Now Writeback</strong> integration performs the following functions:</p><ul>
+<li data-list-item-id="e233b4e5ab33c2e7741259f2517146a13">Retrieves the business email addresses and business phone numbers of the users created by Aquera's ADP Workforce Now / Entra ID integration in Entra ID.</li>
+<li data-list-item-id="e3f20768451ef0299fc1cf8532723ad70">Updates the business email addresses and business phone numbers to the corresponding employee records in ADP Workforce Now.</li>
 <li data-list-item-id="e042efc766bc5ba3001df95b2c6bb3265">Generates reports and logs, and sends notification emails based on the integration settings.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="eca3d3f24a4cfa53435584e546e2d3fac">
@@ -37,47 +29,23 @@
 </li>
 <li data-list-item-id="eb1a3bd217082e4a94539c7e657a4c25a">
 <strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
-<li data-list-item-id="eb1b03dca6f21354835c5ba5c31ab5ebe">
-<strong>Aquera Contractor</strong>: For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/35025335553559" rel="noopener noreferrer" target="_blank">Aquera Contractor Configuration Guide</a>.</li>
 <li data-list-item-id="e65bfb8d0d62db698356648195cd90f72">
-<strong>Active Directory</strong>:  For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/26093919567255" rel="noopener noreferrer" target="_blank">Active Directory (AD) Version 8 Configuration Guide</a>.</li>
+<strong>ADP Workforce Now</strong>:  For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a>.</li>
 <li data-list-item-id="ed6f4f944e147f37fbbab548cc8ce7307">
-<strong>Entra ID</strong>: For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> or the <a href="https://support.aquera.com/hc/en-us/articles/16828093288727" rel="noopener noreferrer" target="_blank">Microsoft 365 App Registration Configuration Guide</a>, depending on the type of authentication to be used for the connector.</li>
+<strong>Entra ID</strong>: For configuration details, refer to the <a href="https://support.aquera.com/hc/en-us/articles/31450274680727" rel="noopener noreferrer" target="_blank">Microsoft Entra Native Configuration Guide</a> or the <a href="https://support.aquera.com/hc/en-us/articles/35264303156759" rel="noopener noreferrer" target="_blank">Microsoft Entra Native Basic Auth Configuration Guide</a>, depending on the type of authentication to be used for the connector. <span>&lt;Should this be M365?&gt;&gt;</span>
+</li>
 </ul>
 </li>
-</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize contractors from NEIM to Active Directory and Entra ID.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to write back business email addresses and business phone numbers from Entra ID to ADP Workforce Now.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
 <li data-list-item-id="e08082bb195b36901a11c6555039d729a">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="efb6754e6ae651818a943a272f5268a0a">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="e86a4210df04f6841a771c17b44df1205">Click<strong> Create Integration</strong>.</li>
-<li data-list-item-id="e2cc447a2cf005e278015c0880597a59a">Select<strong> NEIM / Hybrid</strong>.</li>
+<li data-list-item-id="e2cc447a2cf005e278015c0880597a59a">Select<strong> Entra ID to ADP Workforce Now Writeback</strong>.</li>
 <li data-list-item-id="ea325a0cefafe6d479f46d7099d7d2387">Enter a name and a description for the integration.</li>
 <li data-list-item-id="eadc014487893eadf7b265c7b22c7f4b6">Click <strong>Continue</strong>. The <strong>Overview</strong> page is displayed to start configuring the integration.</li>
-</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Overview</h2><p>The <strong>Overview</strong> tab provides a summary of the capabilities of the integration and also allows you to enable the core integration features. It has the following sections:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Features</h3><p>The <strong>Features List</strong> section provides options to enable or disable the following integration features:</p><ul>
-<li data-list-item-id="ef547f2ac04f765d55c96e9e5767d2671">
-<strong>Enable Entra ID for NEI management</strong>: Enable this toggle for the integration to support synchronizing contractors from NEIM to Entra ID.</li>
-<li data-list-item-id="e1b38d90711d85f65714bacdc061b5389">
-<strong>Enable Active Directory for NEI management</strong>: Enable this toggle for the integration to support synchronizing contractors from NEIM to Active Directory.</li>
-<li data-list-item-id="e9eead3fbc37986fb636fcbcab4712f9b">
-<strong>Enable Monitored Provisioning</strong>: Enable this toggle to support monitored provisioning of users in Active Directory and Entra ID. When this toggle is disabled, users are provisioned to directories without supervisor/admin approvals.</li>
-<li data-list-item-id="e8c9ecc6d8403c1647a9afe84d392d53f">
-<strong>Enable OneDrive management</strong>: Enable this toggle to </li>
-<li data-list-item-id="e5de24d77bc5a78f7e62213125150ec02">
-<strong>Enable mailbox management</strong>:</li>
-<li data-list-item-id="e071d07dbd6cbf96a79ab88cbdabc621e">
-<strong>Enable device management</strong>: </li>
-<li data-list-item-id="eb1f5591890e0b0a932f7b5c15c70b29b">
-<strong>Enable writeback to source</strong>: </li>
-<li data-list-item-id="e2b1a03cafb458747320d891b47556e0f">
-<strong>Enable time-based onboarding and offboarding</strong>: Enable this toggle to support setting timezones for creating and terminating contractors in the directory. When enables, the Time-based Settings section is displayed under the NEIM tab.</li>
-<li data-list-item-id="e0333d663eed02ba621f5473d25e0bee5">
-<strong>Enable exception handling</strong>:</li>
-<li data-list-item-id="ec124315c0980a827ebbe9e6dd8c07293">
-<strong>Enable group management</strong>:</li>
-<li data-list-item-id="e4038704779663bc895ddf1e98ed5a97f">
-<strong>Enable notification management</strong>: Enable this toggle for the integration to send email notifications on integration runs.</li>
-<li data-list-item-id="ec4733df60fc6b42c87b68597157eb0e5">
-<strong>Enable access retention</strong>: </li>
-</ul>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Overview</h2><p>The <strong>Overview</strong> tab provides a summary of the integration capabilities and also allows you to enable the write-back feature. It has the following section:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Features</h3><p>The <strong>Features</strong> section provides options to enable or disable the write-back feature.</p><ul><li data-list-item-id="ee12d0bd3f4fb9ebc100cf6aab6a72730">Enable the toggle to support writing back business email addresses and business phone numbers of newly created users from Entra ID to ADP Workforce Now.</li></ul><h2 id="h_01KRZXNH6R5GZ0AEMNSNNTX6BK">Directory</h2><p>The <strong>Directory</strong> tab enables you to set the application connector that must be used to retrieve the data of Entra ID users. It also enables you to set the <span>conditional rules for retrieving a speci</span>fic set of users from Entra ID.</p><h3 id="h_01KRZZRVGSTRJM6999JFAP478J">Entra ID Application Settings</h3><ul><li data-list-item-id="e4e65c33ee5b4a61503e3b1daff7049b1">
+<strong>Entra ID Application</strong>: Select the connector that must be used by the integration to retreive users data from Entra ID.</li></ul><h3 id="h_01KS029C113DVGXE21QK1SK0E9">Writeback Settings</h3><ul><li data-list-item-id="e218fcc4784e254e6c9cdd593dba9c217">
+<strong>Entra ID Application</strong>: Select the Entra ID connector that must be used by the integration to retreive users data from Entra ID.</li></ul><p> </p><p> </p><p> </p><p> </p>
   </div>
 </body>
 </html>

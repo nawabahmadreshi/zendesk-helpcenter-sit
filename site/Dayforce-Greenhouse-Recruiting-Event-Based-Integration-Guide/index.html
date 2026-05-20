@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce / Greenhouse Recruiting Event-Based Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce / Greenhouse Recruiting Event-Based Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the process of synchronizing Greenhouse Recruiting hire and unhire webhooks with Dayforce to enable employee creation, updates, rehires, and terminations, including optional signed offer letter upload to the employee record.</p><h2 id="h_01KHR3961J01YSVRG3Q6Z14GED">Key Functions</h2><p>The Greenhouse Recruiting to Dayforce event-based integration provides the following functions:</p><ul>
+<li data-list-item-id="ee2f28070ab18fd3db90743151c4e46d4">Synchronizes hire, rehire, internal move, and unhire events from Greenhouse to Dayforce, creating, updating, reactivating, or terminating employee records as needed.</li>
+<li data-list-item-id="e8372c5ddfdea181a16df9734a9c6a36b">Uploads signed offer letters from Greenhouse to the employee’s document file in Dayforce.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ebbdc1106db026d2ea001cdf09126585c">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="eb645d1c626ff095104b17075e1bddaa1">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="efc01d4cf4f1c31cea3092c11802c6647">
+<strong>Greenhouse Recruiting</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/10462467749911-Greenhouse-Recruiting-Configuration-Guide" rel="noopener noreferrer" target="_blank">Greenhouse Recruiting Configuration Guide</a> for details.</li>
+<li data-list-item-id="e9d0aad6d6163629d271b869032e39b51">
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853-Dayforce-Configuration-Guide" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push hire, rehire, internal move, and unhire events from Greenhouse Recruiting to Dayforce.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="eff82b8ca66c21b8b97ad8020d366b26c">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e50367466452db887d928a767c90c6acf">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="eb7e8725254b33c9f8ec551e94f496f90">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e5e5a085b3b07f4edff672482973c7927">Search for <strong>Dayforce / Greenhouse Recruiting [Event]</strong> in the search box next to the Explore Templates section.</li>
+<li data-list-item-id="eaf70060d24ec653684070782d6c50d19">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e646f2027a4be31a502663293fb62d46e">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e9f7c8d14a6db3b0b4175b2fa1cb045c4">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="ea147f804518f84036acc24584f7f16be">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</h4><p>Configure the following integration scenarios:</p><ul><li data-list-item-id="e410293c59db989ff0cdbf399d8fc5106">
+<strong>Enable candidate to employee sync</strong>: Select this checkbox to sync hired candidates from Greenhouse Recruiting into Dayforce as employees. When enabled, the Candidate Configuration section is displayed for configuring additional integration settings. </li></ul><h4 id="01KF2RH05MP5RR93W69VEMT2AR">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e3387dd07bca4205f07b0fa8560e48d43">
+<strong>Enable report-only mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="eff6b9396bdcd3cc9a9cc88465825786c">
+<strong>Enable logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the Log Settings section is displayed for further configuration.</li>
+<li data-list-item-id="ecca96f37ff4b525d1b87f1d733c8f7be">
+<strong>Enable notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the Notification Settings section is displayed for further configuration.</li>
+<li data-list-item-id="e0cf13a439ab8ae13f4c89e7d6fb14b43">
+<strong>Enable report generation</strong>: Select this checkbox to generate the integration report. When enabled, the Report Settings section is displayed for further configuration.</li>
+<li data-list-item-id="e4a9ced1e8d710ddfcad9c30953b8704b">
+<strong>Enable log insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the Log Insights Settings section is displayed for further configuration.</li>
+</ul><h3 id="h_01KKGR0E1X2J8YA1DX900C9W7D"><span>Sensitive Fields</span></h3><p><span>The <strong>Sensitive Field Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</span></p><ul>
+<li data-list-item-id="e5973c584cb399b298cf23febb67610c5"><span><strong>PII fields</strong>: Enter the field names that contain personally identifiable information (PII).</span></li>
+<li data-list-item-id="eaca6de313daf004ff52eee2202e2b029"><span><strong>GUID fields</strong>: Enter the field names that contain globally unique identifiers (GUIDs).</span></li>
+<li data-list-item-id="e508eac90b5ab36d90cbb369100bb2cee"><span><strong>Employee ID fields</strong>: Enter the field names that contain employee IDs.</span></li>
+</ul><h3 id="h_01KGPAMEAW2HCGNSBF99C8ADNF">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable logging</strong> is enabled in the <a href="#01KF2RH05MP5RR93W69VEMT2AR">General Settings</a> section.</p><ul>
+<li data-list-item-id="e4acf8c945fdaba018e2d3b2e9548eec8">
+<strong>Select log type</strong>: Select the desired log type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="ed9f4e38b11590aea1dbe80b196d399c9">
+<strong>Select log detail level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eaf7ab43e03a4f86ecb16597c6cac8596">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e9aee55624bc28beebab058be6dc4b6b8">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="e4d44a1a7fb3a785bc25f99daa27fa96a">
+<strong>Inclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e67abf905eaa7c0cf511e0eab7aa17698">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the log insights.</li></ul>
+</li>
+<li data-list-item-id="ef3d97166e7a94ea9040d49799eb89a7e">
+<strong>Exclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="e6efb8b8b6f01b93d07aa64650d008358">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the log insights.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KRDXWM2EN0GY8QKCSWWP3ZQZ">Notification Settings</h3><p>The <strong>Notification Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable notification</strong> is enabled in the <a href="#01KF2RH05MP5RR93W69VEMT2AR">General Settings</a> section.</p><h4 id="h_01KNRH0CCKYTWKSDADWQVSDY3Y">Notification Template Settings</h4><p>Configure the following notification template settings:</p><ul>
+<li data-list-item-id="ebf898f1918c662d5af6084fc9b17b22f">
+<strong>Send email notification for success</strong>: Select this checkbox to enable email notifications for successful integration. When enabled, the Successful Integration Notification Settings section is displayed for further configuration.</li>
+<li data-list-item-id="e8b4f161871d15bd660a46c757222c3c2">
+<strong>Send email notification for failure</strong>: Select this checkbox to enable email notifications for failed integration. When enabled, the Failed Integration Notification Settings section is displayed for further configuration.</li>
+<li data-list-item-id="eb562c89e3ace5d66baf860e390680893">
+<strong>Send email notification for skipped execution</strong>: Select this checkbox to enable email notifications for skipped integration. When enabled, the Skipped Integration Notification Settings section is displayed for further configuration.</li>
+<li data-list-item-id="e14934a2f697f27fa05ed0875429f9e21">
+<strong>Attach report to email</strong>: Select this checkbox to attach the integration report to notification emails. When enabled, the Notification Report Settings section is displayed for further configuration.</li>
+</ul><h4 id="01KFD1AMVYPNY4PY2ZB7A64VGC">Successful Integration Notification Settings</h4><p>Configure the following notification settings for the successful integration:</p><ul>
+<li data-list-item-id="e6ae71b6e2e9924426a330fb842fd73c9">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e7a0810fbab81dd4fae35315d790ab66e">
+<strong>Additional recipients (CC): </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e27fe0da7825e7a4c97946a5484070426">
+<strong>Email subject on successful integration execution</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
+<li data-list-item-id="e5f4b20f52d886d375ecfbbd6aa63b726">
+<strong>Email body on successful integration execution</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+</ul><h4 id="h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failed Integration Notification Settings</h4><p>Configure the following notification settings for the failed integration:</p><ul>
+<li data-list-item-id="e3734e4e48f40531a24831bc6c8d186c6">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e74c33cdcd20a096a36a513690f5dc6e5">
+<strong>Additional recipients (CC): </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e65118eea6f7211ce89b479a2e7e3f584">
+<strong>Email subject on failed integration execution</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="ebaed9b4a3464ac605ef3e20538f1c313">
+<strong>Email body on failed integration execution</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h4 id="h_01KPMSJ4R07ANJZ3N7XKKR5WQ1">Skipped Integration Notification Settings</h4><p>Configure the following notification settings for the failed integration:</p><ul>
+<li data-list-item-id="e1bcc4094427cd9669fb7ca2cb77630cf">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e8038905f9fb48f739338665531847779">
+<strong>Additional recipients (CC): </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e32740a7daacf216478f899295113f9ca">
+<strong>Email subject on skipped integration execution</strong>: Enter the content that must be used as the email subject in the notifications sent for skipped integration execution.</li>
+<li data-list-item-id="e4d66e926e80e90a1afd47a7fc9d21daf">
+<strong>Email body on skipped integration execution</strong>: Enter the content that must be used as the email body in the notifications sent for skipped integration execution.</li>
+</ul><h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4><p>Configure the following settings for the notification reports:</p><ul>
+<li data-list-item-id="ee3a3ca3192b26fb5ab29a5f44c62b3fb">
+<strong>Select report type</strong>: Select the desired report type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e0004cd37c6d558a3b7a3e016ccdfa199">
+<strong>Select report detail level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="e2f2c70ad19555b0a9c5317f7ba47df91">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e048a4bef29a7ae4da81cfcf1151721e4">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="e34f6e82e612f6168386ce7ca9c7912d4">
+<strong>Inclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="ebc690cf569dad4b044ebe12fae920626">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="e6a62443ae46ad9d83e027d55308b5332">
+<strong>Exclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom exclusion list</strong>.<ul><li data-list-item-id="e611b8ccd9dcf38f94f3bbc1a9ee6a6ef">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KRDXWM2EG33CBM54TMB99A3W">Report Settings</h3><p>The <strong>Report Settings</strong> section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable report generation</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><ul>
+<li data-list-item-id="ef2b521dcfa1bda21b922a33bb5104db8">
+<strong>Select Report Type</strong>: Select the desired report type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e16c52269a34efd0bb5452d86de5569f0">
+<strong>Select log insight detail level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e098bf3a1794138d43fd0dad2b0bf29bf">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e20c66b7f94afe2d739a78b35ca42712e">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="efc477db08a50e1e8f4de9522777257b9">
+<strong>Inclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e2f865ae42a594723670ca267420134c8">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the reports.</li></ul>
+</li>
+<li data-list-item-id="ebf25ae3298c4f725cbab713e5db8a7be">
+<strong>Exclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="ec86f886a8248e2e6e5c0765564a83172">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the reports.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Analytics Settings</h3><p>The <strong>Analytics Settings</strong> section enables you to customize the integration analytics settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable analytics</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><ul>
+<li data-list-item-id="ea67d4b93fa16a1546629e1cc871910c6">
+<strong>Dashboard name</strong>: Enter the dashboard name for analytics.</li>
+<li data-list-item-id="e104d96ac988a83ef395e792121612e48">
+<strong>Select analytics type</strong>: Select the desired analytics type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e437e432e7b33acc78939eaccb1deccfe">
+<strong>Select analytics detail level</strong>: Select the desired analytics detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ebc6ed4532620178252d62b5d8ba4111b">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="eab5e97128eff6649b2b8b5297a6a715b">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="e7d383ba3679dee6e93cbf232f07f9777">
+<strong>Inclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e0b4642c85de10151b2a59a69a93b9394">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the analytics.</li></ul>
+</li>
+<li data-list-item-id="e8d99c465de4e3eea8bea2f1db5c06a01">
+<strong>Exclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="e6fd0840e7f87fee6e3de2178728ff963">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the analytics.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01JVP6WJ681AK5EKZYA0EHHYMZ">Candidate Configuration</h2><p>The following section is displayed under the <strong>Candidate</strong> <strong>Configuration</strong> tab:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable candidate to employee sync</strong> is enabled in the <a href="#h_01K04AVZNHW4RD086HGMDCJSM6">Integration Scenarios</a> section.</p><h3 id="h_01KP5CE7FF276MAFECVTT2A1DN">Candidate Settings</h3><p>The <strong>Candidate Settings</strong> section enables you to customize the integration department settings according to your specific use case. It has the following settings:</p><ul><li data-list-item-id="ee0b33a36289bed197880434e12102ade">
+<strong>Sync Greenhouse candidate events to Dayforce employees</strong>: Select this checkbox to enable the Greenhouse Recruiting candidate event that triggers employee creation or updates in Dayforce.<ul>
+<li data-list-item-id="e21a62f47c1066d3c0186e6b2eb36b09c">
+<strong>Candidate event trigger</strong>: Select the Greenhouse Recruiting candidate event that will create or update an employee record in Dayforce from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e9c8a1f92e4fade98ecb1d1e83531b91f">
+<strong>Candidate hire</strong>: Select this option to create a new employee record in Dayforce when a candidate is marked as hired in Greenhouse Recruiting.</li>
+<li data-list-item-id="e98e74b2489ee661145011810aacf9dac">
+<strong>Offer created</strong>: Select this option to create or update the employee record when an offer is created for a candidate.</li>
+<li data-list-item-id="ed96a81e24e2ce16613dcf8c55e2166f2">
+<strong>Offer updated</strong>: Select this option to update the employee record in Dayforce when candidate offer details are modified.</li>
+<li data-list-item-id="ef469c5cb8fc7bdbd9e148f5ee4d51633">
+<strong>Unhire candidate</strong>: Select this option to update the employee record when a candidate’s hired status is removed in Greenhouse Recruiting.</li>
+</ul>
+</li>
+<li data-list-item-id="ee1e1b1bc45fa7090fed513c55c7c4e32">
+<strong>Hire types for user creation</strong>: Select one or more hire types from the dropdown menu to determine when candidates are created. Only the selected hire types trigger user creation.</li>
+<li data-list-item-id="e92043a3ce000e7537bbf5f99d9cad955">
+<strong>Hire types for user activation</strong>: Select one or more hire types from the dropdown menu to determine when candidates are activated. Only the selected hire types trigger user activation.</li>
+<li data-list-item-id="eaeec204c0fe8a968c27f0ac0226ec787">
+<strong>Hire types for user update</strong>: Select one or more hire types from the dropdown menu to determine when candidates are updated. Only the selected hire types trigger user updates.</li>
+<li data-list-item-id="e7b2a1b419d445f2fa7786816375fe8a0">
+<strong>Enable offer letter sync</strong>: Select this checkbox to sync offer letter details from Greenhouse Recruiting to Dayforce. When selected, the following fields are displayed:<ul>
+<li data-list-item-id="e4afff21db77515d5031df32262cac7d2">
+<strong>Offer letter title</strong>: Enter the title of the offer letter to be synced.</li>
+<li data-list-item-id="e10a97a12766cbd0a958bac577cf9cbff">
+<strong>Offer letter description</strong>: Enter the description of the offer letter to be synced</li>
+</ul>
+</li>
+</ul>
+</li></ul><h2 id="h_01KQRYSBQN0HXWEP20VS4XDPFD">Event</h2><p>The <strong>Event</strong> tab is used to configure the webhook details. </p><p>Provide the following details and save the changes:</p><ul>
+<li data-list-item-id="eaa133271dc15c260e2713329e38c1a5a">
+<strong>Event Source</strong>: Select your Greenhouse Recruiting application from which employee events are triggered.</li>
+<li data-list-item-id="e3c7aa71ce0191a5fe3fa9096ba3e72d9">
+<strong>URL</strong>: Copy this URL and paste it into the appropriate webhook field on the Greenhouse Recruiting Webhooks setup page. For details on setting up a webhook in the Greenhouse Recruiting application, refer to the Set Up Webhooks in Greenhouse Recruiting guide.</li>
+<li data-list-item-id="ea37dc41f08235abb3c8458c8c19c8610">
+<strong>Refresh Token</strong>: Click <strong>Refresh Token </strong>to generate a new token. Copy the generated token and paste it into the <strong>Event Secret</strong> field of the Greenhouse Recruiting webhook under the <strong>Event Subscription</strong> tab on the <strong>Demo Application</strong> page. For details on setting up a webhook in the Greenhouse Recruiting application, refer to the Set Up Webhooks in Greenhouse Recruiting guide.</li>
+</ul><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="e2d93e80a3bd54659bd190e62297b8804">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="ea1b0cde340ba13d6fda1b87e17921c7c">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="ef218d8f4123c3f25952272158b01a576">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="e6713f5c9e1bf6f11c03aec85dc40f8f6">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="ede97dd94e3ba64a8423a4ffab9250f74">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e922f25dcf70a45e966efc3ad8263d3d8">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="e58a87650447cb6baa4b9bba757c996b3">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e5f271f00d2ffcde62d5531948997ae9e">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="ebfe123f1e24843806d77346261273802">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
+  </div>
+</body>
+</html>

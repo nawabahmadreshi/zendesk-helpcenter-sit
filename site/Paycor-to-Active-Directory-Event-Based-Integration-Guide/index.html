@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Paycor to Active Directory Event-Based Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Paycor to Active Directory Event-Based Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the process of synchronizing user creation, user updates, and user termination events from Paycor using Webhooks to Active Directory. </p><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="eac4951fd2d22eca7753d32227b98d530">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e97286a52a093cf835b0e7adb9bc2cc30">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e3194d7329f44c700cc0d1a4f35698803">
+<strong>Paycor</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/17896615676951" rel="noopener noreferrer" target="_blank">Paycor Configuration Guide</a> for details.</li>
+<li data-list-item-id="eb86c46c7f759d085a589a269b9ec62e1">
+<strong>Active Directory</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052131934-Active-Directory-AD-Configuration-Guide" rel="noopener noreferrer" target="_blank">Active Directory Configuration Guide</a> for details.</li>
+</ul>
+</li>
+<li data-list-item-id="eeba90be5159fc253e0fee56506fecc96">
+<strong>Set up Webhooks in Paycor</strong>: Your Paycor admin must configure webhooks in the Paycor application to trigger events when an employee is terminated. For details on the webhooks setup, refer to the <a href="../Set-Up-Webhooks-in-Paycor/" rel="noopener noreferrer" target="_blank">Set Up Webhooks in Paycor</a> guide.<br/><strong>Note</strong>: Ensure that the <strong>Employee Information Updated</strong> event is enabled when setting up webhooks for employee termination.</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push termination events from Paycor to Microsoft Entra ID.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ebc9c6b61137428d3291a9bf41c7af13b">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e68168e472d1d85b57e0f9279ffc52c93">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e37b8ad1c35f42eba17179083b161a588">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e6d5336fde8d0fd48a974a943c9e7c57a">Search for <strong>Active Directory / Paycor (Webhook) </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="e418642dd282a904d53a15701bba63d5b">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e9c5c6f97a61f335b0a94b25436173b2d">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e81dc0c5ea024ec5b5bb5ce392992cf6d">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="e112286b7b0c382d4dc9d4d519ec86937">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings and general settings according to your specific use case. It has the following settings:</p><h4 id="h_01KSS78V4MVRBJA91YJ55TTDPT">Integration Settings</h4><ul>
+<li data-list-item-id="e13076c9ded40a585aadf6ffb620ffd9c">
+<strong>Enable User Management</strong>: Select this checkbox to enable user lifecycle actions in Active Directory. When enabled, the User Management section is displayed for configuring additional integration settings.</li>
+<li data-list-item-id="e7da80ecace29f84b9e5d311571a19213">
+<strong>Enable Report Only-Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+</ul><h4 id="h_01KSS7ETZ60PA8SF8DAAQ97Z8N">General Settings</h4><ul>
+<li data-list-item-id="e95b814fd7005ca4d17b96b7293e4e878">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01KSS80FGD1TX9T91YX3BPTVDE">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e1ee80c419387d4115b83e9754275237e">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01KSS80FGEKF2QTTY79MM7PSXR">Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eaf13af39684e2c6b73263e901398f8e6">
+<strong>Enable Debugging</strong>: Select this checkbox to capture additional troubleshooting details during the integration run. When enabled, the <a href="#h_01KSS80FGE1R6R8VM0M3PC11YB">Debug Mode</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e407ca86eefe99b506c34c03455e0f44d">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#h_01KSS80FGDTYF1F68JGK59WQZ6">Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e5dfe20de86b101ec704a6a5ce38765d6">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the <a href="#h_01KSS80FGD1TX9T91YX3BPTVDE">Log Insights</a> section is displayed for further configuration.</li>
+</ul><h3 id="h_01KSS80FGDMG7MR5WY0538GZAQ">User Management</h3><h3 id="h_01KSS80FGDS1WVZS7J1TGPBYTB">Sensitive Fields</h3><p>The <strong>Sensitive Field Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="e5973c584cb399b298cf23febb67610c5">
+<strong>PII fields</strong>: Select the field names that contain personally identifiable information (PII) and should be masked or protected.</li>
+<li data-list-item-id="eaca6de313daf004ff52eee2202e2b029">
+<strong>GUID fields</strong>: Select the field names that contain globally unique identifiers (GUIDs) and should be masked or protected.</li>
+<li data-list-item-id="e508eac90b5ab36d90cbb369100bb2cee">
+<strong>Employee ID fields</strong>: Select the field names that contain employee IDs and should be masked or protected.</li>
+</ul><h3 id="h_01KSS80FGD1TX9T91YX3BPTVDE">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable logging</strong> is enabled in the <a href="#h_01KSS7ETZ60PA8SF8DAAQ97Z8N">General Settings</a> section.</p><ul>
+<li data-list-item-id="e4acf8c945fdaba018e2d3b2e9548eec8">
+<strong>Select log type</strong>: Select the desired log type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="ed9f4e38b11590aea1dbe80b196d399c9">
+<strong>Select log detail level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eaf7ab43e03a4f86ecb16597c6cac8596">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e9aee55624bc28beebab058be6dc4b6b8">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="e4d44a1a7fb3a785bc25f99daa27fa96a">
+<strong>Inclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e67abf905eaa7c0cf511e0eab7aa17698">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the log insights.</li></ul>
+</li>
+<li data-list-item-id="ef3d97166e7a94ea9040d49799eb89a7e">
+<strong>Exclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="e6efb8b8b6f01b93d07aa64650d008358">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the log insights.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KSS80FGDTYF1F68JGK59WQZ6">Report Settings</h3><p>The <strong>Report Settings</strong> section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Report Generation</strong> is enabled in the <a href="#h_01KSS7ETZ60PA8SF8DAAQ97Z8N">General Settings</a> section.</p><ul>
+<li data-list-item-id="ef2b521dcfa1bda21b922a33bb5104db8">
+<strong>Select Report Type</strong>: Select the desired report type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e16c52269a34efd0bb5452d86de5569f0">
+<strong>Select log insight detail level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e098bf3a1794138d43fd0dad2b0bf29bf">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e20c66b7f94afe2d739a78b35ca42712e">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="efc477db08a50e1e8f4de9522777257b9">
+<strong>Inclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e2f865ae42a594723670ca267420134c8">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the reports.</li></ul>
+</li>
+<li data-list-item-id="ebf25ae3298c4f725cbab713e5db8a7be">
+<strong>Exclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="ec86f886a8248e2e6e5c0765564a83172">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the reports.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KSS80FGEKF2QTTY79MM7PSXR">Notifications</h3><p>The <strong>Notifications</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Notifications</strong> is enabled in the <a href="#h_01KSS7ETZ60PA8SF8DAAQ97Z8N">General Settings</a> section.</p><h4 id="h_01KNRH0CCKYTWKSDADWQVSDY3Y">Notification Template Settings</h4><p>Configure the following notification template settings:</p><ul>
+<li data-list-item-id="ebf898f1918c662d5af6084fc9b17b22f">
+<strong>Send Email Notification For Success</strong>: Select this checkbox to enable email notifications for successful integration. When enabled, the <a href="#h_01KSSFMNSE65MXKD68KTE3XMXJ">Success Notifications </a>section is displayed for further configuration.</li>
+<li data-list-item-id="e8b4f161871d15bd660a46c757222c3c2">
+<strong>Send Email Notification For Failure</strong>: Select this checkbox to enable email notifications for failed integration. When enabled, the <a href="#h_01KSSFMNSE99F1XKSVGGNBQZTD">Failure Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e14934a2f697f27fa05ed0875429f9e21">
+<strong>Attach Report To Email</strong>: Select this checkbox to attach the integration report to notification emails. When enabled, the <a href="#h_01KSSFKPNQ9VF3311DJ3V1SVNG">Notification Report Settings</a> section is displayed for further configuration.</li>
+</ul><h4 id="h_01KSSFMNSE65MXKD68KTE3XMXJ">Success Notifications</h4><p>Configure the following notification settings for the successful integration:</p><ul>
+<li data-list-item-id="e66671f08ea7151aec4628221ecf12531">
+<strong>Success Notification Recipients</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="ed3c2018abdf6581e4b242666de4336ae">
+<strong>Success Notification CC</strong><strong>: </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="ea801bf4bb94aa927c6e8a037fd4e2b22">
+<strong>Success</strong><strong> Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
+<li data-list-item-id="e432d89f4f514f1944d6338b1dce3b042">
+<strong>Success Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+</ul><h4 id="h_01KSSFMNSE99F1XKSVGGNBQZTD">Failure Notifications</h4><p>Configure the following notification settings for the failed integration:</p><ul>
+<li data-list-item-id="e3734e4e48f40531a24831bc6c8d186c6">
+<strong>Failure Notification Recipients</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e74c33cdcd20a096a36a513690f5dc6e5">
+<strong>Failure Notification CC</strong><strong>: </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e65118eea6f7211ce89b479a2e7e3f584">
+<strong>Failure Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="ebaed9b4a3464ac605ef3e20538f1c313">
+<strong>Failure Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h4 id="h_01KSSFK7YARC58MM7QN520FRTG">Creation Mail To User</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e4c31e5458c0bb2020be95929bb58f53a">
+<strong>Creation Email Subject</strong>: Enter the subject line used for the email sent after a user account is created.</li>
+<li data-list-item-id="e0616c31461bac3c2f55998632c25b9f2">
+<strong>Creation Email Body</strong>: Enter the message content sent after a user account is created.</li>
+</ul><h4 id="h_01KSSFKAKA4PXWV2CRB2EVHG0T">Deactivation Mail to User</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="e87e072aa9f59a3211ae242e7f6059ddb">
+<strong>Deactivation Email Subject</strong>: Enter the subject line used for the email sent after a user account is deactivated.</li>
+<li data-list-item-id="e2cad3543edfc0393128ccd86e7439358">
+<strong>Deactivation Email Body</strong>: Enter the message content sent after a user account is deactivated.</li>
+</ul><h4 id="h_01KSSFKPNQ9VF3311DJ3V1SVNG">Notification Report Settings</h4><p>Configure the following settings for the notification reports:</p><ul>
+<li data-list-item-id="ee3a3ca3192b26fb5ab29a5f44c62b3fb">
+<strong>Select report type</strong>: Select the desired report type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e0004cd37c6d558a3b7a3e016ccdfa199">
+<strong>Select report detail level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="e2f2c70ad19555b0a9c5317f7ba47df91">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e048a4bef29a7ae4da81cfcf1151721e4">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="e34f6e82e612f6168386ce7ca9c7912d4">
+<strong>Inclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="ebc690cf569dad4b044ebe12fae920626">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="e6a62443ae46ad9d83e027d55308b5332">
+<strong>Exclusion list</strong>: Select this option to report only the attributes specified in the <strong>Custom exclusion list</strong>.<ul><li data-list-item-id="e611b8ccd9dcf38f94f3bbc1a9ee6a6ef">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the re</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KSS80FGEVCWP8ST8GZWY0QG4">Log Insights</h3><p>The <strong>Log Insights</strong> section enables you to customize the integration analytics settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if <strong>Enable Log Insights</strong> is enabled in the <a href="#h_01KSS7ETZ60PA8SF8DAAQ97Z8N">General Settings</a> section.</p><ul>
+<li data-list-item-id="ea67d4b93fa16a1546629e1cc871910c6">
+<strong>Insights</strong> <strong>Dashboard Name</strong>: Enter the name of the dashboard where integration analytics will be displayed.</li>
+<li data-list-item-id="e104d96ac988a83ef395e792121612e48">
+<strong>Insights Data Type</strong>: Select the desired log insights type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e437e432e7b33acc78939eaccb1deccfe">
+<strong>Insights detail level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ebc6ed4532620178252d62b5d8ba4111b">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e7d383ba3679dee6e93cbf232f07f9777">
+<strong>Inclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e0b4642c85de10151b2a59a69a93b9394">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the analytics.</li></ul>
+</li>
+<li data-list-item-id="e8d99c465de4e3eea8bea2f1db5c06a01">
+<strong>Exclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="e6fd0840e7f87fee6e3de2178728ff963">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the analytics.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KSS80FGE1R6R8VM0M3PC11YB">Debug Mode</h3><ul>
+<li data-list-item-id="e22d927de1f283d95d830dabc6d465913">
+<strong>Onboarding Filter Field</strong>: Select the onboarding field used to filter users during debugging. Available options are <strong>Employee Number</strong> and <strong>Email Address</strong>.</li>
+<li data-list-item-id="ea986a535dca5075e650972e9d3718fc0">
+<strong>Filter Value</strong>: Enter the value used to find a specific onboarding user during debugging.</li>
+</ul><h2 id="h_01KSS80ZRM3YXPK5SJ893ZWXWJ">Attribute Map</h2><h2 id="h_01KSS82D50AE1FB4SWS0MPH0ZS">Policy</h2><h2 id="h_01KSS8146D67GQ7RX7TVRANY1Y">Tables</h2><h2 id="h_01KSS83WJ3T4AEHFACWC9CVJZ6">Event</h2><p>The <strong>Event</strong> tab is used to configure the webhook details. </p><p>Provide the following details and save the changes:</p><ul>
+<li data-list-item-id="ee5d2556c455cf682c48476806ece9aeb">
+<strong>Event Source</strong>: Select your Paycor application from which employee-termination events are triggered.</li>
+<li data-list-item-id="e165b6efc6d5932135642d268491a3558">
+<strong>URL</strong>: Copy this URL and paste it into the appropriate webhook field on the Paycor Webhooks setup page. For details on setting up a webhook in the Paycor application, refer to the <a href="../Set-Up-Webhooks-in-Paycor/" rel="noopener noreferrer" target="_blank">Set Up Webhooks in Paycor</a> guide.</li>
+<li data-list-item-id="e7944c2bb09835c8412db86e8c881b428">
+<strong>Refresh Token</strong>: Click <strong>Refresh Token </strong>to generate a new token. Copy the generated token and paste it into the <strong>Event Secret</strong> field of the Paycor webhook under the <strong>Event Subscription</strong> tab on the <strong>Demo Application</strong> page. For details on setting up a webhook in the Paycor application, refer to the <a href="../Set-Up-Webhooks-in-Paycor/" rel="noopener noreferrer" target="_blank">Set Up Webhooks in Paycor</a> guide.</li>
+</ul><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="ede2837698f9a7ee455a0c56d59fa170f">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="e11bacca4211affc47c89d930f1facf0a">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="ed42715343bdbd6598829a53510d6a4ca">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="eb5b9e4a4ec2a9c07fafca4844f9c44c1">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="e47712c358f10d1dd69ef9586afb80a2d">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e0b052c16f401085f034e1785aecad97c">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="e8935aba9a3dacc4a35517852b0bed92d">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="eb0b39d16c40951a8bf69ce49851c6fa1">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="e898882e40e5d93b834ea1432b6cc7eef">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol><p><br/> </p>
+  </div>
+</body>
+</html>

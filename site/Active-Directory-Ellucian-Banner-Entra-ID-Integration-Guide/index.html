@@ -1,0 +1,438 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Active Directory / Ellucian Banner / Entra ID Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Active Directory / Ellucian Banner / Entra ID Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KG6QWCT4WRT0Q4BT7BRDVTER">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This guide outlines the end-to-end steps required to set up the integration that synchronizes employees and students data between Ellucian Banner and Entra ID.</p><p>To identify records across both systems, the integration uses the <strong>Banner ID</strong> from <strong>Ellucian Banner</strong> and matches it to the <strong>Employee ID</strong> in <strong>Entra ID</strong> as a correlation attribute.</p><h2 id="h_01KG6QY97ZJ49QJZ8YT6P8ZMAR">Key Functions</h2><p>This integration automates identity lifecycle management between Ellucian Banner and Entra ID (formerly Azure AD) with the following primary capabilities:</p><ul>
+<li data-list-item-id="ed25ac0dcc7f17712388dea1fe60ae65f">Synchronizes user records from Ellucian Banner to Microsoft Entra ID.</li>
+<li data-list-item-id="e6feab217b3aad2ebc9e945276dfa70f0">Creates new users in Entra ID when they are added in Ellucian Banner.</li>
+<li data-list-item-id="ee2f96a8549962e72576cc1d891afeb8e">Updates existing Entra ID users when their information changes in Ellucian Banner.</li>
+<li data-list-item-id="e07694d1ca25bda5bd0dd2adf52445d2d">Deactivates or deletes Entra ID users when they are no longer active in Ellucian Banner.</li>
+<li data-list-item-id="ebb2355eb42c0d397c30849e0d0b7dbe0">Assigns users to groups in Entra ID based on configured rules.</li>
+<li data-list-item-id="ee66f6598aaf8490533ae456a704d8031">Generates passwords, email IDs, and UPNs (User Principal Name) for users in Entra ID based on configured policies.</li>
+<li data-list-item-id="e905b881b5e6f3b3787d1f954f37668c7">Supports both full synchronization and incremental synchronization to process only changed records.</li>
+</ul><h2 id="h_01KD80KT84CHY25GM05997PQ8Q">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="eb1337065d0a13f15e7e9941889f30b41">
+<strong>Tenant account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e3692e8bf8514e737090c5f07e9dfb0a8">
+<strong>Configure application connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e488df1a608f21d6ad818316689ca50b7">
+<strong>Ellucian Banner</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/7261735537815" rel="noopener noreferrer" target="_blank">Ellucian Banner Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="ebd0f42d6a08811ab097560ae49148c3f">
+<strong>Microsoft 365</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/15351675074711" rel="noopener noreferrer" target="_blank">Microsoft 365 Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section details the configuration and mapping process for integrating Ellucian Banner with Entra ID. It outlines the steps to create the integration, set up integration preferences, and define how data is mapped.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e5c1f9f31af02c348fa127fc1da477499">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e4d88afb0a37517e3ac6c9a76c9ee8dff">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e614079c263f1d2bffcb7a2ef0e1d2a3a">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e8d51e3c291d9d6b95627b5f5a3002cc6">Search for <strong>Active Directory / Ellucian Banner / Entra ID</strong> in the search box next to the <strong>Explore Templates</strong> section, and then select it to create a new integration.</li>
+<li data-list-item-id="e9ed70b03b8912bf15b1dd1033751a6a5">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ec8ecf46651947cb1ec84c52555e6e35b">Select your <strong>Ellucian Banner</strong> and <strong>Microsoft 365</strong> connector instances.</li>
+<li data-list-item-id="ed605f70e7801803782a2218db5630909">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><p>Once created, the following tabs are displayed:</p><ul>
+<li data-list-item-id="e9c7e0566ebae8302df71779002eeb8a3"><a href="#h_01K3TMT9CQB86XXAZ9FY9M1QYW">Overview</a></li>
+<li data-list-item-id="e34d296ab6e0bcf5180288e5d1fb91a08"><a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Ellucian Banner</a></li>
+<li data-list-item-id="eebd6c46713758897b348160243ebb543"><a href="#h_01KSF66KXWMG0FDJQJ8HD965YR">Directory</a></li>
+<li data-list-item-id="ee7ed7f35a293cccc55e51e303aaee650"><a href="#h_01KSMDYWAWZYJXF17ZF4447CGC">Policy</a></li>
+<li data-list-item-id="e3ec9d295f0c401bcbeea42ebdb50f379"><a href="#h_01KSMHR4R27S8ZWQ2QVVCJP1NC">Execution</a></li>
+<li data-list-item-id="eebc60e780881abd520c311597e57a570"><a href="#h_01KGHH5EYXPD55T3QNB33EB738">Notification</a></li>
+<li data-list-item-id="e7d4510067a5abc551f4a8b92b127e828"><a href="#h_01KJCP43MS8PMZZMVQPMDWVEEP">Schedule</a></li>
+</ul><h2 id="h_01K3TMT9CQB86XXAZ9FY9M1QYW">Overview</h2><p>This tab displays details about the integration and its related information. The following features are displayed for further configuration:</p><h3 id="h_01KSHC6AEGS1R9BHDR4Z4PF8XY">Features List</h3><p>This section lists the features supported by the integration. You can enable or disable each feature based on your requirements.</p><p>The following are the supported features:</p><ul>
+<li data-list-item-id="ebcd4a7387c3e7e3ea7b62e55c709da94">
+<strong>Enable employee management in Entra ID</strong>: Turn on this toggle to synchronize employee data from Ellucian Banner to Entra ID. When enabled, the <strong>Manage Employee - Entra ID</strong> settings in the <strong>Directory </strong>tab is displayed for further configuration.</li>
+<li data-list-item-id="ea76cd5cd3b34b4d76719c6c7879aa567">
+<strong>Enable student management in Entra ID</strong>:<strong> </strong>Turn on this toggle to synchronize student data from Ellucian Banner to Entra ID. When enabled, the <strong>Manage Student - Entra ID</strong> settings in the <strong>Directory </strong>tab is displayed for further configuration.</li>
+<li data-list-item-id="e6dc28feab19fa3f44395bf63ee799e7b">
+<strong>Advanced features</strong>: Turn on this toggle to enable additional features. When enabled, the following field is displayed:<ul><li data-list-item-id="e0cbbf1d5f899ac7453f90cfe9ad6cf20">
+<strong>Group management</strong>: Turn on this toggle to enable the <strong>Groups management </strong>settings. When enabled, the Group settings in the <strong>Directory </strong>tab is displayed.</li></ul>
+</li>
+</ul><h2 id="h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Ellucian Banner</h2><p>The Ellucian Banner tab helps you to define the user account syncing settings for this integration. The following sections are available for further configurations:</p><ul>
+<li data-list-item-id="e62550460c1f0ac9fc911baa44bcd6276"><a href="#h_01KSHWTKBJQQF24TWSGR9NZ9ZQ">Select source application</a></li>
+<li data-list-item-id="e1c9d65d50b355a3b10dd26bae3f3530c"><a href="#h_01KSF4TKC8HMKR7NX6K3TGH418">Employee configuration</a></li>
+<li data-list-item-id="e96ef62270e792a2bb33878962f4d8a46"><a href="#h_01KSF4VW16H8BDBQR0N4YNK58D">Student configuration</a></li>
+<li data-list-item-id="e8f4d4299ff76c6d5d14402dad434c452"><a href="#h_01KSF5GX6E1DCQSWGCTNS1V0XJ">Additional configuration</a></li>
+</ul><h3 id="h_01KSHWTKBJQQF24TWSGR9NZ9ZQ">Source Application</h3><p><strong>Select Ellucian Banner application:</strong> Select the Ellucian Banner application in which you want to configure this integration.</p><h3 id="h_01KSF4TKC8HMKR7NX6K3TGH418">Employee Configuration</h3><p>This section provides settings to control the employee account that must be synced in Entra ID:</p><ul>
+<li data-list-item-id="e37349b782ddedd5daf50f1110324cbf1">
+<strong>Include attributes from the selected resources</strong>: Select one or more sources that you want to include in this integration. The attributes to be included for synchronization depends on the selected sources. If you do not find the required sources in the list, click the refresh icon available next to the field to reload the available sources.</li>
+<li data-list-item-id="ee93ebe76556cc5cbace9ae7c180557e5">
+<strong>Ignore errors from the selected resources</strong>: Select one or more sources for which error responses should be ignored during integration execution. If you do not find the required sources in the list, click the refresh icon available next to the field to reload the available sources.</li>
+<li data-list-item-id="e9ea9723f0fada53767707a293d44d419">
+<strong>Enable custom condition to identify supervisor from institution jobs</strong>: By default, the primary supervisor with active status from the latest institution is considered. Turn on this toggle button to define a custom condition to identify supervisor from institution jobs. When enabled, the following field is displayed:<ul><li data-list-item-id="e23bbc05cbaa83e5f1fd9a8dedd8e74ec">
+<strong>Define custom condition for determining supervisor from institution jobs</strong>: Enter your prompt to define a condition that determines supervisor for the employee. This field uses Aquera Intelligence (AI Assistant). For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li></ul>
+</li>
+</ul><h3 id="h_01KSF4VW16H8BDBQR0N4YNK58D">Student Configuration</h3><p>This section provides settings to control the student account that must be synced in Entra ID:</p><ul>
+<li data-list-item-id="e100d63cb0c720880b9652d4597f9fbfa">
+<strong>Include attributes from the selected resources</strong>: Select one or more sources that you want to include in this integration. The attributes to be included for synchronization depends on the selected sources. If you do not find the required sources in the list, click the refresh icon available next to the field to reload the available sources.</li>
+<li data-list-item-id="ebb22c86878769a3dbf03fac23a437983">
+<strong>Ignore errors from the selected resources</strong>: Select one or more sources for which error responses should be ignored during integration execution. If you do not find the required sources in the list, click the refresh icon available next to the field to reload the available sources.</li>
+</ul><h3 id="h_01KSF5GX6E1DCQSWGCTNS1V0XJ">Additional Configuration</h3><ul>
+<li data-list-item-id="e39c184285ad7134809f298b95b1ac1d2">
+<strong>Set maximum API requests per execution</strong>: Set the maximum number of API requests that can run simultaneously in a single execution. This controls how many API calls are made at the same time during a single run.</li>
+<li data-list-item-id="e5c617c8b2192f0e628ccace5763c0c9e">
+<strong>Set full import trigger limit</strong>: Set the maximum number of records allowed before triggering a full import. If the number of records exceeds the defined limit, a full synchronization is performed from Ellucian Banner to Entra ID. If the records are within the defined limit, only those records are synced.</li>
+</ul><h2 id="h_01KSF66KXWMG0FDJQJ8HD965YR">Directory</h2><p>The <strong>Directory</strong> tab helps you to manage Microsoft Entra ID directory settings to create, update, and terminate employee and student accounts. It also supports group configuration settings.</p><p>The following sections are displayed in this tab:</p><ul>
+<li data-list-item-id="e6c90367507557bc33beea5be4ddd73a0"><a href="#h_01KSF6MT79R2CTGJW23Z76WK3F">Directory Configuration</a></li>
+<li data-list-item-id="e705c92c1d22cd6a4c5bf3e6b7a130a42"><a href="#h_01KSF79TRB2DB1J55KYK8VWQDZ">Manage Employee - Entra ID</a></li>
+<li data-list-item-id="e7baa3669ffe6a6b3a20292b8e9785b92"><a href="#h_01KSF7GG8H03BT2W15KG4AV5Z5">Manage Student - Entra ID</a></li>
+<li data-list-item-id="eba1e3d52d574ad06333c895a39d07dc6"><a href="#h_01KSF7GG8HZZPYQH5JDX2CNFNR">Groups Settings</a></li>
+</ul><h3 id="h_01KSF6MT79R2CTGJW23Z76WK3F">Directory Configuration</h3><p>Navigate to the <strong>directory configuration </strong>section to manage the synchronization of employees and students account in Entra ID:</p><ul>
+<li data-list-item-id="e4b91b7e12e5daca6aaa2fa1049c043b8">
+<strong>Select the Entra ID application</strong>: Select the Microsoft Entra ID application to sync the employees and students account data in Entra ID. If you do not find the required application in the list, click the refresh icon available next to the field to reload the available applications.</li>
+<li data-list-item-id="eec8d6697f551b22510cc68036af35e96">
+<strong>Generate custom passwords for users provisioned to Entra ID</strong>: Turn on this toggle to this to select your own custom password policy instead of using the default Entra ID policy. When enabled, <strong>Select password policy </strong>field is displayed.</li>
+<li data-list-item-id="e41e24b3e24c0bc7a12c8992f751d242d">
+<strong>Select Password Policy</strong>: This field allows you to select the required password policy for the integration. If you do not find the required sources in the list, click the refresh icon available next to the field to reload the available sources.</li>
+</ul><h3 id="h_01KSF79TRB2DB1J55KYK8VWQDZ">Manage Employee - Entra ID</h3><p>Configure the following settings in this section to create, update, and terminate employee accounts from Entra ID. </p><p>The following are the sections and fields to be configured:</p><ul>
+<li data-list-item-id="ea6fa0f0d8a312bf40828303270d9990f"><a href="#h_01KSF81EPVJKJ0AC9A8KQYF3NZ">Account correlation settings</a></li>
+<li data-list-item-id="ee3663483c1dd14121e1d792dc3f741ec"><a href="#h_01KSFARYQ4BHA63MFHSAVB8W22">Employee Eligibility</a></li>
+<li data-list-item-id="eee03b955084a84adf448b68fbd6743ed"><a href="#h_01KSFEZKV70AS6WGF8BSHHTFDP">SafeGuard Settings</a></li>
+<li data-list-item-id="eefacda2c50fcb98143001006e4c73691"><a href="#h_01KSFHHHG30M8XBFAFXMJKPABP">Account Retrieval Settings</a></li>
+<li data-list-item-id="e935b8d37eedecb5310fa1bc0529e308f"><a href="#h_01KSM2TGX7VGM2EYKDZKNQ29F5">Enable Employee Creation</a></li>
+<li data-list-item-id="e014671e213bc28fd2c4a171eaddae940"><a href="#h_01KSKYS88T324N3GR2TS4SR5P3">Enable Employee Update</a></li>
+<li data-list-item-id="e4bcb8f3ddacc1f7c86cd487c33fab047"><a href="#h_01KSKYSBC4ZQ4BZQ1Y5N1XCZ6N">Enable Employee Termination</a></li>
+<li data-list-item-id="ebb31e095c9df3ca5a4cbd1ae231b351d"><a href="#h_01KSKYSEYYJNDD5BRADNCZX8QM">Attribute Mapping</a></li>
+</ul><h4 id="h_01KSF81EPVJKJ0AC9A8KQYF3NZ">Account Correlation Settings</h4><ul><li data-list-item-id="e92a6736d8d8198e00852001235b7e477">
+<strong>Customize how users are matched between Ellucian Banner and Entra ID: </strong>Enable this to correlate the employees account with custom identity matching accounts instead of the default correlation rules.<ul>
+<li data-list-item-id="e72a46725ee7b4b5e8fbc54c9becfeaa4">
+<strong>Select how employees are matched between the Ellucian Banner and Entra ID</strong>: Select the required option to correlate how employee records are matched between Ellucian Banner and Entra ID.</li>
+<li data-list-item-id="e7f9bbec826f04408e727c67cd000f0b6">
+<strong>Ellucian Banner attribute for matching employees</strong>: Select the attribute defined in Ellucian Banner from the dropdown list to use as the primary identifier for record matching. If the required sources are not listed, click the refresh icon next to the field to reload the available sources.</li>
+<li data-list-item-id="e21d5b1a1c3c4fc35a23f6eae0d723266">
+<strong>Entra ID attribute for matching employees</strong>: Select the required attribute in Entra ID from the dropdown list to use as the primary identifier for matching employee accounts. If the required sources are not listed, click the refresh icon next to the field to reload the available sources.</li>
+</ul>
+</li></ul><h4 id="h_01KSFARYQ4BHA63MFHSAVB8W22">Employee Eligibility</h4><ul><li data-list-item-id="e3b5889fa32fc336882833f56f2eade14">
+<strong>Use custom rules to identify eligible employees</strong>: By default, all employees are included in the integration. Turn on this toggle button if you want to define a custom condition to identify employees to be included. When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="e8bcc67e20cb9945723d296113c577727">
+<strong>Select how employees retrieval is triggered</strong>: Select one of the following options to identify employees that need to be included.<ul>
+<li data-list-item-id="e300c93ae8f6d3a7262c4b983ba2054de">
+<strong>Based on Status</strong>: Select this if you want to identify employees based on their status. When selected, the following field is displayed.<ul><li data-list-item-id="e08077fab0920cd2b1d9c82abf6ec3fff">
+<strong>Select employee status to filter the employee records</strong>: Select the required employee status from the dropdown.</li></ul>
+</li>
+<li data-list-item-id="e3ec2fa182c9786542a423dd68fe65414">
+<strong>Based on Contracts</strong>: Select this if you want to identify employees based on their contract. When selected, the following field is displayed.<ul><li data-list-item-id="e0c8aa8b42aec65bc3a6ecb906666d8da">
+<strong>Select employee contract to filter the employee records</strong>: Select the required employee contract from the dropdown.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li></ul><h4 id="h_01KSFEZKV70AS6WGF8BSHHTFDP">SafeGuard Settings</h4><p>Enables safeguard controls to limit excessive provisioning operations during synchronization. The following fields are displayed in this section:</p><ul><li data-list-item-id="ed791a38a778be1410fa18b3fd9130afe">
+<strong>Enable safeguard limit</strong>: Turn on the toggle button to perform the following settings.<ul><li data-list-item-id="e79612f891aa71911e2ac2af790d4c2a3">
+<strong>Safeguard limit setup</strong>: determine whether the safeguard limits are applied to all operations together or separately for <strong>create,</strong> <strong>update,</strong> and <strong>termination</strong> operations. If you do not find the required Safeguard settings in the list, click the refresh icon available next to the field to reload the available settings.<ul>
+<li data-list-item-id="e55c41fa0ce3073ec9c6bcd89b641413c">When <strong>common for all</strong> is selected, the <strong>Safeguard Limit for All Operations</strong> field is displayed for further configuration.</li>
+<li data-list-item-id="ef5ab49a5dd3bfd997ea31debb550c68c">When <strong>Per Operation type</strong> is selected, the following fields are displayed:<ul>
+<li data-list-item-id="ec1f5f92f317e19a24828c9fc2e61c3d4">
+<strong>Enable Create operation limit</strong>: Turn on this toggle button if you want to define a separate safeguard limit for account creation operations in Entra ID. When enabled, <strong>Set the Creation Limit </strong>field appears.<ul><li data-list-item-id="eb00257ed31ca8e3635a4e68d000128fc">
+<strong>Set the creation limit</strong>: Enter a number to limit the account creation in Entra ID.</li></ul>
+</li>
+<li data-list-item-id="e883da869236a98d07482031494e816dc">
+<strong>Enable update operation limit</strong>: Turn on this toggle button if you want to define a safeguard limit for account update operations in Entra ID. When enabled, <strong>Set the Update Limit </strong>field is displayed.<ul><li data-list-item-id="edceb6e1b67a8615cad503bdffb71687e">
+<strong>Set the update limit</strong>: Enter a number to limit the account update in Entra ID.</li></ul>
+</li>
+<li data-list-item-id="e073038129cbc4064cbd01da5b956280f">
+<strong>Enable termination operation limit</strong>: Turn on this toggle button if you want to define a separate safeguard limit for account termination operations in Entra ID. When enabled, <strong>Set the termination Limit </strong>field is displayed.<ul><li data-list-item-id="edb50b33d13802cd84e0d4d9b91b06d5e">
+<strong>Set the termination limit</strong>: Enter a number to limit the account termination in Entra ID.</li></ul>
+</li>
+</ul>
+</li>
+</ul>
+</li></ul>
+</li></ul><h4 id="h_01KSFHHHG30M8XBFAFXMJKPABP">Account Retrieval Settings</h4><p>Configure how employee user accounts must be synced and imported from the source application to the target application during synchronization.</p><p>The following fields are displayed for further configuration:</p><ul>
+<li data-list-item-id="e508a1fee142baee3d48aead0749f4b64">
+<strong>Employee record threshold for full import</strong>: This field triggers a full resource import when the employee record count exceeds the defined limit.</li>
+<li data-list-item-id="e7e577f8eda2d7c13a8ea088ab4121451">
+<strong>User count threshold for full sync: </strong>Enter the maximum number of employee count in this field, when the limit is exceeded, it will trigger a full import.</li>
+<li data-list-item-id="ea7f85ab3919e03d784652ee5834150ac">
+<strong>Selective import batch size</strong>: Select the number of requests processed together in each import batch to balance import speed and system performance.</li>
+</ul><h4 id="h_01KSM2TGX7VGM2EYKDZKNQ29F5">Enable Employee Creation</h4><p>Enable this to configure the employee creation in Entra ID. You can enable or disable this field based on your use case.</p><ul>
+<li data-list-item-id="eae2b212ad79d9f09b0f0d217856823af">
+<strong>Enable Employee Creation</strong>: Turn on this toggle for further configurations.</li>
+<li data-list-item-id="e7c3fdaf871f357134869b987789e92d7">
+<strong>Employee Creation Criteria</strong>: Enter your prompt to define a condition that determines supervisor for the employee. This field uses Aquera Intelligence (AI Assistant). For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+<li data-list-item-id="e2b67333eb4d9c74b07c38f07af14d63f">
+<strong>Apply Custom Policies For Entitlement Assignment</strong>: Enable this to automatically apply predefined policies to assign during user account creation in Entra ID. When enabled, the following field is displayed:<ul><li data-list-item-id="e9b880b90dd19af2a40d026dc09eb5969">
+<strong>Entitlements Assignment Rule</strong>:<strong> </strong>This field enables you to select the predefined rules or policies.</li></ul>
+</li>
+<li data-list-item-id="e8a8c22f07d623be1f65edb0bc0e93977">
+<strong>Force password change on first login</strong>: When enabled, this field forces the user to reset the Entra ID password.</li>
+</ul><h4 id="h_01KSKYS88T324N3GR2TS4SR5P3">Enable Employee Update</h4><p>Turn on this toggle button if you want to  configure the employee update settings in Entra ID. You can enable or disable this field based on your use case.</p><ul><li data-list-item-id="e8e0449c37010881f6878817954bac0bd">
+<strong>Enable update creation</strong>: Turn on this toggle for further configurations.<ul>
+<li data-list-item-id="e8a969c22f799ddb25dbcc85d0c5445ac">
+<strong>Employee update criteria</strong>: Enter your prompt to define a condition that determines supervisor for the employee. This field uses Aquera Intelligence (AI Assistant). For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+<li data-list-item-id="e6ed7d9a9ec2acbb47e60e57ccccdcdc4">
+<strong>Apply custom policies for entitlement assignment</strong>: Enable this to automatically apply predefined policies to assign during user account creation in Entra ID. When enabled, the following field is displayed:<ul><li data-list-item-id="e23198e06298e72c085074eaf12122cc4">
+<strong>Entitlements assignment Rule</strong>:<strong> </strong>This field enables you to select the predefined rules or policies.</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KSKYSBC4ZQ4BZQ1Y5N1XCZ6N">Enable Employee Termination</h4><p>Turn on this toggle button if you want to configure the employee termination settings in Entra ID. You can enable or disable this field based on your use case.</p><p>When enabled, the following field is displayed:</p><ul>
+<li data-list-item-id="e2f2efa3a8ee264e6f4d6fde1ac0a8bf4">
+<strong>Employee Deactivation / Deletion Criteria</strong>: Enter your prompt to define a condition that determines supervisor for the employee. This field uses Aquera Intelligence (AI Assistant). For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+<li data-list-item-id="e19ee6cde678ccf55fe661cc32b634d7c">
+<strong>Apply Custom Policies For Entitlement Assignment</strong>: Enable this to automatically apply predefined policies to assign during user account creation in Entra ID. When enabled, the following field is displayed:<ul>
+<li data-list-item-id="e7848e58fa32facf7113832518536f26c">
+<strong>Entitlements Assignment Rule</strong>:<strong> </strong>This field enables you to select the predefined rules or policies.</li>
+<li data-list-item-id="e53199d16af06e4eaf66cf2efbf0d0562">
+<strong>Invalidate password</strong>: Immediately disables the user’s current password and allow the employees to create a new password to stop further login attempts.</li>
+<li data-list-item-id="e098b6e6296206d91e56a289e8cd9e508">
+<strong>Disable Account</strong>: Disables the employees account in Entra ID to stop accessing connected systems.</li>
+<li data-list-item-id="e14d3abe371d698f1b1f810050da2bcaa">
+<strong>Delete Account</strong>: Permanently deletes the employee account from Entra ID after termination.</li>
+</ul>
+</li>
+</ul><h4 id="h_01KSKYSEYYJNDD5BRADNCZX8QM">Attribute Mapping</h4><p>This section defines how employee attributes from <strong>Ellucian Banner</strong> are mapped to the corresponding user attributes in <strong>Microsoft Entra ID</strong>. These mappings control how employee data is used when creating or updating user accounts in Entra ID during the integration run.</p><p>Each mapping specifies how a <strong>source attribute or expression from Ellucian Banner</strong> is transformed and assigned to a <strong>target attribute in Entra ID</strong>. This ensures that employee identity information, such as names, email addresses, phone numbers, and location details, remains consistent between the two systems.</p><p>Mappings may use direct attributes from Ellucian Banner or expressions that combine or transform values before sending them to Entra ID. For example, <strong>preferredFirstName</strong> and <strong>preferredLastName</strong> from Ellucian Banner may be combined to populate the <strong>Display Name</strong> attribute in Entra ID.</p><p>Administrators can review and modify these mappings to align with organizational identity requirements. Any updates made in this section determine how worker data from Ellucian Banner is provisioned and synchronized to Microsoft Entra ID during user creation and updates.</p><h3 id="h_01KSF7GG8H03BT2W15KG4AV5Z5">Manage Student - Entra ID</h3><p>Configure the following settings in this section to create, update, and terminate student accounts from Entra ID. </p><p>The following are the sections and fields to be configured:</p><ul>
+<li data-list-item-id="e5d0c37245bec8a40762b8641ed45f30d"><a href="#h_01KSMBHR5333ST504KXDTMZ5DM">Account Correlation Settings</a></li>
+<li data-list-item-id="e823a92f3c1ba94024615097652b41626"><a href="#h_01KSMA8BB0GC99NJ38NTWZ7Q5D">Student Eligibility</a></li>
+<li data-list-item-id="e3d936168ccc5bb40228c5f5c24c64ce2"><a href="#h_01KSMC4DGS4TCYW7SGC4PHHVZB">SafeGuard Settings</a></li>
+<li data-list-item-id="e021b4c0ebde1b7da59d4a23db2df588e"><a href="#h_01KSMBHR53RFK38DGGZ12D16KH">Account Retrieval Settings</a></li>
+<li data-list-item-id="e63c0aebd5c73312974ad34db4aebfdf8"><a href="#h_01KSMBHR53SST5H861SKCQGPSN">Microsoft Entra ID Student Creation</a></li>
+<li data-list-item-id="ee7e1380cb0f02421266c1673cabec001"><a href="#h_01KSMAGEHMHZ0RHDA7VD9SSD2F">Microsoft Entra ID Student Updation</a></li>
+<li data-list-item-id="e650de4b415fb9b469d5b9c8cd29c69dd"><a href="#h_01KSMAKMVFRDK07F4FP6NMQ8MZ">Microsoft Entra ID Student Termination</a></li>
+<li data-list-item-id="e06ef5ff6b96faf247296a74fd717061b"><a href="#h_01KSMBHR535QMBNREA6EF7MGXP">Attribute Mapping</a></li>
+</ul><h4 id="h_01KSMBHR5333ST504KXDTMZ5DM">Account Correlation Settings</h4><ul><li data-list-item-id="e63577b946bd7cd37a74b170a0f6ac381">
+<strong>Account correlation settings: </strong>Turn on this toggle to correlate the students account with custom identity matching accounts instead of the default correlation rules.<ul>
+<li data-list-item-id="e2ced91d3cd447e9d26713584482c6dcf">
+<strong>Customize how users are matched between Ellucian Banner and Entra ID</strong>: Select the required option to correlate how student records are matched between Ellucian Banner and Entra ID.</li>
+<li data-list-item-id="e2dbf3f44c2b0e40657e62457da1108bd">
+<strong>Ellucian Banner attribute for matching employees</strong>: Select the attribute defined in Ellucian Banner from the dropdown list to use as the primary identifier for record matching. If the required sources are not listed, click the refresh icon next to the field to reload the available sources.</li>
+<li data-list-item-id="e14544e5c1b6d7cdf1de0e17eaa753559">
+<strong>Entra ID attribute for matching employees</strong>: Select the required attribute in Entra ID from the dropdown list to use as the primary identifier for matching student accounts. If the required sources are not listed, click the refresh icon next to the field to reload the available sources.</li>
+</ul>
+</li></ul><h4 id="h_01KSMA8BB0GC99NJ38NTWZ7Q5D">Student Eligibility</h4><ul><li data-list-item-id="e438c346895aa52c9fe1a60bd096003f7">
+<strong>Use custom rules to identify eligible students</strong>: By default, all students are included in the integration. Turn on this toggle to define a custom condition to identify students to be included. When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="eef46b55dd8189161b6b87584b7fdb7cb">
+<strong>Select how students retrieval is triggered</strong>: Select one of the following options to identify students that need to be included. <ul>
+<li data-list-item-id="e786c83f625bbbd14e948f3221c8ec788">
+<strong>Based on Status</strong>: Select this if you want to identify students based on their status. When selected, the following field is displayed.<ul><li data-list-item-id="e88f9b0b8459299f6e88f40cce8db90f1">
+<strong>Select student status to filter the student records</strong>: Select the required student status from the dropdown.</li></ul>
+</li>
+<li data-list-item-id="e602058c2541fd42ea8ecfae988658bd6">
+<strong>Based on Contracts</strong>: Select this if you want to identify students based on their contract. When selected, the following field is displayed.<ul><li data-list-item-id="e1c76735ea0375a8d18c8b038c34f9164">
+<strong>Select student contract to filter the student records</strong>: Select the required student contract from the dropdown.</li></ul>
+</li>
+</ul>
+</li></ul>
+</li></ul><h4 id="h_01KSMC4DGS4TCYW7SGC4PHHVZB">SafeGuard Settings</h4><p>Enables safeguard controls to limit excessive provisioning operations during synchronization. When enabled, the following fields are displayed for further configuration:</p><ul><li data-list-item-id="eda53c9cb3defaa2c55705897f3c1c296">
+<strong>Safeguard limit setup</strong>: Turn on this toggle to determine whether the safeguard limits are applied to all operations together or separately for <strong>create,</strong> <strong>update,</strong> and <strong>termination</strong> operations. If you do not find the required Safeguard settings in the list, click the refresh icon available next to the field to reload the available settings.<ul>
+<li data-list-item-id="e58445dab8dca0800ebfe456e70bbc335">When <strong>common for all</strong> is selected, the <strong>Safeguard Limit for All Operations</strong> field is displayed for further configuration.</li>
+<li data-list-item-id="e09d79a5d8a7574fdce28b6c35655ace6">When <strong>Per Operation type</strong> is selected, the following fields are displayed:<ul>
+<li data-list-item-id="e7f0b35f33aef7a7bb9ede1bbdae1ca9e">
+<strong>Enable Create operation limit</strong>: Turn on this toggle to separate safeguard limit for account creation operations in Entra ID. When enabled, <strong>Set the Creation Limit </strong>field appears.<ul><li data-list-item-id="e3b384f2927126dffc2379fd6cc5cdcb7">
+<strong>Set the creation limit</strong>: Enter a number to limit the account creation in Entra ID.</li></ul>
+</li>
+<li data-list-item-id="e064aba0b4c82b46374632066e62f2079">
+<strong>Enable update operation limit</strong>: Turn on this toggle to safeguard limit for account update operations in Entra ID. When enabled, <strong>Set the Update Limit </strong>field is displayed.<ul><li data-list-item-id="e1bf024c7cfef2ed3a17d82b0cebf29c3">
+<strong>Set the update limit</strong>: Enter a number to limit the account update in Entra ID.</li></ul>
+</li>
+<li data-list-item-id="e1a834a9f79bfeaf90c8895907e50a4fa">
+<strong>Enable termination operation limit</strong>: Turn on this toggle to separate safeguard limit for account termination operations in Entra ID. When enabled, <strong>Set the termination Limit </strong>field is displayed.<ul><li data-list-item-id="e5cdc281689b440e572cd66c855ca5ed3">
+<strong>Set the termination limit</strong>: Enter a number to limit the account termination in Entra ID.</li></ul>
+</li>
+</ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KSMBHR53RFK38DGGZ12D16KH">Account Retrieval Settings</h4><p>Configure how student user accounts must be synced and imported from the source application to the target application during synchronization.</p><p>The following fields are displayed for further configuration:</p><ul>
+<li data-list-item-id="eb5323b192af05b3167c84dc90d299f27">
+<strong>Student record threshold for full import</strong>: This field triggers a full resource import when the student record count exceeds the defined limit.</li>
+<li data-list-item-id="e4603a8976c508c8adaf93ccb33bb4705">
+<strong>User count threshold for full sync: </strong>Enter the maximum number of student count in this field, when the limit is exceeded, it will trigger a full import.</li>
+<li data-list-item-id="e133a4463ef14b289f760a74f37cab389">
+<strong>Selective import batch size</strong>: Select the number of requests processed together in each import batch to balance import speed and system performance.</li>
+</ul><h4 id="h_01KSMBHR53SST5H861SKCQGPSN">Microsoft Entra ID Student Creation</h4><p>Turn on this toggle if you want to configure the student creation in Entra ID. You can enable or disable this field based on your use case.</p><p>When enabled, the following field is displayed:</p><ul>
+<li data-list-item-id="e17d4148875ffd883451f5d56e5704456">
+<strong>Student creation criteria</strong>: Enter your prompt to define a condition that determines supervisor for the student. This field uses Aquera Intelligence (AI Assistant). For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+<li data-list-item-id="e413c8217067c7ab35c6dd5bca898a236">
+<strong>Apply custom policies For entitlement assignment</strong>: Enable this to automatically apply predefined policies to assign during user account creation in Entra ID. When enabled, the following field is displayed:<ul><li data-list-item-id="ee440e1a9dd9408ecc9a2bb9d378df0b1">
+<strong>Entitlements assignment rule</strong>:<strong> </strong>This field enables you to select the predefined rules or policies.</li></ul>
+</li>
+<li data-list-item-id="e872659ce75039a4e5ebee07d21169bac">
+<strong>Force password change on first login</strong>: When enabled, this field forces you to reset the password during your first login into Entra ID.</li>
+</ul><h4 id="h_01KSMAGEHMHZ0RHDA7VD9SSD2F">Microsoft Entra ID Student Updation</h4><p>Turn on this toggle if you want to configure the student update settings in Entra ID. You can enable or disable this field based on your use case.</p><p>When enabled, the following field is displayed:</p><ul>
+<li data-list-item-id="e9b9866af1a3109fe7dad3ff3052363d3">
+<strong>Student update criteria</strong>: Enter your prompt to define a condition that determines supervisor for the student. This field uses Aquera Intelligence (AI Assistant). For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+<li data-list-item-id="e01815a7d6804297b94c7f53f42123ba9">
+<strong>Apply custom policies for entitlement assignment</strong>: Enable this to automatically apply predefined policies to assign during user account creation in Entra ID. When enabled, the following field is displayed:<ul><li data-list-item-id="e0be53bd967156140b933df5888f156fb">
+<strong>Entitlements assignment rule</strong>:<strong> </strong>This field enables you to select the predefined rules or policies.</li></ul>
+</li>
+</ul><h4 id="h_01KSMAKMVFRDK07F4FP6NMQ8MZ">Microsoft Entra ID Student Termination</h4><p>Turn on this toggle if you want to configure the student termination settings in Entra ID. You can enable or disable this field based on your use case.</p><p>When enabled, the following field is displayed:</p><ul>
+<li data-list-item-id="e5b0ee73cf9bf0c4a0a837de926566f4a">
+<strong>Student deactivation / deletion criteria</strong>: Enter your prompt to define a condition that determines supervisor for the student. This field uses Aquera Intelligence (AI Assistant). For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li>
+<li data-list-item-id="ef5dd09c5daaa0ed45eae23f05844091a">
+<strong>Apply custom policies for entitlement assignment</strong>: Enable this to automatically apply predefined policies to assign during user account creation in Entra ID. When enabled, the following field is displayed:<ul>
+<li data-list-item-id="eb0198ef21e41ff42b4bca73b734c0623">
+<strong>Entitlements assignment rule</strong>:<strong> </strong>This field enables you to select the predefined rules or policies.</li>
+<li data-list-item-id="eba80abe1a3c4da0bc5fa75734c2e4bd2">
+<strong>Invalidate password</strong>: Immediately disables the user’s current password and allow the students to create a new password to stop further login attempts.</li>
+<li data-list-item-id="e7f6e0c30a28c4cad27f44a9b68c83825">
+<strong>Disable account</strong>: Disables the students account in Entra ID to stop accessing connected systems.</li>
+<li data-list-item-id="ef043ca2b0bc58134e745df3376e2161b">
+<strong>Delete account</strong>: Permanently deletes the student account from Entra ID after termination.</li>
+</ul>
+</li>
+</ul><h4 id="h_01KSMBHR535QMBNREA6EF7MGXP">Attribute Mapping</h4><p>This section defines how employee attributes from <strong>Ellucian Banner</strong> are mapped to the corresponding user attributes in <strong>Microsoft Entra ID</strong>. These mappings control how employee data is used when creating or updating user accounts in Entra ID during the integration run.</p><p>Each mapping specifies how a <strong>source attribute or expression from Ellucian Banner</strong> is transformed and assigned to a <strong>target attribute in Entra ID</strong>. This ensures that employee identity information, such as names, email addresses, phone numbers, and location details, remains consistent between the two systems.</p><p>Mappings may use direct attributes from Ellucian Banner or expressions that combine or transform values before sending them to Entra ID. For example, <strong>preferredFirstName</strong> and <strong>preferredLastName</strong> from Ellucian Banner may be combined to populate the <strong>Display Name</strong> attribute in Entra ID.</p><p>Administrators can review and modify these mappings to align with organizational identity requirements. Any updates made in this section determine how worker data from Ellucian Banner is provisioned and synchronized to Microsoft Entra ID during user creation and updates.</p><h3 id="h_01KSF7GG8HZZPYQH5JDX2CNFNR">Groups Settings</h3><p>You can set up group rules for removal of users in Entra ID groups. The following are the available options:</p><ul>
+<li data-list-item-id="eb19b45cf9e5ce08320a537b955fe8479">
+<strong>Remove user from all groups on deactivation</strong>: Enable or disable the automatic removal of users from all assigned groups upon deactivation.</li>
+<li data-list-item-id="e4dfcd63d76e09c7a2273e42c7be3ff09">
+<strong>Remove extra groups assigned to the user during the update</strong>: Enable or disable the automatic removal of any additional groups assigned to the user during the update process.</li>
+</ul><p><strong>Note</strong>: The same procedure applies for the <strong>Group assignment rule for students.</strong></p><h3 id="h_01KSMDYWAWZYJXF17ZF4447CGC">Policy</h3><p>This section enables you to configure the settings to assign rules, set naming policy, and set password policy in Entra ID.</p><p>It has the following fields:</p><ul>
+<li data-list-item-id="e09876b96655546ad55ddc20adbee1129"><a href="#h_01KSME3Z5747KD3BV9FHECQDCY">Assignment Rules</a></li>
+<li data-list-item-id="ec1fdfec982034c00266b7f4ad856a1a7"><a href="#h_01KSMGP9GEZT8Q7G43B88T28YZ">Naming Policy</a></li>
+<li data-list-item-id="e2cf5bff0bdb0a31a290e4a5541b66256">
+<a href="#h_01KSMGPJ22MMDSNPE9XHEH8RZE">Password Policy</a> </li>
+</ul><h4 id="h_01KSME3Z5747KD3BV9FHECQDCY">Assignment Rules</h4><p>This section explains how to edit access rules for assigning rules for employees and students in Entra ID.</p><p>Perform the following steps to edit access rules:</p><ol>
+<li data-list-item-id="e4b10cfc4566cf7f789a338f3e387b32f">Click the vertical ellipsis next to any column, and then click <strong>Add Attribute</strong> to view the list of available attributes you can use to set the assignment rule.<br/>If you want to remove the existing column, click <strong>Delete Column</strong>.</li>
+<li data-list-item-id="e3996317166f7a4d3bb97f2bb45a44277">Select the attribute you want to use to define a condition.</li>
+<li data-list-item-id="e71f7160d78c360bf35fe9363ec15dbf4">In the next row, double-click and select the attribute value to define the rule. If multiple values are selected, <strong>OR</strong> condition is applied among them.</li>
+<li data-list-item-id="e4d4a9252d441ec0e696fdc2fea239830">If required to add another condition and assignment for the same selected attribute, click <strong>Add Row</strong>.<br/><strong>Note</strong>: You can add any number of rows within a rule.</li>
+<li data-list-item-id="e536a2aecafd826a2dae6c9c273ad1a0b">If required to include another attribute to the assignment rule, click the vertical ellipsis next to a column, and then click <strong>Add Attribute</strong>.<br/>If multiple columns are added for a rule, <strong>AND</strong> condition is applied between different columns.<br/>You can use multiple attributes and their corresponding values to define an assignment rule.</li>
+<li data-list-item-id="ea0c4af62ccf5aebb90cb6b736140dd9f">If needed, click the <strong>+</strong> icon at the top right corner to add another rule, as explained above.</li>
+<li data-list-item-id="e0a13dff4077940fec456526fd37a1da1">Click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
+<li data-list-item-id="e6241bf52ba8e88244f7451a48369d163">To see other action items, such as <strong>View Info</strong>, <strong>Insert Row</strong>, <strong>Copy Row</strong>, <strong>Disable Rule</strong>, and <strong>Delete Row</strong>, click the horizontal ellipsis next to the row.</li>
+</ol><h4 id="h_01KSMGP9GEZT8Q7G43B88T28YZ">Naming Policy</h4><p>This section allows you to configure the generation of UserPrincipalName and email:</p><p>It has the following settings to configure:</p><ul>
+<li data-list-item-id="e6fb6e966c847dceaf48bfd5e1803c612">
+<strong>Generate UserPrincipalName (UPN)</strong>: Turn on this toggle if you want to perform the UPN generation.<ul><li data-list-item-id="ed4d2121bc9d0fd2c02147e69a3796ffe">
+<strong>UPN</strong>: The User Principal Name (UPN) attribute is the user logon name (ULN) that is used to log in to a domain. By convention, UPN should map to the user's email address.<br/>A UPN consists of a prefix (the user account name) and a suffix (a DNS domain name), separated by the @ symbol. The UPN format is <em>username@DomainName</em>. For example, <em>barbarajensen@aquera.com</em>.</li></ul>
+</li>
+<li data-list-item-id="e4e87ee6750696f26743de871963272b2">
+<strong>Generate email</strong>: Turn on this toggle if you want to perform the email generation.<ul><li data-list-item-id="edd77db96290c57aae17c5560785cb58b">
+<strong>Mail</strong>: The Mail attribute is the user's email address, often set to match the UPN. The mail should be unique within the same domain. The mail attribute typically follows standard email formatting. For example, <em>barbarajensen@example.com.</em>
+</li></ul>
+</li>
+<li data-list-item-id="e09d31f898756c31315cd97ca4f1fead3">
+<strong>Generate email using: </strong>Select the required value to generate the emails using custom values. If you do not find the required sources in the list, click the refresh icon available next to the field to reload the available sources.</li>
+</ul><h4 id="h_01KSMGPJ22MMDSNPE9XHEH8RZE">Password Policy</h4><p>Navigate to the <strong>Password Policies</strong> section to define how passwords are generated in the target applications. This section allows you to configure password generation rules, complexity requirements, and length constraints.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e6ebd613ddc38557705735c77e8127e47">
+<strong>Policy name</strong>: Enter a unique name to identify the password policy.</li>
+<li data-list-item-id="eb8e48e95af24941d958cc13fef5894d4">
+<strong>Maximum password length</strong>: Enter the maximum number of characters allowed in a password.</li>
+<li data-list-item-id="ee60aea53154c6ec356e786a7542311b1">
+<strong>Minimum password length</strong>: Enter the minimum number of characters required for a password.</li>
+<li data-list-item-id="ee80e5c6f2556c3157ae616be22d5ee75">
+<strong>Password complexity requirements</strong>: Select the password complexity requirements. This defines the character types that must be included in the password. The available options are as follows:<ul>
+<li data-list-item-id="e47f2227238cae0e5a94956c8bb07db6e">
+<strong>Require uppercase letters</strong>: Select this if you want passwords to include at least one uppercase character (A–Z).</li>
+<li data-list-item-id="e44f40fbdde5d4d330a0a4b9d8504801d">
+<strong>Require lowercase letters</strong>: Select this if you want passwords to include at least one lowercase character (a–z).</li>
+<li data-list-item-id="e752d4968aa6233b27ce97ada50e454c1">
+<strong>Require numbers</strong>: Select this if you want passwords to include at least one numeric character (0–9).</li>
+<li data-list-item-id="e4b754b1aaac0e78aeacd242f92d3628b">
+<strong>Require special characters</strong>: Select this if you want passwords to include at least one special character. If you select this option, the following field is displayed for further configuration:<ul><li data-list-item-id="ebbb6a7154af3df2b622cb4d1c25049f0">
+<strong>Allowed special characters</strong>: Select the special characters permitted in passwords. Only the selected characters can be used when special characters are required.</li></ul>
+</li>
+</ul>
+</li>
+</ul><p>To add another password policy, click the <strong>+</strong> icon.<br/><img alt="2026-01-28_18-44-40.png" height="232" src="./assets/bad33494bc2d4977.bin" width="1464"/></p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><p>To delete a configuration, click the delete icon.</p><p>To view the configurations in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h3 id="h_01KSMHR4R27S8ZWQ2QVVCJP1NC">Execution</h3><p>This section allows you to configure the integration settings. The following are the available settings:</p><ul>
+<li data-list-item-id="eae954f01bbfd7691637b4e8528a06b6d"><a href="#h_01KSMKEY11S6QV58EXMPMPQYR6">Operational Settings</a></li>
+<li data-list-item-id="e5107029be6366536edca2c76efb22397"><a href="#h_01KSMKGETR82R3JX6K0EARA2WN">Advance Settings</a></li>
+</ul><h4 id="h_01KSMKEY11S6QV58EXMPMPQYR6">Operational Settings</h4><p>This section has the following settings to configure:</p><h4 id="h_01KGHH3ZZ8TA8NBG5BHDVSRZBB">Logging Settings</h4><p>This section enables you to customize the report settings. It has the following settings:</p><ul>
+<li data-list-item-id="e9409493fc97ce4b23edd134ba627e633">
+<strong>Select log type:</strong> Select the type of information to include in the integration logs.<ul>
+<li data-list-item-id="e9e84a8c1a6b79ccbbc0d2cc9281387e7">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e1f2d747a7cf481c116ebd9563a8d1df6">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e78c3d8b0273def02e5de899f2bcc74fe">
+<strong>Employee number with all data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e4c57ec3a01070c582de2abfb17a1adc4">
+<strong>Select log level:</strong> Select the level of detail to include in logs.<br/>The following are the available options:<ul><li data-list-item-id="eabf4084b3a7c3672b97fa03965eeb7c3">
+<strong>Full:</strong> Select this if you want to fetch all attribute details in the logs.</li></ul>
+</li>
+</ul><h4 id="h_01KSMK8D7XZJGBKGGT9MMTJPM7">Report Settings</h4><p>This section enables you to customize the report settings. It has the following settings:</p><ul>
+<li data-list-item-id="e87235faf8f52c172405d7a7321fa96d7">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Report type</strong>: Select the <strong>report</strong> type. This will decide the level of detail to be included in the <strong>report.</strong><br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e3e19156c078bf6879fa8e4e864c6e65b">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e8c8ac5db213d35b658aa516a1de62a31">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e038236edad87bf0cbeba69c355a53521">
+<strong>Employee number with all data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="edd55c9189abfb4a46aeb39f13cddf19d">
+<strong>Select report level:</strong> Select the level of detail to include in Report.<br/>The following options are available in the dropdown list:<ul><li data-list-item-id="e3c90d1ff7fc1bb0fb942885a0ce84fdb">
+<strong>Full:</strong> Select if you need all the attribute details in the Report.</li></ul>
+</li>
+</ul><h4 id="h_01KSMKBB0W980JDFRCJTSBB9X2">Log Insight Settings</h4><p>This section enables you to customize the log insight settings. It has the following settings:</p><ul>
+<li data-list-item-id="ecfea5db76183ddca315055c43369ab22">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select insights type</strong>: Select the insights type. This will decide the level of detail to be included in the insights.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e1a462c62d57c07c8d34a1c3bc9067e0f">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="eb43c6ee997f349586e0d776adf63329d">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e61dba59fb091ea92e28079bccfd3782b">
+<strong>Employee number with all data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e025498cfee848e9e2791a87396207f76">
+<strong>Select insights level:</strong> Select the level of detail to include in insights.<br/>The following options are available in the dropdown list:<ul><li data-list-item-id="e03e48fffd40916082f2785fc6476c6ef">
+<strong>Full:</strong> Select if you need all the attribute details in the analytics.</li></ul>
+</li>
+</ul><h3 id="h_01KN1W5D3KG4Q8Z44BMB8CBYQ5">Advance Settings</h3><p>This section enables you to filter employees and candidates for debugging purposes.</p><p>The following fields are displayed for configuration:</p><ul>
+<li data-list-item-id="e69e072c29f25d6e6ec41b3048f4723d3">
+<strong>Report only mode</strong>: Enable the toggle button to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="eb2ac8a9fc96cee232fc480affe0d8d64">
+<strong>Enable debug mode</strong>: Turn on this toggle to generate logs outlining data changes that would occur, for debugging purposes.</li>
+<li data-list-item-id="ebd2886d560c8be0803b77145435ec66a">
+<strong>Enable source filter</strong>: Select this checkbox to filter an employee for debugging purposes. When enabled, the following parameters are displayed:<ul>
+<li data-list-item-id="e44a974f5ea4ce6fecff7c0c866849b8e">
+<strong>Select the filter type</strong>: Select an attribute from the dropdown menu to filter an employee. For example, select <em>Employee Number</em>.</li>
+<li data-list-item-id="e7f5c87352aa4ef6c971bd160b969efeb">
+<strong>Filter value</strong>: Enter a value for the selected attribute. For example, <em>EMP123</em>.</li>
+</ul>
+</li>
+</ul><h3 id="h_01KGHH5EYXPD55T3QNB33EB738">Notification</h3><p>Turn on the toggle if you want to send customized Email Notification.</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Email Notifications</strong> setting is enabled in the channel section.</p><p>It has the following sections:</p><h4 id="h_01KSPPPG71VS165YCFN7YBTW0F">Channel</h4><p><strong>Enable Email Notification</strong>: Enable email notifications for system events and alerts. Turn on to send notifications via email. When enabled, the following section will be displayed:</p><h4 id="h_01KSMM1GQNXZ8TBSKWZJX2R11R">Templates library</h4><p>This section allows you to customize the email template. The following fields are displayed:</p><ul>
+<li data-list-item-id="e16255e46e0405deec5674b7dcb99db52">
+<strong>Name</strong>: Enter a name for the notification template.</li>
+<li data-list-item-id="e791767a09759bd30c8292ca3a0b220f2">
+<strong>Type</strong>: Select this option if you want to send notification through email.</li>
+<li data-list-item-id="ed9b031e58c294d8055ea9d8c4d84eb53">
+<strong>Subject</strong>: Enter the content that must be used as the email subject.</li>
+<li data-list-item-id="e69eb74e885b81abd437e562971305140">
+<strong>Template</strong>: Enter the content to be used as the notification body. You can use available customization features to configure the email body.</li>
+</ul><h4 id="h_01KSMND5BADTTQEHRGWQKX56C1">Configuration</h4><ul>
+<li data-list-item-id="e4e5a1d3adeec092738fbe26d1a7963b8">
+<strong>Select event for notification</strong>: Select the provisioning event that will trigger a notification. For example, select <strong>Account provisioned</strong> to get email notifications every time accounts are provisioned to the target application.</li>
+<li data-list-item-id="ed256409f0f6ee862fbfeedcaacc3c1a5">
+<strong>Notification delivery channel</strong>: Select the channel to be used for sending notification. The available options are:<ul><li data-list-item-id="e244182d9fd15edbcd1e7619c82a360d5">
+<strong>Email</strong>: Select this option if you want to send notification through email. </li></ul>
+</li>
+<li data-list-item-id="ead7e36440b39614550d86eb3a32ad86d">
+<strong>Send notifications to</strong>: Select the additional recipients to send email notifications. For example, select <em>Supervisor</em> if you want to send email notifications to the user's supervisor.</li>
+<li data-list-item-id="e8aa01719e1791858223581a4e1b38228">
+<strong>Template</strong>: Select the content to be used as the notification body. You can use available customization features to configure the email body.</li>
+<li data-list-item-id="ec0d61272c2607956b07586163ce6b1e6">
+<strong>Attach report</strong>: Select this checkbox to receive an email notification with a report for each integration execution.</li>
+<li data-list-item-id="e907197d307d98dfef307a1ad583a5477">
+<strong>Select notification report type</strong>: Select the notification report type. This will decide the level of details to be included in reports.<br/>The following are the available options:<ul>
+<li data-list-item-id="eb2a28c7d7eba5fe705c8738a9390df3e">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e9f76498b8f7ee9cb2e7fcb8b0902a8e0">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e5d194010d1b5f158b97d0943a514a7ef">
+<strong>Employee number with all data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e346588b86245692a3374deda25b45f27">
+<strong>Select notification report level</strong>: Select the notification report level. The following are the available options:</li>
+<li data-list-item-id="ea3bdd7075398d08e37694943790d51f0">
+<strong>All</strong>: Select this to include all attribute details in reports.</li>
+</ul><h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01KJCP43MS8PMZZMVQPMDWVEEP">Schedule</h2><p>Integrations can be scheduled to run automatically based on your preferred timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p><p> </p><p> </p><p> </p><p> </p>
+  </div>
+</body>
+</html>

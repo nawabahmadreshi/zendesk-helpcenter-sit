@@ -1,0 +1,281 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP Recruiting Management / Manage Engine Service Desk Cloud Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP Recruiting Management / Manage Engine Service Desk Cloud Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide covers the end-to-end tasks involved in setting up the ADP Recruiting Management / ManageEngine ServiceDesk integration, which creates onboarding tickets in ManageEngine ServiceDesk based on employee onboarding events in ADP Recruiting Management.</p><p>To use this integration, you must first create a User Integration in the Aquera Admin portal that retrieves newly onboarded employees from ADP Recruiting Management and then creates the corresponding user in a target system (for example, Active Directory). After creating the user integration,  you need to configure the ADP Recruiting Management / ManageEngine ServiceDesk integration by following the steps in this guide. After this integration is set up, you must select this integration in both the New User Integration Hook and the Deprovision User Integration Hook configuration fields within the user integration.</p><p>When the user integration runs, the ADP Recruiting Management / ManageEngine ServiceDesk integration is triggered for each successful user creation in the target system specified in the user integration.</p><p><strong>Note</strong>: Before running this integration for the first time, you must manually create a request in ManageEngine ServiceDesk. This ensures that the required request structure and configurations are initialized. If this step is not completed, the integration may fail during execution.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The <strong>ADP Recruiting Management</strong> to <strong>ManageEngine ServiceDesk</strong> integrations provide the following functions:</p><ul>
+<li data-list-item-id="e6896d62604df5770f76915e1b7184657">Reads the required data from the user integration during execution.</li>
+<li data-list-item-id="e3e76146539c6edc969e215a4a3ee4a36">Creates service requests in ManageEngine ServiceDesk based on the configured operation.</li>
+<li data-list-item-id="e48028f6bb0e62f0c5d06604c3449278d">Processes request creation automatically during integration runs.</li>
+<li data-list-item-id="ee85a7ca811a9bf97f7a4ccee40f6a59c">Creates integration reports based on the integration configuration.</li>
+<li data-list-item-id="e2d2f1056fd89527df4e57d62c91fd0ea">Sends email notifications for integration runs along with the integration report, based on the configuration.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="efd21bdb0b1845b0d59e15dc2f7a1ab84">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e56ffd1fe241163a1886bc649b82bfa33">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e536c5dd9d4eaaa47a3eb47991e0716c9">
+<strong>ADP Recruiting Management</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/17869438111895-ADP-Recruiting-Management-Configuration-Guide" rel="noopener noreferrer" target="_blank">ADP Recruiting Management Configuration Guide</a> for details.</li>
+<li data-list-item-id="ec019a30b1ea573ac71c80fef52e15f3d">
+<strong>ManageEngine ServiceDesk</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/19445672801559-ManageEngine-ServiceDesk-Plus-for-Cloud-Configuration-Guide" rel="noopener noreferrer" target="_blank">ManageEngine ServiceDesk Plus for Cloud Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push <strong>worker</strong> data from <strong>ADP Recruiting Management</strong> to <strong>ManageEngine ServiceDesk</strong>.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ed07047781996ef451b54f5c34c177038">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ee0d39c3800f99eee3997b2fe274e4cc1">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ecde769d810e2a5de93bc241e57ce2683">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e86a1c48b1ab23eda999464af27b0f554">Search for <strong>ADP Recruiting Management / ManageEngine ServiceDesk</strong> integration.</li>
+<li data-list-item-id="e3a4be3f7706cd1a036d77ecdbe298a4b">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ead4530addf876889ea84dbf1216ab864">Select both application connector instances from the dropdown menus.</li>
+<li data-list-item-id="ecd56a9b8495dd728e9bf000b780c3f26">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Features</h4><p>Configure the following integration feature:</p><ul><li data-list-item-id="e2260aa83241797b351b6359c1ff64b2e">
+<strong>Enable Onboarding Ticket Generation</strong>: Select this checkbox to create onboarding tickets in ManageEngine ServiceDesk for users provisioned from ADP Recruiting Management. When enabled, the <a href="#01KFD0RVZ9EM5G97GM5P4XPJHZ">Onboarding Ticket</a> section is displayed for configuring additional integration settings.</li></ul><h4 id="h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="ece70bba7a8b78c5f1b6905c7dafd6703">
+<strong>Report only mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="ed16cc5762fe2c790d9dfb8d26c839d31">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01KNRSHJ66RW8KG8MQVWT2BZT5">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eb4a4816023991e6bafadbb9ece077f5b">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#h_01KNRH0CCKYTWKSDADWQVSDY3Y">Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e041d3543c35c328b85bb020c2e489e2b">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#h_01KNRSTJN3X10V5Q7RX07KG1XG">Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ea80c23203c55385301dc67099af594f4">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the <a href="#h_01KNRSTJN3V91CYJFDB7FQ8XHH">Log Insights Settings</a> section is displayed for further configuration.</li>
+</ul><h3 id="h_01KPMSJ4R0FP05Q2AS6CBBX3DK">Onboarding Ticket Settings</h3><p>The <strong>Onboarding Ticket Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Onboarding Ticket Generation</strong> parameter is enabled in the <a href="#h_01K04AVZNHW4RD086HGMDCJSM6">Integration Features</a> section.</p><ul>
+<li data-list-item-id="ea8e5f9bf10a442eed8a9495bb92962f5">
+<strong>New Joiner Ticket Action</strong>: Select an action from the dropdown menu that should trigger the creation of a joiner ticket in ManageEngine ServiceDesk. For example, if you select <strong>Create</strong>, a joiner ticket will be automatically created in ManageEngine ServiceDesk when a candidate is joined in ADP Recruiting Management.</li>
+<li data-list-item-id="edf4d3f20c8182ffbef634e61b55cf801">
+<strong>Template</strong>: Select a template from the dropdown menu to automatically populate ticket details when a candidate joins in ADP Recruiting Management.</li>
+<li data-list-item-id="ecba790d8ff1e070fe7df2052921220af">
+<strong>Request Type</strong>: Select the request type from the dropdown menu that should be used for the ticket created when a candidate joins in ADP Recruiting Management.</li>
+</ul><h3 id="h_01KPQRAZWFJTJZVBHKDFYB35J8">Sensitive Fields Settings</h3><p>The <strong>Sensitive Fields Settings </strong>section enables you to customize the integration settings according to your specific use case. It has the following setting:</p><ul><li data-list-item-id="e4f3cf3e1eb90fa73a4c8eed701dec7a5">
+<strong>PII fields</strong>: Enter a comma-separated list of field names that contain personally identifiable information (PII). The configured PII fields will be considered as sensitive data and will be excluded from the logs and reports.</li></ul><h3 id="h_01KPQRAZWFSM7S1FFW22HC5QZ2">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if <strong>Enable Logging</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><ul>
+<li data-list-item-id="e787db70b72499e08b1be772c52e03e3a">
+<strong>Select Log Type</strong>: Select the desired log type from the dropdown menu. This will decide the level of detail to be included in log insights. The following are the available options:<ul>
+<li data-list-item-id="e356be732170a12dcff4172175fed1ce3">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ee72f1aeaa6fd61625b7c62ce1ec7e2a9">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e6e42b3affaa2a7d441e1026b097aca61">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e96542a52cc7398cad1d9139fa5c55da6">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e5e6488e91e7cb435454a49386c25a50c">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eefd715e37c343dcf7f7cdd8245441dc4">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e8bfcec2d3b0a614f4aa9bd7e2c8174c7">
+<strong>Select Log Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e2f8d3318c6cb1a65f324da779041e0d8">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e04f43f649d9985bde9277cf7f85b477a">
+<strong>Include List</strong>: Select this option to log only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="ef59990d7053590a5fad788c462f15798">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the log.</li></ul>
+</li>
+<li data-list-item-id="e5201289bab6e02687c0124cc2862e857">
+<strong>Exclude List</strong>: Select this option to log only the attributes specified in the <strong>Custom exclusion list.</strong><ul><li data-list-item-id="e208ba8dc3663266dcd3915274dfbf4f6">
+<strong>Custom Exclusion list</strong>: Select the attributes to be excluded from the log.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01K5TY1G8QTYYA129P3KWESN2C">Report Settings</h3><p>The <strong>Report Settings</strong> section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Report Generation</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><ul>
+<li data-list-item-id="eac664c28cf805f6b0a3adfbc15c8802d">
+<strong>Group level reports</strong>: Enable this toggle button to</li>
+<li data-list-item-id="ef5691a64bfe3392195dea6198c01ee24">
+<strong>Reports split by results</strong>: Enable this toggle button to</li>
+<li data-list-item-id="ef56cb5b7bd35d59d844401de09f854f9">
+<strong>Select Report Type</strong>: Select a report type. This will decide the level of detail to be included in reports.<br/>The following are the available options:<ul>
+<li data-list-item-id="ededa47d9be7315ace0c777bd8f84f39e">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e0ea04f4f8ad106dda1bca92650e1ad03">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="eaea4fbb3750743db75fdf97c75af90a2">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ee74d553d08857f142679eb6686e3dca1">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e97fa7b67fc1220284d2e04717806576c">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e4daa4e899e0cca2de9e03d3c028e5aa3">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e68dd3bc6b63fe020a104f229edf9dd14">
+<strong>Select Report Level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="e95dc66ade4d420f973704bd41865f5b0">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e6e1048c0683c042ac27e566ef8042964">
+<strong>Include List</strong>: Select this option to report only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="e81bea31615a6b9d07e603b03ff9c6390">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="ee25a9932bf1d7834a8f77db636ac4ae6">
+<strong>Exclude List</strong>: Select this option to report only the attributes specified in the <strong>Custom exclusion list</strong>.<ul><li data-list-item-id="ee7e55d2dae22c7cf44107b36fad7b110">
+<strong>Custom Exclusion list</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01K5TY2F66RQRGHM0D3B23C2S3">Notification Settings</h3><p>The <strong>Notification Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Notifications</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><h4 id="h_01KNRH0CCKYTWKSDADWQVSDY3Y">Notification Template Settings</h4><p>Configure the following notification template settings:</p><ul>
+<li data-list-item-id="e22566c9a6bff9f815f11536d3149c067">
+<strong>Send Email Notification For Success</strong>: Select this checkbox to send email notifications for successful integration. When enabled, the <a href="#01KFD1AMVYPNY4PY2ZB7A64VGC">Success Execution</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e7485843f6a54a1ce3c458c2ee8b8a6eb">
+<strong>Send Email Notification For Failure</strong>: Select this checkbox to send email notifications for failed integration. When enabled, the <a href="#h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failure Execution</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e2180aeffe256580c2af0f0403ce00cd9">
+<strong>Enable Transaction Execution</strong>: select this checkbox to send the transaction template for the integration. When enabled, the <a href="#h_01KPMSJ4R07ANJZ3N7XKKR5WQ1">Transaction Template Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e489e90ba38d18e9233aaa9f9fe790e47">
+<strong>Attach report to email</strong>: Select this checkbox to attach the integration report to notification emails. When enabled, the <a href="#01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</a> section is displayed for further configuration.</li>
+</ul><h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4><p>Configure the following settings for the notification reports:</p><ul>
+<li data-list-item-id="e0a8135725d759181898214731d4a58b2">
+<strong>Select Report type</strong>: Select a notification type. This will decide the level of detail to be included in notifications. The following are the available options:<ul>
+<li data-list-item-id="e25e8d1641b980b000522b36704a5e479">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ee21af7a19a01fabd71d73f207d241ee4">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e39e937b6c37d8c540999c727a1c557a3">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="eb8e95c60c981ce13e8df34bdc9a09dba">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ee3c9bb0f09e80f9664e01961ec8e1b6f">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e08848f5638bba132ddf4d34260eeada4">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="eeff6c0c186299f75a1eb0b661a001c40">
+<strong>Select Report Level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="e2167ca6f17565574cd917d43819c3c61">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e4b053747fc431fcd5f1782d12619bd48">
+<strong>Include list</strong>: Select this option to report only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="e7570be82f60a2af8a0026b86cc60729c">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="ef6c7ac4378038d31c428a59da98f281d">
+<strong>Exclude list</strong>: Select this option to report only the attributes specified in the <strong>Custom exclusion list</strong>.<ul><li data-list-item-id="e7d09ac002a97518ccc24527ebca2aeea">
+<strong>Custom Exclusion list</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="01KFD1AMVYPNY4PY2ZB7A64VGC">Success Execution</h4><p>Configure the following notification settings for the successful integration:</p><ul>
+<li data-list-item-id="e1e2ca5e60f39457bf53ae19a76e2d379">
+<strong>Group Level Reports</strong>: Enable this toggle button to</li>
+<li data-list-item-id="e4131bf1feea093a90b515261a8eb586a">
+<strong>Reports split by results</strong>: Enable this toggle button to</li>
+<li data-list-item-id="e5c5a200d85c19af78c2315065e24172d">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e200c0b0ddc19e6847572fedd38cc3af1">
+<strong>CC: </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e826cd90a5da812beea144ac406f8ff87">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
+<li data-list-item-id="e39c99c08446316ef6c9889a63af45f13">
+<strong>Integration Execution Success Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+</ul><h4 id="h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failure Execution</h4><p>Configure the following notification settings for the failed integration:</p><ul>
+<li data-list-item-id="e0ee0879aed408f3cc606ef1ce46db492">
+<strong>Group Level Reports</strong>: Enable this toggle button to</li>
+<li data-list-item-id="e4715bee5be68b0a23c951990614c04a9">
+<strong>Reports split by results</strong>: Enable this toggle button to</li>
+<li data-list-item-id="e937f19ddc5e08cec3bafec97ba8a05b5">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="ea4b9ce3fd0a622bcfd61eb6c9af8011d">
+<strong>CC</strong>:<strong> </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="ec3fd7f31764e81957db1f9ee552a5409">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="e965f402b229b28fbee20d3b6fe8b66e5">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h4 id="h_01KPMSJ4R07ANJZ3N7XKKR5WQ1">Transaction Template Settings</h4><p>Configure the following transaction template settings for integration:</p><ul>
+<li data-list-item-id="e1cc55522ada1cd09148f76a0ea8520c8">
+<strong>Create transaction</strong>: Enable this toggle button to send a notification upon each  to create a transaction for integration. When enabled, the <a href="#h_01KPQC1R5CS7NX5V5N8YXP4JET">Create Transaction Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eeb0634ada9bc668913f92449c0c1f2df">
+<strong>Update transaction</strong>: Select this checkbox to create a transaction for integration. When enabled, the <a href="#h_01KPQD0SGWKNJXT5CAAPT8GBGF">Update Transaction Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e8021238670047a4c4029831a0c1afe7c">
+<strong>Delete transaction</strong>: Select this checkbox to create a transaction for integration. When enabled, the <a href="#h_01KPQD0SGWJ17WEYEXGSM62GW8">Delete Transaction Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ef64287adcc006a67ca74f3a7b41db611">
+<strong>Deactivate transaction</strong>: Select this checkbox to create a transaction for integration. When enabled, the <a href="#h_01KPQD0SGWABMNSJ78V9TAE6ZK">Deactivate Transaction Notification Settings</a> section is displayed for further configuration.</li>
+</ul><h5 id="h_01KPQC1R5CS7NX5V5N8YXP4JET">Create Transaction Execution</h5><p>Configure the following notification settings for the create transaction:</p><ul>
+<li data-list-item-id="ecc79b396195cfc0dba38cd23896e02e5">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e79057281710d575c1f721bd1247c8b4f">
+<strong>CC</strong>:<strong> </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e81098f12b42f49790df2873623a83f4a">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for creating transaction execution.</li>
+<li data-list-item-id="e80c8feea12e6e4e39b2ea37b81937337">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for creating transaction execution.</li>
+</ul><h5 id="h_01KPQD0SGWKNJXT5CAAPT8GBGF">Update Transaction Execution</h5><p>Configure the following notification settings for the update transaction:</p><ul>
+<li data-list-item-id="ee97df8ca320fa5af5df9bb3c4768c2b6">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e5945f4cb2543672702a35214e1339285">
+<strong>CC</strong>:<strong> </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="eb423e08c7779ca41f6f36881030e73c3">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for update transaction execution.</li>
+<li data-list-item-id="e624348c48ac7773fe9da74d1f59dadca">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for update transaction execution.</li>
+</ul><h5 id="h_01KPQD0SGWJ17WEYEXGSM62GW8">Delete Transaction Execution</h5><p>Configure the following notification settings for the delete transaction:</p><ul>
+<li data-list-item-id="e1ee91239518617115c300d1d6541cf5c">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="ecc20554e5ea6e8f6f17f9daf7805eee6">
+<strong>CC</strong>:<strong> </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="eb274ad11d4fde3cd0f5cc1faca29319c">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for delete transaction execution.</li>
+<li data-list-item-id="e0ea54d4bd341916faa34a31b85b11ec9">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for delete transaction execution.</li>
+</ul><h5 id="h_01KPQD0SGWABMNSJ78V9TAE6ZK">Deactivate Transaction Execution</h5><p>Configure the following notification settings for the deactivated transaction:</p><ul>
+<li data-list-item-id="e5e6674fea4a0c9f5fcc9845b8233244a">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="ea3833d29dd488cc667f7a571c6c5908d">
+<strong>CC</strong>:<strong> </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e88178921ceab85da53f321d7f82ac12a">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for the deactivated transaction execution.</li>
+<li data-list-item-id="e6c370ecdea44640d137f1273b5986ed2">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for deactivated transaction execution.</li>
+</ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insight Settings</h3><p>The <strong>Log Insight Settings</strong> section enables you to customize the integration log insight settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Log Insights</strong> is enabled in the <a href="#h_01KP5B67GT4RG40ST6MBSYGHNQ">General Settings</a> section.</p><ul>
+<li data-list-item-id="e9a3629614f7aa9a5cff984fc25593180">
+<strong>Enter Dashboard Name</strong>: Enter the dashboard name for log insights.</li>
+<li data-list-item-id="ec697803caed73f77063be2757a4bc70b">
+<strong>Select Analytics Type</strong>: Select an analytics type. This will decide the level of detail to be included in log insights. The following are the available options:<ul>
+<li data-list-item-id="e59e8d937595f0ef570750c81d49f8115">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ee9734a6d08f4b399d73f0c19698ceeff">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e5e19a4c335d18a82dcf7e281f634a8bf">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e23ef9b83d5385bdaf7eb09dc2aaa3100">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e57f2a0408e57cf4380ba810b1d59f63d">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ecd88b891f7911332214b51cad1deb715">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e3c2945fcf606f3a0739a582935e3b317">
+<strong>Select Analytics Level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ea7859f8ee1b21e8fc443bfe1d6ef681a">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e32a4ae55fea2c91bb67016937a5fe543">
+<strong>Include List</strong>: Select this option to log only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e893a274f151a9babdfa02bcd3427d212">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the log insights.</li></ul>
+</li>
+<li data-list-item-id="e77eddfff68a2d4ed0341a29ef82e5a6a">
+<strong>Exclude List</strong>: Select this option to log only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="ee09bfb797e235ce7aaed49e2fb5bec8c">
+<strong>Custom Exclusion list</strong>: Select the attributes to be excluded from the log insights.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01K04HD998SCMWKJ7BWM43V581">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the <strong>ADP Recruiting Management</strong> to the <strong>ManageEngine ServiceDesk</strong> application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side, and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration. </p><h2 id="h_01K06FVR3HY5TQCJK1AC2W07CZ">Tables</h2><p id="h_01J7XEGA5M57172Y4JT9508Q9D"><span><span>In the Tables tab, you can add tables to the integration. Refer to the </span></span><a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank"><span><span>Using Tables in Integrations</span></span></a><span><span> guide for more details.</span></span></p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span><span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
+  </div>
+</body>
+</html>

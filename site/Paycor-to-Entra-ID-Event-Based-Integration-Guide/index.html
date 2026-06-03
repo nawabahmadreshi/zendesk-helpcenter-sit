@@ -22,6 +22,7 @@
 <h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This guide outlines the process of synchronizing employee termination events from Paycor using Webhooks to Microsoft Entra ID to enable real-time user deactivation.</p><p>To identify user records across both systems, the integration uses the <strong>employeeNumber</strong> attribute from Paycor and matches it to the <strong>employeeNumber</strong> in the Microsoft Entra ID as a correlation attribute.</p><h2 id="h_01KHR3961J01YSVRG3Q6Z14GED">Key Functions</h2><p>The Paycor to Microsoft Entra ID event-based integration provides the following functions:</p><ul>
 <li data-list-item-id="e15aa64099fc8e36c30d3c3f2753e0b6b">Synchronizes employee termination events from Paycor to Microsoft Entra ID. The integration identifies terminated employees in Paycor, locates the corresponding user in Microsoft Entra ID, and deactivates the user’s account.</li>
 <li data-list-item-id="e58dbfb458ba681c78e6e7026797b22c7">Sends an automated notification email to the configured recipients upon successful integration execution.</li>
+<li data-list-item-id="e3d3babd59fb5448971eef3aed0ba5d04">Handles user updates and terminations from Paycor to Entra ID.<br/><strong>Note</strong>: Configure LaidOff, Deceased, Resigned, Retired, Terminated, LeaveWithoutPay, LeaveWithPay, and FMLA in the Paycor tenant attribute, <strong>Provide the list of Onboarding statuses to consider as inactive</strong>.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="eac4951fd2d22eca7753d32227b98d530">
 <strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
@@ -40,23 +41,201 @@
 <li data-list-item-id="ebc9c6b61137428d3291a9bf41c7af13b">Log in to the Aquera Admin portal.</li>
 <li data-list-item-id="e68168e472d1d85b57e0f9279ffc52c93">Navigate to <strong>Integrations</strong> from the left side panel.</li>
 <li data-list-item-id="e37b8ad1c35f42eba17179083b161a588">Click<strong> Create Integration</strong>.</li>
-<li data-list-item-id="e6d5336fde8d0fd48a974a943c9e7c57a">Search for <strong>Entra ID / Paycor (Webhook) </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="e6d5336fde8d0fd48a974a943c9e7c57a">Search for <strong>Entra ID / Paycor [Webhook] </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
 <li data-list-item-id="e418642dd282a904d53a15701bba63d5b">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
 <li data-list-item-id="e9c5c6f97a61f335b0a94b25436173b2d">Enter a name and a description for the integration.</li>
 <li data-list-item-id="e81dc0c5ea024ec5b5bb5ce392992cf6d">Select both application connector instances from the dropdown menus.</li>
 <li data-list-item-id="e112286b7b0c382d4dc9d4d519ec86937">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
-</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
-<li data-list-item-id="ebe667388157d98542a9368bce90bc5ec">
-<strong>Report - Only Mode</strong>: Select this option to generate a report detailing the data changes that would happen, but without applying them.</li>
-<li data-list-item-id="ebe3801cdf214f2c9ec550e432dbb3432">
-<strong>Enable Notification Setting</strong>: Select this option to enable the integration-related notifications. When enabled, the <a href="#h_01K0EPNYJEHDW4TQRTN6PXT579">Notifications</a> section is displayed for further configuration.</li>
-</ul><h3 id="h_01K0EPNYJEHDW4TQRTN6PXT579">Notifications</h3><p>Configure the following settings for email notifications:</p><ul>
-<li data-list-item-id="e00b340fc28a8f357f060b10f47c551f3">
-<strong>Send Email Notification To</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent.</li>
-<li data-list-item-id="e51528ed188c5671cf2df77b587a4281a">
-<strong>Subject</strong>: Enter the content that must be used as the email subject for successful integration execution.</li>
-<li data-list-item-id="e2d096bbe55e984e8043bb7517c55a2d0">
-<strong>Email Body on Successful Integration Execution</strong>: Enter the content that must be used as the email body in the notifications for successful integration execution.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01K04AVZNHW4RD086HGMDCJSM6">Integration Settings</h4><p>Configure the following integration settings:</p><ul>
+<li data-list-item-id="ecb3c1702411098a61e3e2dd55e803546">
+<strong>Enable User Management: </strong>Select this checkbox to synchronize users' data from Paycor to Entra ID. When enabled, the <a href="#h_01KKGR0E1X4WS9VGW91EW6JMB7">User Management</a> sections appear, allowing you to configure additional integration settings.</li>
+<li data-list-item-id="e83b97351de3c8ad123d56ca00e4a7121">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+</ul><h4 id="01KF2RH05MP5RR93W69VEMT2AR">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e138c408c0de314a0c849d1ad526acd90">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the <a href="#h_01KGPAMEAW2HCGNSBF99C8ADNF">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e4ea98b2356a6063edb55966832bb4775">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When enabled, the <a href="#01K5TY2F66RQRGHM0D3B23C2S3">Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="edd1f65e9161884090b4aeea09ef5f8da">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When enabled, the <a href="#01K5TY1G8QTYYA129P3KWESN2C">Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e2095e73d9f4da0c22354925d9f3fd164">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When enabled, the <a href="#01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insights</a> section is displayed for further configuration.</li>
+</ul><h3 id="h_01KKGR0E1X4WS9VGW91EW6JMB7"><span>User Management</span></h3><p><span>The <strong>User Management</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</span></p><p><strong>Note</strong>: This section appears only if the <strong>Enable User Management</strong> is enabled in the <a href="#h_01K04AVZNHW4RD086HGMDCJSM6">Integration Settings</a> section.</p><h4 id="01KF2ST6Y7GH70E2MJCYT5X2DZ">Correlation Settings</h4><p>Configure the following correlation settings:</p><ul>
+<li data-list-item-id="e085d95a84fcf5117387fc700d3ccccea">
+<strong>Source Correlation Attribute</strong>: Select the Paycor correlation attribute to distinctly find the associated Entra ID user. For example, select <span>employeeNumber</span>.</li>
+<li data-list-item-id="e59e5a0ec79d16e4dcaae4216f659cfdf">
+<strong>Target Correlation Attribute</strong>: Select the Entra ID correlation attribute to distinctly find the associated Paycor user. For example, select <span>employeeNumber</span>.</li>
+</ul><h4 id="h_01KRG2661TDEHWCKHA9TA6VZHE">User Settings</h4><p>Configure the following settings based on your use case:</p><ul>
+<li data-list-item-id="e64e4cf0525d6bedc54f288da462129cf">
+<strong>Enable User Update</strong>: Select this checkbox to update a user from Paycor to Entra ID. </li>
+<li data-list-item-id="e892bc217fcb64104106049e4fad1ba12">
+<strong>Enable User Terminate</strong>: Select this checkbox to terminate a user from Paycor to Entra ID.</li>
+</ul><h4 id="h_01KRG2C2G6577BS6ZZHRQYW1HM">User Process Settings</h4><p>Configure the following settings to define which employee records must be synchronized in Entra ID:</p><ul><li data-list-item-id="e0a5a339ebdd54f3915c5a2a8e5e711d9">
+<strong>Match Condition</strong>: Select a condition from the dropdown menu to specify which employee records must be synchronized from Paycor to Entra ID. The following are the available options:<ul>
+<li data-list-item-id="ea478d2a911fecbaaa84b552de38333d7">
+<strong>All Users</strong>: Select this if you want to synchronize all employees from Paycore to Entra ID when the corresponding event is triggered.</li>
+<li data-list-item-id="e211ae6c186ce07827ade2e2a5e930cc6">
+<strong>All active Paycor Users</strong>: Select this if you want to synchronize only active users from Paycor to Entra ID when the corresponding event is triggered.</li>
+<li data-list-item-id="e388d6e82f869d06e5cd5c6a9253aaff4">
+<strong>Custom Condition</strong>: Select this if you want to define a condition to identify employee records to be synchronized. When selected, the following parameter is displayed:<ul><li data-list-item-id="e1a0d9be9029bf8b5d710943086953863">
+<strong>Custom Condition</strong>: Enter an expression that defines the condition for synchronizing employees from Paycor to Entra ID. For example, if you enter <em>SOURCE[IAN].officeLocation != "California"</em> in this field, only employees whose office location is California will be synchronized from Paycor to Entra ID when the event is triggered.</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KKGR0E1X2J8YA1DX900C9W7D"><span>Sensitive Fields</span></h3><p><span>The <strong>Sensitive Field Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</span></p><ul>
+<li data-list-item-id="e67fd2142e9463c9c02ec6a0874a14f04"><span><strong>PII Fields</strong>: Enter the field names that contain personally identifiable information (PII).</span></li>
+<li data-list-item-id="ee1015f49c95d2184644e72b1d93a2e64"><span><strong>GUID Fields</strong>: Enter the field names that contain globally unique identifiers (GUIDs).</span></li>
+<li data-list-item-id="ef66d6467e8865758413571672f55d8b2"><span><strong>Employee ID Fields</strong>: Enter the field names that contain employee IDs.</span></li>
+</ul><h3 id="h_01KGPAMEAW2HCGNSBF99C8ADNF">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if <strong>Enable Logging</strong> is enabled in the <a href="#01KF2RH05MP5RR93W69VEMT2AR">General Settings</a> section.</p><ul>
+<li data-list-item-id="e37789289230cc90f0554516ddd38611b">
+<strong>Select Log Type</strong>: Select a log type from the dropdown menu. This will decide the level of detail to be included in logs. The following are the available options:<ul>
+<li data-list-item-id="eb92344e06df29b82a47ede86247029a1">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ed792539e891c9f9807103577473e6f9a">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="eaafa98aa6dc6db7138a02bdc7d2afb03">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e1bf1e48b8077c7d47a865e707cb91273">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e04cb8fb40a714d56474e1535e039e776">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eb31f4331babba024dde66eb82c5f4382">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e4b39b68e6eecc989faca4123321d089a">
+<strong>Select Log Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ede66b320250b56e47542f239c20f1612">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ed2065622d48528c8373546067fcaa4e1">
+<strong>Include List</strong>: Select this option to log only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e859da21f95fb1bde09195fe77809a157">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the log.</li></ul>
+</li>
+<li data-list-item-id="ecc81df33e0a53b6a30d6014334e77f4f">
+<strong>Exclude List</strong>: Select this option to log only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="e0006ff7f700b229a45b7b941980e3a1b">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the log.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01K5TY1G8QTYYA129P3KWESN2C">Report Settings</h3><p>The <strong>Report Settings</strong> section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Report Generation</strong> is enabled in the <a href="#01KF2RH05MP5RR93W69VEMT2AR">General Settings</a> section.</p><ul>
+<li data-list-item-id="e6b3ccb72d8812142d4c3ec7e7f77ec07">
+<strong>Select Report Type</strong>: Select a report type from the dropdown menu. This will decide the level of detail to be included in reports. The following are the available options:<ul>
+<li data-list-item-id="e99dbca3090233b852682879ac2602d74">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e3755dfc45ba62f6f8620510aac06998d">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="efb39dda002d32f65d3b06449cbac7345">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e5b1842d2ca15212163e886297576130a">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ef4738bcc2ec6c3ba1655b69b1c984b94">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e4b000af4682b0bb180ca08335779de08">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e965ff96e478279bdcbbcd8f78ea6ff5c">
+<strong>Select Report Level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ea428874a4071ac03c6dec525a13de0e4">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e9c13a31c91f2f1191b92e126871cc0ec">
+<strong>Include List</strong>: Select this option to report only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e4b0f39f1e3111cff4a006f1ba65230b9">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="ebd295dc21f099de5d65036f10aaff470">
+<strong>Exclude List</strong>: Select this option to report only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="ea05d1eb87cb45a75cd3d034229660deb">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01K5TY2F66RQRGHM0D3B23C2S3">Notifications</h3><p>The <strong>Notifications</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Notifications</strong> is enabled in the <a href="#01KF2RH05MP5RR93W69VEMT2AR">General Settings</a> section.</p><h4 id="h_01K9750G1WVCA080W3BF2A4RY4">Notification Template Settings</h4><p>Configure the following settings for the notification template:</p><ul>
+<li data-list-item-id="ee5cf071a795f150cacee3a0d2e7c5c93">
+<strong>Send Email Notification for Success</strong>: Select this checkbox to enable notification for successful integration. When enabled, the <a href="#01KFD1AMVYPNY4PY2ZB7A64VGC">Success Execution</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e10008a133283b069a195020ed3d992f8">
+<strong>Send Email Notification for Failure</strong>: Select this checkbox to enable notification for failed integration. When enabled, the <a href="#h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failure Execution</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eeca40201a6583a4d177143646cf0f5b3">
+<strong>Attach report to email</strong>: Select this checkbox to attach the integration report to notification emails. When enabled, the <a href="#01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</a> section is displayed for further configuration.</li>
+</ul><h4 id="01KFD1AMVYPNY4PY2ZB7A64VGC">Success Execution</h4><p>Configure the following notification settings for the successful integration:</p><ul>
+<li data-list-item-id="ecdf3fb12021f06d80c0e8240f374ae06">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e807f91a7001e4b9f7a5ae232d8e0d63e">
+<strong>CC: </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e9de1ce2556b2329bbc3d5b780e9285c2">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
+<li data-list-item-id="ef62a90d3c1befde8759f62fed94c7ea0">
+<strong>Integration Execution Success Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+</ul><h4 id="h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failure Execution</h4><p>Configure the following notification settings for the failed integration:</p><ul>
+<li data-list-item-id="efeee5b7017421e45b6a533630f26264b">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e212b3c9bb4ab5ba8f904758824a1f738">
+<strong>CC</strong>:<strong> </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e201ef2c375de4b11e05261159d61a490">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="ec65ed109dc7a14315a60332479c4d65a">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4><p>Configure the following settings for the notification reports:</p><ul>
+<li data-list-item-id="e403fb151680f4e2342440460be19fbb9">
+<strong>Select Report Type</strong>: Select a notification type from the dropdown menu. This will decide the level of detail to be included in notifications. The following are the available options:<ul>
+<li data-list-item-id="e86184c8a4f052950dd59350148311067">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e264701d7acad58a3eda4ad50143d793c">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e8fbc03255b7e11e505817de8843d6df2">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e058f92143ada1311aeac18bdd42b26f4">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ef5ca82594c0933b63b7b7c6988e9cc6e">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ecc609cbe45fb35237b544c58903432ac">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e335723fd6b7d4dc05427e4595ccdcb01">
+<strong>Select Report Detail Level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="e7270347c68d73888bb2ea43c842a46ff">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e14c3911d93d8993cd468e548b2a85edc">
+<strong>Include List</strong>: Select this option to report only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e7dd744288d5baa8b5daec4b70fc05ed5">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="e7b7f831501e3c6e74e5af97be5cb18e6">
+<strong>Exclude List</strong>: Select this option to report only the attributes specified in the <strong>Custom Exclusion List</strong>.<ul><li data-list-item-id="e3cac9830d8a68541350889af1881a7d3">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insights</h3><p>The <strong>Log Insights</strong> section enables you to customize the integration log insight settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Log Insights</strong> is enabled in the <a href="#01KF2RH05MP5RR93W69VEMT2AR">General Settings</a> section.</p><ul>
+<li data-list-item-id="eafa2d671197ff30c56a252bcb012e1a8">
+<strong>Enter Dashboard Name</strong>: Enter the dashboard name for log insights</li>
+<li data-list-item-id="ed187d46b6261111292f8037ba2a58b4e">
+<strong>Select Analytics Type</strong>: Select an analytics type from the dropdown menu. This will decide the level of detail to be included in log insights. The following are the available options:<ul>
+<li data-list-item-id="ef6117ab9a166cc6fb39455085d3db8b3">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e8f7c153ae52ea4884baab4e6d0dc1c5f">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ee20afbbcfe1c0e2c1acfc9a3b071b63f">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ea231abb3d93985a90e29729e679c368f">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e4780bf1a3ef53bf8b994db18789eaee4">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="edc753c13c71d195be3aa0a145b6c9a20">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e12f558f4802b3822f6e5bf9d1005c0db">
+<strong>Select Analytics Level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e8cb5b684d13e0146b9da3707ade579e3">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e4330c904833e930afd48d00c736ad0bd">
+<strong>Include List</strong>: Select this option to log insight only of the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="eb9a1c7fc15b15608654b96597ed70238">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the log insights.</li></ul>
+</li>
+<li data-list-item-id="eb6adfe4c1ac184cacab6496956d02f8d">
+<strong>Exclude List</strong>: Select this option to log insight only of the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="efa603b79869ef86ad6dc6494060bbdea">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the log insights.</li></ul>
+</li>
+</ul>
+</li>
 </ul><h2 id="h_01JVP6WJ681AK5EKZYA0EHHYMZ">Event</h2><p>The <strong>Event</strong> tab is used to configure the webhook details. </p><p>Provide the following details and save the changes:</p><ul>
 <li data-list-item-id="ee5d2556c455cf682c48476806ece9aeb">
 <strong>Event Source</strong>: Select your Paycor application from which employee-termination events are triggered.</li>

@@ -19,20 +19,14 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Bob / UKG Ready integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize employee data, including their contract details and compensation details to the UKG Ready application.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The Bob / UKG Ready integration performs the following functions:</p><ul><li data-list-item-id="e60e9156f365a708f7dfe29180feef40b">Retrieves the data of employees from Bob and synchronizes the data to a specific company code in UKG Ready.</li></ul><p> </p><p> </p><p> </p><p> </p><ul>
-<li data-list-item-id="e1eeb1b56d36866c5951296a92130e783"><span>Supports filtering the data of a specific ADP worker by their Position ID or Associate ID</span></li>
-<li data-list-item-id="ec999311c472b068d06105eb7a9dad86d"><span>Supports filtering workers' data based on their statuses, for creations and updates in Viewpoint Spectrum</span></li>
-<li data-list-item-id="ede9d96996c2193f8fd1a43ff74ed6442">
-<span>Creates and updates users in Viewpoint Spectrum.</span><ul>
-<li data-list-item-id="e4cc477ae6686ade7e0d4254f2269e2aa"><span>Creates new users in Viewpoint Spectrum when new workers are added in ADP Workforce Now</span></li>
-<li data-list-item-id="e59a98189874280769e1c2340f090eb80"><span>Updates user details in Viewpoint Spectrum when any changes are made to the existing workers in ADP Workforce Now</span></li>
-<li data-list-item-id="ec0d180eea329472d245630d52515955a"><span>Supports configuring conditions for creating and updating users</span></li>
-</ul>
-</li>
-<li data-list-item-id="e1dd1c7b35cfc6846187f79167cf05eb9"><span>Retrieves workers, and creates and updates users based on the limits set in the integration.</span></li>
-<li data-list-item-id="eb04f1b8b8af77514e1c6947c531d3319"><span>Performs full synchronization or incremental synchronization of workers based on the configuration.</span></li>
-<li data-list-item-id="e9d73e4bc23dc382e791c04c99732c9cd"><span>Generates logs, reports, and analytics dashboards based on the configurations.</span></li>
-<li data-list-item-id="eb034f7964886307a513e48a22ab5fdbc"><span>Sends notification emails with reports on each integration run based on the configuration.</span></li>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This integration enables you to synchronize employee data, including their contract details and compensation details to the UKG Ready application.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The Bob / UKG Ready integration performs the following functions:</p><ul>
+<li data-list-item-id="e60e9156f365a708f7dfe29180feef40b">Retrieves the data of employees from Bob and synchronizes the data to a specific company code in UKG Ready.</li>
+<li data-list-item-id="e73a7fde7572d5cae2475c68737cfd80c">Retrieves the employment contract details of employees from Bob and adds those details to the user records in UKG Ready, based on the integration settings.</li>
+<li data-list-item-id="e030ae0542dc9d076cc30358e8d45e79b">Retrieves the compensation details of employees from Bob and adds those details to the user records in UKG Ready, based on the integration settings.</li>
+<li data-list-item-id="e46227238ed1198eb2c5c8d2cfbdc3a47">Updates the attributes of employees, contract information, and compensation details in UKG Ready based on the attribute mappings configured in the integration.</li>
+<li data-list-item-id="e1dd1c7b35cfc6846187f79167cf05eb9">Retrieves Bob employees, and creates, updates and terminates UKG Ready users based on the limits set in the integration.</li>
+<li data-list-item-id="e9d73e4bc23dc382e791c04c99732c9cd">Generates logs, reports, and analytics dashboards based on the configurations.</li>
+<li data-list-item-id="eb034f7964886307a513e48a22ab5fdbc">Sends notification emails with reports on each integration run based on the configuration.</li>
 </ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="eeb9dba040a18914855067846d5b58476">
 <strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
@@ -77,6 +71,164 @@
 <strong>Bob employee attribute</strong>: Select an employee attribute in Bob that is used to find a matching user in UKG Ready.</li>
 <li data-list-item-id="eb9836cfc6de6f12a144fc17c7eafef80">
 <strong>UKG Ready employee attribute</strong>: Select the corresponding UKG Ready employee attribute that is used to find the matching employee records.</li>
+</ul><h3 id="h_01KT6483R1YATTAQ1W88YTTB80">Sensitive Fields</h3><p>The <strong>Sensitive Field Settings</strong> section enables you to define the employee fields that should be treated as sensitive data and unique identifiers. These settings are used by the integration when generating reports, logs, and Insights data, ensuring that employee information is displayed and handled according to your configured preferences. </p><p> This section has the following settings:</p><ul>
+<li data-list-item-id="e67fd2142e9463c9c02ec6a0874a14f04">
+<strong>PII Fields</strong>: Enter the field names that contain personally identifiable information (PII).</li>
+<li data-list-item-id="ee1015f49c95d2184644e72b1d93a2e64">
+<strong>GUID Fields</strong>: Enter the field names that contain globally unique identifiers (GUIDs).</li>
+<li data-list-item-id="ef66d6467e8865758413571672f55d8b2">
+<strong>Employee ID Fields</strong>: Enter the field names that contain employee IDs.</li>
+</ul><h3 id="01K5TY1G8QTYYA129P3KWESN2C">Report Settings</h3><p>The <strong>Report Settings</strong> section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled<strong> Report generation</strong> in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">Operational Settings</a> section.</p><ul>
+<li data-list-item-id="e87f2077cabb88de98656d1afd4da2696">
+<strong>Select Report Type</strong>: Select a report type from the dropdown menu. This will decide the level of detail to be included in reports. The following are the available options:<ul>
+<li data-list-item-id="e06dea260341c5ce48bb88e779b688ea0">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ec1483ab7c86300234b23bd2b861b0738">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e960d542211f1c03599775b893fea4923">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e29e67f7b7daeba59cac030634a4906ea">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ec7be71332d31e60465783171104723a6">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e7dde2e6beaae8a12f3984f46170d100b">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e82f1dcad86031a9f0dd6e24d94acff59">
+<strong>Select Report Level</strong>: Select the desired report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ea50ca1afcf1888a0f730b4c5b2921dad">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e6bb907e582a09dfdd1010988cf66e05e">
+<strong>Include List</strong>: Select this option to report only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e1d175b922e17b2c99f002ccf003095ae">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="e4d6803fd315cf2169b0d459363cf1975">
+<strong>Exclude List</strong>: Select this option to report only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="e5e95d0125f7bfe4a1965b8e4fed33755">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KGPAMEAW2HCGNSBF99C8ADNF">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled<strong> Logging</strong> in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">Operational Settings</a> section.</p><ul>
+<li data-list-item-id="ee4565f4dae85f23a6f5f57f851a6deb5">
+<strong>Select Log Type</strong>: Select a log type from the dropdown menu. This will decide the level of detail to be included in logs. The following are the available options:<ul>
+<li data-list-item-id="eb2e4b815555be5a0c9ed52f639f22cc2">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ea25b19c1713f834f0b1fbe3ddfa58584">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="eda080c1bf91e2d982f34ad9a760afc2a">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e29660a7c3a38b22cfed6be7d036114b2">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e6e3984365c776a4ebf5571ea570022d8">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e3777ec7a28ffecbe155103dfcffad389">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e5b6c516243cab5f424e5862281cbf0fe">
+<strong>Select Log Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e4b2710b771309dce4ba9b934b936f6be">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e7bd5c6fa7fc90f1c28860d777952513c">
+<strong>Include List</strong>: Select this option to log only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e6292919e7ed265d5e53b74edf1835d12">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the log.</li></ul>
+</li>
+<li data-list-item-id="ea99432a2400847c4a411fbc2b863c09f">
+<strong>Exclude List</strong>: Select this option to log only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="eb7763f2201f61473d16166694298056b">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the log.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01K5TY2F66RQRGHM0D3B23C2S3">Notifications</h3><p>The <strong>Notifications</strong> section enables you to customize the email notification settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled<strong> Notifications</strong> in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">Operational Settings</a> section.</p><h4 id="h_01K9750G1WVCA080W3BF2A4RY4">Notification Template Settings</h4><p>Configure the following settings for the notification template:</p><ul>
+<li data-list-item-id="ec5d431eae3dcc01a58ad596c2bb34fcf">
+<strong>Send email notifications for success</strong>: Select this checkbox to enable notification for successful integration. When enabled, the <a href="#01KFD1AMVYPNY4PY2ZB7A64VGC">Success Execution</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e8ac2c83120ec49bab475b55956a8e365">
+<strong>Send email notification for failures</strong>: Select this checkbox to enable notification for failed integration. When enabled, the <a href="#h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failure Execution</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e95240a4660c7d9848646efe553494ae7">
+<strong>Attach report to email</strong>: Select this checkbox to attach the integration report to notification emails. When enabled, the <a href="#01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</a> section is displayed for further configuration.</li>
+</ul><h4 id="01KFD1AMVYPNY4PY2ZB7A64VGC">Success Execution</h4><p>Configure the following settings for the notification of successful integration runs:</p><ul>
+<li data-list-item-id="ed54fefd6a0692f48946431d100a93665">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="eb73a808639211fbea24990477fbd81c0">
+<strong>CC: </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e6ab06db44ae12b4dd04ff7400c58aa02">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
+<li data-list-item-id="e91de3e515da33b05b22ce643982ad1ee">
+<strong>Integration Execution Success Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+</ul><h4 id="h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failure Execution</h4><p>Configure the following notification settings for the failed integration runs:</p><ul>
+<li data-list-item-id="ef80cb8476d2e68546641ec860067ddc1">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e3d6ec2b4968703ec4ef8763f8269c400">
+<strong>CC</strong>:<strong> </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e3cb1bd6a5171184ce2044bb3599d9af1">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="eff0947932d48aec8b35deaf5a58dda9e">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4><p>Configure the following settings for the integration reports that will be attached to the email:</p><ul>
+<li data-list-item-id="e8fcc190b3bdc786f20a41d21c8c3cd51">
+<strong>Select Report Type</strong>: Select a notification type from the dropdown menu. This will decide the level of detail to be included in notifications. The following are the available options:<ul>
+<li data-list-item-id="eef306246687b344b0ac53589e07862d6">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ef52fcf4ab7c384dbc11882cc048a45cf">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e4f77f3d5d7b9a5ed858da2fd1c5c47b7">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ea33c6d4080cb12d772c2bee062bd344a">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e4513c3fc1d2d94865889cdad1bb0f0f7">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e55aa0a9fdd934107de4b97b688d44142">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e4d4f0d681416a3a5b481b91d3f4bffe0">
+<strong>Select Report Detail Level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="e92bfa57e01f0253bd17c861b7603b270">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e1ec6c7589df3a2ada09fc810ea1b478c">
+<strong>Include List</strong>: Select this option to report only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e0a290bd3da53f905cd8db1caf6db6c84">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="ed4e07f27c06aeb32664f1ca1fa2d2a4a">
+<strong>Exclude List</strong>: Select this option to report only the attributes specified in the <strong>Custom Exclusion List</strong>.<ul><li data-list-item-id="e44b6415d89bebcc5bc9b7db948f1dff3">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01KAB4M2RSH1S3C6QGA5KJ5HRH">Log Insights</h3><p>The <strong>Log Insights</strong> section enables you to customize the Insights settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled<strong> Insights</strong> in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">Operational Settings</a> section. </p><ul>
+<li data-list-item-id="e76fcf3fe48a3c2c81945b2e4da2978fc">
+<strong>Enter Dashboard Name</strong>: Enter the dashboard name for log insights.</li>
+<li data-list-item-id="edb00e327937afa4bcc09d31d9567c5d8">
+<strong>Select Analytics Type</strong>: Select an analytics type from the dropdown menu. This will decide the level of detail to be included in log insights. The following are the available options:<ul>
+<li data-list-item-id="ef06da4904d846e6fe9ba1217a18285bc">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e672d34a26c0c6738b32d6ceaa9d0583a">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e43ce2d737ce4f1479291a45b9a0e9c90">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e6eeae5454159127f6eec4df4c9b43cab">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e744f521b8d1f4b68818433904cf9ee6e">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ef9b0e254926a9aa024955d73bd75b0fb">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="ef5a9e1032b3138927dbe86128c408d03">
+<strong>Select Analytics Level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ecc7475b7a154d15691d87de71b81b25e">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e235b77e4dadec9bdb128e62a75b81fe4">
+<strong>Include List</strong>: Select this option to log insight only of the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="ef090ca3c1da5dab1c181704ffe43ecf9">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the log insights.</li></ul>
+</li>
+<li data-list-item-id="ebecc27d7e2f0894953ad98570b0da34d">
+<strong>Exclude List</strong>: Select this option to log insight only of the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="ece11b877ac956e92560daff085261ea1">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the log insights.</li></ul>
+</li>
+</ul>
+</li>
 </ul><h2 id="h_01KSMQH2ZTZ24NCC7BAP8NGFP0">Bob Settings</h2><p>This tab includes the settings related to the retrieval of employee details from the Bob application.</p><h3 id="h_01KSMQV5M7HSX0NRVSGEBGX4KS">Eligible Employees Filter</h3><p>This section enables you to set the configurations for filtering the employees that must be considered for synchronization to UKG Ready.</p><ul>
 <li data-list-item-id="e976af3a7cbac4c7d4fc5bbb7eddd2b87">
 <strong>Site filter</strong>: Select the sites from which the employees need to be retrieved for synchronizing to UKG Ready. Only employees associated with the chosen site(s) will be retrieved and processed.</li>
@@ -129,114 +281,39 @@
 <strong>Rehire limit</strong>: Enter the maximum number of employee records that are allowed to be reactivated in UKG Ready in a single integration run.</li>
 </ul><h3 id="h_01KSSFH5TSP0Q87P84TP3K3T12">Contract Management</h3><h4 id="h_01KT1NPPVS865ZHNBH5RWY6BPT">Contract Settings</h4><ul>
 <li data-list-item-id="ef4aaaf2137c415344aef961b46265c17">
-<strong>Contracts creation</strong>: Enable this toggle to enable the integration to add employment contract details of users in UKG Ready. When enabled, the <strong>Creation</strong> section is displayed for further configurations.</li>
+<strong>Contracts creation</strong>: Enable this toggle to enable the integration to add employment contract details of users in UKG Ready.</li>
 <li data-list-item-id="e2b42d63723dae326072e126162b00d11">
 <strong>Contracts update</strong>: Enable this toggle to enable the integration to update contract records of users in UKG Ready based on the changes to the employment contract data in Bob. </li>
 <li data-list-item-id="e0ab158e62326db5bf545bf49aed1b27d">
-<strong>Contracts termination</strong>: Enable this toggle to enable the integration to update employement contract records in UKG Ready when they are terminated in Bob.</li>
+<strong>Contracts termination</strong>: Enable this toggle to enable the integration to update employment contract records in UKG Ready when they are terminated in Bob.</li>
 <li data-list-item-id="e61926fbf96985845cee8e6f3593630aa">
-<strong>Contracts History Mode</strong>: Indicate whether the full contract history of the employees must be updated in the UKG Ready or only the details of the current employment contract.</li>
-</ul><p> </p><p> </p><p> </p><ul>
-<li data-list-item-id="e964e9a19703a3ba08ba67cb70c1b93b0"><span><strong>Debugging</strong>: Turn on this toggle to add the details of the API calls in the integration execution logs, for debugging purposes. The details include the API request, the parameters passed in the request, and the response code.</span></li>
-<li data-list-item-id="e4be92e56fecaddbcbf40d142a22b1843"><span><strong>Advanced debugging</strong>: Turn on this toggle to add extensive details to the integration execution logs for debugging purposes. In addition to the API request, the parameters passed in the request, and the response code, the API response body will also be available in the logs.</span></li>
-<li data-list-item-id="e83e68f376207ea9a13fd3f33e273448a">
-<span><strong>Debug mode</strong>: Turn on this toggle to filter a single worker record, for testing purposes. When the toggle is on, the </span><a href="#h_01KJ53FCW9MVRD5Y58BMAJGH9X"><span>Debug Settings</span></a><span> section is displayed for further configuration.</span>
-</li>
-<li data-list-item-id="ec312f5e40d791a627e5f2ead6d3e5288"> </li>
-<li data-list-item-id="e1d97562df52102caef7c1ca8d475767b"> </li>
-<li data-list-item-id="e26abf9ceef9fa055e72538e9dad9bb4c"> </li>
-<li data-list-item-id="e2eef531c308e8f7d59cf860a4cf8cb75"> </li>
-</ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Application Configurations</h3><p>This section enables you to set the configurations specific to the Viewpoint Spectrum application.</p><ul>
-<li data-list-item-id="e1abcc3a5494b64f569c36a751b3e86f4">
-<strong>Company Code</strong>: Enter the company code in your Viewpoint Spectrum instance to which the worker data from ADP must be synced.</li>
-<li data-list-item-id="ee7a6db1d80d4ce32ed7778ca56ffa2fb">
-<strong>Upload Viewpoint Spectrum employees CSV file</strong>: Click <strong>Browse File</strong> and select the CSV file containing the data of employees from Viewpoint Spectrum. This file is used to identify the matching user records for ADP worker records and to determine which users must be created in Viewpoint Spectrum. <br/><strong>Note</strong>: If any user data is modified directly in the Viewpoint Spectrum application through the UI, download a new CSV file containing the latest user data and upload the updated file. </li>
-</ul><h3 id="h_01KRGHYGXSHZGM7MVSB83V5APW">Worker Sync Settings</h3><p>The <strong>Worker Sync Settings</strong> section allows you to customize the settings to manage worker sync.</p><p><strong>Note</strong>: This section appears only if you have turned on the <strong>Enable user lifecycle management</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">User Match Settings</h4><ul>
-<li data-list-item-id="e49c41ebab17d9146cf96fd3a52a7ac08">
-<strong>Select the match condition</strong>: Select the condition to match records between ADP and Viewpoint Spectrum.<ul>
-<li data-list-item-id="e4eb8d4c92e6de7a319d790b60472058b">Select <strong>ADP Worker Position ID &gt; Viewpoint Spectrum Employee Code</strong> to match an ADP worker with a Viewpoint Spectrum user by comparing the ADP worker’s Position ID with the Viewpoint Spectrum employee code.</li>
-<li data-list-item-id="e1f2ae51786d13e02162632a9c90d1357">Select <strong>Custom match expression</strong> to define a custom condition to match the records.</li>
+<strong>Contracts history mode</strong>: Specify whether the integration should synchronize the employee's complete contract history to UKG Ready or only the details of the employee's current contract. <ul>
+<li data-list-item-id="e3a29a7c942cc87232232a3db08e33972">Select <strong>Full history</strong> to sync the full employment contract history.</li>
+<li data-list-item-id="e393652fdb431a58b3d2af9ad19d13c15">Select <strong>Current only</strong> to sync only the current employment contract details.</li>
 </ul>
 </li>
-<li data-list-item-id="e96f8195d4f85f87b9017f7c966ddefba">
-<strong>Custom match expression</strong>: Enter the condition that must be used to identify the matching records.</li>
-</ul><h4 id="h_01KRGC3NR44QDZHD20J29AB4N8">Source Settings</h4><p>This section enables you to configure the worker data filter settings and to set the worker details that must be retrieved.</p><ul>
-<li data-list-item-id="eb2c784bb2abc986d208c5b3556778d85">
-<strong>Select the source filter</strong>: Select whether you want to use <em>Position ID</em> or <em>Associate ID </em>to filter a single worker record from ADP.</li>
-<li data-list-item-id="ecde18106964cc8310d216ac32a4450f3">
-<strong>Source filter value</strong>: Enter the Associate ID or the Position ID to filter a worker record from ADP Workforce Now. This field is displayed only if you have selected an option from the <strong>Select the source filter</strong> drop-down list.</li>
-<li data-list-item-id="e2c71bc44757d6fc0293db075e19bd874">
-<strong>Select ADP Worker Statuses to Be Considered as Active True</strong>: Select the statuses of the workers in ADP Workforce Now that must be considered as active. Only the workers with the selected statuses will be created or updated in Viewpoint Spectrum.</li>
-<li data-list-item-id="ea26118a091ea3bb25a25a5ee31c36a03">
-<strong>Fetch Additional Data for Workers</strong>: Select the additional worker data fields that must be retrieved from ADP Workforce Now along with the core worker data. For example, select <em>FederalTax</em> and <em>StateTax</em> to retrieve the Federal tax and State tax details of each worker.</li>
-</ul><h4 id="h_01KMMM7K00V0ETTP6KJQ26Y8DW">Provisioning Settings</h4><p>This section provides the settings to set the conditions in which ADP workers must be created or updated in Viewpoint Spectrum.</p><ul>
-<li data-list-item-id="e568caae379ee8c7093a9672098b45a4e">
-<strong>Create worker condition</strong>: Select whether you want to create all the workers retrieved from ADP in Viewpoint Spectrum or only the active workers. If you select <em>Create only Active Workers from ADP</em>, then the workers whose statuses are configured in the <strong>Select ADP Worker Statuses to Be Considered as Active True</strong> field are considered as active and created in Viewpoint Spectrum.</li>
-<li data-list-item-id="ed7a56fcdf9684a27ca7bd3e9d09c4920">
-<strong>Update worker condition</strong>: Select whether you want to update all the workers retrieved from ADP in Viewpoint Spectrum, only the active workers, or only the terminated workers. <ul>
-<li data-list-item-id="ef83cb64f0437bc1279a16d05e7f03981">If you select <em>Update only Active Workers from ADP</em>, then the workers with the statuses configured in the <strong>Select ADP Worker Statuses to Be Considered as Active True</strong> field are considered as active and updated in Viewpoint Spectrum. </li>
-<li data-list-item-id="ea4afff1279fb7df31fa3d348077b490e">If you select <em>Update only Terminated Workers from ADP</em>, then only the workers with the status as <em>Terminated</em> will be updated in Viewpoint Spectrum. Their termination date and status will be updated.</li>
-</ul>
-</li>
-</ul><h4 id="h_01KMMMGEBSKPCF8YW78AQ9HEVX">Execution Settings</h4><p>This section provides the settings to execute the integration in Report-only mode and incremental mode. It also provides options to limit the number of cost center records that will be retrieved from Workforce Now and that will be created or updated in Viewpoint Spectrum.</p><ul>
-<li data-list-item-id="e1ac211a61677d88fbb24c5ad2ee624e6">
-<strong>Report-only mode</strong>: Turn on this toggle to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
-<li data-list-item-id="e44beedce19d66fc2128727c7669671f6">
-<strong>Incremental mode</strong>: Turn on this toggle to execute the integration in incremental mode, where the worker data that was created or modified since the last incremental run will be processed by the integration.</li>
-<li data-list-item-id="e0c4bd91e26c17dda4c24585d41f3c061">
-<strong>Enter timestamp for incremental mode</strong>: Select the timestamp that must be considered for the first incremental run. The worker data that will be created or modified in ADP since this timestamp will be processed by the integration. For subsequent incremental runs, the timestamp of the previous incremental run will be considered.</li>
-<li data-list-item-id="e67e58b6191e56079f2c2ede61bc1f47f">
-<strong>Import limit</strong>: Enter the maximum number of worker records that must be retrieved from ADP Workforce Now in a single integration run. </li>
-<li data-list-item-id="eb9aded94bc3ec2276ffb9cc82ae5d46c">
-<strong>Create limit</strong>: Enter the maximum number of user records that are allowed to be created in Viewpoint Spectrum in a single integration run.</li>
-<li data-list-item-id="ed142377d9cf2efbff0381ca975381571">
-<strong>Update limit</strong>: Enter the maximum number of user records that are allowed to be updated in Viewpoint Spectrum in a single integration run. </li>
-</ul><h3 id="h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Settings</h3><p>This section enables you to customize the settings for debugging the integration behaviour using a single worker record.</p><p><strong>Note</strong>: This section appears only if you have turned on the<strong> Debug Mode</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. </p><h4 id="h_01KMMWQQRF8166YPHRS870BX9H">Source Filter</h4><ul>
-<li data-list-item-id="e3a128180dd85827039bd8241ba79142c">
-<strong>Select the source filter</strong>: Select whether you want to use <em>Position ID</em> or <em>Associate ID </em>to filter a single worker record from ADP.</li>
-<li data-list-item-id="e2bcc225678b11b11c82e32b031b7ec46">
-<strong>Enter the source filter value</strong>: Enter the Associate ID or the Position ID to filter a worker record from ADP Workforce Now. This field is displayed only if you have selected an option from the <strong>Select the source filter</strong> drop-down list.</li>
-</ul><h3 id="h_01KMMWWZASCF14V76882FQNPZ5">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Logging</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul><li data-list-item-id="e74beb28aa4f3bc542bebd99e1b2949d3">
-<strong> Log Level</strong>: Select the level of details to be logged from the dropdown menu. The following are the available options:<ul>
-<li data-list-item-id="e6a824bfda896526a486715c6bb3e496c">
-<strong>Summary: </strong>Logs only the count of various operations</li>
-<li data-list-item-id="e2a47d66e5be685a7cd90adc4b4b62df6">
-<strong>Full Details</strong>: Logs the attribute values for each create and update operation.</li>
-</ul>
-</li></ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</h3><p>This section enables you to customize the CSV report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the R<strong>eport generation</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
-<li data-list-item-id="e1fa8304be0e170483e1531c93d145936">
-<strong>Report detail level</strong>: Select the level of details to be captured in the CSV report from the dropdown menu. The following are the available options:<ul>
-<li data-list-item-id="e2631a39eff6c7e6bb92e8824171a0ece">
-<strong>Summary: </strong>Shows only the count of various operations</li>
-<li data-list-item-id="e5fe8a184cb55b54c115dbd3247b19417">
-<strong>Full Details</strong>: Shows the attribute values for each create and update operation.</li>
-</ul>
-</li>
-<li data-list-item-id="ec908e1a9d5d672a9277448841e40dc9c">
-<strong>Enable Integration Report Download</strong>: Select this option to allow you to download a copy of the integration report from the integration execution timeline panel.</li>
-</ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Email notifications</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KMD5HX6RZDKPDAS75W3C2BAC">Notification Report Settings</h4><ul><li data-list-item-id="e5fff678bd52149f92ab7144822b4c565">
-<strong>Send the notification report as an attachment</strong>: Select this checkbox to receive an email notification with an attached CSV report for each integration execution.</li></ul><h4 id="h_01KRGHYGXSD8NWDN7EKG9G42WZ">Notification Template Settings</h4><p>Configure the following setting to customize notifications:</p><ul><li data-list-item-id="ecd8dccad2a4a07235fa2522dd858f1a1">
-<strong>Send Notifications On</strong>: Select <em>Success Events</em> to send an email notification on successful worker syncs in an integration run. When selected, the <strong>Success Notifications  Settings</strong> section is displayed for further configuration.</li></ul><h4 id="h_01KRGHYGXSV2916CB2H9D2CMPX">Success Notification Settings</h4><p>Configure the following settings to customize success notifications:</p><ul>
-<li data-list-item-id="e7a59a0688e5903fd8f1ee5c8c638bd48">
-<strong>Send to</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful sync of worker data.</li>
-<li data-list-item-id="edc16f5b1c738ae63e9773c0794d369d2">
-<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
-<li data-list-item-id="e5b2e8b3e18cc5a43f0eda5a861141ebe">
-<strong>Email subject</strong>: Enter the content that must be used as the subject in email notifications.</li>
-<li data-list-item-id="ec9870fff96aecab535adb9bf38e16006">
-<strong>Email body</strong>: Enter the content that must be used as the email body for notifications sent upon successful sync of worker records.</li>
-</ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>This section enables you to customize the <strong>Log Insights</strong> settings for viewing and analyzing the integration data. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Log Insights</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
-<li data-list-item-id="e12c67cfc9929cbd66dacd3a9df61b201">
-<strong>Enter dashboard name</strong>: Enter the name of the Log Insights dashboard that must be created after the integration run.</li>
-<li data-list-item-id="e87fb3363a850acf82de0e90033d12b85">
-<strong data-end="185" data-start="147">Select analytics detail level</strong>: Select the Log Insights detail level from the dropdown menu. The following are the available options:<ul>
-<li data-list-item-id="e9d50d3d03c84f49329c9d73cf226cb12">
-<strong data-end="440" data-start="423">Summary: </strong><strong> </strong>Shows only the count of various operations</li>
-<li data-list-item-id="e055b8dc0f8b1cfcfb0fe0ab48c9bdcfc">
-<strong>Full Details</strong>: Shows the attribute values for each create and update operation.</li>
-</ul>
-</li>
-</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+<li data-list-item-id="e01dfd0c9b6b4234e6e5d34123ef0df35">
+<strong>Default contract type</strong>: Select the default employment type to be assigned to the contract records if the employment type is not available in the employee contract records retrieved from Bob. </li>
+<li data-list-item-id="e59e4e3f28707d5a7350c701ee4c44467">
+<strong>Contracts safeguard</strong>: Enable this toggle to set a limit to the number of contract records that the integration can create in UKG Ready in a single run. When enabled, the <strong>Contracts limit</strong> field is displayed.</li>
+<li data-list-item-id="e0a96c91beb4fc05430554a485638f060">
+<strong>Contracts limit</strong>: Enter the maximum number of contract records that are allowed to be created in UKG Ready in a single integration run. This field is displayed only if you have enabled the <strong>Contracts safeguard</strong> toggle.</li>
+</ul><h3 id="h_01KT65KYDTZ4T7R88763XDFJRE">Compensation Management</h3><h4 id="h_01KT65KYDTJTRMH5F7W7RH25CD">Compensation Settings</h4><ul>
+<li data-list-item-id="ee5bb953f547db3e1ab461070b9b37180">
+<strong>Compensation creation</strong>: Enable this toggle to enable the integration to add compensation details of users in UKG Ready. </li>
+<li data-list-item-id="e7775685a4f0a70df252a85d08d3ae504">
+<strong>Compensation update</strong>: Enable this toggle to enable the integration to update compensation records of users in UKG Ready based on the changes to the compensation data in Bob.</li>
+<li data-list-item-id="e905664e2f490c6bd95cf89327cb491b6">
+<strong>Default currency</strong>: Select the default currency to be assigned to the employee compensation records if the currency is not available in the compensation records retrieved from Bob. </li>
+<li data-list-item-id="e5cb6ee0ac155223590f703ac1050bfc0">
+<strong>Compensation</strong><strong> safeguard</strong>: Enable this toggle to set a limit to the number of compensation records that the integration can create in UKG Ready in a single run. When enabled, the <strong>Compensation limit</strong> field is displayed.</li>
+<li data-list-item-id="e0b120d857a272714e9d0148daacee3f9">
+<strong>Compensation</strong><strong> limit</strong>: Enter the maximum number of compensation records that are allowed to be created in UKG Ready in a single integration run. This field is displayed only if you have enabled the <strong>Compensation</strong><strong> safeguard</strong> toggle.</li>
+</ul><h2 id="h_01KT63V5KV39BPGRVPTYTM066X">Attribute Map</h2><p>This tab includes sections to configure the following mappings of attributes from Bob to UKG Ready:</p><ul>
+<li data-list-item-id="eefd82106a94d0b1931da384bc1080798">Employee attributes mapping</li>
+<li data-list-item-id="e219b7f479a11581fd2ffb97bfa03b30d">Contract attributes mapping</li>
+<li data-list-item-id="e4f2e484264c7c7217a6d2866260eb221">Compensation attributes mapping </li>
+</ul><p>The above attribute mapping sections are displayed only if you have enabled the corresponding integration features in the <a href="#h_01KSMGJETG65B6DKV7ADE5J951">User and Access Management Features</a>.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
   </div>
 </body>
 </html>

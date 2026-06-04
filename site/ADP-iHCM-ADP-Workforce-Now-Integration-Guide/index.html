@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADP iHCM / ADP Workforce Now Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>ADP iHCM / ADP Workforce Now Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>The ADP Workforce Now / ADP iHCM integration enables you to synchronize the data of employees and cost centers from ADP Workforce Now to ADP iHCM. </p><ul>
+<li data-list-item-id="ed09e55c943f4a982eec69a0325c44ea9">To identify cost center records across both systems, the integration uses the <strong>Cost Center Code</strong> attribute from ADP Workforce Now and matches it to the <strong>Cost Center Code</strong> available in the ADP iHCM. The following cost center attributes will be synced: Cost center code value, Cost center short name, and Effective date.</li>
+<li data-list-item-id="e6a86b8e7f769217a1e65374a0cf0f55a">To identify employee records across both systems, the integration uses the <strong>Associate ID</strong> attribute from ADP Workforce Now and matches it to the <strong>Worker ID</strong> available in the ADP iHCM.</li>
+</ul><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The ADP iHCM / ADP Workforce Now Cost Center Sync integration performs the following functions:</p><ul>
+<li data-list-item-id="e4d6af3146c3019d12d76529d7125bfcb">Reads worker data from ADP Workforce Now and synchronizes the data to ADP iHCM.</li>
+<li data-list-item-id="e8448984ac2790c95d66476dd79a89942">Reads cost center data from the Cost Center or the Department validation table in ADP Workforce Now, based on the integration configuration.</li>
+<li data-list-item-id="e65c03742b53dcddfa3e360cb061c361f">Reads data from a specific company code in ADP Workforce Now.</li>
+<li data-list-item-id="e6b14b6f8da05b4e74df2150884e1a5a3">Creates new cost centers in ADP iHCM when new cost centers are added in ADP Workforce Now.</li>
+<li data-list-item-id="ea0c2dc79036903c43727bbe5f2e45602">Updates cost center details in ADP iHCM when any changes are made to the existing cost centers in ADP Workforce Now.</li>
+<li data-list-item-id="e46dd1d20f36d767a5145cd4375a4838c">Retrieves, creates, and updates cost center records based on the limits set in the integration.</li>
+<li data-list-item-id="e8099f433abbeced37702ad64d0f6ab1c">Performs full synchronization of cost centers on each integration run.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e7fbb30f2d40e0ff04150f1beaea120c6">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
+</li>
+<li data-list-item-id="e9fb103b93f2225066ba3e8a7627c3133">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ee02eddec2bcbb6184028fd2914ff4a70">
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="ef4d5ee59f1ce196038b9c74a41781fd4">
+<strong>ADP iHCM</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/16804103956759" rel="noopener noreferrer" target="_blank">ADP iHCM Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize cost center data from ADP Workforce Now to ADP iHCM.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e58e927b41c34468bc8628b3ec2215cd7">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="eb3716907ca87f0a4388021dc6536a135">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e10bea7b749aea3533b4b915c6e654912">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ea3c6065e154a2f100c699bba507f03b2">Select<strong> ADP iHCM / ADP Workforce Now Cost Center Sync</strong>.</li>
+<li data-list-item-id="e7fa694b5c85698828e8da44bb92d6eee">Enter a name and a description for the integration.</li>
+<li data-list-item-id="efb24b6bf48365e1bdca78180c5fa55dc">Select your <strong>ADP iHCM </strong>and<strong> ADP Workforce Now </strong>connector instances.</li>
+<li data-list-item-id="ef7ead19a28047a1ef87c586de58b583b">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source (ADP Workforce Now) and target (ADP iHCM) application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and settings according to your use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4><p>Enable the following feature based on your requirements:</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e29603be15aea6b241b9c4e7eb60f55fe">
+<strong>Enable Worker Management</strong>: Turn on this toggle to synchronize the worker data from ADP Workforce Now to ADP iHCM. When turned on, the <a href="#h_01KT6C14A9GVAZG0ZH0405HQTV">Worker Sync</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ecf2084c4483d87473eef35c4f1613b43">
+<strong>Enable Cost Center Life Cycle Management</strong>: Turn on this toggle to synchronize the cost center data from ADP Workforce Now to ADP iHCM. When turned on, the <a href="#h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Cost Centers</a> section is displayed for further configuration.</li>
+</ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e87c4a1e58284fd6b2048da6a5f51a8aa">
+<strong>Report only</strong>: Turn on this toggle to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="ee807fd2c376c58e3b7840e9e4aab6366">
+<strong>Enable logging</strong>: Turn on this toggle to generate logs outlining data changes. When the toggle is on, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e3f571244aa12acd4f58a0b7ef3d51834">
+<strong>Enable notifications</strong>: Turn on this toggle to enable integration-related notifications. When the toggle is on, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e8c03567013c7e9bfe0907499bbab143f">
+<strong>Enable report generation</strong>: Turn on this toggle to generate the integration report. When the toggle is on, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e60e742fdba176d49baddc51479488e63">
+<strong>Enable Log Insights</strong>: Turn on this toggle to visualize the integration-related metrics. When the toggle is on, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e623ec903b6b3d3b1a7218d0ea185006b">
+<strong>Enable debug mode</strong>: Turn on this toggle to generate logs outlining data changes that would occur, for debugging. When the toggle is on, the <a href="#h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Settings</a> section is displayed for further configuration.</li>
+</ul><h3 id="h_01KT6C14A9GVAZG0ZH0405HQTV">Worker Sync</h3><p>The <strong>Worker Sync</strong> section allows you to configure worker synchronization settings based on your use case.</p><p><strong>Note</strong>: This section appears only if you have turned on the <strong>Enable Worker Management</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">Worker settings</h4><p>This section enables you to configure the settings related to the worker data.</p><ul><li data-list-item-id="eda3b1a1a00c1ca84ff687932954be165">
+<strong>Full Sync</strong>: Turn on this toggle to enable the integration to run in full sync mode, that is, all eligible worker records from ADP Workforce Now will be created or updated in ADP iHCM during every integration run. When this toggle is disabled, the integration runs in incremental sync mode, that is, only the new and updated worker records since the last integration run will be processed by the integration.</li></ul><h4 id="h_01KT6C66NF5HGNNPQH69ZG4M61">Correlation Settings</h4><p>This section shows the source and target attributes that are used for identifying the matching worker records between the source and target applications. </p><ul>
+<li data-list-item-id="eed6899be5ceeb2e23fee6e920c81b54a">
+<span><strong>Source correlation attribute</strong></span>: Displays the attribute that will be used to identify a unique worker record in ADP Workforce Now. </li>
+<li data-list-item-id="ed25381465c183cd78b40ade7ffabda45">
+<span><strong>Target correlation attribute</strong></span>: Displays the attribute that will be used to identify the corresponding worker record in ADP iHCM. </li>
+</ul><h4 id="h_01KT6D99A749KQ5AJZKMQYER0Y">Worker Management Settings</h4><p>This section enables you to define the conditions used to determine which worker records are eligible for creation or update in ADP iHCM. </p><ul>
+<li data-list-item-id="e029ccb63db5938ab5cfa9bdabc6df056">
+<span><strong>Create condition</strong></span>: Configure the JavaScript expression that must be evaluated to identify the worker records to be created in ADP iHCM. </li>
+<li data-list-item-id="e9991ffacb5bad4cdff5dd0a91015ff56">
+<span><strong>Update condition</strong></span>: Configure the JavaScript expression that must be evaluated to identify the worker records to be updated in ADP iHCM. </li>
+</ul><h4 id="h_01KMMMGEBSKPCF8YW78AQ9HEVX">Safeguard Limits</h4><p>This section provides the settings to restrict the number of worker records that can be created or updated in ADP iHCM.</p><ul>
+<li data-list-item-id="ee00f697f0491341cab34f7a00fbd3a03">
+<strong>Enable create limit</strong>: Turn on this toggle to set a limit to the number of worker records that can be created in ADP iHCM in a single integration run.</li>
+<li data-list-item-id="e532c6d5f6e1161a3cae6554c07b7918a">
+<strong>Create limit</strong>: Enter the maximum number of worker records that are allowed to be created by the integration in a single run. This field is displayed only if you have enabled <strong>Enable create limit</strong>.</li>
+<li data-list-item-id="e5e0f8a0a424cb11d99c535e6381856fd">
+<strong>Enable update limit</strong>: Turn on this toggle to set a limit to the number of worker records that can be updated in ADP iHCM in a single integration run.</li>
+<li data-list-item-id="ee4848a3a3f9d690e36698e2f62ee76ec">
+<strong>Update limit</strong>: Enter the maximum number of worker records that are allowed to be updated by the integration in a single run. This field is displayed only if you have enabled <strong>Enable update limit</strong>.</li>
+</ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Cost Centers</h3><p>The <strong>Manage Cost Centers</strong> section allows you to customize the settings to manage cost center synchronizations based on your use case.</p><p><strong>Note</strong>: This section appears only if you have turned on the <strong>Enable Cost Center Life Cycle Management</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KT6D99A8NYS6ZPYTNNRHS79A">Cost Center Settings</h4><p>This section enables you to configure the settings related to the cost center data and the company code.</p><ul>
+<li data-list-item-id="e798921a180eaeffddd186535b5d503c6">
+<strong>Select validation table</strong>: Select the validation table in ADP Workforce Now that must be used by the integration to read the cost center data. <ul>
+<li data-list-item-id="e0663405141384f4ecea1a220f2e8ea73">If you select <em>Cost Centers</em>, the cost center data will be retrieved from the Cost Center validation table in your ADP Workforce Now instance.</li>
+<li data-list-item-id="ebb707d405e940545877c03977d7c2d52">If you select <em>Departments</em>, the cost center data will be retrieved from the Department validation table in your ADP Workforce Now instance.</li>
+</ul>
+</li>
+<li data-list-item-id="e49514735a5c21f13ed8fc472615aba12">
+<strong>Select company code</strong>: Select a company code in ADP Workforce Now from which the cost center data must be retrieved.</li>
+</ul><h4 id="h_01KQVMYBGQVNVAWK8JY6JC9VHE">Correlation Settings</h4><p>This section shows the source and target attributes that are used for identifying the matching cost center records across the source and target applications. </p><ul>
+<li data-list-item-id="e21eb697747208f7721f3a9c00d89814d">
+<span><strong>Source correlation attribute</strong></span>: Displays the cost center attribute that will be used to identify a unique cost center record in ADP Workforce Now. </li>
+<li data-list-item-id="efe94c6f97a9acab189a03dc9cd194fe5">
+<span><strong>Target correlation attribute</strong></span>: Displays the cost center attribute that will be used to identify the corresponding cost center record in ADP iHCM. </li>
+</ul><h4 id="h_01KMMM7K00V0ETTP6KJQ26Y8DW">Provisioning Settings</h4><p>This section provides the settings to enable creation and update of cost center records.</p><ul>
+<li data-list-item-id="e2f741e9056f43926807db4f25097d1dc">
+<strong>Create cost centers</strong>: Turn on this toggle to allow the integration to create cost centers in ADP iHCM. When the toggle is off, the integration will not create cost centers in ADP iHCM.</li>
+<li data-list-item-id="e278245fd089ab009bc675f19e2ab2399">
+<strong>Update cost centers</strong>: Turn on this toggle to allow the integration to update cost centers in ADP iHCM. When the toggle is off, the integration will not update cost centers in ADP iHCM.</li>
+</ul><h4 id="h_01KT6D99A80QCK58NZQKNGMMXR">Provisioning Threshold</h4><p>This section provides the settings to limit the number of cost center records that will be retrieved from Workforce Now and that will be created or updated in ADP iHCM.</p><ul>
+<li data-list-item-id="e7f4d63b26cbe1e8c45d8e4d2d2f80294">
+<strong>Fetch limit mode</strong>: Select whether you want to limit the number of cost center records that must be retrieved from ADP Workforce Now in a single integration run. <ul>
+<li data-list-item-id="e199633eb00f221e5f26b1a4379efa5bc">If you select <em>Unlimited</em>, all cost center data will be retrieved.</li>
+<li data-list-item-id="e4bdd7987311824336735b64cd6be7c34">If you select <em>Value</em>, you can set a limit to the number of cost center records that will be retrieved.</li>
+</ul>
+</li>
+<li data-list-item-id="ea121d2f59e3570ec169d65ec55c98d4e">
+<strong>Fetch limit</strong>: Enter the maximum number of cost center records that will be retrieved from ADP Workforce Now in a single integration run. This field is displayed only if you have selected <em>Value</em> in the <strong>Fetch limit mode</strong> drop-down.</li>
+<li data-list-item-id="e3d3b2fa8ee25b28bfd364a2891bc82ff">
+<strong>Create limit mode</strong>: Select whether you want to limit the number of cost center records that will be created in iHCM in a single integration run. This field is displayed only if the <strong>Create cost centers </strong>toggle is turned on.<ul>
+<li data-list-item-id="ea8db0e0563dcec36a8f3770cfe70f924">If you select <em>Unlimited</em>, all the new cost centers from Workforce Now will be created in iHCM.</li>
+<li data-list-item-id="e12878699c52933c6b3975c8c44ebbd69">If you select <em>Value</em>, you can set a limit to the number of cost center records that will be created.</li>
+</ul>
+</li>
+<li data-list-item-id="e7b473cea043bea620a8cd9761afc0123">
+<strong>Create limit</strong>: Enter the maximum number of cost center records that are allowed to be created in ADP iHCM in a single integration run. This field is displayed only if you have selected <em>Value</em> in the <strong>Create limit mode</strong> drop-down.</li>
+<li data-list-item-id="e1a07440cd1487478745a27a51fe08539">
+<strong>Update limit mode</strong>: Select whether you want to limit the number of cost center records that will be updated in iHCM in a single integration run. This field is displayed only if the <strong>Update cost centers </strong>toggle is turned on.<ul>
+<li data-list-item-id="e8c6b7a5128fb583b4fe6f6fb6e7bd41a">If you select <em>Unlimited</em>, all the modified cost center data will be updated in iHCM.</li>
+<li data-list-item-id="e8b32f98c45b641f7e6e597e12eaede38">If you select <em>Value</em>, you can set a limit to the number of cost center records that will be updated.</li>
+</ul>
+</li>
+<li data-list-item-id="e39a805d3bb6d34768453499e4cb460fd">
+<strong>Update limit</strong>: Enter the maximum number of cost center records that are allowed to be updated in ADP iHCM in a single integration run. This field is displayed only if you have selected <em>Value</em> in the <strong>Update limit mode</strong> drop-down.</li>
+</ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Sensitive Fields</h3><p>This section enables you to set any sensitive (PII -Personally Identifiable Information) fields processed by the integration. Currently, the integration does not handle any PII data, so you can skip this section.</p><h3 id="h_01KMMWWZASCF14V76882FQNPZ5">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
+<li data-list-item-id="e017362ac7f7c4fc70c3772742ecfc9f7">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Log Type</strong>: Select a log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e943d5611a9791b09714ef7be695fed8e">
+<strong>Minimum</strong>: Select this option to include only operation details.</li>
+<li data-list-item-id="e361853d106b840d89a4b39ed82ac0eed">
+<strong>Metadata</strong>: Select this option to include operation details and attribute names.<br/><strong>Note</strong>: You may ignore the other options in the drop-down list.</li>
+</ul>
+</li>
+<li data-list-item-id="e526fb3010087ff0091d6ab31d5598b87">
+<strong> Select Log Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ecac62f90183f752f430c9334cdaad096">
+<strong>Full</strong>: Select this option to include all attributes in the log.</li>
+<li data-list-item-id="ed58472df1c1034f0de90d9634d3903ee">
+<strong>Include List</strong>: Select this option to include specific attributes in the log.<ul><li data-list-item-id="efc876026c4c7cdacea724a541466d19b">
+<strong>Custom Inclusion List</strong>: Enter the attributes to be included in the log. This parameter is available only if you select <strong>Include List</strong> in the <strong>Select Log Level </strong>parameter.</li></ul>
+</li>
+<li data-list-item-id="e54c5d9cb5a708eea2849286f89fc020d">
+<strong>Exclude List</strong>: Select this option to exclude specific attributes from the log.<ul><li data-list-item-id="e946eaecb2c53cc395719d96dedce48e2">
+<strong>Custom Exclusion list</strong>: Enter the attributes to be excluded from the log. This parameter is available only if you select <strong>Exclude List</strong> in the <strong>Select Log Level </strong>parameter.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable report generation</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
+<li data-list-item-id="e0b0dfead812900c084dd0d9b6ba3e80b">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Report Type</strong>: Select a report type. This will decide the level of detail to be included in reports.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="ee1945c22213a84628b9dfa9d2fcb9221">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e324c7f478d6dccc7f0c70b7c5ea6f1f7">
+<strong>Metadata</strong>: Select this option to include operation details and attribute names. GUIDs are excluded.<br/><strong>Note</strong>: You may ignore the other options in the drop-down list.</li>
+</ul>
+</li>
+<li data-list-item-id="eaf652a412d86e2c5e8cd82aafcfb29dd">
+<strong>Select Report Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e27672fa6cdaa5748f32afda7ca4a05db">
+<strong>Full</strong>: Select this option to include all attributes in the report.</li>
+<li data-list-item-id="e29f72a992f6a9d2a37b2fb13e5a7fa4a">
+<strong>Include List</strong>: Select this option to include specific attributes in the report.<ul><li data-list-item-id="e2c9a1606290a4ffc85102a623b01cc3c">
+<strong>Custom Inclusion List</strong>: Enter the attributes to be included in the report. This parameter is available only if you select <strong>Include List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+</li>
+<li data-list-item-id="eb8df8435e7c2d039fb472071e3c0ffce">
+<strong>Exclude List</strong>: Select this option to exclude specific attributes from the report.<ul><li data-list-item-id="ecd13f0b4ce98ada1d52873813db43c20">
+<strong>Custom Exclusion List</strong>: Enter the attributes to be excluded from the report. This parameter is available only if you select <strong>Exclude List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable notifications</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><h4 id="h_01KMD5HX6RZDKPDAS75W3C2BAC">Notification Template Settings</h4><p>Configure the following settings to customize notifications:</p><ul>
+<li data-list-item-id="ee70bb2b819615b2ed6f090443ac19888">
+<strong>Send email notifications for success</strong>: Turn on this toggle to send an email notification on successful cost center syncs in an integration run. When enabled, the <strong>Success Notifications</strong> section is displayed for further configuration.</li>
+<li data-list-item-id="ec799281e2322180ae6efea609718790b">
+<strong>Send email notifications for failures</strong>: Turn on this toggle to send an email notification on failed cost center syncs in an integration run. When enabled, the <strong>Failure Notifications </strong>section is displayed for further configuration.</li>
+<li data-list-item-id="e3e257349f103af7f0d13a5df1ab86914">
+<strong>Attach the report to email</strong>: Turn on this toggle to receive an email notification with an attached report for each integration execution.</li>
+<li data-list-item-id="e5a70892f447543f8008282138335935c">
+<strong>Merge all reports</strong>: Turn on this toggle to merge all the reports (records with successful sync and failed sync) in a single integration notification email. When this toggle is turned off, separate reports will be generated for successful records and failed records.<br/><strong>Note</strong>: This toggle is displayed only if you have turned on the <strong>Attach the report to email</strong> toggle.</li>
+</ul><h4 id="h_01KMDB9FBA9XQX58JJ5R0BJGRS">Success Notifications</h4><p>Configure the following settings for successful cost center sync notifications:</p><ul>
+<li data-list-item-id="eaca01057a597a9957e90c6d754fe3321">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful sync of cost center records.</li>
+<li data-list-item-id="e6471c837ba59deccd386b735ebc42223">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e2c993fcdd559adfe8044cc7fc89335d1">
+<strong>Email Subject</strong>: Enter the content that must be used as the subject in email notifications.</li>
+<li data-list-item-id="ee4c9db1d5d357804b480447ef0d1a7df">
+<strong>Email Body</strong>: Enter the content that must be used as the email body for notifications sent upon successful sync of cost center records.</li>
+</ul><h4 id="h_01KMYRKV8WABFW2SDY1JHBDHCX">Failure Notifications</h4><p>Configure the following settings for failed cost center sync notifications:</p><ul>
+<li data-list-item-id="e6c38d93f3f677008fc1dbd49f481f3ed">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon failed cost center records sync.</li>
+<li data-list-item-id="e32c9347b5764345b5437c7636981d94c">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e71b060c7f759c63f38c3bd9846dbe03d">
+<strong>Email Subject</strong>: Enter the content that must be used as the subject in email notifications.</li>
+<li data-list-item-id="e08c36515a32463b17e7ce3d11ca3b5cb">
+<strong>Email Body</strong>: Enter the content that must be used as the email body for notifications sent upon failed cost center sync.</li>
+</ul><h4 id="h_01KMF2X3G32JK6ZPBW74RWAJ7K">Notification Report Settings</h4><p>Configure the following email notification report settings:</p><ul>
+<li data-list-item-id="eb96b9f885bf385e0199dd3b234f5d6d7">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Report Type</strong>: Select a notification report type. This will decide the level of detail to be included in the report in the email notifications.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e5a4133b2c619abc922c089ee3c676a9f">
+<strong>Minimum</strong>: Select this option to include only operation details.</li>
+<li data-list-item-id="e39da54e7ce80dc3e2ac8d5d898e4f64b">
+<strong>Metadata</strong>: Select this option to include operation details and attribute names.<br/><strong>Note</strong>: You may ignore the other options in the drop-down list.</li>
+</ul>
+</li>
+<li data-list-item-id="e62e6f9d8cf03b6f62e57639c2a1f2f27">
+<strong>Select Report Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e3094c9fe531e74a9186b7971e9f67003">
+<strong>Full</strong>: Select this option to include all attributes in the notification report.</li>
+<li data-list-item-id="e283eaeaed37488315617f687ad128f60">
+<strong>Include List</strong>: Select this option to include specific attributes in the notification report.<ul><li data-list-item-id="e977568edb41a2efcb6e2750469e02bc2">
+<strong>Custom Inclusion List</strong>: Enter the attributes to be included in the notification report. This parameter is available only if you select <strong>Include List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+</li>
+<li data-list-item-id="e3ad818a43d4c298431b1266c5722a7c1">
+<strong>Exclude List</strong>: Select this option to exclude specific attributes from the notification report.<ul><li data-list-item-id="e2377607992d398bb1a3d989cb4c89f20">
+<strong>Custom Exclusion List</strong>: Enter the attributes to be excluded from the notification report. This parameter is available only if you select <strong>Exclude List</strong> in the <strong>Select Report Level </strong>parameter.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>This section enables you to customize the <strong>Log Insights</strong> settings for viewing and analyzing the integration data. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
+<li data-list-item-id="eab5ac13356478eec30e0ffe2895530ad">
+<strong>Enter Dashboard Name</strong>: Enter the name of the Log Insights dashboard that must be created after the integration run.</li>
+<li data-list-item-id="e9f90b75d345a26deff73b1220db4b3e2">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select analytics type</strong>: Select an analytics type. This will decide the level of detail to be included in the dashboard.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e63adf3da2f048e28f12c895217f5940a">
+<strong>Minimum</strong>: Select this option to include only operation details.</li>
+<li data-list-item-id="eb9f060160185e19da1c366a6a46f1e9d">
+<strong>Metadata</strong>: Select this option to include operation details and attribute names.<br/><strong>Note</strong>: You may ignore the other options in the drop-down list.</li>
+</ul>
+</li>
+<li data-list-item-id="e42d5006142dac040420ae1c3260f0ea7">
+<strong data-end="185" data-start="147">Select analytics Level</strong>: Select the Log Insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="edeb67996ecdb88bcc19c909e1c589c63">
+<strong data-end="440" data-start="423">Full</strong>: Select this option to include all attributes in the Log Insights data.</li>
+<li data-list-item-id="e8ae9362aff7d49afd31b130fb85fe8a8">
+<strong>Include List</strong>: Select this option to include specific attributes in the Log Insights.<ul><li data-list-item-id="e407290aa792e02c65884d6f0cae7c442">
+<strong>Included Attributes</strong>: Enter the attributes to be included in the Log Insights. This parameter is available only if you select <strong>Include List</strong> in the <strong data-end="185" data-start="147">Select analytics Level</strong><strong> </strong>parameter.</li></ul>
+</li>
+<li data-list-item-id="ec4c47ba3cb40d31c56e990db51059c8f">
+<strong>Exclude List</strong>: Select this option to exclude specific attributes from the Log Insights.<ul><li data-list-item-id="e47145f32f6e57c78897fc6eee51cac69">
+<strong>Excluded Attributes</strong>: Enter the attributes to be excluded from the Log Insights. This parameter is available only if you select <strong>Exclude List</strong> in the <strong data-end="185" data-start="147">Select analytics Level</strong><strong> </strong>parameter.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KJ53FCW9MVRD5Y58BMAJGH9X">Debug Mode</h3><p>This section enables you to customize the settings for debugging the integration setup.</p><p><strong>Note</strong>: This section appears only if you have turned on the <strong>Enable Debug Mode</strong> toggle in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section. </p><h4 id="h_01KMMWQQRF8166YPHRS870BX9H">Source Filter</h4><ul>
+<li data-list-item-id="efafd4846ab2fd3fb522c4ca7a87f3682">
+<strong>Enable source filter</strong>: Turn on this toggle to filter a specific cost center record and then run the integration for debugging purposes.</li>
+<li data-list-item-id="ed556b16cac10b3e666c3304d695dc2ae">
+<strong>Filter query</strong>: Enter the expression that must be used to filter a cost center record from ADP Workforce Now. For example: <em>nameCode.code eq "01234SE"</em><br/><strong>Note</strong>: This setting is effective only if you have turned on the <strong>Enable source filter</strong> toggle.</li>
+</ul><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+  </div>
+</body>
+</html>

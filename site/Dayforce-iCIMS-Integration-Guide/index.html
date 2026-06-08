@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce / iCIMS Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce / iCIMS Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KRWT240N6DTDENY3ZWVR2FVK">Overview</h1><p>The Aquera platform enables organizations to connect applications and automate data exchange across systems. This integration connects to iCIMS and automatically discovers available candidate, job, workflow, manager, company, and iForm fields to generate a comprehensive Candidate schema that can be leveraged by other Aquera integrations.</p><p>By automatically detecting and incorporating changes made in iCIMS, the integration eliminates the need for manual schema maintenance and helps ensure that data structures remain current. The discovered information is consolidated into a single Candidate resource, simplifying integration configuration and attribute mapping. This enables you to quickly build and maintain integrations while ensuring consistency and accuracy across connected systems.</p><h2 id="h_01KRWT32ZXT09PDMVFRT62WWC5">Key Functions</h2><p>This integration provides the following capabilities:</p><ul>
+<li data-list-item-id="ed7b02b117efd288f21fc457842f90153">Retrieves profile schemas directly from iCIMS.</li>
+<li data-list-item-id="e6c75e2f3ded795c0068562949194782b">Dynamically generates Candidate attributes from Person, Job, and Applicant Workflow profiles.</li>
+<li data-list-item-id="e11a707f2ae6992661d102846c59971f5">Supports optional Manager profile schema generation.</li>
+<li data-list-item-id="e35fc2393afb325fd2b056da097e170db">Supports optional Company profile schema generation.</li>
+<li data-list-item-id="e8d22ef3d51351ad49de7b4c6b3d498ab">Retrieves iForm schemas and generates form-specific attributes.</li>
+<li data-list-item-id="e1659eee598e14d174542922dc290d26d">Automatically flattens nested JSON structures into Aquera-compatible attributes.</li>
+<li data-list-item-id="e75011063432c979bbe8b251c84c0f7ac">Converts JSON schema data types into SCIM-compatible data types.</li>
+<li data-list-item-id="e20426f7fc01c25d1afa1bd8dca8ae6c0">Generates standard iForm document attributes.</li>
+<li data-list-item-id="e11455c9b6e70762d02bc51a0e5475763">Generates integration-computed attributes for common iCIMS use cases.</li>
+<li data-list-item-id="e1f7aa726d597de002d10f14a0d2ec481">Produces a complete Candidate schema resource for use in downstream mappings and integrations.</li>
+</ul><h2 id="h_01KRWT5RZGKJ14TJBXWXWSEWJZ">Prerequisites</h2><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e3a544ed537a9e79b8f662178f6887b97">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e6100a8e9d3087b3670a114a209cef784">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="efb5f48eeabe50b936a89df2f64339f13">
+<strong>iCIMS</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360056231174-iCIMS-Configuration-Guide" rel="noopener noreferrer" target="_blank">iCIMS Configuration Guide</a> for details.</li>
+<li data-list-item-id="e8dd715bc3925d3327851072fa8e2d3e6">
+<strong>Dayforce</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853-Dayforce-Configuration-Guide" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01KRWTFS4A0J3PQY4JJ949BHBK">Integration Setup</h1><p>This section details the configuration process for integrating iCIMS and Dayforce. It outlines the steps to create the integration, configure the iCIMS application connector, define customer and schema settings, configure profile and iForm schema retrieval, enable optional Manager and Company schemas, and generate the Candidate schema used in downstream mappings and integrations.</p><h2 id="h_01KRWTG9XBKFWS4N731EX6Y7Q9">Create Integration</h2><p>Perform the following steps to create the integration:</p><ul>
+<li data-list-item-id="ef91002980b4bd697aa8ffc0887ae9372">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ece712e859352c02a8baa4e7eb2e4f000">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="edb0ae69b0554d35857e4bb2563ceb0ed">Click <strong>Create Integration</strong>.</li>
+<li data-list-item-id="ef975f6492785003fc7d163f96c86e3f8">Search for <strong>Dayforce / iCIMS</strong> in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="ef2eb92031dab26e2b8f969a77182e143">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e1dd0d2918c64fd707cb402c41f10e282">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e6a8352c7c1c1effb05624894d6541ea2">Select application connector instances from the dropdown menus.</li>
+<li data-list-item-id="e6637b166cc72d835fd511de9ce8d7896">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ul><p>This guide covers the following tabs:</p><ul>
+<li data-list-item-id="ed23e950fce56f49340f2fc36fdcf65d0"><a href="#h_01K06FVR3HY5TQCJK1AC2W07CZ">Overview</a></li>
+<li data-list-item-id="e384bc7b231066478fdd6499e63f1b68b"><a href="#h_01KTK44D2WWSVCZZAD6T2QY62B">iCIMS</a></li>
+<li data-list-item-id="ec35c81d78a90e36320bee57beeac610f"><a href="#h_01KTK44VGGS80HDQ36ZTJRZB9K">Dayforce</a></li>
+<li data-list-item-id="ee5e84557cb16e69cd897ad096a562866"> </li>
+</ul><h2 id="h_01K06FVR3HY5TQCJK1AC2W07CZ">Overview</h2><p>This tab displays an introduction to the integration and explains how the integration is organized.</p><p>The About Overview section explains that the integration automates schema discovery and schema generation for iCIMS.</p><p>iCIMS is used as the source system for candidate, job, applicant workflow, company, manager, and iForm metadata. The integration retrieves schema definitions directly from iCIMS and generates a unified Candidate schema that can be used in Aquera mappings and downstream integrations.</p><p>The integration performs the following actions during each run:</p><ul>
+<li data-list-item-id="ec077dead82dc7d65c2ce891bdf73f2d5">Retrieves profile schemas from iCIMS, including Person, Job, and Applicant Workflow profiles.</li>
+<li data-list-item-id="e42635949a84feff12f936497961b42c0">Optionally retrieves Manager and Company profile schemas when enabled.</li>
+<li data-list-item-id="e2547713420cd938ca43a12302983c54f">Retrieves schema definitions for configured iForms.</li>
+<li data-list-item-id="e7227c9f218428f0df39d5c207430e7ee">Discovers available fields and attributes from the retrieved schemas.</li>
+<li data-list-item-id="e64a82965cc9d0e386b0cbe6be87b5c46">Flattens nested objects and arrays into Aquera-compatible attribute names.</li>
+<li data-list-item-id="eebc31b43977ce9f5c7262aea7abb60d7">Converts source data types into SCIM-compatible schema types.</li>
+<li data-list-item-id="e8cb057219df41f878305f1032721593f">Generates standard iForm document attributes and form data attributes.</li>
+<li data-list-item-id="ef22a719340c73d3dc8c2650ac11837e3">Creates a unified Candidate schema resource containing all discovered attributes.</li>
+<li data-list-item-id="ece9dcd90e6c5e2fe72fcf5c0cac16f18">Makes the generated schema available for use in mappings, provisioning workflows, and other Aquera integrations.</li>
+</ul><h2 id="h_01KTK44D2WWSVCZZAD6T2QY62B">iCIMS</h2><p>The following sections are displayed under the <strong>iCIMS</strong> tab:</p><h3 id="h_01KTK5RKGBPHMNC6S9RSX4AZ49">iCIMS Settings</h3><p>The <strong>iCIMS Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KTK85C2M3MGGD64J7N9JTC5D">iCIMS Source Application</h4><p>Configure the following source application settings:</p><ul><li data-list-item-id="eaa5a72e49f57398bf9f76fec3d1f2277">
+<strong>Select iCIMS Application Instances</strong><span><strong>*</strong></span>: Select the iCIMS application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul><h4 id="h_01KTKARPGBWF117DXKWG3BEESW">iCIMS Configuration</h4><p>Configure the following iCIMS settings:</p><ul><li data-list-item-id="e0a6d6e3d3862bde439879562ed7e233e">
+<strong>Customer ID</strong><span><strong>*</strong></span>: Enter the iCIMS customer ID for your iCIMS instance.</li></ul><h3 id="h_01KTKARPGBQ2Z3F5Z6WGYD4ZCM">Candidate Management</h3><p>The <strong>Candidate Management</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KTKARPGBFZHC74121F0NMY2X">Candidate Configuration</h4><p>Configure the following Candidate Configuration settings:</p><ul>
+<li data-list-item-id="eda792939a94992607dbfe68fa83cf801">
+<strong>Candidate Workflow Statuses</strong><span><strong>*</strong></span>: Select one or more iCIMS workflow statuses that indicate a candidate is ready for import into Dayforce. Only candidates with the selected workflow statuses will be processed. If you do not find your workflow status in the list, click the refresh icon available next to the field to reload the available workflow status.</li>
+<li data-list-item-id="e8fd844f7a264c7514cfeda60abc587af">
+<strong>iForms Names</strong>: Enter the name of the iForm used to identify candidates.</li>
+<li data-list-item-id="e62836cb522c8ac48ad5b1c806497a7b5">
+<strong>Applicant Workflow Field IDs</strong>: Enter the iCIMS applicant workflow field IDs used to retrieve candidate workflow status.</li>
+<li data-list-item-id="e8ea645dd9eb12c7ae69228af3d594e57">
+<strong>Map Manager</strong>: Enable this option to map the employee's manager information from iCIMS to the corresponding manager field in Dayforce.</li>
+<li data-list-item-id="e7904525cefe0dac8ef1885e3280b4dea">
+<strong>Import Limit Per Run</strong>: Specify the maximum number of candidate records that can be imported in the target application during a single integration run.</li>
+<li data-list-item-id="edf35d097f784cdca4e438291115f87b5">
+<strong>Create Condition</strong>: Select a condition from the dropdown menu to determine when employees are created. The following are the available options:</li>
+</ul><h2 id="h_01KTK44VGGS80HDQ36ZTJRZB9K">Dayforce</h2><p>The following sections are displayed under the <strong>Dayforce</strong> tab:</p><h3 id="h_01KTKARPGBHTZR5JZC6YZ01YTP">Dayforce Settings</h3><p>The <strong>Dayforce Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul><li data-list-item-id="e566c8cc8d529cc0d5b9d1bda48252136">
+<strong>Select Dayforce Application Instances</strong>: Select the Dayforce application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul><h3 id="h_01KTKARPGBXDT2B73FHTZZF53X">Employee Management</h3><p>The <strong>Employee Management</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="h_01KTKARPGBSJAWY7NF91GD81AZ">Correlation Settings</h4><p>Configure the following correlation settings:</p><ul><li data-list-item-id="eb405e63e98fbc4292c09cea81e332d0c">
+<strong>Customize How Candidates Are Matched Across Systems</strong>: Select the iCIMS correlation attribute to distinctly find the associated Dayforce value. For example, select SSN. If you do not find your correlation attribute in the list, click the refresh icon available next to the field to reload the available attributes.</li></ul><h4 id="h_01KTK8EH51A55GPNCVQHEB9CXC">iCIMS Candidate to Dayforce Employee</h4><p>The iCIMS Candidate to Dayforce Employee tab defines how data is mapped from iCIMS to Dayforce application. The default mapping of attributes is displayed on the page. The iCIMS attributes are listed on the left side, and the Dayforce attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click Save Changes at the top-right corner of the page to save the integration. </p><h2 id="h_01KTK4883GSGGVG49VRBTGVTPV">Tables</h2><p id="h_01J7XEGA5M57172Y4JT9508Q9D"><span><span>In the Tables tab, you can add tables to the integration. Refer to the </span></span><a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank"><span><span>Using Tables in Integrations</span></span></a><span><span> guide for more details.</span></span></p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span><span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="e4953c3b2213a3e5e7cd9afa705222f28">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="eb514c146c24b38adca5f98c1bece1e0a">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="e20402d1a3916fc31d44b7a4c66c3c861">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="e6df98c63a9b9105f20d26ec7fc7f8c21">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="e4d8fb17863f3c866b2b4e8ba2b7da718">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e41f87a7a2ea5d50c580a284d405ffdb7">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="ebb01093045ec03fb0f5b8c89291355ad">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e7cf30a155d5a76569918bad8f42507c8">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="e9476ae59b67357110f850671de66d376">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol><p> </p>
+  </div>
+</body>
+</html>

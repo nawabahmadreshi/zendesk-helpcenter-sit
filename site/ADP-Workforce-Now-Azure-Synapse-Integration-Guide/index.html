@@ -19,7 +19,237 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>ADP Workforce Now / Azure Synapse Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-_
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><div>The ADP Workforce Now to Azure Synapse integration extracts Workers and related resource types such as personal contacts, government IDs, and communication details with their selected attributes from the ADP Workforce Now API Central app, storing the data in the configured Databricks environment. This data can be transferred to <strong>Databricks Volume</strong>, <strong>AWS S3</strong>, or <strong>Azure Data Lake Storage</strong> based on the chosen landing configuration. For each entity, a dedicated folder is created within the specified storage location, containing Parquet or JSON files with the data, along with Delta log files that track metadata about these files.</div><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ec11883a6e52bc25ca0625b9a36034b19">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e3a437e2f31b48f9cf389cabac9625336">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e45a923406feafd2378a818f4d3e08b21">
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li data-list-item-id="ecbccc70e1acfa342ec68da8d05ac61ca">
+<strong>Databricks</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360052802574-Databricks-Configuration-Guide">Databricks Configuration Guide</a> for details.</li>
+<li data-list-item-id="ed7189bf871fba3cbe7fa280d62b134ec">
+<strong>Azure Data Lake Storage Gen2</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/40991679959191-Azure-Data-Lake-Storage-Gen2-Configuration-Guide">Azure Data Lake Storage Configuration Guide </a>for details if you select <strong>Azure Data Lake Storage</strong><strong> </strong>as the landing storage<strong> </strong>in <strong>Databricks</strong><strong> </strong>settings.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push workers data from ADP Workforce Now to Azure Synapse.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ee344291788791a0fc2334f979084ebaf">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e09664668e4c66049ae530e5f45248526">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ecec0d3c6f3007443d591b2d080933e90">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e50eaf63b403e282bf6a3cd7aaee446df">Search for <strong>ADP Workforce Now / Azure Synapse </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="e9baa5ef05a65b12ae2b0edfd93257ef6">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="eeec427bc3d26ea69bf2c77d7ab89e1e7">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e35455e0b1efe989c00825d2d0b40cfc8">Click <strong>Continue</strong>. The integration configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01KTNFWDZ7ZAP3S6NTF9SCCMC2">Overview</h2><p>On this tab, you can view integration details and the list of additional features supported by the integration.</p><h2 id="h_01KRZNSHPKFRTMY95CGTCRTVG1">ADP Workforce Now</h2><p>The ADP Workforce Now section displays the source application connectors for the integration. This section allows you to search and update the application connectors.</p><h2 id="h_01KRZP61CF0FRZKV5SMH9Z9364">ADP Workforce Now Objects</h2><p>Configure the following ADP Workforce Now Objects:</p><h3 id="h_01KRZP9VZD2WGF8CRNXCYMM93H">Workers</h3><p>Configure the following Worker Data:</p><ul>
+<li data-list-item-id="e91599dd76b4f9281831f02d1778cac93">
+<strong>Workers</strong>:<ul><li data-list-item-id="ec488550df6e1167e7abee881bc1153ff">
+<strong>Workers Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e81dbe44db542fdeee0a7033262ab1ccb">
+<strong>GovernmentID</strong>:<ul><li data-list-item-id="ebe429615b79f76b85616865e24ce0082">
+<strong>GovernmentID Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e165a761216cff108070ed6ad46040b14">
+<strong>Social Insurance Programs</strong>:<ul><li data-list-item-id="e5a8e796539310aca6b5ccf2241f46e0c">
+<strong>Social Insurance Programs Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e14acad95ac0422dfc21999069c724ffd">
+<strong>Personal Landlines</strong>:<ul><li data-list-item-id="e6106e2c992e9bdd5fba2788087c383bf">
+<strong>Personal Landlines</strong> <strong>Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="ed2f7ff388df17e7c6aa53101f5bb29aa">
+<strong>Personal Mobiles</strong>:<ul><li data-list-item-id="e76db434d2126220ed2d38bad53e50ffb">
+<strong>Personal Mobiles</strong> <strong>Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="ef54f44d88d16e2d1bd0541f86915e83e">
+<strong>Personal Faxes</strong>:<ul><li data-list-item-id="e18155738b0331a7c3df91a7af6986915">
+<strong>Personal Faxes Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e6fb69b6a3922585a14a31d603c6fb810">
+<strong>Personal Pagers</strong>:<ul><li data-list-item-id="e0b8d0509d107ce7d802843d874bf643e">
+<strong>Personal Pagers</strong> <strong>Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="ed17f7667d6778f704c63b1a034787985">
+<strong>Personal Emails</strong>:<ul><li data-list-item-id="e22c99aa5cdb02c84a2ddcfcf88e10fe6">
+<strong>Personal Emails Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="eeb620e3e366b61618e22d1e7c65d9244">
+<strong>Business Landlines</strong>:<ul><li data-list-item-id="ecacdf6171ed7528d078a7497db1a1478">
+<strong>Business Landlines</strong> <strong>Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e7da417674ff837cca38091064b79c1a9">
+<strong>Business Mobiles</strong>:<ul><li data-list-item-id="ed42472656eecaec868ce9a88d612fcac">
+<strong>Business Mobiles Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="ed4555cea5f9aa5ab3ee36e474c397af7">
+<strong>Business Faxes</strong>:<ul><li data-list-item-id="ec5023653bd125b67aeecb56b231bfaba">
+<strong>Business Faxes Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="eaae962105aaa4df034fd6342e9c19a7a">
+<strong>Business Pagers</strong>:<ul><li data-list-item-id="ec2f37b1c30d4f2525b49d1de06dbf4ea">
+<strong>Business Pagers Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e7c0752da90aa5e115fe65ffdcfe155b6">
+<strong>Business Emails</strong>:<ul><li data-list-item-id="ed74acb85823c992d1ec309a3db7d7d32">
+<strong>Business Emails Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="eddb847e654e1bb54235c2190cbf48671">
+<strong>Work Assignments</strong>:<ul><li data-list-item-id="e070286acd5635f848bd67b3e03e9910a">
+<strong>Work Assignments Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e764d5ba97f537a77d4028383fab0c2cf">
+<strong>Work Assignment Occupational Classifications</strong>:<ul><li data-list-item-id="e1edf13baf07099a470d4cf765614217a">
+<strong>Work Assignment Occupational Classifications Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e710009e8dbda29db9af4c827e64ad7d8">
+<strong>Work Assignment Industry Classifications</strong>:<ul><li data-list-item-id="ec8ded3ae595f8e0eea6159c62255c766">
+<strong>Work Assignment Industry Classifications Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="edd02c5926f77eb2fba1a125837e703f9">
+<strong>Work Assignment Assigned Work Locations</strong>:<ul><li data-list-item-id="ef5403fb3e7b76149f1cfc8f03d389242">
+<strong>Work Assignment Assigned Work Locations Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e5a83935dbe0d9c7171406b254fa5376d">
+<strong>Military Classification Codes</strong>:<ul><li data-list-item-id="edb4f7ea39e53e7a2df90f5c0c5c8c476">
+<strong>Military Classification Codes Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="ec77d5978769fd44e01e83aa00e0b524c">
+<strong>Preferred Salutations</strong>:<ul><li data-list-item-id="e2b4396b6cf8ba2807d85596d5b94e744">
+<strong>Preferred Salutations Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e29728a7869c0344260cecd2a2895467e">
+<strong>Other Personal Addresses</strong>:<ul><li data-list-item-id="ea3acec25e4b519c1043b18272f45a4be">
+<strong>Other Personal Addresses Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e5f86d6ba0c1fe109825fc984eaa5a5da">
+<strong>Disability Type Codes</strong>:<ul><li data-list-item-id="e836abc0c53e4a600ea22d9c4880bc2ae">
+<strong>Disability Type Codes Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e811f03630985489a49ef1e35cc184110">
+<strong>Photos</strong>:<ul><li data-list-item-id="e645fc8ba35eb1bfaf0690a7e482c02b4">
+<strong>Photos Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e8c3e49e27bc7300d060cbff2455ffb5b">
+<strong>Work Assignment Reports To</strong>:<ul><li data-list-item-id="efc2338f57f98fe637140957a7257f763">
+<strong>Work Assignment Reports To Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="ecf7da18e663a44af9d7693396d159a9e">
+<strong>Work Assignment Home Organizational Units</strong>:<ul><li data-list-item-id="e9725211089a87f3dae55e515c7980de7">
+<strong>Work Assignment Home Organizational Units Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e60f246b1c9d09dff0054f610252093bb">
+<strong>Work Assignment Assigned Organizational Units</strong>:<ul><li data-list-item-id="ef5065a4562d3961fd50a214c70e53aac">
+<strong>Work Assignment Assigned Organizational Units Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="ed755a94f9ca955f2ce2022b9542b9f0b">
+<strong>Work Assignment Worker Groups</strong>:<ul><li data-list-item-id="e22ca6b9908924158a1e8c9d721a380e0">
+<strong>Work Assignment Worker Groups Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e12c8e91fb137d90be42a0c36e362c3f7">
+<strong>Work Assignment Additional Remunerations</strong>:<ul><li data-list-item-id="eae8629ca33b1ef710504915831104fa3">
+<strong>Work Assignment Additional Remunerations Columns</strong>:</li></ul>
+</li>
+<li data-list-item-id="e88dd816b2c339ab4fc347e206d70c0e2">
+<strong>Worker Custom Fields</strong>:<ul><li data-list-item-id="e77a57222c48ba1aa9ba7cc52adc30a46">
+<strong>Worker Custom Fields List</strong>:</li></ul>
+</li>
+<li data-list-item-id="e5d704006ef67ac73cefb71fc3bd52dc0">
+<strong>Person Custom Fields</strong>:<ul><li data-list-item-id="ecf259344d590eca9a10d8869ff4a38ee">
+<strong>Person Custom Fields List</strong>:</li></ul>
+</li>
+<li data-list-item-id="e29e47ba6730b0dbbf3bb9286bb8540b2">
+<strong>Work Assignment Custom Fields</strong>:<ul><li data-list-item-id="e479d16a70a22ac1669d30e5290d6ef40">
+<strong>Work Assignment Custom Fields List</strong>: </li></ul>
+</li>
+</ul><h2 id="h_01KTNMG9VPSQYMVY1ABTAAJJPH">Azure Synapse</h2><p>Configure the following ADP Workforce Now Objects:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul>
+<li data-list-item-id="e3354c653af98c2fc532dd1ed3d7432dd">
+<strong>Select Target Application</strong>: Select the target application from the </li>
+<li data-list-item-id="e3bb90cc3014fd4a4430592bbd604403b">
+<strong>Select Database Name</strong><span>*</span>: Enter the dashboard name in the SQL Server database where DataBridge should create HR tables.</li>
+<li data-list-item-id="e9b198ec68ac6a948653078ad5abc8538">
+<strong>Select Schema</strong><span>*</span>: Select a </li>
+<li data-list-item-id="e6c86df2d0a7b7c26190176ef4a5ff301">
+<strong>Data Write Strategy (SCD Type)</strong>: Select a </li>
+</ul><h2 id="h_01KTNRFPX5KTDFPW5GZ4Z7084B">Monitoring</h2><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Operational Settings</h3><p>The <strong>Operational Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><ul>
+<li data-list-item-id="eaae9e2b2de8c1e040024f66444fe2075">
+<strong>Report Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e35294df714362232da6ca8421e322b2e">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When selected, the following parameter is displayed:<ul><li data-list-item-id="eedac994dc7773a9a98ed358acad703b2">
+<strong>Log Level</strong>: Select the level of detail to include in the integration logs from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eb6673456be5d4b6bf613c8406376e227">
+<strong>Minimum - Operations only; no GUID or fields</strong>: Include operation details in the logs. Any field names and GUIDs are excluded.</li>
+<li data-list-item-id="eb242721931eb3fa845b3607742b266bc">
+<strong>Metadata - Operations + field names; no GUID</strong>: Include operation details and field names in the logs. GUIDs are excluded.</li>
+<li data-list-item-id="e01df11dbba6621c74adc41bdfe595556">
+<strong>Non-PII Data - Operations + field names + selected non-PII values; no GUID</strong>: Include operation details, field names, and selected non-PII values in the logs. GUIDs are excluded.</li>
+<li data-list-item-id="e73f44709ba53f607a0e80d3131fddf6d">
+<strong>GUID with Non-PII Data - GUID + operations + field names + selected non-PII values</strong>: Include GUIDs with operation details, field names, and selected non-PII values in the logs.</li>
+<li data-list-item-id="ee09c9566742045be838febbecf04e8d3">
+<strong>Employee Number with Non-PIl Data - Employee # + operations + field names + selected non-PII values</strong>: Include employee numbers, operation details, field names, and selected non-PII values in the logs.</li>
+<li data-list-item-id="e8380e035db2206695c24fb04cb25c202">
+<strong>Employee Number with All Data - Employee # + operations + field names + all values (PII + Non-PII)</strong>:<strong> I</strong>nclude employee numbers, operation details, field names, and all values, including both PII and non-PII data, in the logs.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="ecd4bdb5395fa568e0fa978e4f72cfb9e">
+<strong>Enable Reporting</strong>: Select this checkbox to generate the integration report. When selected, the following parameters are displayed:<ul>
+<li data-list-item-id="e437d0965584744b241b6b83d9f4dc90f">
+<strong>Reporting Type</strong>: Select the level of detail to be included in the integration reports from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e68dcc96fdff2be7fa7b747edf4946513">
+<strong>Minimum - Operations only; no GUID or fields</strong>: Include operation details in the report. Any field names and GUIDs are excluded.</li>
+<li data-list-item-id="e73c572ef0cbf69905eff9e4d23ac7f44">
+<strong>Metadata - Operations + field names; no GUID</strong>: Include operation details and field names in the report. GUIDs are excluded.</li>
+<li data-list-item-id="e912f7eac1c608385626e068388667af1">
+<strong>Non-PII Data - Operations + field names + selected non-PII values; no GUID</strong>: Include operation details, field names, and selected non-PII values in the report. GUIDs are excluded.</li>
+<li data-list-item-id="e507d712c0f9c26eed2a72622d5dafeee">
+<strong>GUID with Non-PII Data - GUID + operations + field names + selected non-PII values</strong>: Include GUIDs with operation details, field names, and selected non-PII values in the report.</li>
+<li data-list-item-id="ec958461532c64e9ab72fc599c3361420">
+<strong>Employee Number with Non-PIl Data - Employee # + operations + field names + selected non-PII values</strong>: Include employee numbers, operation details, field names, and selected non-PII values in the report.</li>
+<li data-list-item-id="ed9f120db148d1128624eb07a009cf016">
+<strong>Employee Number with All Data - Employee # + operations + field names + all values (PII + Non-PII)</strong>:<strong> I</strong>nclude employee numbers, operation details, field names, and all values, including both PII and non-PII data, in the report.</li>
+</ul>
+</li>
+<li data-list-item-id="e9e289420314eb2566373d43c60c3001a">
+<strong>Report Format Type</strong>: Select the format in which the integration report should be created. The available options are <em>CSV</em> and <em>Excel</em>.</li>
+</ul>
+</li>
+<li data-list-item-id="eb2df076555e1ccf5f674b22a7fbb69c5">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When selected, the following parameter is displayed:<ul><li data-list-item-id="e663e4d7c9579169abc6f7ab11fb224dc">
+<strong>Log Insights Level</strong>: Select the level of detail to include in the log insights dashboard from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eb8d07baf8cc8192694607636c4e7aa8e">
+<strong>Minimum - Operations only; no GUID or fields</strong>: Include operation details in the log insights dashboard. Any field names and GUIDs are excluded.</li>
+<li data-list-item-id="e70b37a0849fab698bdd14a49c8e725dc">
+<strong>Metadata - Operations + field names; no GUID</strong>: Include operation details and field names in the log insights dashboard. GUIDs are excluded.</li>
+<li data-list-item-id="e88f02a3627f45e7b0cd54015c7ada7a3">
+<strong>Non-PII Data - Operations + field names + selected non-PII values; no GUID</strong>: Include operation details, field names, and selected non-PII values in the log insights dashboard. GUIDs are excluded.</li>
+<li data-list-item-id="e5da9f690d180b2709d6bb2512c259056">
+<strong>GUID with Non-PII Data - GUID + operations + field names + selected non-PII values</strong>: Include GUIDs with operation details, field names, and selected non-PII values in the log insights dashboard.</li>
+<li data-list-item-id="e749961317f71abfea10e66b71eeb2437">
+<strong>Employee Number with Non-PIl Data - Employee # + operations + field names + selected non-PII values</strong>: Include employee numbers, operation details, field names, and selected non-PII values in the log insights dashboard.</li>
+<li data-list-item-id="e464f6fedbca84546fcb24bd5df363899">
+<strong>Employee Number with All Data - Employee # + operations + field names + all values (PII + Non-PII)</strong>:<strong> I</strong>nclude employee numbers, operation details, field names, and all values, including both PII and non-PII data, in the log insights dashboard.</li>
+</ul>
+</li></ul>
+</li>
+</ul><h3 id="h_01KTNSDH2WXFVQBZN2705QJQBM">Notification</h3><p>The <strong>Notification</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Enable Email Notification</strong>: Select to enable email notifications for the integration.</p><h4 id="h_01KFDPWRK3JBR0HV1SHVH6ZA32">Email Notification </h4><ul>
+<li data-list-item-id="ee4a1d316c7a7d13be9ed9cb7511bc584">
+<strong>Select Event Type</strong>: Select an event from the dropdown menu for which the email notification must be sent. The available options are <em>Success </em>and <em>Failure</em>.</li>
+<li data-list-item-id="e22d161b409010f33bd6b3537a406ce28">
+<strong>Select Conditional Notification</strong>: Select this checkbox to define a condition for sending the notification. When enabled, the following parameter is displayed:<ul><li data-list-item-id="e6ff58129a23607fea0c465901c29b055">
+<strong>Notification Condition</strong>:</li></ul>
+</li>
+<li data-list-item-id="e3d3dfde45bb5fd7af0391aae80999228">
+<strong>Recipient Email Addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="ed6fa4247edcd938eb432035e92497052">
+<strong>Email Subject Line</strong>: Enter the content that must be used as the email subject in the notifications sent for the selected event in the <strong>Select Event</strong> parameter.</li>
+<li data-list-item-id="ee81e69be9517ce9057ff88efe7cc640b">
+<strong>Email Template</strong>: Enter the content that must be used as the email body for all admin email notifications.</li>
+<li data-list-item-id="e8af313668ea63d433ee8c6b6e91f7450">
+<strong>Send Integration Report via Email</strong>: Select this checkbox to send the integration report via email. When selected, the following parameter is displayed:<ul><li data-list-item-id="e8d35a8e5575286d5a65e88fdf8abab70">
+<strong>Select Report Format</strong>: Select the format in which the integration report should be sent via email. The available options are <em>CSV</em> and <em>Excel</em>.</li></ul>
+</li>
+</ul><p>To add another configuration, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button.</p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><p>To delete a configuration, click the delete icon.</p><p>To view the notification settings in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p>
   </div>
 </body>
 </html>

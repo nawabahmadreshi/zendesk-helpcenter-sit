@@ -1,0 +1,430 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dynamic365-ERP / UKG Ready Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dynamic365-ERP / UKG Ready Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, any employees or system users created, updated, or terminated in UKG Ready are automatically updated in Microsoft Dynamics 365 Finance and Operations based on the defined schedule.</p><p>To identify user records across both systems from UKG Ready to Microsoft Dynamics 365, the integration uses the attribute configured in the <strong>UKG Ready Correlation Attribute</strong> parameter in UKG Ready and matches it to the attribute configured in the <strong>Microsoft Dynamics 365 Finance and Operations Correlation Attribute</strong> parameter in Microsoft Dynamics 365 as a correlation attribute.</p><h2 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h2><p>The Dynamics 365 / UKG Ready Integration performs the following functions:</p><ul>
+<li data-list-item-id="e634cc2be2753f67634d148db048edd66">Synchronizes employees or system user records from UKG Ready to Microsoft Dynamics 365 Finance and Operations.</li>
+<li data-list-item-id="ea0a14da17bdf0406b683fe35370fffef">Creates new employees and system users in Microsoft Dynamics 365 Finance and Operations when they are added in UKG Ready.</li>
+<li data-list-item-id="e84b55cad6ee14b10e537fa8d28cd7acf">Updates existing employees and system user records in Microsoft Dynamics 365 Finance and Operations when the corresponding user information changes in UKG Ready.</li>
+<li data-list-item-id="ed44211bc86a164eeb8da3eef5ab3eb15">Terminates the employees and system user records in Microsoft Dynamics 365 Finance and Operations when the corresponding user records are deleted from the UKG Ready.</li>
+<li data-list-item-id="e990ed9c48f053d08c239711254ff2cf4">Supports both full synchronization and incremental synchronization to process only changed records.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e678d0c372604313c18d9c8d8843d587c">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
+</li>
+<li data-list-item-id="e2bf1625534d3917519d1071cc18efb9b">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="eb98ab7306006b6bf4cb2d595d170b2d5">
+<strong>UKG Ready</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360063406953" rel="noopener noreferrer" target="_blank">UKG Ready Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="ebafb5f6f8fd27e35c0ac0c0d42d16b87">
+<span><strong>Microsoft Dynamics 365 Finance and Operations</strong></span>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/27620068148247" rel="noopener noreferrer" target="_blank">Microsoft Dynamics 365 Finance and Operations Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to push user-related data from UKG Ready to Microsoft Dynamics 365 Finance and Operations.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e01ab3a433aa87344069ccd11af0a1e04">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e97898e1f17915909f808c0269a68e8f7">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="ef2d41be5cd6c467bc3ac497894f57df8">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e4d79d0edb562bf7a20bdcb800e220633">Search for<strong> Dynamic365-ERP / UKG Ready </strong>in the search box next to the <strong>Explore Templates</strong> section.</li>
+<li data-list-item-id="ee16ee57dbe15ff5f19d4faa9ea038327">Click the integration template to display the <strong>Create New Integration</strong> pop-up window.</li>
+<li data-list-item-id="e0b567a81ba70176b1f48ba51e3756ea6">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e92e4298921d2212e0954c8808da343e1">Select your Microsoft Dynamics 365 Finance and Operations and UKG Ready connector instances.</li>
+<li data-list-item-id="e1d8ec9d5ed58124303410606ea7089d6">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</h4><p>Enable the following feature based on your requirements:</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e6b0beed2b0555bca385603aa56d00cda">
+<span><strong>Manage Employees</strong></span>: Enable this toggle button to synchronize employee records from UKG Ready to Microsoft Dynamics 365 Finance and Operations. When enabled, the <a href="#h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Employees</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e93960f31e226c97b19ca525f3e854359">
+<span><strong>Manage System Users</strong></span>: Enable this toggle button to synchronize the system use records from UKG Ready to Microsoft Dynamics 365 Finance and Operations. When enabled, the <a href="#h_01KKBMXVHB7WJDCHSC4ACBW4XT">Manage System Users</a> section is displayed for further configuration.</li>
+</ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">
+<span>Execution</span> Features</h4><p>Configure the following settings:</p><ul>
+<li data-list-item-id="ee7e36b15376d39e100fe2dd97c580937">
+<strong>Enable Report-Only Mode</strong>: Enable this toggle button to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e61d3ca9c5bd729187b4c04b1e3fd73d9">
+<strong>Enable Incremental Mode</strong>: Enable this toggle button to run the integration in incremental mode. If this toggle is disabled, the integration will run in full sync mode. By default, the first integration execution always runs in full sync mode.</li>
+<li data-list-item-id="e2ca7bc24ed035aa40087a90b022383c2">
+<strong>Enable Logging</strong>: Enable this toggle button to generate logs outlining data changes. When enabled, the <a href="#h_01K04B51EEX43EAV95YABBP3F5">Logging Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eceb4cf1e3eac5891a0f178cac44427b3">
+<strong>Enable Notifications</strong>: Enable this toggle button to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e43a0ebf6cfef086b7310a00450863abc">
+<strong>Enable Report Generation</strong>: Enable this toggle button to generate the integration report. When enabled, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e9acf3f36db3f8071edf23287d25fae8c">
+<strong>Enable Log Insights</strong>: Enable this toggle button to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e6d8846b3a670b4f282ebebcea722e40f">
+<strong>Enable Debugging</strong>: Enable this toggle button to generate logs outlining data changes that would occur for debugging.</li>
+<li data-list-item-id="ea2a7e9fc50b1f9e1469b304a177dad5f">
+<strong>Enable Advanced Debugging</strong>: Enable this toggle button to generate detailed execution logs, including request and response payloads, mappings, and internal processing steps for advanced troubleshooting.</li>
+</ul><h3 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Manage Employees</h3><p>This section enables you to customize the integration settings to manage employee records for your specific use cases.</p><h4 id="h_01KGMG4JM39E5ES9AGZFATM7WD">Correlation Settings</h4><p>Configure the following settings:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e04faf3f766ab620ad3dbcd39163643ef">
+<span><strong> </strong></span><span><strong>Source Correlation Attribute</strong></span><span>*</span>: Select the UKG Ready attribute to distinctly find the associated Microsoft Dynamics 365 Finance and Operations employee record. For example, <em>EmployeeId</em>.</li>
+<li data-list-item-id="ee7e2d5f7d159cae3b465aea5c13d75a6">
+<span><strong>Target Correlation Attribute</strong></span><span>*</span>: Select the Microsoft Dynamics 365 Finance and Operations attribute to distinctly find the associated UKG Ready employee record. For example, <em>PersonnelNumber</em>.</li>
+</ul><h4 id="h_01KHNR86JVSS2AZXF2B8AGHB5E">Safeguard Limits</h4><p>Configure the following settings to limit the employee records provisioned from UKG Ready to Microsoft Dynamics 365 Finance and Operations:</p><ul>
+<li data-list-item-id="e7a106f6da50804905124f15fc2890d19">
+<strong>Limit type</strong>: Select whether the safeguard limits are defined as a number or a percentage. Currently, only a number value is supported.</li>
+<li data-list-item-id="e9ddf9b02a77544e563e53578a839c01c">
+<strong>Enable Import Limit</strong>: Enable this toggle button to set a limit on the number of employee records that can be imported from UKG Ready into Microsoft Dynamics 365 Finance and Operations. If disabled, all the employee records will be imported. When enabled, the following parameter is displayed:<ul><li data-list-item-id="ebdc9c47cdd9105326a2564da130d5187">
+<strong>Import Limit</strong>: Enter the maximum number of employee records that can be imported from UKG Ready to Microsoft Dynamics 365 Finance and Operations in a single integration run. For example, entering 7 allows only 7 employee records to be imported in a single integration run.</li></ul>
+</li>
+<li data-list-item-id="e37a5fd80cffb6a0781126e4f50358427">
+<strong>Limit Scope</strong>: Select a scope from the dropdown menu to specify whether a single safeguard limit has to be applied across all operations or separate limits need to be configured for each operation type. The available operations are <em>All operations</em> and <em>Per operation</em>.<ul>
+<li data-list-item-id="e102d5642a8ece33cfed8f74b3b4877b7">
+<strong>All operations</strong>: Select this option to apply the safeguard limit across all operations. When selected, the following field is displayed for further configuration:<ul><li data-list-item-id="e66a71687e7220615df44c38bef852baa">
+<strong>Limit value (all operations)</strong>: Enter a value to define the safeguard limit for all operations. After the limit is reached, no create, update, or deactivation operations will be executed.</li></ul>
+</li>
+<li data-list-item-id="e874a72bc65b71ff2bc679af1c7c4c104">
+<strong>Per operation</strong>: Select this option to define and apply different safeguard limits for each operation type. When selected, the following parameters are displayed for further configuration:<ul>
+<li data-list-item-id="e7d0f30d9f80ffe81f0dea9d03f370786">
+<strong>Create limit</strong>: Enter the maximum number of creations that are allowed to be performed in a single integration run. After the limit is reached, create operations will no longer be executed.</li>
+<li data-list-item-id="eb8d7622e69f6ee7e31b831be2f5e8757">
+<strong>Update limit</strong>: Enter the maximum number of updates that are allowed to be performed in a single integration run. After the limit is reached, update operations will no longer be executed.</li>
+<li data-list-item-id="e1587a5c5b76cce34c32de17a4233ab95">
+<strong>Deactivate limit</strong>: Enter the maximum number of deactivations that are allowed to be performed in a single integration run. After the limit is reached, deactivation operations will no longer be executed.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="h_01KTRHH5YRWSCWSDSHJENEEV24">Provisioning Settings</h4><p>Configure the following provisioning settings:</p><ul>
+<li data-list-item-id="e485185069f2ddae10aeb9530878d523c">
+<strong>Enable Creation</strong>: Enable this toggle button to define the condition for creating employee records in Microsoft Dynamics 365 Finance and Operations from UKG Ready. When enabled, the <a href="#h_01KHNMP7V37BGNDT0PQTYGM99V">Create Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e6da88a0749922bb22e59b183bde5a5ef">
+<strong>Enable Update</strong>: Enable this toggle button to define the condition for updating employee records in Microsoft Dynamics 365 Finance and Operations from UKG Ready. When enabled, the <a href="#h_01KRDDN0K3FM9KRV3N42DTA00G">Update Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e5bb78362ba2d800d9e5a08f956183fc7">
+<strong>Enable Deactivation</strong>: Enable this toggle button to define the condition for deactivating employee records in Microsoft Dynamics 365 Finance and Operations from UKG Ready. When enabled, the <a href="#h_01KRDDN0K435R6MCNKX39TEX8B">Deactivate Settings</a> section is displayed for further configuration.</li>
+</ul><h4 id="h_01KHNR86JVZTAQ5FH2VMSSCEZ5">
+<span>Source</span> Settings</h4><p>Configure the following settings to filter employee records in UKG Ready.</p><ul><li data-list-item-id="edbc9f8d886598e657f4f543508dfc0a3">
+<strong>Enable Source Filter</strong>: Enable this toggle button to filter a single employee record from UKG Ready to sync to Microsoft Dynamics 365 Finance and Operations. When enabled, the following parameters are displayed where you need to select the attribute name and the value by which an employee record needs to be filtered:<ul>
+<li data-list-item-id="eae12d9a2da7924a0e625e87b4c0126ed">
+<span><strong>Source Filter</strong></span>:  Select an attribute name from the dropdown menu to filter an employee. The available values are <em>Username</em> and <em>Employee ID</em>.</li>
+<li data-list-item-id="e1f92072020255a182479ec074b3f1e1d">
+<span><strong>Source filter value</strong></span>: Enter a value for the selected attribute by which an employee must be filtered.</li>
+</ul>
+</li></ul><h4 id="h_01KHNMP7V37BGNDT0PQTYGM99V">Create Settings</h4><p>Configure the following settings to apply a condition for creating employee records from UKG Ready to Microsoft Dynamics 365 Finance and Operations:</p><ul><li data-list-item-id="ed83fbecd8805c9a138864548d29dfac3">
+<strong>Create Condition Type</strong>: Select a condition to specify which UKG Ready employee records must be created in the Microsoft Dynamics 365 Finance and Operations application. Only employee records that satisfy this condition will be created in the Microsoft Dynamics 365 Finance and Operations application. The available options are <em>Based on Employment Status</em> and <em>Custom</em>.<ul>
+<li data-list-item-id="ef61d290e0050950c2a0f702666f5784a">
+<strong>Based on Employment Status</strong>: Select this option to filter the employee records by their employment statuses. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="e1d9225a73f798f0b8d0072c01119fed5">
+<strong>Eligible Employment Statuses for Create</strong>: Select one or more employment statuses from the dropdown menu. Only employees with the selected statuses in UKG Ready will be created in Microsoft Dynamics 365 Finance and Operations. For example, if you select <em>Active</em>, only users with the Active status are filtered and created in the Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+<li data-list-item-id="edc00fb07a493942d8870079a394ba20d">
+<strong>Custom</strong>: Select this option to define a custom expression for filtering employee records from UKG Ready. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="e076789418451053999e5e67b77a54191">
+<strong>Custom Create Condition</strong>: Enter a custom expression to define which employee records should be created in Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KRDDN0K3FM9KRV3N42DTA00G">Update Settings</h4><p>Configure the following settings to apply a condition for updating employee records from UKG Ready to Microsoft Dynamics 365 Finance and Operations:</p><ul><li data-list-item-id="edeecb0751e3ecec9f3f4d6a3ec20af69">
+<strong>Update Condition Type</strong>: Select a condition to specify which UKG Ready employee records must be updated in the Microsoft Dynamics 365 Finance and Operations application. Only employee records that satisfy this condition will be updated in the Microsoft Dynamics 365 Finance and Operations application. The available options are <em>Based on Employment Status</em> and <em>Custom</em>.<ul>
+<li data-list-item-id="e3c89ace919b18cdf9874a29d85d80f8b">
+<strong>Based on Employment Status</strong>: Select this option to filter the employee records by their employment statuses. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="e77a0ecb7e7a87f4ea2ffa93978a7afda">
+<strong>Eligible Employment Statuses for Update</strong>: Select one or more employment statuses from the dropdown menu. Only employees with the selected statuses in UKG Ready will be updated in Microsoft Dynamics 365 Finance and Operations. For example, if you select <em>Pre Hire</em>, only users with the Pre Hire status are filtered and updated in the Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+<li data-list-item-id="e57495803fa79b603f1f07d09ca58dfad">
+<strong>Custom</strong>: Select this option to define a custom expression for filtering employee records from UKG Ready. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="e6b62846eb5fdcf6b1952410e43603b7b">
+<strong>Custom Create Condition</strong>: Enter a custom expression to define which employee records should be updated in Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KRDDN0K435R6MCNKX39TEX8B">Deactivate Settings</h4><p>Configure the following settings to apply a condition for deactivating employee records from UKG Ready to Microsoft Dynamics 365 Finance and Operations:</p><ul><li data-list-item-id="e9b2431a6490ba28c0b91fde7f5c54064">
+<strong>Deactivate Condition Type</strong>: Select a condition to specify which UKG Ready employee records must be deactivated in the Microsoft Dynamics 365 Finance and Operations application. Only employee records that satisfy this condition will be deactivated in the Microsoft Dynamics 365 Finance and Operations. The available options are <em>Based on Employment Status</em> and <em>Custom</em>.<ul>
+<li data-list-item-id="efbf6e3b09ba74eb78359bb99cd70165c">
+<strong>Based on Employment Status</strong>: Select this option to filter the employee records by their employment statuses. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="e520e582ae029802af62c8795b25212fe">
+<strong>Eligible Employment Statuses for Deactivation</strong>: Select one or more employment statuses from the dropdown menu. Only employees with the selected statuses in UKG Ready will be deactivated in Microsoft Dynamics 365 Finance and Operations. For example, if you select <em>Terminated</em>, only users with the Terminated status are filtered and deactivated in the Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+<li data-list-item-id="e6ce01bb013ebdf8d597343f06aa2daab">
+<strong>Custom</strong>: Select this option to define a custom expression for filtering employee records from UKG Ready. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="effd3647cdae7c3db1e2a0ecc506ff837">
+<strong>Custom Deactivate Condition</strong>: Enter a custom expression to define which employee records should be deactivated in Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KKBMXVHB7WJDCHSC4ACBW4XT">Manage System Users</h3><p>This section enables you to customize the integration settings to manage system user records for your specific use cases.</p><h4 id="h_01KHNR86JVFMC64ERZV9VCKCEH">Correlation Settings</h4><p>Configure the following settings:</p><p><strong>Note</strong>: All parameters marked with a red asterisk (<span>*</span>) are mandatory.</p><ul data-end="1629" data-start="288">
+<li data-list-item-id="e0da5868a8bfb824947e23c9175d882fc">
+<span><strong>Source Correlation Attribute</strong></span><span>*</span>: Select the UKG Ready attribute to distinctly find the associated Microsoft Dynamics 365 Finance and Operations system user record. For example, <em>EmployeeId</em>.</li>
+<li data-list-item-id="e79cdb6af4985f40b8836821cb37a71c0">
+<span><strong>Target Correlation Attribute</strong></span><span>*</span>: Select the Microsoft Dynamics 365 Finance and Operations attribute to distinctly find the associated UKG Ready system user record. For example, <em>UserID</em>.</li>
+</ul><h4 id="h_01KTRHH5YRHPAJVREYED2A3F8E">Safeguard Limits</h4><p>Configure the following settings to limit the system user records provisioned from UKG Ready to Microsoft Dynamics 365 Finance and Operations:</p><ul>
+<li data-list-item-id="e36dc4062bdad39788b6e12283f6bf18e">
+<strong>Limit type</strong>: Select whether the safeguard limits are defined as a number or a percentage. Currently, only a number value is supported.</li>
+<li data-list-item-id="e855d88385d9143cc6af6d184ddf9f9c5">
+<strong>Enable Import Limit</strong>: Enable this toggle button to set a limit on the number of system user records that can be imported from UKG Ready into Microsoft Dynamics 365 Finance and Operations. If disabled, all the system user records will be imported. When enabled, the following parameter is displayed:<ul><li data-list-item-id="e73d278b5abdce4c61ef8f893fd2de56b">
+<strong>Import Limit</strong>: Enter the maximum number of system user records that can be imported from UKG Ready to Microsoft Dynamics 365 Finance and Operations in a single integration run. For example, entering 7 allows only 7 system user records to be imported in a single integration run.</li></ul>
+</li>
+<li data-list-item-id="e7e4ecd341b571bd7b3ed3da25bd74781">
+<strong>Limit Scope</strong>: Select a scope from the dropdown menu to specify whether a single safeguard limit has to be applied across all operations or separate limits need to be configured for each operation type. The available operations are <em>All operations</em> and <em>Per operation</em>.<ul>
+<li data-list-item-id="e8abe6e4cf1608cb49365b352d1bf7258">
+<strong>All operations</strong>: Select this option to apply the safeguard limit across all operations. When selected, the following field is displayed for further configuration:<ul><li data-list-item-id="eadeafb88cad67454972b2fc84dcff8d6">
+<strong>Limit value (all operations)</strong>: Enter a value to define the safeguard limit for all operations. After the limit is reached, no create, update, or deactivation operations will be executed.</li></ul>
+</li>
+<li data-list-item-id="e029f94ceef320d52c722e63263dd2df7">
+<strong>Per operation</strong>: Select this option to define and apply different safeguard limits for each operation type. When selected, the following parameters are displayed for further configuration:<ul>
+<li data-list-item-id="e81f38f455271324dd396b8750ed6adad">
+<strong>Create limit</strong>: Enter the maximum number of creations that are allowed to be performed in a single integration run. After the limit is reached, create operations will no longer be executed.</li>
+<li data-list-item-id="e6ea88c4bd120d55c7fe77a3f23dab12a">
+<strong>Update limit</strong>: Enter the maximum number of updates that are allowed to be performed in a single integration run. After the limit is reached, update operations will no longer be executed.</li>
+<li data-list-item-id="e3962e4ea89fd79db069f2a7971d18d1f">
+<strong>Deactivate limit</strong>: Enter the maximum number of deactivations that are allowed to be performed in a single integration run. After the limit is reached, deactivation operations will no longer be executed.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="h_01KTRHH5YRPDJQDT9S0BZANHTN">Provisioning Settings</h4><p>Configure the following provisioning settings:</p><ul>
+<li data-list-item-id="ee9b91d7097e21d56c768ee854a1895ae">
+<strong>Enable Creation</strong>: Enable this toggle button to define the condition for creating system user records in Microsoft Dynamics 365 Finance and Operations from UKG Ready. When enabled, the <a href="#h_01KTRH6H3WR2KHPNCG3GSC3H41">Create Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e7814ed8a7b59ee869384f2a25b63e993">
+<strong>Enable Update</strong>: Enable this toggle button to define the condition for updating system user records in Microsoft Dynamics 365 Finance and Operations from UKG Ready. When enabled, the <a href="#h_01KTRH7JAN22KAS6PGPQRVTK3D">Update Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ef78af81869b25bd2d8c0c04c97ef4c53">
+<strong>Enable Deactivation</strong>: Enable this toggle button to define the condition for deactivating system user records in Microsoft Dynamics 365 Finance and Operations from UKG Ready. When enabled, the <a href="#h_01KTRH8RKPVBSH08ZE1N3AXFXZ">Deactivate Settings</a> section is displayed for further configuration.</li>
+</ul><h4 id="h_01KTRHH5YRFMWC0SS48Z26YWYB">
+<span>Source</span> Settings</h4><p>Configure the following settings to filter employee records in UKG Ready.</p><ul><li data-list-item-id="ee17a3f48be854348150942b9efe92f0d">
+<strong>Enable Source Filter</strong>: Enable this toggle button to filter a single system user record from UKG Ready to sync to Microsoft Dynamics 365 Finance and Operations. When enabled, the following parameters are displayed where you need to select the attribute name and the value by which an system user record needs to be filtered:<ul>
+<li data-list-item-id="e0807dc7782201addbee1a569c86f7c7c">
+<span><strong>Source Filter</strong></span>:  Select an attribute name from the dropdown menu to filter a system user. The available values are <em>Username</em> and <em>Employee ID</em>.</li>
+<li data-list-item-id="ee3d763c20976dd0a7a187efb877a1091">
+<span><strong>Source filter value</strong></span>: Enter a value for the selected attribute by which a system user must be filtered.</li>
+</ul>
+</li></ul><h4 id="h_01KTRH6H3WR2KHPNCG3GSC3H41">Create Settings</h4><p>Configure the following settings to apply a condition for creating system user records from UKG Ready to Microsoft Dynamics 365 Finance and Operations:</p><ul><li data-list-item-id="ee53947c2aa204e9f1ce28c8c55be5b4d">
+<strong>Create Condition Type</strong>: Select a condition to specify which UKG Ready system user records must be created in the Microsoft Dynamics 365 Finance and Operations application. Only system user records that satisfy this condition will be created in the Microsoft Dynamics 365 Finance and Operations application. The available options are <em>Based on Employment Status</em> and <em>Custom</em>.<ul>
+<li data-list-item-id="e0df0aa754402c3ad9625a5027e4241af">
+<strong>Based on Employment Status</strong>: Select this option to filter the system user records by their employment statuses. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="e6509a3beb95f86a8868dc2bdb3e601ff">
+<strong>Eligible User Statuses for Create</strong>: Select one or more employment statuses from the dropdown menu. Only system user with the selected statuses in UKG Ready will be created in Microsoft Dynamics 365 Finance and Operations. For example, if you select <em>Active</em>, only system users with the Active status are filtered and created in the Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+<li data-list-item-id="e41952cde46820291041b5a2c6ff92134">
+<strong>Custom</strong>: Select this option to define a custom expression for filtering system user records from UKG Ready. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="edda0cfa1246455242009e293a03387cc">
+<strong>Custom Create Condition</strong>: Enter a custom expression to define which system user records should be created in Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KTRH7JAN22KAS6PGPQRVTK3D">Update Settings</h4><p>Configure the following settings to apply a condition for updating system user records from UKG Ready to Microsoft Dynamics 365 Finance and Operations:</p><ul><li data-list-item-id="e59184d549ed0526d3252739aaab715c0">
+<strong>Update Condition Type</strong>: Select a condition to specify which UKG Ready system user records must be updated in the Microsoft Dynamics 365 Finance and Operations application. Only system user records that satisfy this condition will be updated in the Microsoft Dynamics 365 Finance and Operations application. The available options are <em>Based on Employment Status</em> and <em>Custom</em>.<ul>
+<li data-list-item-id="e1487a0aa3e63255eff9fe4f4399f7e07">
+<strong>Based on Employment Status</strong>: Select this option to filter the system user records by their employment statuses. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="e850196d38a572b952659b75e9581e7ce">
+<strong>Eligible User Statuses for Update</strong>: Select one or more employment statuses from the dropdown menu. Only system user with the selected statuses in UKG Ready will be updated in Microsoft Dynamics 365 Finance and Operations. For example, if you select <em>Pre Hire</em>, only users with the Pre Hire status are filtered and updated in the Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+<li data-list-item-id="eb49ed88f83eac9854595fb2a04e45c26">
+<strong>Custom</strong>: Select this option to define a custom expression for filtering system user records from UKG Ready. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="ee0946f7ecd9069981180b803cc73a3bb">
+<strong>Custom Create Condition</strong>: Enter a custom expression to define which system user records should be updated in Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+</ul>
+</li></ul><h4 id="h_01KTRH8RKPVBSH08ZE1N3AXFXZ">Deactivate Settings</h4><p>Configure the following settings to apply a condition for deactivating system user records from UKG Ready to Microsoft Dynamics 365 Finance and Operations:</p><ul><li data-list-item-id="e1f7bdf23254216d5bd1b34332a729544">
+<strong>Deactivate Condition Type</strong>: Select a condition to specify which UKG Ready system user records must be deactivated in the Microsoft Dynamics 365 Finance and Operations application. Only system user records that satisfy this condition will be deactivated in the Microsoft Dynamics 365 Finance and Operations. The available options are <em>Based on Employment Status</em> and <em>Custom</em>.<ul>
+<li data-list-item-id="e700f5f02e4fcd37536edddde9d92f312">
+<strong>Based on Employment Status</strong>: Select this option to filter the system user records by their employment statuses. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="efe63e80225ec2be75dff46770b6f7b8e">
+<strong>Eligible User Statuses for Deactivate</strong>: Select one or more employment statuses from the dropdown menu. Only system users with the selected statuses in UKG Ready will be deactivated in Microsoft Dynamics 365 Finance and Operations. For example, if you select <em>Terminated</em>, only users with the Terminated status are filtered and deactivated in the Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+<li data-list-item-id="e20eacab22d91803f2fb463abb605fa99">
+<strong>Custom</strong>: Select this option to define a custom expression for filtering system user records from UKG Ready. When selected, the following parameter is displayed for further configuration:<ul><li data-list-item-id="ea90983aac6ea7549c5b3fa761cf9595a">
+<strong>Custom Deactivate Condition</strong>: Enter a custom expression to define which system user records should be deactivated in Microsoft Dynamics 365 Finance and Operations.</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01K04B51EEX43EAV95YABBP3F5">Sensitive Fields</h3><p>Configure the following settings to specify the fields that should be considered sensitive data:</p><ul>
+<li data-list-item-id="e5b250ff24e557f748acda308ac22d2b0">
+<strong>PII Fields</strong>: Enter the personally identifiable information (PII) fields that should be masked or protected.</li>
+<li data-list-item-id="ed2cc00f21fcfa428793729276a37339d">
+<strong>GUID Fields</strong>: Enter the globally unique identifiers (GUIDs) fields that should be masked or protected.</li>
+<li data-list-item-id="e933f5e4f81dd62692afc242ab09aa132">
+<strong>Employee Id Fields</strong>: Enter the employee IDs fields that should be masked or protected.</li>
+</ul><h3 id="h_01KTRHH5YSBTAAPEBFQ5C8JD1Y">Log Settings</h3><p>The <strong>Log Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable logging</strong> parameter in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">Execution Features</a> section.</p><ul>
+<li data-list-item-id="ee6ee190c86d4e3c6978c8f6465f56736">
+<strong>Select Log Type</strong>: Select the type of data that should appear in the logs. The following are the available options:<ul>
+<li data-list-item-id="ee76dc5c16dfe87b9f43c740d472e1645">
+<strong>Minimum:</strong> Logs only the operations performed during the integration run. Operations are recorded without GUIDs or field details. For example, the log may display <strong>User Created</strong>, <strong>User Updated</strong>, or <strong>User Deleted</strong> without listing any attributes or identifiers.</li>
+<li data-list-item-id="ee650c84fdf1ddf3e920e1957c6a9bccd">
+<strong>Metadata:</strong> Logs the operations performed along with the names of the fields that were changed, but does not include the GUID. For example, the log may show <strong>Updated fields: Department and Title</strong> without displaying the associated user identifier.</li>
+<li data-list-item-id="e1abdea480e36231556b6b580e0cb2d5c">
+<strong>Non-PII Data:</strong> Logs the operations performed, field names, and selected non-PII values. The GUID is not included. For example, the log may display <strong>Department updated to Sales</strong> while masking sensitive information such as date of birth.</li>
+<li data-list-item-id="ef86cde138877af10c5c1641b8f610288">
+<strong>GUID with Non-PII Data:</strong> Logs the GUID together with the operations performed, field names, and selected non-PII values. This option provides detailed traceability while still preventing exposure of sensitive information.</li>
+<li data-list-item-id="e9cde4b88577d97727131a1bf2f349565">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eae6e590199671f217160dc74889896ff">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data. </li>
+</ul>
+</li>
+<li data-list-item-id="ec8933c5a782e924eeb61bad10c17c4e9">
+<strong>Select Log Level</strong>: Select the desired log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ede9fe7b1219f6c3192eb3c960cbffba9">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="ec858e149155ddcd27a7b922dacef8c85">
+<strong>Inclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="ef2d4fa345d308033bf5c2255250708e7">
+<strong>Custom inclusion list</strong>: Select the attributes to be included in the log.</li></ul>
+</li>
+<li data-list-item-id="eba1ab1d8656a3033cce2c37da5725208">
+<strong>Exclusion list</strong>: Select this option to log only the attributes specified in the <strong>Custom exclusion list.</strong><ul><li data-list-item-id="e63ee622097b94a41dfa60f1e38f47004">
+<strong>Custom exclusion list</strong>: Select the attributes to be excluded from the log.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Reporting Settings</h3><p>This section enables you to customize the integration report settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Report Generation</strong> parameter in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">Execution Features</a> section.</p><ul>
+<li data-list-item-id="e2088054d637f10891c645e2e966e73d7">
+<strong>Select Report Type</strong>: Select a report type. This will decide the level of detail to be included in reports.<br/>The following are the available options:<ul>
+<li data-list-item-id="e27191c152ddf3d6b8eeaee768bc12866">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="eecdf7662a45499c9cefdcc3f38ba9f6c">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e5b06776d742a9d3f39cbcedd3833a7fe">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e84ca7748e58c24c036a239e14bb46dbb">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e80253b9e11f2478e54035a9ca9137685">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e90a806e5d6fc6ddcdbad22225567299f">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e5a9629d313a35b2c06248b63760191fe">
+<strong>Select Report Level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="ea3695e9ff65d290940ecaad57611bd92">
+<strong>Full details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e29c3e19e4cf46e6ebde12c9bfc2008cd">
+<strong>Include list</strong>: Select this option to report only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="e32865716c1c5b366d5ddc418deb85df1">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="ee2e3dbe6ab7be5ef4df7c14fe8577897">
+<strong>Exclude list</strong>: Select this option to report only the attributes specified in the <strong>Custom exclusion list</strong>.<ul><li data-list-item-id="ed7d73a283b4bbfa40115c511c929e162">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>The <strong>Notification Settings</strong> section enables you to customize the integration settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Notification </strong>parameter is enabled in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">Execution Features</a> section.</p><h4 id="h_01KNRH0CCKYTWKSDADWQVSDY3Y">Notification Template Settings</h4><p>Configure the following notification template settings:</p><ul>
+<li data-list-item-id="e522190b477097716d25c04dbd779d262">
+<strong>Attach report to email</strong>: Enable this toggle button to attach a CSV report to the email notification. When enabled, the <a href="#01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e3ccdab79094c8111373b8dd1bc37d920">
+<strong>Send Email Notification For Success</strong>: Enable this toggle button to send an email notification upon successful integration. When enabled, the <a href="#01KFD1AMVYPNY4PY2ZB7A64VGC">Successful Integration Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eac8e25d4951cabee032894aeb2e9a00f">
+<strong>Send Email Notification For Failure</strong>: Enable this toggle button to send an email notification upon integration failure. When enabled, the <a href="#h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failed Integration Notification Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ee839a5dcc09b08c62db3061626375a7b">
+<strong>Send Email Notification on Create</strong>: Enable this toggle button to send an email notification upon successful employee or system user creation. When enabled, the <a href="#h_01KRE0VPQVSTC8WW591B03TGBN">Create Notification</a> section is displayed for further configuration.</li>
+<li data-list-item-id="edd403fd7256f78adc3a431891b3b8ee2">
+<strong>Send Email Notification on Update</strong>: Enable this toggle button to send an email notification upon successful employee or system user updation. When enabled, the <a href="#h_01KRE0VPQVXZ0NEHWR02TY477D">Update Notification</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e3b47e33556ae00fb1e8e737a612af58b">
+<strong>Send Email Notification on Deactivate</strong>: Enable this toggle button to send an email notification upon successful employee or system user updation. When enabled, the <a href="#h_01KRE0VPQV0PHSHTB4AZR8EYNV">Deactivate Notification</a> section is displayed for further configuration.</li>
+</ul><h4 id="01K5X7TJQR0KMMYYXZF7N7W9SG">Notification Report Settings</h4><p>Configure the following settings for the notification reports:</p><ul>
+<li data-list-item-id="ef56e449329f841bee9d8cabf1b7667d1">
+<strong>Select Report Type</strong>: Select the desired report type from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e98503fa53f97b900097b691dddf4718a">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e780202b40ae3b03ee24fbf080be71586">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="eb33348b6e8a85c39c2fa355d8852a813">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e2f7264279ddb61311f0cd428b1294b98">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e63d99faac625a47236847605d59662bc">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e7000b9243e6170c18f5af13808dee7b7">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="eeac24e8549144dd49d49701379651049">
+<strong>Select Report Level</strong>: Select the desired report detail level. The following are the available options:<ul>
+<li data-list-item-id="e172684f02c8ad006823a981be63005b4">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e0921565a80ed02e6a9ecc0d28bc8b2d6">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="e22b50695f2d451c7bf82a950249eb48b">
+<strong>Include List</strong>: Select this option to report only the attributes specified in the <strong>Custom inclusion list</strong>.<ul><li data-list-item-id="e92dec03cee61d9cedf685f2f9a57820e">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the report.</li></ul>
+</li>
+<li data-list-item-id="ee71c09e998a081dee4dfdd3f03e75e83">
+<strong>Exclude List</strong>: Select this option to report only the attributes specified in the <strong>Custom exclusion list</strong>.<ul><li data-list-item-id="ecee7a80793f4a22027d987b07a090c66">
+<strong>Custom Exclusion List</strong>: Select the attributes to be excluded from the report.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="01KFD1AMVYPNY4PY2ZB7A64VGC">Successful Integration Notification Settings</h4><p>Configure the following notification settings for the successful integration:</p><ul>
+<li data-list-item-id="e984c9d3cadd0d9eeaf4f835b62c501f1">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e52f12761857657faa37ca40365e6ea2b">
+<strong> Enter the email addresses that should be included as CC recipients for notifications</strong>:<strong> </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e6d8ec90d03b843a575fb19c557e8b509">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for successful integration execution.</li>
+<li data-list-item-id="e9ba194297cfe684b4ea2085f438fffb3">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for successful integration execution.</li>
+</ul><h4 id="h_01KFG2ZYY71TZZJY19NF3Q5K5S">Failed Integration Notification Settings</h4><p>Configure the following notification settings for the failed integration:</p><ul>
+<li data-list-item-id="e4ce77d526a25825f0350e700a1296899">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="ee30395a28fabafd29ccd8f9b7fddd6ed">
+<strong>Additional recipients (CC): </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e5031021c531a8c3889675f339cef17ae">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="efe35fa97ded63a94ba3ae3d16b3a0719">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h4 id="h_01KRE0VPQVSTC8WW591B03TGBN"><span>Create Notification</span></h4><p>Configure the following settings to send email notifications upon user creation:</p><ul>
+<li data-list-item-id="e90816a86220a500c0bb487b8006c3fef">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e4c508dc0d469cc5c5c95ae5287120d1c">
+<strong>Additional recipients (CC): </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="eb30c66c91322385adf81292ea09ce507">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="e907257dbdf509fd5989723c00d57dc61">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h4 id="h_01KRE0VPQVXZ0NEHWR02TY477D"><span>Update Notification</span></h4><p>Configure the following settings to send email notifications upon user updation:</p><ul>
+<li data-list-item-id="e4aa71f2d307ef085c3ab15e1d6b495cf">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="eb84a10afe46c2424d715accb01e91919">
+<strong>Additional recipients (CC): </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e6e0db1144a0b333bee636bed6e71ef20">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="e0dd2003bd4ff82d417691dbb48775455">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h4 id="h_01KRE0VPQV0PHSHTB4AZR8EYNV"><span>Deactivate Notification</span></h4><p>Configure the following settings to send email notifications upon user deactivation:</p><ul>
+<li data-list-item-id="ebe492443f0b6ad13e467c7f5ac151503">
+<strong>Admin's email addresses</strong>: Enter the email addresses of the admins to whom the email notifications will be sent.</li>
+<li data-list-item-id="e233a610a8e5ccfb6b67fcbd8ce61a7da">
+<strong>Additional recipients (CC): </strong>Enter the email addresses that should be included as CC recipients for notifications.</li>
+<li data-list-item-id="e94a6a2624ca8b02b1f3e4476216c5366">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject in the notifications sent for failed integration execution.</li>
+<li data-list-item-id="e5765103b283fd68e85cac2a0866336e0">
+<strong>Email Body</strong>: Enter the content that must be used as the email body in the notifications sent for failed integration execution.</li>
+</ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>The <strong>Log Insight Settings</strong> section enables you to customize the integration log insight settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if the <strong>Enable Log Insights</strong> parameter is enabled in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">Execution Features</a> section.</p><ul>
+<li data-list-item-id="eaf92a88cbad1da6b6bbcfb26e29c3e9d">
+<strong>Enter Dashboard Name</strong>: Enter the dashboard name for log insights</li>
+<li data-list-item-id="ecd7295646179701b50e6eb666d4579ca">
+<strong>Select analytics Type</strong>: Select the desired log insight type from the dropdown menu. For example, select Employee Number with Non-PII Data.</li>
+<li data-list-item-id="e9462e3724a33e3cb136f284155bfdc5f">
+<strong>Select analytics level</strong>: Select the desired log insights detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ebd008209a07bcc910cbddb73ee6c1b8c">
+<strong>Full</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e0fc35cd654847814437fd051f1249348">
+<strong>Summary only</strong>: Attribute details are not displayed.</li>
+<li data-list-item-id="e446bdbc94164abc678bf98e6c825451e">
+<strong>Include List</strong>: Select this option to log only the attributes specified in the <strong>Custom Inclusion List</strong>.<ul><li data-list-item-id="e78df013422258018408b4c013d3bf1d9">
+<strong>Custom Inclusion List</strong>: Select the attributes to be included in the log insights.</li></ul>
+</li>
+<li data-list-item-id="e974f88c7efb956f2e4d65925d4a6c1c0">
+<strong>Exclude List</strong>: Select this option to log only the attributes specified in the <strong>Custom Exclusion List.</strong><ul><li data-list-item-id="e897f298b2159d78f3a89cd8204f9267c">
+<strong>Custom Exclusion list</strong>: Select the attributes to be excluded from the log insights.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01KGS7GWR0HGV51CVV377A1WX4">Attribute Map</h2><p>The <strong>Attribute Mapper</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><h3 id="h_01KJ9R144MH0HSVY3G5ABDGVA6">Employees Mapper</h3><p>This section enables you to define how employees data must be mapped from UKG Ready to Microsoft Dynamics 365. Based on your configuration, UKG Ready employee details are mapped to Microsoft Dynamics 365 employee records.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h3 id="h_01KJA0WZY0D50CT7T6Y9EKTJCC">Users Mapper</h3><p>This section allows you to define how users data must be mapped from UKG Ready to Microsoft Dynamics 365. Based on your configuration, UKG Ready user details are mapped to Microsoft Dynamics 365 user records.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="e8a427fb90882026edd997331a2d4d5c1">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="e968609115d59211f2ae6b9b1674fa8df">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="e21eb191cc425e9d0633aa03f1353cd52">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="e53136629d65b32dbef0a0b431c32274a">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="e4b0dde8663771ab6e232d151f15645b4">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="ec3ca4f62c53245113e9eaf2bbdd196ce">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="ea5eb13dcdfa235b27037093b7fdaf31a">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e56b0d57b0ca94f82324361e51f31c564">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="e088d1de0e23d172afafd94183ab4dadc">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
+  </div>
+</body>
+</html>

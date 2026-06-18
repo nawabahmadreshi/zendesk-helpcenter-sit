@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Jira Service Management Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Jira Service Management Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KRXERGB68MS81D6DJQ7P235N">Overview</h1><p>Aquera provides an innovative platform that allows your organization to scale complex data management by automating data synchronization from any selected source application to Jira Service Management.</p><p>Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>This hook-based integration is triggered only after the user sync integration is completed. The hook-based integration is configured during the setup of the user sync integration.</p><p><strong>Note</strong>: The source application selected for this hook-based integration must be the same as the source application configured in the user sync integration. For example, if Active Directory is configured as the source application in the user sync integration, then Active Directory should also be selected as the source application in this hook-based integration to perform the automated ticket generation process for Joiner, Mover, or Leaver events in Jira Service Management.</p><h1 id="h_01KRZ9RC0YQWD98B52263MYTQ2">Key Functions</h1><p>This integration performs the following functions:</p><ul>
+<li data-list-item-id="eb290815b870ab513ca1f7bb798d9b8e4">Automatically creates Jira tickets for Joiner, Mover, and Leaver events.</li>
+<li data-list-item-id="ef903d0035f2c71da68b3dd1b4bf123b9">Supports ticket generation based on any user sync integrations between connected applications.</li>
+<li data-list-item-id="e1cb5b5176e10256a2d253d3523745d8b">Allows configuration of Jira projects, work types, and change request categories.</li>
+<li data-list-item-id="e44033fd07f28c265b7fb8193abc56d40">Supports attribute mapping and data transformation using JavaScript expressions.</li>
+<li data-list-item-id="e93cc5a600b2ea126df29374f41c6996b">Generates logs and execution details for monitoring and troubleshooting integration activities.</li>
+</ul><h1 id="h_01KRXHHNYZP8KY0GM1VQQMJCK1">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e9d8298582f91229242ea794d003c6951">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e77698fa19cd4e45d76ac6d11039d99b4">
+<strong>Configure Applications in the Aquera Admin Portal</strong>: <ul>
+<li data-list-item-id="e3369463627081595a84666dae0a9ccdc">
+<strong>Source Connector</strong>: Ensure that you add and configure the source application connector in the Aquera Admin portal. </li>
+<li data-list-item-id="eed9d561db56815d1239668b60c85bba0">
+<strong>Jira Service Management Connector</strong>: Ensure that you add and configure the Jira Service Management connector<strong> </strong>in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/13840676724631-Jira-Service-Management-Cloud-Configuration-Guide" rel="noopener noreferrer" target="_blank">Jira Service Management Cloud Configuration Guide</a> for details. </li>
+</ul>
+</li>
+</ul><h1 id="h_01J46B7Y1FJFZ9EF69E21925AA">Integration Setup</h1><p>This section outlines how the integration must be configured to create JML tickets in the JIRA Service Management application when the corresponding events are triggered in the selected source application.</p><h2 id="h_01KRZAH40ZXF6A2NBMSC7W79CJ">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e789640c103d441362661ad4b61b61691">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e2b93f08047d6780da2ea0ef5c5c69bd2">Navigate to <strong>Integrations</strong> on the left panel.</li>
+<li data-list-item-id="e64b1e4c62a7db348ec3dd6302cef75a3">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="ef0d0c6d8ebd479ef71defaeca3aebe2a">Select <em><strong>Jira Service Management</strong>.</em> The <strong>Create New Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e64840cf0f3699f81c9ec91d70c048f95">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e40a7a6e1dfbcd9899572f5ddbab04222">Click <strong>Continue</strong>. The integration is created.</li>
+</ol><p>Once created, the following tabs are displayed:</p><ul>
+<li data-list-item-id="e9c7e0566ebae8302df71779002eeb8a3"><a href="#h_01KRJZGDHVK39XCQKBKZFD5519">Overview</a></li>
+<li data-list-item-id="eaff1fdf81a659cf36088cbc3f27630cf"><a href="#h_01KRXERB6990XCM5QE4QJ1GPKY">Source Application</a></li>
+<li data-list-item-id="ebb86eba56c996966f13b4251dc7ca972"><a href="#h_01KRXCM2Q9HS02WVDV4QVHT6ZY">JIRA</a></li>
+<li data-list-item-id="e66475e91faae0bbb45e188bf0f546bb3"><a href="#h_01KRXA6AHVW8369XX6N26ZP5GS">Execution</a></li>
+<li data-list-item-id="e9c86a40d28e84af87e739cc3e721d0a3"><a href="#h_01KRX8AY3P41TJTJ2BSD9RBWCV">Notification</a></li>
+<li data-list-item-id="e34d296ab6e0bcf5180288e5d1fb91a08"><a href="#h_01KJCP43MS8PMZZMVQPMDWVEEP">Schedule</a></li>
+</ul><h2 id="h_01KRJZGDHVK39XCQKBKZFD5519">Overview</h2><p>The <strong>Overview</strong> tab provides a summary of the integration capabilities and also allows you to enable the ticket management feature.</p><ul><li data-list-item-id="eaa21b2175697ac8518267b355535e528">
+<strong>Enable Ticket Management: </strong>Turn on the toggle button to automatically generate JML tickets in the Jira Service Management application when the corresponding events are triggered in the selected source application.</li></ul><h2 id="h_01KRXERB6990XCM5QE4QJ1GPKY">Source Application</h2><div><section data-testid="conversation-turn-10" data-turn="assistant" data-turn-id="request-WEB:f08fd5bf-4b01-465a-8b58-0ec067ebb9cd-4" data-turn-id-container="request-WEB:f08fd5bf-4b01-465a-8b58-0ec067ebb9cd-4" dir="auto"><div><div data-conversation-screenshot-content=""><div><div data-message-author-role="assistant" data-message-id="dc617754-e918-4208-823f-58342dad63f4" data-message-model-slug="gpt-5-3-mini" data-turn-start-message="true" dir="auto" tabindex="0"><div><div><p data-end="114" data-is-last-node="" data-is-only-node="" data-start="0">This tab allows you to search and select the source application connector to be used for this integration.</p></div></div></div></div></div></div></section></div><ul><li data-list-item-id="ee7e63c3cf377e11bbdc1a568a89031dc">
+<strong>Select your Source Application Instance</strong>: Select the source application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul><h2 id="h_01KRXCM2Q9HS02WVDV4QVHT6ZY">JIRA</h2><div><section data-testid="conversation-turn-10" data-turn="assistant" data-turn-id="request-WEB:f08fd5bf-4b01-465a-8b58-0ec067ebb9cd-4" data-turn-id-container="request-WEB:f08fd5bf-4b01-465a-8b58-0ec067ebb9cd-4" dir="auto"><div><div data-conversation-screenshot-content=""><div><div data-message-author-role="assistant" data-message-id="dc617754-e918-4208-823f-58342dad63f4" data-message-model-slug="gpt-5-3-mini" data-turn-start-message="true" dir="auto" tabindex="0"><div><div><div><section data-testid="conversation-turn-12" data-turn="assistant" data-turn-id="request-WEB:f08fd5bf-4b01-465a-8b58-0ec067ebb9cd-5" data-turn-id-container="request-WEB:f08fd5bf-4b01-465a-8b58-0ec067ebb9cd-5" dir="auto"><div><div data-conversation-screenshot-content=""><div><div data-message-author-role="assistant" data-message-id="a8e75cc8-2e2c-465a-8849-8e9b3f8c62e6" data-message-model-slug="gpt-5-5" data-turn-start-message="true" dir="auto" tabindex="0"><div><div><p data-end="224" data-is-last-node="" data-is-only-node="" data-start="0">This tab allows you to search and select the target application connector to be used for this integration. It also enables you to configure the settings that determine when JML tickets are created in JIRA Service Management.</p></div></div></div></div></div></div></section></div></div></div></div></div></div></div></section></div><ul>
+<li data-list-item-id="e5facd0d9d599bcb7cf5776177370a071"><a href="#h_01KRXD9V8WYRPQV719W926RNZJ">JIRA Settings</a></li>
+<li data-list-item-id="e21558a9fc000f63078c4d206b7acf4e7"><a href="#h_01KRXDBS3NB4X16RPFKK7T5WNB">Ticket Generation</a></li>
+</ul><h3 id="h_01KRXD9V8WYRPQV719W926RNZJ">JIRA Settings</h3><p>The <strong>JIRA Settings</strong> section is for configuring the required JIRA application instance. The following fields are displayed in this tab:</p><ul>
+<li data-list-item-id="ed60260064838904e1a9d2c3a6653b6d5">
+<strong>Select JIRA Application</strong>: Select the JIRA Service Management application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.</li>
+<li data-list-item-id="e85ecb73718af3e251c1299044d86c809">
+<strong>Enable Ticket Creation Trigger Mode</strong>: Turn on this toggle button to configure how Jira tickets are created and processed for the selected source application using the available execution modes. When enabled, the following<strong> </strong>field is displayed:<ul><li data-list-item-id="e4176b1ddf5572636c0006e6534b1d2b5">
+<strong>Select the Mode</strong>: Select the mode from the dropdown menu. Currently, only the <strong>Hook-Based Ticket Creation </strong>is displayed.</li></ul>
+</li>
+</ul><h3 id="h_01KRXDBS3NB4X16RPFKK7T5WNB">Ticket Generation</h3><p>The Ticket Generation section allows you to define the Jira project, work type, and event-specific settings required for ticket creation workflows. The following fields are displayed in this section:</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="ed063a0bac9bf069e1da5bc7e7715ac11">
+<strong>Select JML Type</strong>: Select the employee lifecycle event type from the dropdown menu to which it should trigger Jira ticket creation. If you do not find the required event type in the list, click the <strong data-end="105" data-start="94">refresh</strong> icon next to the field to reload the available event types.<br/>The following event types are available in the dropdown menu:<ul>
+<li data-list-item-id="e84c0c8e411d559e7c6f4f4eb72cf71f1">
+<strong>Joiner</strong>: Select Joiner to generate tickets only for users who have recently joined the organization.</li>
+<li data-list-item-id="e134ad97a853a7f7eae376dc05f7bbb56">
+<strong data-end="124" data-is-only-node="" data-start="114">Mover:</strong> Select Mover to generate tickets only for users whose role, department, or access has changed.</li>
+<li data-list-item-id="ea645b0640e1ddf53b764e8761de9ce11">
+<strong data-end="239" data-is-only-node="" data-start="228">Leaver:</strong> Select Leaver to generate tickets only for users who have left the organization.</li>
+</ul>
+</li>
+<li data-list-item-id="eee0eb91c4bef9537a8db86be89774a3c">
+<strong>JIRA Space</strong>: Select the Jira project space where tickets for the configured JML events will be created and managed. If you do not find the required JIRA space in the list, click the <strong data-end="105" data-start="94">refresh</strong> icon next to the field to reload the available JIRA space.</li>
+<li data-list-item-id="e2598e3a0f6382919afa50cbf3a753f67">
+<strong>JIRA Work Type</strong>: Select the JIRA work type that should be used when creating tickets for the configured JML workflows.</li>
+<li data-list-item-id="e1c5df3a05f1c00372764d07bf9da1c67">
+<p><strong>Select change type for Mover</strong>: Select the change types that should trigger Jira change requests for Mover events, such as department updates or employee detail changes.<br/><strong>Note</strong>: This parameter is displayed only if you have selected the <em>Mover</em> option in the <strong>Select JML Type </strong>parameter.</p>
+<p><strong>Attribute Map</strong></p>
+<p>This section allows you to control how each attribute is synchronized between the Source and JIRA Service Management.<br/>Source attributes are listed on the left side and the target attributes are listed on the right side of the page. You can modify only the source attributes as needed, to align with your specific use case.<br/>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. You can enter the expression directly in the source attribute field or click the expand icon to write a longer expression.<br/>Attributes marked with a red asterisk (<span>*</span>) are required for successful provisioning.<br/>The <strong>Search Attributes</strong> field allows you to filter the list of available attributes for mapping.<br/>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</p>
+</li>
+</ul><p>To add another configuration, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button.</p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><p>To delete a configuration, click the delete icon.</p><p>To view the notification settings in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h2 id="h_01KRXA6AHVW8369XX6N26ZP5GS">Execution</h2><p>The <strong>Execution</strong> tab allows you to configure advanced and operational settings before executing the integration. The following sections are displayed in this tab:</p><ul>
+<li data-list-item-id="e6b6842af999cb0ca22a434b37d32a46f"><a href="#h_01KRX6396CQ8M4PG93MPCD108E">Advanced settings</a></li>
+<li data-list-item-id="eb3d4ffcc05949e0e0a101c0cede71fcc"><a href="#h_01KRX6EQP4NHSC44A9F21QFPXK">Operational Settings</a></li>
+</ul><h3 id="h_01KRX6396CQ8M4PG93MPCD108E">Advanced Settings</h3><p>The <strong>Advanced Settings</strong><strong> </strong>section allows you to test and validate the integration before running it for all users.</p><ul><li data-list-item-id="e7e3ea85f44376ce429cacfb2d1d76de1">
+<strong>Report Only Mode</strong>: Turn on this toggle button to generate a report detailing the data changes that would happen, but without applying them.</li></ul><h3 id="h_01KRX6EQP4NHSC44A9F21QFPXK">Operational Settings</h3><p>The <strong>Operational Settings</strong> section allows you to configure logging, reporting, and log insights for the integration. These settings help you review integration activity, generate reports, and view dashboard insights for integration runs. It has the following settings:</p><ul>
+<li data-list-item-id="e5242ad2c3f4d4edb937148cf7d605ffc"><a href="#h_01KRX70G5CCBYMNSYTD4PZNG78">Logging Settings</a></li>
+<li data-list-item-id="e2a04b09c6daf934f8f43b256432e2aac"><a href="#h_01KRX72TRZ4WQJ50AVN4N859X1">Report Settings</a></li>
+<li data-list-item-id="ee596c368d63644eb4a547cb41c8d2d90"><a href="#h_01KRX740JB1KH2H35Q1WVQ7HNP">Log Insights Settings</a></li>
+</ul><h4 id="h_01KRX70G5CCBYMNSYTD4PZNG78">Logging Settings</h4><p>This section enables you to customize the log generation settings. It has the following settings:</p><ul>
+<li data-list-item-id="e1ca3f780a4673444a39a913d78771faa">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Log Type</strong>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e4e161676710b45c952bb218bc84d8fdb">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e8554b93e6b51805cb54181b7a09693d2">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e09cee93f21c917200faf052b0a6f8a54">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e131fb67ce14ebedb95a8f21b6cf9b763">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e1659112ec3dd5f68176947b65fa0d545">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ec2579f1023163d52c0062fe312dab3af">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e00a40eee3d0f74b9a4231b3803bdedf9">
+<strong>Select Log Level:</strong> Select the level of detail to include in logs. The following options are available in the dropdown:<ul>
+<li data-list-item-id="e6d88189ca2041c67eb40ba0459b9e33b">
+<strong>Full:</strong> Includes all attribute details in the logs.</li>
+<li data-list-item-id="e88482cb0098475dafa0c5dbed8925db3">
+<strong>Include List:</strong> Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="eb51530b6f33c2634609071c0b93b1a77">
+<strong>Custom Inclusion List:</strong> Enter the attributes that should be included in logs. For example, entering <strong>firstName, lastName, email</strong> ensures only these fields are captured.</li></ul>
+</li>
+<li data-list-item-id="e9b3fe288eed87025c0bd68d0bcfcfabd">
+<strong>Exclude List:</strong> Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="e62ed31672f63aa4b4391c5eed561de55">
+<strong>Custom Exclusion List:</strong> Enter the attributes that should be excluded from logs. For example, entering <strong>salary </strong>and Location ensures these fields are not captured.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="h_01KRX72TRZ4WQJ50AVN4N859X1">Report Settings</h4><p>This section enables you to customize the report generation settings. It has the following settings:</p><ul>
+<li data-list-item-id="ecaa525a43821fe3cd5a3b3a2cb49543c">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Reporting Type</strong>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e6c816142a88172bac611a66afc0264d3">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="eb38e3a5c6b41204c241fc7fb0ceda30c">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="eef5154630aa79b1c2713f2657bae18d3">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e1e563b8eeb4e3a0edb45e32e7d9ba95a">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ecb29687c23386278ee7909c2976dd4eb">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e6d060c86608b9de7f8908120a851ba33">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="eb32b2d27570a3346210c8b9e4cbaa08b">
+<strong>Select Reporting Level:</strong> Select the level of detail to include in logs.<br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="e08f3cfc683ac6ed376eb0b86029e4c14">
+<strong>Full:</strong> Includes all attribute details in the logs.</li>
+<li data-list-item-id="eebe7b84667f3aa8a6cb8f37d080334c5">
+<strong>Include List:</strong> Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="ee3e7dae56c5ec5352b9c1532839d5272">
+<strong>Custom Inclusion List:</strong> Enter the attributes that should be included in logs. For example, entering <strong>firstName, lastName, email</strong> ensures only these fields are captured.</li></ul>
+</li>
+<li data-list-item-id="e2835c400cf9d13d5c917113a8f7ec0aa">
+<strong>Exclude List:</strong> Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="e8bab5eae15a8f2c938e4c55969d34866">
+<strong>Custom Exclusion List:</strong> Enter the attributes that should be excluded from logs. For example, entering <strong>salary </strong>and Location ensures these fields are not captured.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ece5b54f431e5a724d5e1e22b9815b21b">
+<strong>Select Report Format</strong>: Select the required report format in which you want to export your integration run report.</li>
+</ul><h4 id="h_01KRX740JB1KH2H35Q1WVQ7HNP">Log Insights Settings</h4><p>This section enables you to customize the log insight settings. It has the following settings:</p><ul>
+<li data-list-item-id="eab9117048c218028bebd78edbb499c75"><p id="01K5B9P929CY5YBAY51DATK62B"><strong>Dashboard Name</strong>: Provide the dashboard name for the generated report.</p></li>
+<li data-list-item-id="ed35c62fa1b6a95114890a327a012c5c5">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Log Insight Type</strong>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e69d566206919586ce8bee1268003cc0e">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e1d9b0391c13dff2286754859632de6f3">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e9b73322c60497a5d4ca3fe33c4f8d0bd">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e331c023dd4c65288fbf9c426107df26d">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ed3e40599bb0159d96929791eecb11b80">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ef60d9063ddaf912192d927baa4be2384">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="ecfd57e564b6ec30f012a31508e4e92e8">
+<strong>Select Log Insight Level:</strong> Select the level of detail to include in logs.<br/>The following options are available in the dropdown:<ul>
+<li data-list-item-id="ee8783c47ed4d6639d86160a3c2a44c37">
+<strong>Full:</strong> Includes all attribute details in the logs.</li>
+<li data-list-item-id="e2ad5df5f9fefde6af7b26100c61348c1">
+<strong>Include List:</strong> Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="e27db733665afdf452e90f632ab9d8759">
+<strong>Custom Inclusion List:</strong> Enter the attributes that should be included in logs. For example, entering <strong>firstName, lastName, email</strong> ensures only these fields are captured.</li></ul>
+</li>
+<li data-list-item-id="e94d41ab5930a1ee6970b81c0b7bdeded">
+<strong>Exclude List:</strong> Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="e7195370df506a7789ac1800c2a88504c">
+<strong>Custom Exclusion List:</strong> Enter the attributes that should be excluded from logs. For example, entering <strong>salary </strong>and Location ensures these fields are not captured.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01KRX8AY3P41TJTJ2BSD9RBWCV">Notifications</h2><p>This tab allows you to configure email notifications for integration events, such as Joiner, Mover, or Leaver, and to define the recipients and report details included in the notification emails.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="eb8485ae07954185cb4408c1ad84b7d4f">
+<strong>Template Name</strong>: Enter a name for the notification template.</li>
+<li data-list-item-id="e2532c9d37ae68ad50c61b9713650ea90">
+<strong>Select Application</strong>: Select applications for notification configuration. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available application connectors.</li>
+<li data-list-item-id="e000a2cf53737e76039ccd36bb4fe5400">
+<strong>Select Event for Notification</strong>: Select the event that will trigger a notification. For example, select <strong>Joiner Ticket Created</strong> to get email notifications every time when a user is created in the organization.<br/>The available options are:<ul>
+<li data-list-item-id="e828ae3a7f3419df199e83012e0543d16">
+<strong>Joiner Ticket Created</strong>: Select this option if you want to create a joiner ticket in Jira Service Management only for users who have recently joined the selected source application.</li>
+<li data-list-item-id="ed96796c6f4e6c2c6eb67799ace2362e3">
+<strong>Mover Ticket Created</strong>: Select this option if you want to create a mover ticket in Jira Service Management only for users whose role, department, or access has changed in the selected source application.</li>
+<li data-list-item-id="e5c9a752790c7a1777b5c113fea0d88cc">
+<strong>Leaver Ticket Created</strong>: Select this option if you want to create a leaver ticket in Jira Service Management only for users who have recently left the selected source application.</li>
+</ul>
+</li>
+<li data-list-item-id="ed2c124e5f488720902e05e884b8c40e0">
+<strong>Notification Delivery Channel</strong>: Select the channel to be used for sending notifications. Currently, only <em>Email</em> is supported. When selected, the following field is displayed:</li>
+<li data-list-item-id="e50941bc987b0208787d6f8208a420e17">
+<strong>Email</strong>: Select this option if you want to send notifications through email. When selected, the following fields are displayed for further configuration:<ul><li data-list-item-id="e77ea955166b251fab72a6d43106298ad">
+<span><strong>Custom Notification Recipients</strong>: Enter the email addresses of the recipients to whom the email notifications will be sent. By default, the notifications are sent to the user's work email. When selected, the following parameters are displayed for further configuration:</span><ul>
+<li data-list-item-id="edb51cbc4f3dc9c64983696f89a9c29aa">
+<strong>Custom Email Address</strong>: Enter the email IDs of the users to whom you want to send email notifications.</li>
+<li data-list-item-id="e6a6655c88399fbbbedb02dccb0538e3f">
+<strong>Subject</strong>: Enter the content that must be used as the email subject.</li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e0b6d13dedc4d36b857c58f9be0904f08">
+<strong>Attach Report</strong>: Select this checkbox to attach a CSV report of the integration along with the notification.</li>
+</ul><p>To add another configuration, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button.</p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><p>To delete a configuration, click the delete icon.</p><p>To view the notification settings in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h2 id="h_01KJCP43MS8PMZZMVQPMDWVEEP">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your preferred timeframe. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="ed36b606eef6925f320ebeaf4ef996c9e">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="e328dfadc2ad17085e257f46b4d393124">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="e3ad65f4b1757747e5ee4ea016a13d049">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="eb3efd427d517548460342fead4cfbfd9">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="e89a3f09f742ecc42535052e922c70d08">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e71c3ba76c309b86450238e0f4b2579ed">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="e1cd54216d5fcd9599ed86b74be0b27b4">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e9199fc307f28f082e155c32a7b56f8fa">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="ef8657fc6e2e19e42c7b6ef2bd4e40d72">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
+  </div>
+</body>
+</html>

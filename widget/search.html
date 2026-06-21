@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aquera Search Portal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+    :root {
+      --bg-color: #f8fafc;
+      --surface-color: var(--text-main)fff;
+      --surface-border: #e2e8f0;
+      --primary-gradient: linear-gradient(135deg, #4f46e5, #9333ea, #db2777);
+      --primary-shadow: rgba(147, 51, 234, 0.4);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 80px 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Background Glows */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: -10%;
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+      filter: blur(80px);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -20%;
+      right: -10%;
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+      filter: blur(80px);
+    }
+
+    .search-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      animation: fadeInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    .search-box-wrapper {
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--surface-border);
+      border-radius: 28px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-box-wrapper:focus-within {
+      border-color: rgba(168, 85, 247, 0.5);
+      box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2), 0 20px 40px rgba(0, 0, 0, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .search-icon {
+      padding-left: 24px;
+      color: var(--text-muted);
+      display: flex;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-main);
+      outline: none;
+      font-family: inherit;
+      padding: 20px 0;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(148, 163, 184, 0.6);
+      font-weight: 400;
+    }
+
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 20px 48px;
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 25px var(--primary-shadow);
+    }
+
+    .btn-primary:hover::before {
+      opacity: 1;
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      filter: grayscale(0.6);
+    }
+
+    .suggestions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 12px 24px;
+      color: var(--text-muted);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chip svg {
+      opacity: 0.7;
+    }
+
+    .chip:hover {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: rgba(168, 85, 247, 0.5);
+      color: var(--text-main);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.15);
+    }
+
+    .chip:hover svg {
+      opacity: 1;
+    }
+
+    .results-area {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .results-header {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-left: 8px;
+    }
+
+    .results-header svg {
+      color: #a855f7;
+      filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.5));
+    }
+
+    .search-result-card {
+      display: block;
+      background: var(--surface-color);
+      border: 1px solid var(--surface-border);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 24px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .search-result-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--primary-gradient);
+      opacity: 0.6;
+      transition: opacity 0.4s ease, width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-result-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(168, 85, 247, 0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(168, 85, 247, 0.15);
+    }
+
+    .search-result-card:hover::before {
+      opacity: 1;
+      width: 8px;
+    }
+
+    .card-content {
+      font-size: 17px;
+      line-height: 1.8;
+      color: #e2e8f0;
+      margin-bottom: 24px;
+      padding-left: 8px;
+    }
+
+    .card-content strong {
+      color: var(--text-main);
+      font-weight: 600;
+      background: rgba(168, 85, 247, 0.15);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-top: 1px solid var(--surface-border);
+      padding-top: 20px;
+      margin-top: auto;
+      padding-left: 8px;
+    }
+
+    .source-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .source-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #c084fc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .source-title svg {
+      flex-shrink: 0;
+    }
+
+    /* Loading Spinner */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 0;
+      gap: 24px;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .loader {
+      width: 56px;
+      height: 56px;
+      border: 4px solid rgba(168, 85, 247, 0.15);
+      border-radius: 50%;
+      border-top-color: #a855f7;
+      border-left-color: #ec4899;
+      animation: spin 1s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite;
+    }
+
+    .loading-text {
+      color: var(--text-muted);
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="search-container">
+    <div class="header-section">
+      <h1>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Aquera AI Search
+      </h1>
+      <p class="subtitle">Search intelligently across the entire knowledge base</p>
+    </div>
+
+    <div class="search-box-wrapper">
+      <div class="search-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <input type="text" id="searchInput" placeholder="What are the prerequisites for GEP?">
+      <button id="searchBtn" class="btn-primary">Discover</button>
+    </div>
+
+    <div class="suggestions">
+      <div class="chip" onclick="triggerSearch('How do I configure ADP WFN integration?')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        Configure ADP WFN
+      </div>
+      <div class="chip" onclick="triggerSearch('What are the prerequisites for GEP?')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        GEP Prerequisites
+      </div>
+      <div class="chip" onclick="triggerSearch('How to create a service account in Microsoft 365?')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        M365 Service Account
+      </div>
+    </div>
+
+    <div id="resultsArea" class="results-area">
+      <div class="results-header">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        Direct Search Results
+      </div>
+
+
+      <div id="answerContent"></div>
+      <div id="previewContainer" style="display: none; margin-top: 20px;"></div>
+      <div id="chatContainer" style="display: none; margin-top: 20px;"></div>
+
+
+    </div>
+  </div>
+
+  <script>
+    async function triggerSearch(query) {
+      document.getElementById('searchInput').value = query;
+      await performSearch();
+    }
+
+    async function performSearch() {
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) return;
+
+      const resultsArea = document.getElementById('resultsArea');
+      const answerContent = document.getElementById('answerContent');
+      const searchBtn = document.getElementById('searchBtn');
+
+      resultsArea.style.display = 'block';
+      searchBtn.disabled = true;
+      searchBtn.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; gap:8px;"><svg viewBox="0 0 50 50" style="width: 18px; height: 18px; animation: spin 1s linear infinite;"><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-dasharray="31.4 31.4" stroke-linecap="round"></circle></svg><span style="opacity: 0.8">Searching...</span></div>';
+
+      answerContent.innerHTML = `
+        <div class="loading-state">
+          <div class="loader"></div>
+          <div class="loading-text">Scanning the knowledge base...</div>
+        </div>
+      `;
+
+      try {
+        const response = await fetch('/api/help/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question: query,
+            page_context: {
+              page_title: "General Search",
+              url_path: "/search",
+              integration_id: "",
+              product_version: "v14"
+            }
+          })
+        });
+
+        if (!response.ok) throw new Error('API server returned error: ' + response.status);
+
+        const data = await response.json();
+        const results = data.results || [];
+
+        if (data.clarification_needed) {
+          let html = `<div style="padding: 24px; background: var(--surface-color); border-radius: 20px; border: 1px solid var(--surface-border); animation: fadeInDown 0.4s ease;">
+                        <p style="font-size: 18px; margin-bottom: 20px; color: var(--text-main);">${data.message}</p>
+                        <div style="display:flex; flex-wrap:wrap; gap:12px;">`;
+          data.chips.forEach((chip) => {
+            html += `<button onclick="document.getElementById('searchInput').value = '${data.guide_name} ${chip}'; performSearch();" style="text-align:center; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 24px; padding: 12px 20px; color: var(--text-main); font-size: 15px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseout="this.style.background='rgba(168, 85, 247, 0.1)'">
+                       ${chip}
+                     </button>`;
+          });
+          html += `   </div></div>`;
+          answerContent.innerHTML = html;
+        } else if (results.length === 0) {
+          answerContent.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px; background: var(--surface-color); border-radius: 20px; border: 1px solid var(--surface-border); font-size: 18px;">No matches found in the documentation.</div>`;
+        } else if (results.length === 1) {
+          answerContent.innerHTML = renderResult(results[0]);
+        } else {
+          window.currentSearchResults = results;
+          let html = '';
+          
+          // ALWAYS display the top result inline immediately (with no back button since it's the main view)
+          html += renderResult(results[0], true);
+          
+          if (results.length > 1) {
+            html += `<div style="margin-top: 24px; padding: 24px; background: var(--surface-color); border-radius: 20px; border: 1px solid var(--surface-border); animation: fadeInDown 0.4s ease;">
+                        <p style="font-size: 15px; margin-bottom: 16px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Other related guides</p>
+                        <div id="resultListContainer" style="display:flex; flex-direction:column; gap:12px;">`;
+            const initialResults = results.slice(1, 5); // Start from index 1
+            initialResults.forEach((r, idx) => {
+              const i = idx + 1;
+              html += `<div style="display:flex; gap:8px;">
+                         <button onclick="renderSelectedResult(${i})" style="flex:1; text-align:left; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 16px; color: var(--text-main); font-size: 16px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background='rgba(168, 85, 247, 0.2)'" onmouseout="this.style.background='rgba(168, 85, 247, 0.1)'">
+                           <strong>${r.article_title}</strong>
+                         </button>
+                         <button onclick="pinAndChat('${r.article_title.replace(/'/g, "\'")}', '${r.article_id}')" style="background: var(--primary-gradient); border: none; border-radius: 12px; padding: 0 16px; color: white; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" title="Pin & Chat">
+                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M7 15V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10"></path></svg>
+                         </button>
+                       </div>`;
+            });
+            html += `   </div>`;
+            if (results.length > 5) {
+              html += `<button id="showMoreBtn" onclick="renderMoreResults(5)" style="margin-top: 16px; width: 100%; text-align:center; background: transparent; border: 1px solid var(--surface-border); border-radius: 12px; padding: 12px; color: var(--text-muted); font-size: 15px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='transparent'">Show more</button>`;
+            }
+            html += `</div>`;
+          }
+          answerContent.innerHTML = html;
+        }
+
+      } catch (err) {
+        answerContent.innerHTML = `<div style="color: #fca5a5; padding: 24px; background: rgba(239, 68, 68, 0.1); border-radius: 16px; border: 1px solid rgba(239, 68, 68, 0.2); font-size: 16px;">
+          <strong>Error:</strong> ${err.message}. Please check if the backend server is running.
+        </div>`;
+      } finally {
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = 'Discover';
+      }
+    }
+
+    
+
+    function openPreview(url, e) {
+      if(e) e.preventDefault();
+      const modal = document.createElement('div');
+      modal.style.position = 'fixed';
+      modal.style.top = '0'; modal.style.left = '0'; modal.style.width = '100vw'; modal.style.height = '100vh';
+      modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+      modal.style.backdropFilter = 'blur(8px)';
+      modal.style.zIndex = '9999';
+      modal.style.display = 'flex';
+      modal.style.justifyContent = 'center';
+      modal.style.alignItems = 'center';
+      modal.style.animation = 'fadeIn 0.3s ease';
+      
+      const iframeContainer = document.createElement('div');
+      iframeContainer.style.width = '85%';
+      iframeContainer.style.height = '85%';
+      iframeContainer.style.position = 'relative';
+      iframeContainer.style.backgroundColor = '#fff';
+      iframeContainer.style.borderRadius = '24px';
+      iframeContainer.style.overflow = 'hidden';
+      iframeContainer.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.5)';
+      
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+      closeBtn.style.position = 'absolute';
+      closeBtn.style.top = '20px';
+      closeBtn.style.right = '20px';
+      closeBtn.style.background = 'rgba(0,0,0,0.05)';
+      closeBtn.style.border = 'none';
+      closeBtn.style.borderRadius = '50%';
+      closeBtn.style.width = '40px';
+      closeBtn.style.height = '40px';
+      closeBtn.style.cursor = 'pointer';
+      closeBtn.style.display = 'flex';
+      closeBtn.style.alignItems = 'center';
+      closeBtn.style.justifyContent = 'center';
+      closeBtn.style.color = '#333';
+      closeBtn.style.transition = 'all 0.2s';
+      closeBtn.onmouseover = () => closeBtn.style.background = 'rgba(0,0,0,0.1)';
+      closeBtn.onmouseout = () => closeBtn.style.background = 'rgba(0,0,0,0.05)';
+      
+      closeBtn.onclick = () => document.body.removeChild(modal);
+      
+      iframeContainer.appendChild(iframe);
+      iframeContainer.appendChild(closeBtn);
+      modal.appendChild(iframeContainer);
+      document.body.appendChild(modal);
+    }
+
+    document.getElementById('searchBtn').onclick = performSearch;
+    document.getElementById('searchInput').onkeydown = (e) => {
+      if (e.key === 'Enter') performSearch();
+    };
+    window.renderMoreResults = function(startIndex) {
+      const container = document.getElementById('resultListContainer');
+      const btn = document.getElementById('showMoreBtn');
+      if (!container || !btn || !window.currentSearchResults) return;
+      
+      const nextResults = window.currentSearchResults.slice(startIndex, startIndex + 5);
+      nextResults.forEach((r, idx) => {
+        const i = startIndex + idx;
+        const btnHtml = `<div style="display:flex; gap:8px;">
+                       <button onclick="openPreview('/article/' + r.article_id + '?embed=true&highlight=' + encodeURIComponent(r.chunk_text || ''), event)" style="text-align:left; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 16px; color: var(--text-main); font-size: 16px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background='rgba(168, 85, 247, 0.2)'" onmouseout="this.style.background='rgba(168, 85, 247, 0.1)'" style="flex:1; text-align:left; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 16px; color: var(--text-main); font-size: 16px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background='rgba(168, 85, 247, 0.2)'" onmouseout="this.style.background='rgba(168, 85, 247, 0.1)'">
+                         <strong>${r.article_title}</strong>
+                       </button>
+                       <button onclick="pinAndChat('${r.article_title.replace(/'/g, "\'")}', '${r.article_id}')" style="background: var(--primary-gradient); border: none; border-radius: 12px; padding: 0 16px; color: white; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" title="Pin & Chat">
+                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M7 15V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10"></path></svg>
+                       </button>
+                     </div>`;
+        container.insertAdjacentHTML('beforeend', btnHtml);
+      });
+      
+      const newStartIndex = startIndex + 5;
+      if (newStartIndex >= window.currentSearchResults.length) {
+        btn.style.display = 'none';
+      } else {
+        btn.onclick = () => window.renderMoreResults(newStartIndex);
+      }
+    };
+  
+    
+    function cleanChunkText(text) {
+      if(!text) return "";
+      return text.replace(/^DOCUMENT:.*?\n/gm, '').replace(/^SECTION:.*?\n/gm, '').trim();
+    }
+
+    function showIframe(articleId, highlight, chunkText) {
+       document.getElementById('extracted-text-view-' + articleId).style.display = 'none';
+       document.getElementById('iframe-view-' + articleId).style.display = 'flex';
+       
+       let src = '/article/' + articleId + '?embed=true';
+       if(highlight && chunkText) {
+          src += '&highlight=' + encodeURIComponent(chunkText);
+       }
+       document.getElementById('iframe-' + articleId).src = src;
+    }
+
+    function renderResult(r, hideBackBtn=false) {
+      const backBtn = hideBackBtn ? '' : `
+        <div style="margin-bottom: 16px; display:flex; justify-content:space-between;">
+          <button onclick="backToResults()" style="background:transparent; border:none; color:var(--text-main); cursor:pointer; font-size:15px; font-weight:600; display:flex; align-items:center; gap:6px; padding: 8px 12px; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='transparent'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Results
+          </button>
+        </div>
+      `;
+      
+      const cleanedText = cleanChunkText(r.chunk_text);
+      
+      return backBtn + `
+        <div class="search-result-card" id="result-card-${r.article_id}" style="animation: fadeInDown 0.4s ease; padding: 0; overflow: hidden; display: flex; flex-direction: column; background: var(--surface-color); border-radius: 16px; border: 1px solid var(--surface-border); box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+          
+          <div id="extracted-text-view-${r.article_id}" style="display:flex; flex-direction:column;">
+             <div style="padding: 24px 24px 16px; border-bottom: 1px solid var(--surface-border); background: rgba(168, 85, 247, 0.05);">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom: 12px; color: #a855f7; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                   Exact Section Extracted from Document
+                </div>
+                <h3 style="margin-top: 0; margin-bottom: 16px; color: var(--text-main); font-size: 22px;">${r.article_title}</h3>
+                <div style="font-size: 16px; color: var(--text-muted); line-height: 1.7; white-space: pre-wrap; font-family: 'Inter', sans-serif; padding-left: 16px; border-left: 3px solid #a855f7;">${cleanedText}</div>
+             </div>
+             <div class="card-footer" style="padding: 20px 24px; background: rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px;">
+               <div style="font-size: 15px; color: var(--text-main); font-weight: 500;">Would you like to view this in the guide?</div>
+               <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                  <button onclick="showIframe('${r.article_id}', true, '${encodeURIComponent(r.chunk_text || '')}')" style="background: white; border: 1px solid var(--surface-border); border-radius: 10px; padding: 12px 20px; color: var(--text-main); font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);" onmouseover="this.style.background='rgba(0,0,0,0.02)'" onmouseout="this.style.background='white'">
+                    <span style="display:flex; align-items:center; gap:6px;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                      View Exact Section
+                    </span>
+                  </button>
+                  <button onclick="showIframe('${r.article_id}', false, '')" style="background: white; border: 1px solid var(--surface-border); border-radius: 10px; padding: 12px 20px; color: var(--text-main); font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);" onmouseover="this.style.background='rgba(0,0,0,0.02)'" onmouseout="this.style.background='white'">
+                    <span style="display:flex; align-items:center; gap:6px;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                      View Whole Guide
+                    </span>
+                  </button>
+                  <div style="flex:1;"></div>
+                  <button onclick="pinAndChat('${r.article_title.replace(/'/g, "\\'")}', '${r.article_id}')" style="background: var(--primary-gradient); color: white; border: none; border-radius: 10px; padding: 12px 24px; font-size: 15px; font-weight: 600; cursor: pointer; display:flex; align-items:center; gap:8px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M7 15V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10"></path></svg>
+                    Pin to Chat
+                  </button>
+               </div>
+             </div>
+          </div>
+          
+          <div id="iframe-view-${r.article_id}" style="display:none; flex-direction:column;">
+             <iframe id="iframe-${r.article_id}" src="about:blank" style="width: 100%; height: 60vh; border: none; background: var(--surface-color);"></iframe>
+             <div class="card-footer" style="padding: 16px 24px; background: rgba(0,0,0,0.02); border-top: 1px solid var(--surface-border); display: flex; justify-content: flex-end; align-items: center; border-radius: 0 0 16px 16px;">
+                <button onclick="pinAndChat('${r.article_title.replace(/'/g, "\\'")}', '${r.article_id}')" style="background: var(--primary-gradient); color: white; border: none; border-radius: 10px; padding: 12px 24px; font-size: 15px; font-weight: 600; cursor: pointer; display:flex; align-items:center; gap:8px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M7 15V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10"></path></svg>
+                    Pin to Chat
+                </button>
+             </div>
+          </div>
+          
+        </div>
+      `;
+    }
+
+    function renderSelectedResult(index) {
+      if (!window.currentSearchResults || !window.currentSearchResults[index]) return;
+      document.getElementById('answerContent').style.display = 'none';
+      if(document.getElementById('showMoreBtn')) document.getElementById('showMoreBtn').style.display = 'none';
+      
+      const previewContainer = document.getElementById('previewContainer');
+      previewContainer.style.display = 'block';
+      previewContainer.innerHTML = renderResult(window.currentSearchResults[index]);
+    }
+    
+    function backToResults() {
+      document.getElementById('previewContainer').style.display = 'none';
+      document.getElementById('chatContainer').style.display = 'none';
+      document.getElementById('answerContent').style.display = 'block';
+      if(document.getElementById('showMoreBtn')) document.getElementById('showMoreBtn').style.display = 'block';
+    }
+
+    let currentPinnedGuideId = null;
+
+
+    function pinAndChat(title, article_id) {
+      currentPinnedGuideId = article_id;
+      document.getElementById('answerContent').style.display = 'none';
+      if(document.getElementById('previewContainer')) document.getElementById('previewContainer').style.display = 'none';
+      if(document.getElementById('showMoreBtn')) document.getElementById('showMoreBtn').style.display = 'none';
+      
+      const chatContainer = document.getElementById('chatContainer');
+      chatContainer.style.display = 'flex';
+      chatContainer.style.flexDirection = 'column';
+      chatContainer.style.gap = '16px';
+      chatContainer.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-color); padding: 16px 20px; border-radius: 16px; border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 10px 25px rgba(0,0,0,0.05); animation: fadeInDown 0.3s ease;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="background:rgba(168, 85, 247, 0.1); padding:8px; border-radius:50%; color:#a855f7;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            </div>
+            <div>
+              <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">Pinned Guide</div>
+              <div style="font-weight:600; color:var(--text-main); font-size:15px;">${title}</div>
+            </div>
+          </div>
+          <button onclick="unpinChat()" style="background:rgba(0,0,0,0.05); border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; color:var(--text-muted); display:flex; align-items:center; justify-content:center; transition: all 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.1)'" onmouseout="this.style.background='rgba(0,0,0,0.05)'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        
+        <div id="chatHistory" style="flex:1; max-height: 400px; min-height: 300px; overflow-y:auto; display:flex; flex-direction:column; gap:16px; padding: 10px 5px; animation: fadeIn 0.4s ease;">
+           <div style="align-self:flex-start; background:var(--surface-color); padding:16px 20px; border-radius:20px 20px 20px 4px; border:1px solid var(--surface-border); max-width:85%; color:var(--text-main); line-height: 1.5; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+             Hi! I have loaded the knowledge base for <strong>${title}</strong>. What would you like to know?
+           </div>
+        </div>
+        
+        <div style="position:relative; animation: fadeInUp 0.4s ease;">
+          <input type="text" id="chatInput" placeholder="Ask a question about this specific guide..." style="width:100%; padding:18px 60px 18px 24px; border-radius:30px; border:1px solid var(--surface-border); background:var(--surface-color); color:var(--text-main); font-size:15px; outline:none; font-family:inherit; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: all 0.3s;" onfocus="this.style.borderColor='rgba(168, 85, 247, 0.5)'; this.style.boxShadow='0 10px 30px rgba(168, 85, 247, 0.1)'" onblur="this.style.borderColor='var(--surface-border)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.05)'" onkeypress="if(event.key === 'Enter') submitChatMessage()">
+          <button onclick="submitChatMessage()" style="position:absolute; right:10px; top:10px; bottom:10px; width:44px; background:var(--primary-gradient); border:none; border-radius:50%; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </button>
+        </div>
+      `;
+    }
+
+    function unpinChat() {
+      currentPinnedGuideId = null;
+      document.getElementById('chatContainer').style.display = 'none';
+      document.getElementById('answerContent').style.display = 'block';
+      if(document.getElementById('showMoreBtn')) document.getElementById('showMoreBtn').style.display = 'block';
+    }
+
+    async function submitChatMessage() {
+      const input = document.getElementById('chatInput');
+      const question = input.value.trim();
+      if(!question) return;
+      
+      input.value = '';
+      const history = document.getElementById('chatHistory');
+      
+      // Add user bubble
+      history.insertAdjacentHTML('beforeend', `
+        <div style="align-self:flex-end; background:var(--primary-gradient); padding:16px 20px; border-radius:20px 20px 4px 20px; max-width:85%; color:white; line-height:1.5; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); animation: fadeIn 0.3s ease;">
+          ${question}
+        </div>
+      `);
+      
+      // Add loading bubble
+      const loadingId = 'loading-' + Date.now();
+      history.insertAdjacentHTML('beforeend', `
+        <div id="${loadingId}" style="align-self:flex-start; background:var(--surface-color); padding:16px 20px; border-radius:20px 20px 20px 4px; border:1px solid var(--surface-border); max-width:85%; color:var(--text-muted); display:flex; align-items:center; gap:12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); animation: fadeIn 0.3s ease;">
+          <svg width="20" height="20" viewBox="0 0 50 50" style="animation: spin 1s linear infinite;"><circle cx="25" cy="25" r="20" fill="none" stroke="var(--surface-border)" stroke-width="4"/><circle cx="25" cy="25" r="20" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-dasharray="30 100" stroke-linecap="round"/></svg>
+          <span style="font-size:14px;">Consulting knowledge base...</span>
+        </div>
+      `);
+      history.scrollTop = history.scrollHeight;
+      
+      try {
+        const res = await fetch('/api/help/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question: question,
+            page_context: {
+              integration_id: currentPinnedGuideId
+            }
+          })
+        });
+        
+        if(!res.ok) throw new Error("API Error");
+        const data = await res.json();
+        
+        const loadingEl = document.getElementById(loadingId);
+        if(loadingEl) loadingEl.remove();
+        
+        // Safely parse markdown
+        let formattedResponse = data.response || "No response received.";
+        if(window.marked) {
+          try {
+            formattedResponse = typeof marked.parse === 'function' ? marked.parse(formattedResponse) : marked(formattedResponse);
+          } catch(err) {
+            formattedResponse = formattedResponse.replace(/\n/g, '<br>');
+          }
+        } else {
+          formattedResponse = formattedResponse.replace(/\n/g, '<br>');
+        }
+        
+        history.insertAdjacentHTML('beforeend', `
+          <div class="chat-ai-response" style="align-self:flex-start; background:var(--surface-color); padding:16px 20px; border-radius:20px 20px 20px 4px; border:1px solid var(--surface-border); max-width:85%; color:var(--text-main); line-height:1.6; box-shadow: 0 4px 15px rgba(0,0,0,0.03); animation: fadeIn 0.3s ease;">
+            ${formattedResponse}
+          </div>
+        `);
+        
+      } catch(e) {
+        console.error("Chat API error:", e);
+        const loadingEl = document.getElementById(loadingId);
+        if(loadingEl) loadingEl.remove();
+        history.insertAdjacentHTML('beforeend', `
+          <div style="align-self:flex-start; background:rgba(239, 68, 68, 0.05); padding:16px 20px; border-radius:20px 20px 20px 4px; border:1px solid rgba(239, 68, 68, 0.2); max-width:85%; color:#dc2626; animation: fadeIn 0.3s ease;">
+            Failed to get response. Please try again.
+          </div>
+        `);
+      }
+      history.scrollTop = history.scrollHeight;
+    }
+</script>
+
+</body>
+
+</html>

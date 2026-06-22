@@ -38,7 +38,10 @@ def init_db(db_path: Path) -> None:
                 tokens_total  INTEGER DEFAULT 0,
                 status        TEXT    DEFAULT 'ok',
                 confidence    REAL    DEFAULT 0.0,         -- AI confidence score (0.0 - 1.0)
-                feedback      INTEGER DEFAULT 0            -- -1 (down), 0 (none), 1 (up)
+                feedback      INTEGER DEFAULT 0,           -- -1 (down), 0 (none), 1 (up)
+                provider      TEXT,
+                component_id  TEXT,
+                crag_status   TEXT
             )
         """)
         # Migrate: add token columns if DB existed before this version
@@ -48,6 +51,9 @@ def init_db(db_path: Path) -> None:
             ("tokens_total","INTEGER DEFAULT 0"),
             ("confidence", "REAL DEFAULT 0.0"),
             ("feedback",   "INTEGER DEFAULT 0"),
+            ("provider",   "TEXT"),
+            ("component_id", "TEXT"),
+            ("crag_status",  "TEXT"),
         ]:
             try:
                 conn.execute(f"ALTER TABLE events ADD COLUMN {col} {typedef}")
@@ -71,6 +77,20 @@ def _connect() -> Generator[sqlite3.Connection, None, None]:
         conn.close()
 
 
+class Analytics:
+    """Wrapper for analytics functions for class-based use in ai_server."""
+    def init_db(self, db_path: Path):
+        return init_db(db_path)
+
+    def log_event(self, agent, **kwargs):
+        return log_event(agent, **kwargs)
+    
+    def log_feedback(self, event_id: int, score: int):
+        return log_feedback(event_id, score)
+
+    def get_summary(self, days: int = 30):
+        return get_summary(days)
+
 def log_event(
     agent: str,
     *,
@@ -86,6 +106,9 @@ def log_event(
     tokens_total: int = 0,
     status: str = "ok",
     confidence: float = 0.0,
+    provider: str = "",
+    component_id: str = "",
+    crag_status: str = "",
 ) -> None:
     if _DB_PATH is None:
         return
@@ -95,8 +118,9 @@ def log_event(
                 """INSERT INTO events
                    (ts, agent, integration_id, question, response_len,
                     article_id, article_title, latency_ms, page_title,
-                    tokens_in, tokens_out, tokens_total, status, confidence)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    tokens_in, tokens_out, tokens_total, status, confidence,
+                    provider, component_id, crag_status)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (
                     time.time(),
                     agent,
@@ -112,6 +136,9 @@ def log_event(
                     tokens_total or (tokens_in + tokens_out),
                     status,
                     confidence,
+                    provider,
+                    component_id,
+                    crag_status,
                 ),
             )
     except Exception as e:

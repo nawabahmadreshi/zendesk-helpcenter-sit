@@ -68,6 +68,19 @@ def orchestrate(
         cfg = Config()
         articles_dir = cfg.processed_dir / "articles"
 
+    # SOTA: Priority 3 - User Context MCP Discovery
+    user_context = {}
+    try:
+        from mcp_servers.user_context_server import get_user_context
+        user_id = extra.get("user_id", "default_user")
+        user_context = get_user_context(user_id)
+        print(f"[DEBUG] SOTA Orchestrator retrieved context for {user_id}: {user_context.get('role')}")
+        # Merge with page_context
+        if page_context is not None:
+             page_context["mastery_context"] = user_context
+    except Exception as e:
+        print(f"[ERROR] User Context MCP failed: {e}")
+
     # Classify intent
     intent = _classify(question, page_context, ai_provider, api_key, **extra)
 
@@ -165,6 +178,56 @@ def _run_classify_llm(
     **extra: Any,
 ) -> str:
     """Run a one-shot classification using the active AI provider."""
+
+    # SOTA Phase 16 & 33: Try local AI first for intent routing (fastest & free)
+    if ai_provider in ("auto", "local_only"):
+        # 1. Internal llama-cpp-python
+        try:
+            from app.local_ai import is_ready, chat
+            if is_ready():
+                print("[DEBUG] Using Internal Local AI for intent classification...")
+                res = chat(_CLASSIFY_SYSTEM, user_message, max_tokens=10, temperature=0)
+                return res["response"].strip()
+        except Exception as e:
+            print(f"DEBUG: Internal Local AI classification failed: {e}")
+
+        # 2. Local Ollama
+        try:
+            from config import Config
+            cfg = Config()
+            import requests
+            print(f"[DEBUG] Trying Ollama for local intent classification at {cfg.OLLAMA_BASE_URL}...")
+            payload = {
+                "model": cfg.OLLAMA_MODEL,
+                "prompt": f"{_CLASSIFY_SYSTEM}\n\n{user_message}",
+                "stream": False,
+                "options": {"temperature": 0, "num_predict": 10}
+            }
+            resp = requests.post(f"{cfg.OLLAMA_BASE_URL}/api/generate", json=payload, timeout=5)
+            if resp.ok:
+                return resp.json().get("response", "").strip()
+        except Exception as e:
+             print(f"DEBUG: Ollama classification failed: {e}")
+
+        # 3. LocalAI (OpenAI-compatible)
+        try:
+            from config import Config
+            cfg = Config()
+            from openai import OpenAI
+            print(f"[DEBUG] Trying LocalAI for classification at {cfg.LOCAL_AI_BASE_URL}...")
+            client = OpenAI(base_url=cfg.LOCAL_AI_BASE_URL, api_key="local-ai")
+            resp = client.chat.completions.create(
+                model=cfg.LOCAL_AI_MODEL,
+                messages=[
+                    {"role": "system", "content": _CLASSIFY_SYSTEM},
+                    {"role": "user", "content": user_message},
+                ],
+                max_tokens=10,
+                temperature=0,
+            )
+            return resp.choices[0].message.content.strip()
+        except Exception as e:
+            print(f"DEBUG: LocalAI classification failed: {e}")
 
     if ai_provider in ("gemini",) and api_key:
         try:

@@ -5,6 +5,8 @@ from __future__ import annotations
 import asyncio
 import subprocess
 import time
+import os
+os.environ["SKIP_VECTOR"] = "true" # Disabled vector search because LLM/Embeddings are disabled
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -155,6 +157,7 @@ class AskRequest(BaseModel):
     chat_history: Optional[List[Dict[str, str]]] = None
     user_id: Optional[str] = "anonymous" # NEW: User ID for personalization
     extra: Dict[str, Any] = {} # NEW: For passing additional agent parameters
+    article_filter: Optional[str] = None # Filter search results to a specific article
 
 
 class DirectSearchResponse(BaseModel):
@@ -163,6 +166,7 @@ class DirectSearchResponse(BaseModel):
     message: Optional[str] = None
     guide_name: Optional[str] = None
     chips: Optional[List[str]] = None
+    fallback: bool = False
 
 
 class HelpResponse(BaseModel):
@@ -575,6 +579,21 @@ async def ask_question(req: AskRequest) -> HelpResponse:
 from app.lexical_search import LexicalIndex
 lex_index_global = LexicalIndex(str(cfg.lexical_index_dir))
 
+from pydantic import BaseModel
+class FeedbackRequest(BaseModel):
+    query: str
+    article_id: str
+    score: int
+
+@app.post("/api/help/feedback")
+async def handle_feedback(req: FeedbackRequest):
+    try:
+        from app.feedback_loop import record_feedback
+        record_feedback(req.query, req.article_id, req.score)
+        return {"status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/help/search", response_model=DirectSearchResponse)
 async def direct_search(req: AskRequest) -> DirectSearchResponse:
     try:
@@ -603,30 +622,168 @@ async def direct_search(req: AskRequest) -> DirectSearchResponse:
         lower_q = req.question.lower()
         if "wfn" in lower_q and "adp workforce now" not in expanded_query.lower():
             expanded_query += " adp workforce now"
+        if "gam" in lower_q and "guest account manage" not in expanded_query.lower():
+            expanded_query += " guest account management manager"
         if "prereq" in lower_q and "prerequisites" not in expanded_query.lower():
             expanded_query += " prerequisite prerequisites"
         if "config" in lower_q and "configuration" not in expanded_query.lower():
             expanded_query += " configuration"
         if "setup" in lower_q and "installation" not in expanded_query.lower():
             expanded_query += " set up installation"
-            
-        # 1. Direct Semantic + Lexical Hybrid Search (Instant, NO AI)
+        # ═══════════════════════════════════════════════════════════════
+        # SPEED OPTIMIZATIONS
+        # 1. Semantic Cache  — instant results for repeated/similar queries
+        # 2. Pure BM25 + Vector (NO LLM calls in Discover — keep it fast!)
+        # ═══════════════════════════════════════════════════════════════
+        import hashlib, time as _time
         from app.embedding import search_knowledge_base
-        raw_results = search_knowledge_base(
-            query=expanded_query, 
+        # Track if we fell back
+        fell_back = False
+
+        # ── 1. Semantic Cache ─────────────────────────────────────────
+        # Key = hash of (normalized_query + integration_id + version + article_filter)
+        cache_key = hashlib.md5(
+            f"{expanded_query.lower().strip()}|{integration_id or ''}|{req.page_context.product_version or ''}|{req.article_filter or ''}"
+            .encode()
+        ).hexdigest()
+        
+        if not hasattr(direct_search, "_result_cache"):
+            direct_search._result_cache = {}  # {key: (timestamp, results)}
+        
+        # INCREASE candidate pool significantly for SOTA accuracy
+        _kw = dict(
             api_key=cfg.GEMINI_API_KEY,
             persist_dir=str(cfg.vectordb_dir),
-            top_k=5, 
+            top_k=40, # Deep pool to ensure short chunks aren't dropped
             integration_id=integration_id,
-            product_version=req.page_context.product_version
+            product_version=req.page_context.product_version,
+            article_filter=req.article_filter
         )
         
+        CACHE_TTL = 300  # 5 minutes
+        cached = direct_search._result_cache.get(cache_key)
+        if cached:
+            ts, cached_results = cached
+            if _time.time() - ts < CACHE_TTL:
+                print(f"DEBUG SEARCH: ⚡ Cache HIT for '{expanded_query[:40]}'")
+                raw_results = cached_results
+            else:
+                del direct_search._result_cache[cache_key]
+                cached = None
+        
+        if not cached:
+            from app.embedding import search_knowledge_base, generate_hyde_query, _LEXICAL_CACHE
+            
+            # SOTA Feature: Lexical Overrides
+            # If the query exactly matches a section title, we force it into raw_results with max score
+            # Ensure _LEXICAL_CACHE is loaded
+            if _LEXICAL_CACHE is None:
+                from app.lexical_search import LexicalIndex
+                from config import Config
+                cfg_local = Config()
+                _LEXICAL_CACHE = LexicalIndex(str(cfg_local.lexical_index_dir))
+                _LEXICAL_CACHE.load()
+                from app import embedding
+                embedding._LEXICAL_CACHE = _LEXICAL_CACHE
+            
+            exact_lexical_matches = []
+            for i, meta in enumerate(_LEXICAL_CACHE.metadata):
+                # Filter by article if requested
+                if req.article_filter and meta.get("article_id") != req.article_filter:
+                    continue
+                    
+                c_section = ""
+                # Handle dictionary versus string corpuses
+                text = ""
+                if isinstance(_LEXICAL_CACHE.retriever.corpus, dict):
+                    for k, v in _LEXICAL_CACHE.retriever.corpus.items():
+                        if isinstance(v, list) and i < len(v):
+                            text = v[i]
+                            break
+                elif i < len(_LEXICAL_CACHE.retriever.corpus):
+                    item = _LEXICAL_CACHE.retriever.corpus[i]
+                    text = item.get("text", "") if isinstance(item, dict) else item
+                
+                if "SECTION:" in text:
+                    for line in text.split("\n"):
+                        if line.startswith("SECTION:"):
+                            c_section = line.replace("SECTION:", "").strip().lower()
+                            if " - " in c_section:
+                                c_section = c_section.split(" - ", 1)[1].strip()
+                            break
+                
+                if c_section and c_section == lower_q:
+                    # EXACT MATCH! Boost this chunk
+                    exact_lexical_matches.append({
+                        "id": meta.get("id", str(i)),
+                        "text": text,
+                        "score": 1000.0,
+                        "metadata": meta
+                    })
+                    # Don't break if article_filter is set, there might be multiple sections in the same guide
+                    if not req.article_filter:
+                        break
+
+            # Template HyDE is <1ms — no LLM, pure rule-based expansion
+            hyde_query = generate_hyde_query(expanded_query)
+            print(f"DEBUG SEARCH: Template-HyDE → '{hyde_query[:80]}'")
+
+            # Run standard search
+            std_results  = search_knowledge_base(query=expanded_query, **_kw)
+            
+            # Only run HyDE if vector search is enabled.
+            if os.environ.get("SKIP_VECTOR") == "true":
+                combined = std_results + exact_lexical_matches
+            else:
+                hyde_results = search_knowledge_base(query=hyde_query, **_kw)
+                combined = std_results + hyde_results + exact_lexical_matches
+
+            combined.sort(key=lambda x: x.get("score", 0), reverse=True)
+            seen_ids, unique_raw = set(), []
+            for r in combined:
+                uid = r.get("id")
+                if uid not in seen_ids:
+                    seen_ids.add(uid)
+                    unique_raw.append(r)
+            raw_results = unique_raw[:100] # Pass deep pool to grouping
+            
+            # Intelligent Fallback: If user searched within a guide, but even the best match is terrible (< 0.0)
+            if req.article_filter and raw_results:
+                best_score = max([r.get("score", -999) for r in raw_results])
+                if best_score < 0.0:
+                    print("DEBUG SEARCH: Local guide search failed (score < 0.0). Falling back to global search!")
+                    _kw["article_filter"] = None
+                    std_results = search_knowledge_base(query=expanded_query, **_kw)
+                    hyde_results = search_knowledge_base(query=hyde_query, **_kw) if os.environ.get("SKIP_VECTOR") != "true" else []
+                    combined = std_results + hyde_results + exact_lexical_matches
+                    combined.sort(key=lambda x: x.get("score", 0), reverse=True)
+                    seen_ids, unique_raw = set(), []
+                    for r in combined:
+                        uid = r.get("id")
+                        if uid not in seen_ids:
+                            seen_ids.add(uid)
+                            unique_raw.append(r)
+                    raw_results = unique_raw[:100]
+                    # Tag it so we know we fell back
+                    fell_back = True
+
+            # Store in 5-minute cache
+            direct_search._result_cache[cache_key] = (_time.time(), raw_results)
+            if len(direct_search._result_cache) > 200:
+                oldest = sorted(direct_search._result_cache.items(), key=lambda x: x[1][0])
+                for k, _ in oldest[:50]:
+                    del direct_search._result_cache[k]
+
+
         # Check for Generic Guide Name Queries to provide suggestion chips
         words = lower_q.split()
-        question_or_action_words = {"how", "what", "why", "where", "when", "can", "do", "does", "is", "are", "configure", "setup", "install", "troubleshoot", "fix", "error"}
+        action_words = {"how", "what", "why", "where", "when", "can", "do", "does", "is", "are",
+                        "configure", "setup", "set up", "install", "troubleshoot", "fix", "error",
+                        "employees", "users", "user", "sync", "connect", "guide", "integration",
+                        "prerequisites", "prerequisite", "authenticate", "enable", "add", "create"}
         is_generic = False
-        if len(words) < 8:
-            has_action = any(verb in words for verb in question_or_action_words)
+        if len(words) <= 4:
+            has_action = any(verb in words for verb in action_words)
             if not has_action:
                 is_generic = True
                 
@@ -636,10 +793,8 @@ async def direct_search(req: AskRequest) -> DirectSearchResponse:
             if title and title not in unique_titles:
                 unique_titles.append(title)
 
-        if is_generic and raw_results:
+        if not req.article_filter and is_generic and raw_results:
             top_title = raw_results[0].get("metadata", {}).get("title", "")
-            # Only ask clarification if we unambiguously matched a single guide
-            # Or if they typed the exact title of the guide
             is_exact_match = (lower_q == top_title.lower())
             if top_title and (len(unique_titles) == 1 or is_exact_match):
                 return DirectSearchResponse(
@@ -650,7 +805,7 @@ async def direct_search(req: AskRequest) -> DirectSearchResponse:
                     chips=["Prerequisites", "Setup Instructions", "Troubleshooting", "Supported Operations"]
                 )
                 
-        print(f"DEBUG SEARCH: raw_results length from hybrid search = {len(raw_results)}")
+        print(f"DEBUG SEARCH: raw_results length = {len(raw_results)}")
         
         # Basic filtering to ensure relevancy if integration_id is provided
         if integration_id and integration_id != "":
@@ -662,68 +817,152 @@ async def direct_search(req: AskRequest) -> DirectSearchResponse:
                     filtered.append(r)
             if filtered:
                 raw_results = filtered
-                print(f"DEBUG SEARCH: raw_results length after integration_id filter = {len(raw_results)}")
                 
-        # Boost scores if query terms appear in the title, and group chunks
+        # SOTA: Group by SECTION, not by Article Title
         query_terms = set(lower_q.split())
         grouped_chunks = {}
         
         for r in raw_results:
+            text = r.get("text", "")
             title = r.get("metadata", {}).get("title", "Documentation")
+            score = r.get("score", 0)
+
+            # Skip draft or internal review documents
+            title_upper = title.upper()
+            if "FOR REVIEW" in title_upper or "TO BE PUBLISHED" in title_upper or "DRAFT" in title_upper:
+                continue
+
             art_id = r.get("metadata", {}).get("article_id", "")
             if not art_id: continue
             
-            score = r.get("score", 0)
-            
-            # Massive title boost to ensure the RIGHT guide is #1
-            title_lower = title.lower()
-            title_matches = sum(1 for term in query_terms if term in title_lower and len(term) > 3)
-            
-            original_score = score
-            if title_matches > 0:
-                score += (title_matches * 100.0)  # Overpower normal cross-encoder scores
+            # Identify the Section Name
+            c_section = title # Fallback
+            if "SECTION:" in text:
+                lines = text.split('\n')
+                for line in lines:
+                    if line.startswith("SECTION:"):
+                        c_section = line.strip()
+                        break
+                        
+            # Skip "Jump To" sections
+            if "- Jump To" in c_section:
+                continue
                 
-            if title not in grouped_chunks:
-                grouped_chunks[title] = {
+            # Strict semantic threshold
+            if not req.article_filter and score < 0.0:
+                continue
+                
+            # Heavy penalty to Release Notes
+            if "release notes" in title.lower() or "release note" in title.lower():
+                score -= 10.0
+                
+            if c_section not in grouped_chunks:
+                grouped_chunks[c_section] = {
                     "article_id": art_id,
+                    "title": title,
                     "chunks": [],
                     "max_score": score
                 }
             else:
-                if score > grouped_chunks[title]["max_score"]:
-                    grouped_chunks[title]["max_score"] = score
+                if score > grouped_chunks[c_section]["max_score"]:
+                    grouped_chunks[c_section]["max_score"] = score
                     
-            if len(grouped_chunks[title]["chunks"]) < 3:
-                grouped_chunks[title]["chunks"].append(r.get("text", ""))
+            if len(grouped_chunks[c_section]["chunks"]) < 10:
+                grouped_chunks[c_section]["chunks"].append(text)
+                
+        # Apply Learning to Rank (Feedback Loop)
+        from app.feedback_loop import get_boost_for_article
+        for c_section, group in grouped_chunks.items():
+            art_id = group["article_id"]
+            # Each previous click on this exact article for this exact query gives a massive +50 relevance score!
+            feedback_boost = get_boost_for_article(lower_q, art_id)
+            if feedback_boost > 0:
+                print(f"DEBUG LTR: Boosting {group['title']} by +{feedback_boost*50} due to feedback loop!")
+                group["max_score"] += (feedback_boost * 50.0)
 
         # Sort the grouped articles by their boosted max score
         sorted_grouped = sorted(grouped_chunks.items(), key=lambda x: x[1]["max_score"], reverse=True)
 
         # Format for UI
         from app.tools import get_article_by_id
-        formatted = []
-        for title, data in sorted_grouped:
+        temp_formatted = []
+        
+        for c_section, data in sorted_grouped:
             art_id = data["article_id"]
+            title = data["title"]
             
             full_text = ""
             article_data = get_article_by_id(art_id, cfg.processed_dir / "articles")
             if article_data and "text" in article_data:
                 full_text = article_data["text"]
 
-            # Deduplicate chunks to avoid repeating the exact same text
-            unique_chunks = []
-            for c in data["chunks"]:
-                if not any(c in uc or uc in c for uc in unique_chunks):
-                    unique_chunks.append(c)
+            # Pull EVERY chunk for this section from the global lexical index
+            # This guarantees the section is completely unbroken.
+            from app.embedding import _LEXICAL_CACHE
+            
+            if _LEXICAL_CACHE is None:
+                from app.lexical_search import LexicalIndex
+                from config import Config
+                cfg_local = Config()
+                _LEXICAL_CACHE = LexicalIndex(str(cfg_local.lexical_index_dir))
+                _LEXICAL_CACHE.load()
+                from app import embedding
+                embedding._LEXICAL_CACHE = _LEXICAL_CACHE
+                
+            section_chunks = []
+            
+            # We search the entire metadata corpus for this article
+            for i, meta in enumerate(_LEXICAL_CACHE.metadata):
+                if meta.get("article_id") == art_id:
+                    text = ""
+                    if isinstance(_LEXICAL_CACHE.retriever.corpus, dict):
+                        for k, v in _LEXICAL_CACHE.retriever.corpus.items():
+                            if isinstance(v, list) and i < len(v):
+                                text = v[i]
+                                break
+                    elif i < len(_LEXICAL_CACHE.retriever.corpus):
+                        corpus_item = _LEXICAL_CACHE.retriever.corpus[i]
+                        text = corpus_item.get("text", "") if isinstance(corpus_item, dict) else corpus_item
+                        
+                    # Verify it belongs to the target section
+                    meta_section = title
+                    if "SECTION:" in text:
+                        for line in text.split("\n"):
+                            if line.startswith("SECTION:"):
+                                meta_section = line.strip()
+                                break
                     
-            combined_chunk_text = "\n\n[...] \n\n".join(unique_chunks)
+                    if meta_section == c_section:
+                        idx = meta.get("chunk_index", i)
+                        section_chunks.append((idx, text))
+            
+            combined_chunk_text = ""
+            if section_chunks:
+                section_chunks.sort(key=lambda x: x[0])
+                combined_chunk_text = "\n\n".join([x[1] for x in section_chunks])
+            else:
+                # Fallback to the ML reranked chunks if for some reason we can't reconstruct
+                combined_chunk_text = "\n\n".join(data["chunks"])
 
-            formatted.append({
+            # Determine best match count for snippet UI logic
+            query_terms = set(lower_q.split())
+            best_match_count = sum(1 for t in query_terms if t in c_section.lower())
+
+            temp_formatted.append({
                 "article_title": title,
                 "article_id": art_id,
                 "snippet": full_text,
-                "chunk_text": combined_chunk_text
+                "chunk_text": combined_chunk_text,
+                "best_match_count": best_match_count
             })
+            
+        formatted = []
+        for item in temp_formatted:
+            # We previously filtered out non-exact matches here, but this caused valid results 
+            # (where the keyword is in the body, not the section header) to be dropped 
+            # in favor of heavily penalized Release Notes that happened to have a matching section header.
+            del item["best_match_count"]
+            formatted.append(item)
             
             if len(formatted) >= 50: # Return up to 50 distinct guides for "Show more"
                 break
@@ -735,7 +974,7 @@ async def direct_search(req: AskRequest) -> DirectSearchResponse:
             lexical = LexicalIndex(str(cfg.lexical_index_dir))
             if lexical.load():
                 all_titles = {md.get("title", "") for md in lexical.metadata if md.get("title")}
-                matches = difflib.get_close_matches(req.query.lower(), [t.lower() for t in all_titles], n=3, cutoff=0.25)
+                matches = difflib.get_close_matches(req.question.lower(), [t.lower() for t in all_titles], n=3, cutoff=0.25)
                 if matches:
                     suggestions = []
                     for m in matches:
@@ -747,11 +986,12 @@ async def direct_search(req: AskRequest) -> DirectSearchResponse:
                         return DirectSearchResponse(
                             results=[],
                             clarification_needed=True,
-                            message=f"I couldn't find anything for '{req.query}'. Did you mean:",
+                            message=f"I couldn't find anything for '{req.question}'. Did you mean:",
                             chips=suggestions[:3],
-                            guide_name="" # Leave empty so chips are searched standalone
+                            guide_name="", # Leave empty so chips are searched standalone
+                            fallback=fell_back
                         )
-        return DirectSearchResponse(results=formatted)
+        return DirectSearchResponse(results=formatted, fallback=fell_back)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Search error: {str(e)}")
 
@@ -1306,15 +1546,20 @@ async def serve_article(article_id: str, embed: bool = False, highlight: str = N
     """
     
     html_content = article.get('html', article['text'])
+    
+    # Strip metadata blocks that should not be visible to the user
+    import re
+    html_content = re.sub(r'<div[^>]*>Synced from Zendesk Help Center</div>', '', html_content, flags=re.IGNORECASE)
+    html_content = re.sub(r'<div[^>]*>\s*INTEGRATION ID:.*?</div>', '', html_content, flags=re.IGNORECASE|re.DOTALL)
+    
     if embed and article.get('title'):
-        import re
         def strip_title(match):
             heading_inner = match.group(3)
-            # Remove the title
-            cleaned = heading_inner.replace(article['title'], "")
-            # Clean up dangling separators like " - " or ": " at the beginning or end
-            cleaned = re.sub(r'^\s*[-:]\s*', '', cleaned)
-            cleaned = re.sub(r'\s*[-:]\s*$', '', cleaned)
+            # Remove the title (case-insensitive)
+            cleaned = re.sub(re.escape(article['title']), "", heading_inner, flags=re.IGNORECASE)
+            # Clean up dangling separators like " - " or ": " at the beginning or end, even if wrapped in HTML tags like <strong>
+            cleaned = re.sub(r"^((?:<[^>]+>)*)\s*[-:]\s*", r"\1", cleaned)
+            cleaned = re.sub(r"\s*[-:]\s*((?:</[^>]+>)*)$", r"\1", cleaned)
             return f"<h{match.group(1)}{match.group(2)}>{cleaned}</h{match.group(1)}>"
         
         # Regex to match <hX class="..."> content </hX>
@@ -1331,6 +1576,10 @@ async def serve_article(article_id: str, embed: bool = False, highlight: str = N
         clean_highlight = highlight
         clean_highlight = re.sub(r'^DOCUMENT:.*?\n', '', clean_highlight, flags=re.MULTILINE)
         clean_highlight = re.sub(r'^SECTION:.*?\n', '', clean_highlight, flags=re.MULTILINE)
+        # Strip markdown headings and lists at the start of lines
+        clean_highlight = re.sub(r'^[#\-\*\+]\s+', '', clean_highlight, flags=re.MULTILINE)
+        # Strip inline markdown bold, italic, code
+        clean_highlight = re.sub(r'[*_`]', '', clean_highlight)
         highlight = clean_highlight.strip()
         
     highlight_json = json.dumps(highlight) if highlight else "null"
@@ -1341,12 +1590,28 @@ async def serve_article(article_id: str, embed: bool = False, highlight: str = N
                 const highlightText = {highlight_json};
                 if (highlightText) {{
                     setTimeout(() => {{
-                        // Use browser's native text search to scroll and highlight the exact matching chunk
-                        // We use the first 10-15 words of the actual paragraph to find it
-                        const words = highlightText.trim().split(/\\s+/).slice(0, 15).join(' ');
-                        if (words && window.find(words)) {{
+                        let found = false;
+                        const targetWords = highlightText.trim().split(/\\s+/);
+                        
+                        const lengths = [20, 15, 10, 6, 4];
+                        for (let len of lengths) {{
+                            if (targetWords.length < len && len !== lengths[lengths.length-1]) continue;
+                            const searchStr = targetWords.slice(0, len).join(' ');
+                            if (searchStr && window.find(searchStr)) {{
+                                found = true;
+                                break;
+                            }}
+                        }}
+                        
+                        if (!found && targetWords.length > 10) {{
+                            const searchStrMid = targetWords.slice(5, 12).join(' ');
+                            if (searchStrMid && window.find(searchStrMid)) {{
+                                found = true;
+                            }}
+                        }}
+                        
+                        if (found) {{
                             console.log("Scrolled to matching chunk!");
-                            // Make it super obvious with a beautiful yellow highlight box
                             try {{
                                 const selection = window.getSelection();
                                 if(selection.rangeCount > 0) {{

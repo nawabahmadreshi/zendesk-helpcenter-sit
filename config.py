@@ -29,25 +29,47 @@ class Config:
     # 'auto' = Gemini first, fallback to OpenRouter, then local on failure
     AI_FALLBACK_MODE: str = field(default_factory=lambda: os.environ.get("AI_FALLBACK_MODE", "gemini").lower())
 
-    # Gemini
+    # Gemini Models
     GEMINI_API_KEY: str = field(default_factory=lambda: os.environ.get("GEMINI_API_KEY", ""))
-    GEMINI_MODEL: str = field(default_factory=lambda: os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite"))
+    GEMINI_MODEL: str = field(default_factory=lambda: os.environ.get("GEMINI_MODEL", "gemini-1.5-flash-latest"))
+    GEMINI_FLASH_LITE_MODEL: str = field(default_factory=lambda: os.environ.get("GEMINI_FLASH_LITE_MODEL", "gemini-1.5-flash-latest"))
 
     # OpenRouter (openai-compatible, cheap/free models)
     OPENROUTER_API_KEY: str = field(default_factory=lambda: os.environ.get("OPENROUTER_API_KEY", ""))
     OPENROUTER_MODEL: str = field(default_factory=lambda: os.environ.get("OPENROUTER_MODEL", "mistralai/mistral-7b-instruct:free"))
     OPENROUTER_SITE_URL: str = field(default_factory=lambda: os.environ.get("OPENROUTER_SITE_URL", "http://localhost:8000"))
+    OPENROUTER_APP_NAME: str = field(default_factory=lambda: os.environ.get("OPENROUTER_APP_NAME", "Aquera AI Co-Pilot"))
 
     # Ollama (local daemon — must be running separately)
     OLLAMA_BASE_URL: str = field(default_factory=lambda: os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434"))
     OLLAMA_MODEL: str = field(default_factory=lambda: os.environ.get("OLLAMA_MODEL", "phi3:mini"))
     OLLAMA_EMBED_MODEL: str = field(default_factory=lambda: os.environ.get("OLLAMA_EMBED_MODEL", "nomic-embed-text"))
 
+    # NVIDIA NIM (OpenAI-compatible)
+    NVIDIA_API_KEY: str = field(default_factory=lambda: os.environ.get("NVIDIA_API_KEY", ""))
+    NVIDIA_MODEL: str = field(default_factory=lambda: os.environ.get("NVIDIA_MODEL", "nvidia/llama-3.1-nemotron-70b-instruct"))
+    
+    # Claude Proxy (Local)
+    CLAUDE_PROXY_URL: str = field(default_factory=lambda: os.environ.get("CLAUDE_PROXY_URL", "http://localhost:8080/v1"))
+
+    # LocalAI (OpenAI-compatible local server)
+    LOCAL_AI_BASE_URL: str = field(default_factory=lambda: os.environ.get("LOCAL_AI_BASE_URL", "http://localhost:8080/v1"))
+    LOCAL_AI_MODEL: str = field(default_factory=lambda: os.environ.get("LOCAL_AI_MODEL", "llama-3-8b"))
+
+    # ── Redis Cache ───────────────────────────────────────────────
+    REDIS_HOST: str = field(default_factory=lambda: os.environ.get("REDIS_HOST", "localhost"))
+    REDIS_PORT: int = field(default_factory=lambda: int(os.environ.get("REDIS_PORT", "6379")))
+    REDIS_PASSWORD: str = field(default_factory=lambda: os.environ.get("REDIS_PASSWORD", ""))
+    REDIS_DB: int = field(default_factory=lambda: int(os.environ.get("REDIS_DB", "0")))
+    CACHE_TTL: int = field(default_factory=lambda: int(os.environ.get("CACHE_TTL", "3600"))) # 1 hour
+    SEMANTIC_CACHE_ENABLED: bool = field(default_factory=lambda: os.environ.get("SEMANTIC_CACHE_ENABLED", "1") == "1")
+
     # ── Background Sync ───────────────────────────────────────────
     AUTO_SYNC_ENABLED: bool = field(default_factory=lambda: os.environ.get("AUTO_SYNC_ENABLED", "1") == "1")
     AUTO_SYNC_INTERVAL_MINS: int = field(default_factory=lambda: int(os.environ.get("AUTO_SYNC_INTERVAL_MINS", "30")))
 
     STORAGE_DIR: Path = field(default_factory=lambda: Path(os.environ.get("STORAGE_DIR", "storage")))
+    FORCE_REBUILD: bool = field(default_factory=lambda: os.environ.get("FORCE_REBUILD", "0") == "1")
 
     # ── derived sub-paths ──────────────────────────────────────────────
     @property
@@ -73,6 +95,10 @@ class Config:
     @property
     def vectordb_dir(self) -> Path:
         return self.STORAGE_DIR / "vectordb"
+
+    @property
+    def lexical_index_dir(self) -> Path:
+        return self.STORAGE_DIR / "site_lexical_index"
 
     def ensure_dirs(self) -> None:
         """Create all storage sub-directories if they don't exist."""
@@ -108,12 +134,24 @@ class Config:
                 "OPENROUTER_SITE_URL": self.OPENROUTER_SITE_URL,
                 "OLLAMA_BASE_URL": self.OLLAMA_BASE_URL,
                 "OLLAMA_MODEL": self.OLLAMA_MODEL,
+                "NVIDIA_API_KEY": mask(self.NVIDIA_API_KEY),
+                "NVIDIA_MODEL": self.NVIDIA_MODEL,
+                "CLAUDE_PROXY_URL": self.CLAUDE_PROXY_URL,
+                "LOCAL_AI_BASE_URL": self.LOCAL_AI_BASE_URL,
+                "LOCAL_AI_MODEL": self.LOCAL_AI_MODEL,
             },
             "slack": {
                 "SLACK_WEBHOOK_URL": mask(self.SLACK_WEBHOOK_URL),
             },
             "storage": {
                 "STORAGE_DIR": str(self.STORAGE_DIR),
+            },
+            "redis_cache": {
+                "REDIS_HOST": self.REDIS_HOST,
+                "REDIS_PORT": str(self.REDIS_PORT),
+                "REDIS_PASSWORD": mask(self.REDIS_PASSWORD),
+                "REDIS_DB": str(self.REDIS_DB),
+                "SEMANTIC_CACHE_ENABLED": "1" if self.SEMANTIC_CACHE_ENABLED else "0",
             },
             "background_sync": {
                 "AUTO_SYNC_ENABLED": "1" if self.AUTO_SYNC_ENABLED else "0",

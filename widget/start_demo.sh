@@ -10,7 +10,9 @@ fi
 
 # Start the AI backend server
 echo "Starting AI backend engine..."
-source ../.venv/bin/activate && python -m uvicorn app.ai_server:app --host 0.0.0.0 --port 8000 &
+export SKIP_VECTOR=true
+export STORAGE_DIR="../storage"
+source ../.venv/bin/activate && PYTHONPATH=.. python -m uvicorn app.ai_server:app --host 0.0.0.0 --port 8000 &
 SERVER_PID=$!
 
 sleep 3

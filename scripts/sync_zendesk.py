@@ -5,13 +5,22 @@ import hashlib
 import pathlib
 import urllib.parse
 import requests
+import json
+import shutil
 from bs4 import BeautifulSoup
 from openpyxl import Workbook
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
+
+import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 STATE_FILE = ROOT / ".state" / "last_sync.txt"
 SITE_DIR = ROOT / "site"
+
 
 ZENDESK_SUBDOMAIN = os.environ["ZENDESK_SUBDOMAIN"].strip().replace("https://", "").replace("http://", "").replace(".zendesk.com", "")
 ZENDESK_EMAIL = os.environ["ZENDESK_EMAIL"]
@@ -27,6 +36,21 @@ session = requests.Session()
 session.auth = (f"{ZENDESK_EMAIL}/token", ZENDESK_API_TOKEN)
 
 
+
+STATE_JSON_FILE = ROOT / ".state" / "sync_state.json"
+
+def read_sync_state() -> dict:
+    if STATE_JSON_FILE.exists():
+        try:
+            return json.loads(STATE_JSON_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+def write_sync_state(state: dict):
+    STATE_JSON_FILE.parent.mkdir(parents=True, exist_ok=True)
+    STATE_JSON_FILE.write_text(json.dumps(state, indent=2), encoding="utf-8")
+
 def read_last_sync() -> int:
     if STATE_FILE.exists():
         try:
@@ -39,6 +63,7 @@ def read_last_sync() -> int:
 def write_last_sync(ts: int):
     STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
     STATE_FILE.write_text(str(ts))
+
 
 
 def zendesk_get(url: str, params=None):
@@ -150,11 +175,16 @@ def absolutize_url(url: str) -> str:
     return HC_HOST.rstrip("/") + "/" + url
 
 
+
+FAILED_ASSETS = set()
+
 def download_asset(asset_url: str, dest_dir: pathlib.Path) -> str | None:
     """
     Downloads asset_url to dest_dir with stable filename.
     Returns the filename (relative to dest_dir) or None on failure.
     """
+    if asset_url in FAILED_ASSETS:
+        return None
     try:
         abs_url = absolutize_url(asset_url)
         parsed = urllib.parse.urlparse(abs_url)
@@ -171,17 +201,24 @@ def download_asset(asset_url: str, dest_dir: pathlib.Path) -> str | None:
             return fname
 
         # Try unauth first
-        r = requests.get(abs_url, timeout=90)
-        if r.status_code != 200:
-            # fallback: try with zendesk session auth (sometimes assets are protected)
-            r = session.get(abs_url, timeout=90)
-        if r.status_code != 200:
+        try:
+            r = requests.get(abs_url, timeout=2)
+            if r.status_code != 200:
+                # fallback: try with zendesk session auth (sometimes assets are protected)
+                r = session.get(abs_url, timeout=2)
+            if r.status_code != 200:
+                FAILED_ASSETS.add(asset_url)
+                return None
+        except Exception:
+            FAILED_ASSETS.add(asset_url)
             return None
 
         out_path.write_bytes(r.content)
         return fname
     except Exception:
+        FAILED_ASSETS.add(asset_url)
         return None
+
 
 
 def add_heading_ids_and_collect(soup: BeautifulSoup):
@@ -310,51 +347,76 @@ def write_headings_excel(headings: list[dict], out_xlsx: pathlib.Path, page_url:
 
 
 def main():
-    if not ZENDESK_CATEGORY_ID:
-        raise RuntimeError("Missing ZENDESK_CATEGORY_ID (add it as a GitHub Actions Variable).")
-
     SITE_DIR.mkdir(parents=True, exist_ok=True)
 
-    # 1) Get all sections in category
-    sections = get_sections_in_category(ZENDESK_CATEGORY_ID)
+    # Load sync state
+    state = read_sync_state()
 
-    # 2) Get all articles in those sections
-    # Build a map id->slug for link rewriting
-    all_article_stubs = []
-    for s in sections:
-        all_article_stubs.extend(get_articles_in_section(s["id"]))
+    # 1) Get all articles in the entire Help Center
+    print("Fetching all articles in the entire Zendesk Help Center...")
+    articles = paginate(f"{API_BASE}/articles.json", "articles")
+    print(f"Retrieved {len(articles)} articles.")
 
-    # Remove duplicates (some APIs can overlap)
+    # Remove duplicates (some APIs can overlap) and map slugs
     seen_ids = set()
-    unique_stubs = []
-    for a in all_article_stubs:
-        if a["id"] not in seen_ids:
-            seen_ids.add(a["id"])
-            unique_stubs.append(a)
-
-    # Fetch full article objects for html_url/body and slug
     full_articles = []
     slug_by_article_id: dict[int, str] = {}
-    for stub in unique_stubs:
-        a = get_article(stub["id"])
-        full_articles.append(a)
-        slug_by_article_id[a["id"]] = slug_from_article_html_url(a.get("html_url", ""), a["id"])
+    for a in articles:
+        if a["id"] not in seen_ids:
+            seen_ids.add(a["id"])
+            full_articles.append(a)
+            slug_by_article_id[a["id"]] = slug_from_article_html_url(a.get("html_url", ""), a["id"])
 
-    # 3) Render each article into folder/<slug>/index.html, download assets, headings.xlsx
+    # Track currently active article IDs to detect deletions
+    current_article_ids = set()
+
+    # 2) Render each article into folder/<slug>/index.html, download assets, headings.xlsx
     index_items = []
+    processed_count = 0
+    skipped_count = 0
+
     for a in full_articles:
         if not a.get("body"):
             continue
+
+        aid = str(a["id"])
+        current_article_ids.add(aid)
 
         slug = slug_by_article_id[a["id"]]
         folder = SITE_DIR / slug
         assets_dir = folder / "assets"
         out_html = folder / "index.html"
         out_xlsx = folder / "headings.xlsx"
+        out_md = folder / f"{slug}.md"
+
+        title = a.get("title", slug)
+
+        # Check if the article is already processed and unchanged
+        is_stale = True
+        if aid in state:
+            if (out_html.exists() and out_md.exists() and out_xlsx.exists() and
+                    state[aid].get("updated_at") == a.get("updated_at") and
+                    state[aid].get("slug") == slug):
+                is_stale = False
+
+        if not is_stale:
+            skipped_count += 1
+            index_items.append((title, slug))
+            continue
+
+        print(f"Syncing new/updated article {a['id']} - {title}...")
+        processed_count += 1
 
         soup = BeautifulSoup(a["body"], "html.parser")
 
         strip_zendesk_styles(soup)
+
+        # Prepend guide title to headings
+        for h in soup.find_all(re.compile(r"^h[1-6]$")):
+            h_text = h.get_text(strip=True)
+            if h_text and not h_text.lower().startswith(title.lower()):
+                h.clear()
+                h.append(f"{title} - {h_text}")
 
         # Add heading ids + collect headings
         headings = add_heading_ids_and_collect(soup)
@@ -363,30 +425,56 @@ def main():
         rewrite_links_and_images(soup, slug_by_article_id, assets_dir)
 
         # Wrap in a page with title + back link
-        title = a.get("title", slug)
         body_html = f"<h1>{title}</h1>\n<p><a href=\"../index.html\">← Back to index</a></p>\n{str(soup)}"
         out_html.parent.mkdir(parents=True, exist_ok=True)
         out_html.write_text(page_template(title, body_html), encoding="utf-8")
+
+        # Write index.md
+        from app.processor import simple_html_to_md
+        md_content = simple_html_to_md(f"<h1>{title}</h1>\n{str(soup)}")
+        out_md.write_text(md_content, encoding="utf-8")
 
         # Excel URLs (absolute if SITE_BASE available)
         page_url = f"{SITE_BASE}/{slug}/" if SITE_BASE else ""
         write_headings_excel(headings, out_xlsx, page_url)
 
+        # Save to state
+        state[aid] = {
+            "updated_at": a.get("updated_at"),
+            "title": title,
+            "slug": slug
+        }
+
         index_items.append((title, slug))
+
+    # 3) Handle deleted articles
+    deleted_count = 0
+    for aid in list(state.keys()):
+        if aid not in current_article_ids:
+            old_slug = state[aid].get("slug")
+            if old_slug:
+                old_folder = SITE_DIR / old_slug
+                if old_folder.exists():
+                    shutil.rmtree(old_folder)
+                    print(f"Deleted local folder for removed article: {old_slug}")
+            del state[aid]
+            deleted_count += 1
 
     # 4) Build site index
     index_items.sort(key=lambda x: x[0].lower())
     links = "<ul>\n" + "\n".join([f'<li><a href="./{slug}/">{title}</a></li>' for title, slug in index_items]) + "\n</ul>"
     index_html = page_template(
         "Integrations",
-        f"<h1>Integrations</h1>\n<p>Category: {ZENDESK_CATEGORY_ID}</p>\n{links}"
+        f"<h1>Integrations</h1>\n<p>All Help Center Categories</p>\n{links}"
     )
     (SITE_DIR / "index.html").write_text(index_html, encoding="utf-8")
 
-    # No incremental optimization yet (keeps it correct). You already run hourly.
+    # Save state
+    write_sync_state(state)
     write_last_sync(int(time.time()))
-    print(f"Generated {len(index_items)} articles for category {ZENDESK_CATEGORY_ID}.")
+    print(f"\n✅ Sync complete. Processed: {processed_count}, Skipped: {skipped_count}, Deleted: {deleted_count}")
 
 
 if __name__ == "__main__":
     main()
+

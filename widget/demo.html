@@ -223,6 +223,30 @@
       border-radius: 50%;
       background: currentColor;
     }
+    
+    .search-suggest-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 6px 12px;
+      color: #c9cdd3;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .search-suggest-chip:hover {
+      background: rgba(139, 92, 246, 0.15) !important;
+      border-color: rgba(139, 92, 246, 0.4) !important;
+      color: #fff !important;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -257,6 +281,48 @@
     </div>
 
     <p class="subtitle">Synchronize employee data from ADP Workforce Now to Okta user profiles</p>
+
+    <!-- AI Help Search Card -->
+    <div class="card ai-search-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08)); border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.2); margin-bottom: 28px; padding: 24px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <h2 style="color: #a78bfa; margin-bottom: 0; display: flex; align-items: center; gap: 8px; font-size: 18px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Aquera Knowledge Search
+        </h2>
+        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #a78bfa; font-weight: 600; background: rgba(139, 92, 246, 0.15); padding: 2px 8px; border-radius: 4px;">RAG Search</span>
+      </div>
+      <div class="form-group" style="position: relative; display: flex; gap: 10px; margin-bottom: 12px;">
+        <input type="text" id="main-search-input" placeholder="Search the help center (e.g. 'What are the ADP prerequisites?')" style="background: rgba(15, 17, 26, 0.6); border: 1px solid rgba(139, 92, 246, 0.3); font-size: 14px; padding: 12px 16px; border-radius: 8px; flex: 1; color: #e1e4e8; outline: none; font-family: inherit;">
+        <button id="main-search-btn" class="btn btn-primary" style="display: flex; align-items: center; gap: 6px; padding: 0 24px; font-size: 14px;">
+          Search
+        </button>
+      </div>
+      
+      <!-- Suggestion chips -->
+      <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; align-items: center;">
+        <span style="font-size: 12px; color: #6b7280; font-weight: 500;">Suggestions:</span>
+        <button class="search-suggest-chip" onclick="triggerSearch('What are the prerequisites in the ADP Workforce Now Configuration Guide?')">ADP Prerequisites</button>
+        <button class="search-suggest-chip" onclick="triggerSearch('How to configure target application?')">Target Configuration</button>
+      </div>
+
+      <!-- Results area -->
+      <div id="main-search-results" style="display: none; margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); animation: fadeIn 0.3s ease;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px;">
+          <span style="font-weight: 600; color: #e1e4e8; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+            <span style="color: #8b5cf6;">✦</span> AI Generated Answer
+          </span>
+          <span id="crag-badge" class="status-badge" style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Source: Knowledge Base</span>
+        </div>
+        <div id="search-answer-content" style="color: #c9cdd3; font-size: 14px; line-height: 1.6; margin-bottom: 16px;"></div>
+        
+        <div id="source-article-link" style="display: none;">
+          <a href="#" id="view-source-btn" target="_blank" class="btn btn-outline" style="font-size: 12px; padding: 6px 16px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+            View Source Guide
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+        </div>
+      </div>
+    </div>
 
     <!-- Tabs (mimicking Angular Material tabs) -->
     <div class="tabs" role="tablist">
@@ -336,5 +402,92 @@
   <!-- AI Help Widget -->
   <script src="widget.js" data-api-url="http://localhost:8000"></script>
 
+  <!-- Interactive Search Script -->
+  <script>
+    async function triggerSearch(query) {
+      document.getElementById('main-search-input').value = query;
+      await performSearch();
+    }
+
+    async function performSearch() {
+      const query = document.getElementById('main-search-input').value.trim();
+      if (!query) return;
+
+      const resultsDiv = document.getElementById('main-search-results');
+      const answerContent = document.getElementById('search-answer-content');
+      const sourceLinkDiv = document.getElementById('source-article-link');
+      const viewSourceBtn = document.getElementById('view-source-btn');
+      const cragBadge = document.getElementById('crag-badge');
+      const searchBtn = document.getElementById('main-search-btn');
+
+      // Show loading state
+      resultsDiv.style.display = 'block';
+      searchBtn.disabled = true;
+      searchBtn.innerHTML = 'Searching...';
+      answerContent.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; padding: 12px 0;">
+          <div style="color: #8b5cf6; font-size: 16px; animation: spin 1s infinite linear;">✦</div>
+          <span style="font-size: 13px; color: #9ca3af;">Scanning documentation and generating answer...</span>
+        </div>
+      `;
+      sourceLinkDiv.style.display = 'none';
+
+      try {
+        const response = await fetch('http://localhost:8000/api/help/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question: query,
+            page_context: {
+              page_title: document.title,
+              url_path: window.location.pathname,
+              integration_id: "integration_id_6c6a442f-3797-456e-29e6-a23da164c87f",
+              product_version: "v14"
+            }
+          })
+        });
+
+        if (!response.ok) throw new Error('API server returned error');
+        
+        const data = await response.json();
+        
+        // Format markdown basic formatting
+        let answerHtml = data.response
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/`(.*?)`/g, '<code>$1</code>')
+          .replace(/\n\s*\*\s(.*?)(?=\n|$)/g, '<li>$1</li>')
+          .replace(/\n\n/g, '<br><br>')
+          .replace(/\n/g, '<br>');
+
+        answerContent.innerHTML = answerHtml;
+        
+        // Setup Source Badge & Link
+        if (data.crag_status) {
+          cragBadge.innerHTML = `Status: ${data.crag_status}`;
+          cragBadge.style.display = 'inline-block';
+          cragBadge.style.background = data.crag_status === 'CORRECT' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(251, 191, 36, 0.1)';
+          cragBadge.style.color = data.crag_status === 'CORRECT' ? '#10b981' : '#fbbf24';
+        }
+        
+        if (data.article_id) {
+          viewSourceBtn.href = `http://localhost:8000/article/${data.article_id}`;
+          sourceLinkDiv.style.display = 'block';
+        } else {
+          sourceLinkDiv.style.display = 'none';
+        }
+
+      } catch (err) {
+        answerContent.innerHTML = `<span style="color: #ef4444;">⚠️ Error: ${err.message}. Please check if the backend server is running.</span>`;
+      } finally {
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = 'Search';
+      }
+    }
+
+    document.getElementById('main-search-btn').onclick = performSearch;
+    document.getElementById('main-search-input').onkeydown = (e) => {
+      if (e.key === 'Enter') performSearch();
+    };
+  </script>
 </body>
 </html>

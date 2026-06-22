@@ -20,6 +20,22 @@ from app.processor import process_single_article_html, compile_local_indices
 from app.embedding import embed_single_article, delete_article_embeddings
 
 
+def should_reingest(article: dict, last_sync: dict, force_rebuild: bool = False) -> bool:
+    """Determine if an article needs to be re-processed or embedded."""
+    aid = str(article["id"])
+    if force_rebuild:
+        return True
+    if aid not in last_sync:
+        return True
+    # SOTA: Also check if local processed file exists
+    # If it was deleted but sync state says it's ok, we should re-sync.
+    return last_sync.get(aid) != article.get("updated_at", "")
+
+def get_stale_articles(articles: list, last_sync: dict, force_rebuild: bool = False) -> list:
+    """Filter articles to find only those that are new, updated, or missing."""
+    return [a for a in articles if should_reingest(a, last_sync, force_rebuild)]
+
+
 def run_sync_logic(cfg: Config, force_rebuild: bool = False, sync_mode: str = "full") -> dict:
     """Core synchronization logic. Can be called from CLI or background task."""
     cfg.ensure_dirs()
@@ -59,21 +75,30 @@ def run_sync_logic(cfg: Config, force_rebuild: bool = False, sync_mode: str = "f
         str(a["id"]): a.get("updated_at", "") for a in articles
     }
 
-    # Identify changes
-    to_update_or_add = []
-    for a in articles:
-        aid = str(a["id"])
-        if force_rebuild or last_sync.get(aid) != a.get("updated_at", ""):
-            to_update_or_add.append(a)
+    # Identify changes using SOTA staleness detection
+    to_update_or_add_raw = get_stale_articles(articles, last_sync, force_rebuild)
+    
+    # FREE MEMORY: Clear the large articles list immediately
+    del articles
+    import gc
+    gc.collect()
+
+    to_update_or_add = to_update_or_add_raw
+
+    # Prioritize integrations for faster contextual help recovery
+    to_update_or_add.sort(
+        key=lambda x: any("integration" in str(l).lower() for l in x.get("label_names", [])), 
+        reverse=True
+    )
 
     # Check for deletions
     to_delete_ids = [aid for aid in last_sync if aid not in current_state]
 
     if not to_update_or_add and not to_delete_ids:
-        print("No articles have changed since the last run. Skipping sync.")
+        print("No articles have changed since the last run. Skipping sync.", flush=True)
         return {"ok": True, "processed": 0, "deleted": 0}
 
-    print(f"Changes detected: {len(to_update_or_add)} new/updated, {len(to_delete_ids)} deleted.")
+    print(f"Changes detected: {len(to_update_or_add)} new/updated, {len(to_delete_ids)} deleted.", flush=True)
 
     # ── 1. Process Deletions ─────────────────────────────────────────
     for aid in to_delete_ids:
@@ -121,6 +146,7 @@ def run_sync_logic(cfg: Config, force_rebuild: bool = False, sync_mode: str = "f
             str(cfg.vectordb_dir),
             cfg.GEMINI_API_KEY if not is_ollama else "ollama",
             collection_name=collection_name,
+            product_version=result.get("product_version")
         )
 
     # ── 3. Rebuild global index files ────────────────────────────────

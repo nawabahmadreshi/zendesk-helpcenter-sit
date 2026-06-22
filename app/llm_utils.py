@@ -125,7 +125,6 @@ def run_simple_llm_call(
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     system_instruction=system_instruction,
-                    max_output_tokens=max_tokens,
                     temperature=temperature
                 )
             )
@@ -158,6 +157,58 @@ def run_simple_llm_call(
             client = OpenAI(base_url=f"{config.OLLAMA_BASE_URL}/v1", api_key="ollama")
             resp = client.chat.completions.create(
                 model=config.OLLAMA_MODEL,
+                messages=[
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=max_tokens,
+                temperature=temperature
+            )
+            content = resp.choices[0].message.content
+            return content.strip() if content else ""
+        elif prov == "claude_proxy":
+            from openai import OpenAI
+            client = OpenAI(base_url=config.CLAUDE_PROXY_URL, api_key="sk-ant-proxy-local")
+            resp = client.chat.completions.create(
+                model="claude-sonnet-4-6", # ID matches proxy config
+                messages=[
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=max_tokens,
+                temperature=temperature
+            )
+            content = resp.choices[0].message.content
+            return content.strip() if content else ""
+        elif prov == "openrouter":
+            from openai import OpenAI
+            client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=config.OPENROUTER_API_KEY,
+                default_headers={
+                    "HTTP-Referer": config.OPENROUTER_SITE_URL,
+                    "X-Title": "Aquera AI Help",
+                }
+            )
+            resp = client.chat.completions.create(
+                model=config.OPENROUTER_MODEL,
+                messages=[
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=max_tokens,
+                temperature=temperature
+            )
+            content = resp.choices[0].message.content
+            return content.strip() if content else ""
+        elif prov == "nvidia":
+            from openai import OpenAI
+            client = OpenAI(
+                base_url="https://integrate.api.nvidia.com/v1",
+                api_key=config.NVIDIA_API_KEY
+            )
+            resp = client.chat.completions.create(
+                model=config.NVIDIA_MODEL,
                 messages=[
                     {"role": "system", "content": system_instruction},
                     {"role": "user", "content": prompt}

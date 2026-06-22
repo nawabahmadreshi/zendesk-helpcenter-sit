@@ -11,6 +11,31 @@ from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup, Tag
 from openpyxl import Workbook
 
+def simple_html_to_md(html: str) -> str:
+    soup = BeautifulSoup(html, "html.parser")
+    # Convert headings
+    for h in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']):
+        level = int(h.name[1])
+        h.insert_before('\n\n' + '#' * level + ' ')
+        h.insert_after('\n\n')
+    # Convert paragraphs
+    for p in soup.find_all('p'):
+        p.insert_before('\n\n')
+        p.insert_after('\n\n')
+    # Convert links
+    for a in soup.find_all('a'):
+        href = a.get('href', '')
+        text = a.get_text(strip=True)
+        a.replace_with(f"[{text}]({href})")
+    # Convert bold
+    for b in soup.find_all(['b', 'strong']):
+        b.insert_before('**')
+        b.insert_after('**')
+    # Clean up whitespace
+    text = soup.get_text()
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text.strip()
+
 
 HEADING_TAGS = {f"h{i}" for i in range(1, 7)}
 REMOVE_SELECTORS = [
@@ -83,7 +108,7 @@ def extract_body_html(article: dict) -> str:
 
 
 def clean_article_html(raw_html: str) -> BeautifulSoup:
-    soup = BeautifulSoup(raw_html, "lxml")
+    soup = BeautifulSoup(raw_html, "html.parser")
 
     for selector in REMOVE_SELECTORS:
         for node in soup.select(selector):
@@ -100,7 +125,7 @@ def clean_article_html(raw_html: str) -> BeautifulSoup:
             del tag.attrs["class"]
 
     if soup.body:
-        wrapper = BeautifulSoup("<div class='help-center-article'></div>", "lxml")
+        wrapper = BeautifulSoup("<div class='help-center-article'></div>", "html.parser")
         container = wrapper.div
         for child in list(soup.body.children):
             if isinstance(child, Tag):
@@ -108,6 +133,18 @@ def clean_article_html(raw_html: str) -> BeautifulSoup:
         return wrapper
 
     return soup
+
+
+
+def prepend_title_to_headings(soup: BeautifulSoup, title: str) -> None:
+    if not title:
+        return
+    for h in soup.find_all(re.compile(r"^h[1-6]$")):
+        h_text = h.get_text(strip=True)
+        if h_text and not h_text.lower().startswith(title.lower()):
+            h.clear()
+            h.append(f"{title} - {h_text}")
+
 
 
 
@@ -175,12 +212,24 @@ def rewrite_links(soup: BeautifulSoup, old_to_new: Dict[str, str], article: dict
 
 
 
-def render_clean_article_html(article: dict, soup: BeautifulSoup) -> str:
+def render_clean_article_html(
+    article: dict, 
+    soup: BeautifulSoup, 
+    product_version: Optional[str] = None,
+    field_id: Optional[str] = None,
+    doc_type: Optional[str] = None
+) -> str:
     title = article.get("title", "")
-    html = BeautifulSoup("<article></article>", "lxml")
+    html = BeautifulSoup("<article></article>", "html.parser")
     root = html.article
     root["data-article-id"] = str(article["id"])
     root["data-article-slug"] = article.get("slug", "")
+    if product_version:
+        root["data-version"] = product_version
+    if field_id:
+        root["data-field-id"] = field_id
+    if doc_type:
+        root["data-doc-type"] = doc_type
     title_tag = html.new_tag("h1")
     title_tag.string = title
     title_tag["id"] = f"{article_prefix(article)}-title"
@@ -247,6 +296,13 @@ def process_single_article_html(article: dict, output_dir: Path) -> dict:
     """Processes a single article into HTML, routing to either integration/ or general/ folders."""
     labels = article.get("label_names", []) or article.get("labels", [])
     integration_id_label = next((l for l in labels if l.startswith("integration_id_")), None)
+    
+    # Extract version label (e.g., v11, v14.2)
+    version_label = next((l for l in labels if re.match(r'^v\d+(\.\d+)*$', l, re.I)), None)
+    
+    # Extract advanced metadata (World-Class Roadmap)
+    field_id = next((l.replace("field_id_", "") for l in labels if l.startswith("field_id_")), None)
+    doc_type = next((l.replace("doc_type_", "") for l in labels if l.startswith("doc_type_")), None)
 
     is_integration = bool(integration_id_label)
     folder_name = "integration" if is_integration else "general"
@@ -259,13 +315,23 @@ def process_single_article_html(article: dict, output_dir: Path) -> dict:
 
     raw_html = extract_body_html(article)
     soup = clean_article_html(raw_html)
+    prepend_title_to_headings(soup, article.get("title", ""))
     old_to_new, rows = assign_heading_ids(soup, article)
+    
+    # FRESH SOUP: Re-parse to avoid corruption in complex DOMs
+    soup = BeautifulSoup(str(soup), "html.parser")
+    
     broken = rewrite_links(soup, old_to_new, article)
 
-    cleaned_article_html = render_clean_article_html(article, soup)
+    cleaned_article_html = render_clean_article_html(article, soup, product_version=version_label)
     filename = f"{file_prefix}_{article['id']}.html"
     filepath = target_dir / filename
     filepath.write_text(cleaned_article_html, encoding="utf-8")
+
+    md_filename = f"{file_prefix}_{article['id']}.md"
+    md_filepath = target_dir / md_filename
+    md_content = simple_html_to_md(cleaned_article_html)
+    md_filepath.write_text(md_content, encoding="utf-8")
 
     return {
         "status": "processed", 
@@ -274,7 +340,9 @@ def process_single_article_html(article: dict, output_dir: Path) -> dict:
         "rows": rows if is_integration else [], # Don't index general KB rows
         "broken": broken if is_integration else [],
         "filepath": filepath,
-        "integration_id": integration_id_label or "global"
+        "md_filepath": md_filepath,
+        "integration_id": integration_id_label or "global",
+        "product_version": version_label
     }
 
 
@@ -294,7 +362,7 @@ def compile_local_indices(output_dir: Path) -> dict:
         html_content = html_file.read_text(encoding="utf-8")
         combined_articles.append(html_content)
         
-        soup = BeautifulSoup(html_content, "lxml")
+        soup = BeautifulSoup(html_content, "html.parser")
         article_elem = soup.find("article")
         if not article_elem:
             continue
@@ -348,15 +416,32 @@ def build_category_outputs(articles: Iterable[dict], output_dir: Path) -> dict:
 
         raw_html = extract_body_html(article)
         soup = clean_article_html(raw_html)
+        prepend_title_to_headings(soup, article.get("title", ""))
         old_to_new, rows = assign_heading_ids(soup, article)
         broken = rewrite_links(soup, old_to_new, article)
         
-        cleaned_article_html = render_clean_article_html(article, soup)
+        # Extract version label (e.g., v11, v14.2)
+        version_label = next((l for l in labels if re.match(r'^v\d+(\.\d+)*$', l, re.I)), None)
+        
+        # Extract advanced metadata (World-Class Roadmap)
+        field_id = next((l.replace("field_id_", "") for l in labels if l.startswith("field_id_")), None)
+        doc_type = next((l.replace("doc_type_", "") for l in labels if l.startswith("doc_type_")), None)
+        
+        cleaned_article_html = render_clean_article_html(
+            article, 
+            soup, 
+            product_version=version_label,
+            field_id=field_id,
+            doc_type=doc_type
+        )
         
         # PREDICTABLE NAMING: Name the file using the integration_id label
         filename = f"{integration_id_label}_{article['id']}.html"
+        md_filename = f"{integration_id_label}_{article['id']}.md"
             
         (articles_dir / filename).write_text(cleaned_article_html, encoding="utf-8")
+        (articles_dir / md_filename).write_text(simple_html_to_md(cleaned_article_html), encoding="utf-8")
+        
         combined_articles.append(cleaned_article_html)
         all_rows.extend(rows)
         all_broken.extend(broken)

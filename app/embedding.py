@@ -227,7 +227,11 @@ def get_chroma_collection(persist_dir: str, collection_name: Optional[str] = Non
     
     collection = client.get_or_create_collection(
         name=collection_name,
-        metadata={"hnsw:space": "cosine"},
+        metadata={
+            "hnsw:space": "cosine",
+            "hnsw:batch_size": 50000,
+            "hnsw:sync_threshold": 50000
+        },
         embedding_function=emb_fn,
     )
     return collection

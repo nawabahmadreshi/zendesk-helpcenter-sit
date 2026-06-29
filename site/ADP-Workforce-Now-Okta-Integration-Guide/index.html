@@ -19,7 +19,7 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>ADP Workforce Now / Okta Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<div>This guide applies to the latest public version of the integration (version 4.6.0).</div><h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This guide covers the end-to-end tasks in setting up the integration to sync <strong>Candidates</strong> (pre-hire) and <strong>Workers</strong> data from <strong>ADP Workforce Now</strong> to the <strong>Users</strong> resource in <strong>Okta</strong>.</p><p>To identify records across both systems, the integration uses an internal unique ID of candidates and <strong>Worker ID</strong> of workers from <strong>ADP Workforce Now</strong>, and matches it to the <strong>External ID</strong> of Users in <strong>Okta</strong> as a correlation attribute.</p><h2 id="h_01KAG54HSP2Q7S6CJSHBK2WNZM">Key Functions</h2><p>The ADP Workforce Now to Okta integration automates identity lifecycle management with the following primary capabilities:</p><ul>
+<div>This guide applies to the latest public version of the integration (version 4.7.0).</div><h1 id="h_01J70BR39BAVVVV4MTDG7T04J6">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate the automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This guide covers the end-to-end tasks in setting up the integration to sync <strong>Candidates</strong> (pre-hire) and <strong>Workers</strong> data from <strong>ADP Workforce Now</strong> to the <strong>Users</strong> resource in <strong>Okta</strong>.</p><p>To identify records across both systems, the integration uses an internal unique ID of candidates and <strong>Worker ID</strong> of workers from <strong>ADP Workforce Now</strong>, and matches it to the <strong>External ID</strong> of Users in <strong>Okta</strong> as a correlation attribute.</p><h2 id="h_01KAG54HSP2Q7S6CJSHBK2WNZM">Key Functions</h2><p>The ADP Workforce Now to Okta integration automates identity lifecycle management with the following primary capabilities:</p><ul>
 <li data-list-item-id="e16e4d5fde8fc0473a00fda1d0762a262">Syncs worker and candidate (pre-hire) records from ADP Workforce Now into the Okta custom identity application.</li>
 <li data-list-item-id="e7be5b41e3a60d011b099eb02c75e08c9">Updates the email ID of workers from Okta to the ADP Workforce Now application (Writeback).</li>
 <li data-list-item-id="e73db41c6e99897a08b7b1c9b0cd0666f">Creates new custom attributes in Okta.</li>
@@ -118,32 +118,37 @@
 </ul>
 </li>
 <li data-list-item-id="e960576ac067ea3abf10a7e079a4fe064">
-<span><strong>Delete Condition Type</strong></span><span>*</span><span>: Select the delete condition type to specify which worker records to be deleted from the custom application (identity source) in Okta.</span><br/><span>The following are the available options:</span><ul>
+<span><strong>Deactivate Condition Type</strong></span><span>*</span><span>: Select the delete condition type to specify which worker records to be deactivate from the custom application (identity source) in Okta.</span><br/><span>The following are the available options:</span><ul>
 <li data-list-item-id="e29ffb59720c21794492e9a04f7c9838d"><span><strong>Basic</strong>: Select this if you want to set a delete condition based on worker's status. For example, all terminated or retired workers.</span></li>
 <li data-list-item-id="e9abed398af4d5b561c0c14f3477237b5"><span><strong>Based on Date</strong>: Select this if you want to delete records based on a specific date. When selected, the <strong>Custom Field For Last Working Date</strong> field is displayed to select the attribute that represents the last working date.</span></li>
-<li data-list-item-id="ead9dbade16e3e717e8749d97137bde0c"><span><strong>Custom</strong>: Select this if you want to provide an expression to specify the workers to be deleted in Okta.</span></li>
-</ul>
-</li>
+<li data-list-item-id="ead9dbade16e3e717e8749d97137bde0c">
+<span><strong>Custom</strong>: Select this if you want to provide an expression to specify the workers to be deleted in Okta.</span><ul>
 <li data-list-item-id="e6a2933f01b0b196d58fdf4c5a5dd14ab">
-<span><strong>User to be deleted in Okta</strong>: This parameter is available only if you select <strong>Basic </strong>in the<strong> Delete Condition Type</strong> parameter. In this field, select one or more statuses of the ADP Workforce Now workers who must be deleted in Okta.</span><br/><span><strong>Note</strong>: The user will be deleted only from the custom application (identity source) in Okta. In the Okta directory, the user will only be deactivated and not deleted.</span><br/><span>The following are the available options:</span><span></span><ul>
+<span><strong>User to be deactivated in Okta</strong>: This parameter is available only if you select <strong>Basic </strong>in the<strong> Deactivate Condition Type</strong> parameter. In this field, select one or more statuses of the ADP Workforce Now workers who must be deactivated in Okta.</span><br/><span><strong>Note</strong>: The user will be deactivated only from the custom application (identity source) in Okta. In the Okta directory, the user will only be deactivated and not deleted.</span><br/><span>The following are the available options:</span><span></span><ul>
 <li data-list-item-id="e4c78966549d7409db27f9d6b11b5394a"><span><strong>All Terminated Workers</strong>: Select this to deactivate all terminated workers.</span></li>
 <li data-list-item-id="ead0a88ef32ce382cd46489932273d075"><span><strong>All Deceased Workers</strong>: Select this to deactivate all deceased workers.</span></li>
 <li data-list-item-id="ecc2530d4ed85743d6db9bf1b400256c7"><span><strong>All Workers on Leave</strong>: Select this to deactivate all workers on leave.</span></li>
 <li data-list-item-id="efd23722e76d60480ffcba730b6c43ac4"><span><strong>All Retired Workers</strong>: Select this to deactivate all retired workers.</span></li>
 </ul>
 </li>
-<li data-list-item-id="e303293c462bf2ea60b3ae85d66e7497c"><span><strong>Custom Field For Last Working Date</strong>: Select the attribute name that represents the last working date for workers. This field is available only when you select <strong>Based on Date</strong> in the <strong>Delete Condition Type</strong> field.</span></li>
+<li data-list-item-id="e303293c462bf2ea60b3ae85d66e7497c">
+<strong>Custom Field For Last Working Date</strong>: Select the attribute name that represents the last working date for workers. This field is available only when you select <strong>Based on Date</strong> in the <strong>Delete Condition Type</strong> field.</li>
 <li data-list-item-id="e3726d142685868af765f7239d0766697">
-<span><strong>Custom Delete Condition</strong></span><span>*</span><span>: This parameter is available only if you select <strong>Custom </strong>in the<strong> Delete Condition Type</strong> parameter. In this field, provide an expression to specify the ADP workforce now workers to be deleted in Okta.</span><br/> </li>
+<strong>Custom Deactivate Condition</strong><span>*</span>: This parameter is available only if you select <strong>Custom </strong>in the<strong> Deactivate Condition Type</strong> parameter. In this field, provide an expression to specify the ADP workforce now workers to be deleted in Okta.</li>
+</ul>
+</li>
+</ul>
+</li>
 <li data-list-item-id="e3a04e058bc5bd3a14a4aeecdd40496cb">
-<strong>Skip Deletion for Future Rehires</strong><span>: Select this checkbox to skip deletion of terminated workers whose records include a future rehire date.</span><br/> </li>
+<strong>Skip Deactivation for Future Rehires</strong><span>: Select this checkbox to skip deactivation of terminated workers whose records include a future rehire date.</span>
+</li>
 <li data-list-item-id="ed89a26792a502edf6e057687c99a2c01">
-<span><strong>Suspend condition</strong>: Select the suspend condition. Based on this configuration, the user status in Okta will be updated to <em>Suspended</em>.</span><br/><span>The following are the available options:</span><ul>
+<span><strong>Suspend condition</strong></span><span>*</span><span>: Select the suspend condition. Based on this configuration, the user status in Okta will be updated to <em>Suspended</em>.</span><br/><span>The following are the available options:</span><ul>
 <li data-list-item-id="e442c808d0b3979df2efee9ea96868dd5"><span><strong>None</strong>: Select this if you do not want to apply the suspend condition.</span></li>
 <li data-list-item-id="e42cb3678164acd28e28d7ae1f9cf3829"><span><strong>Worker on leave</strong>: Select this if you want to update the status of workers on leave to <em>Suspended </em>in Okta.</span></li>
 <li data-list-item-id="e5bbd61664e0f0a000afdb65a89834b60">
 <span><strong>Custom</strong>: Select this to define a custom condition. When selected, the following field is displayed for configuration:</span><ul><li data-list-item-id="e46d1f5786737bcb40a08181d498676bd">
-<span><strong>Custom suspend condition</strong>: Provide a JavaScript expression to specify the suspend condition. For example:</span><br/><span><em>(customFieldGroup__stringFields__EmployeeCustomField1__stringValue == 'Suspended' &amp;&amp; (primaryAssignment__assignmentStatus__statusCode__shortName === 'Active' || primaryAssignment__assignmentStatus__statusCode__longName === 'Active')) || (primaryAssignment__assignmentStatus__statusCode__shortName === 'Leave' || primaryAssignment__assignmentStatus__statusCode__longName === 'Leave')</em></span>
+<span><strong>Custom suspend condition</strong></span><span>*</span><span>: Provide a JavaScript expression to specify the suspend condition. For example:</span><br/><span><em>(customFieldGroup__stringFields__EmployeeCustomField1__stringValue == 'Suspended' &amp;&amp; (primaryAssignment__assignmentStatus__statusCode__shortName === 'Active' || primaryAssignment__assignmentStatus__statusCode__longName === 'Active')) || (primaryAssignment__assignmentStatus__statusCode__shortName === 'Leave' || primaryAssignment__assignmentStatus__statusCode__longName === 'Leave')</em></span>
 </li></ul>
 </li>
 </ul>
@@ -164,11 +169,11 @@
 </li>
 </ul>
 </li></ul><h3 id="01K4ABZPKAE6TPEMRK2JZV9RY7">Okta Attributes</h3><p>This section enables you to customize the target settings according to your specific use case.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Auto-Creation of Custom Attributes in Okta</strong> setting in the <strong>Parameters</strong> section.</p><p>It has the following settings:</p><ul><li data-list-item-id="e4e6875734affa9e6aaf0ac4580bfa1aa">
-<strong>Custom Attributes to be Created in Okta</strong>: Select the ADP Workforce Now attributes that are not available in Okta by default and must be created as custom attributes in Okta.<br/>When you select an attribute here, a corresponding custom attribute will be populated in the <a href="#h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</a> tab under the target application column (once you refresh the list). This allows you to map ADP Workforce Now attributes to the custom attributes that will be created in Okta.<br/>When you add a new attribute in ADP Workforce Now, click the <em>refresh </em>icon next to the <strong>Custom Attributes to be Created in Okta </strong>field. This ensures that the new attribute appears in the attribute list for selection.<br/><strong>Note</strong>: The selected custom attributes will be automatically created in Okta during the next integration run, and their data will be synchronized in subsequent runs.</li></ul><h3 id="h_01KC3Y89NAAVSS7TXVNZXTEANX">Monitored Provision</h3><p>This section allows you to configure the settings for monitored provisioning. It has the following settings:<br/><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Monitored Provisioning</strong> in the <strong>Parameters</strong> section.</p><ul>
+<strong>Custom Attributes to be Created in Okta</strong>: Select the ADP Workforce Now attributes that are not available in Okta by default and must be created as custom attributes in Okta.<br/>When you select an attribute here, a corresponding custom attribute will be populated in the <a href="#h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</a> tab under the target application column (once you refresh the list). This allows you to map ADP Workforce Now attributes to the custom attributes that will be created in Okta.<br/>When you add a new attribute in ADP Workforce Now, click the <em>refresh </em>icon next to the <strong>Custom Attributes to be Created in Okta </strong>field. This ensures that the new attribute appears in the attribute list for selection. If you do not find your custom attribute value in the list, click the refresh icon available next to the field to reload the custom attribute value.<br/><strong>Note</strong>: The selected custom attributes will be automatically created in Okta during the next integration run, and their data will be synchronized in subsequent runs.</li></ul><h3 id="h_01KC3Y89NAAVSS7TXVNZXTEANX">Monitored Provision</h3><p>This section allows you to configure the settings for monitored provisioning. It has the following settings:<br/><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Monitored Provisioning</strong> in the <strong>Parameters</strong> section.</p><ul>
 <li data-list-item-id="efa0c42ea07839c7fddca1d5370f5790e">
 <strong>Monitor Email Addresses</strong><span>*</span>: Enter the email IDs of the users who can monitor provisioning or deprovisioning.</li>
 <li data-list-item-id="edf6aa940af75a377e3afab772308a53f">
-<strong>Enable Monitored Provisioning for Creates</strong>: Select this checkbox to monitor all create operations performed during provisioning. If enabled, monitoring will be triggered whenever a new record is created.<br/>When enabled, the following field is displayed for further configuration:<ul><li data-list-item-id="e6cfc7e5db1d7bde0473ef457c1e8742d">
+<strong>Enable Monitored Provisioning for Creates</strong>: Select this checkbox to monitor all create operations performed during provisioning. if enabled, monitoring will be triggered whenever a new record is created.<br/>When enabled, the following field is displayed for further configuration:<ul><li data-list-item-id="e6cfc7e5db1d7bde0473ef457c1e8742d">
 <strong>Monitored Provisioning Create User Threshold</strong><span>*</span>: Enter the minimum number of users that must be queued for creation in a provisioning run for the system to consider it as monitored provisioning. If the number of users to be created is greater than this threshold, the provisioning run will be considered as a monitored run. For example, if you set the threshold to 50, any provisioning run that attempts to create more than 50 users will be treated as a monitored provisioning run.</li></ul>
 </li>
 <li data-list-item-id="e842ca7a3e4443e7cf747459e240203ae">
@@ -191,33 +196,59 @@
 <strong>Enable Monitored Provisioning for Email Writebacks</strong>: Select this checkbox to monitor all email writeback requests. If enabled, monitoring will be triggered for each email writeback request.<br/>When enabled, the following field is displayed for further configuration:<ul><li data-list-item-id="e870f3f5b29aec7aa42cc1370f2641100">
 <strong>Monitored Provisioning Email Writeback Threshold</strong><span>*</span>: Enter the minimum number of users that must be queued with email writeback requests in a provisioning run for the system to consider it as monitored provisioning. If the number of users whose email addresses are to be updated is greater than this threshold, the provisioning run will be considered as a monitored run. For example, if you set the threshold to 50, any provisioning run that attempts to writeback emails for more than 50 users will be treated as a monitored provisioning run.</li></ul>
 </li>
-</ul><h3 id="01K5X4A50C76J748QCZ7S6Y5S2">Date Offset</h3><p>This section enables you to configure the Onboarding Date Offset settings according to your specific use case. It has the following settings:<br/><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Date Offset</strong> in the <strong>Parameters</strong> section.</p><ul>
-<li data-list-item-id="ee679fa79f8ed8a749bb220befedca563">
+</ul><h3 id="01K5X4A50C76J748QCZ7S6Y5S2">Date Offset</h3><p>This section enables you to configure the Onboarding Date Offset settings according to your specific use case. It has the following settings:<br/><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Date Offset</strong> in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><h4 id="h_01KVDB8Z48217HCEZNPZGJ3R2M">Onboarding Date Offset</h4><p>Note: All parameters marked with a red asterisk (<span>*</span>) indicate required fields.</p><ul><li data-list-item-id="ee679fa79f8ed8a749bb220befedca563">
 <strong>Onboarding Date Offset</strong><span>*</span>: Select the date offset for onboarding. The following options are available:<ul>
 <li data-list-item-id="e056de299614dc412ffec6cad891536b0">
 <strong>No Offset</strong>: Select this if you do not want to apply any offset to the onboarding date.</li>
 <li data-list-item-id="ebdc90bf38bbe58c8456e5bbbbf96b79d">
-<strong>Offset Before Onboarding Date</strong>: Select this to set the onboarding date earlier by a specified number of days.</li>
-<li data-list-item-id="ea5bc314b3dcf5c74797b50c61b2602bd">
-<strong>Offset After Onboarding Date</strong>: Select this to delay the onboarding date by a specified number of days.</li>
+<strong>Offset Before Onboarding Date</strong>: Select this to set the onboarding date earlier by a specified number of days. <br/>When selected, the following parameters are displayed:<ul>
+<li data-list-item-id="e7afe0ac05c544b985866ceea10ae83c0">
+<strong>Days of Offset before Onboarding</strong><span>*</span>: Enter the number of days for offset. This field is available only if you select <strong>Offset Before Onboarding Date</strong> in the <strong>Onboarding Date Offset</strong> field.</li>
+<li data-list-item-id="e6952eb03c7a72b60090c4d3482b5e2a4">
+<strong>Onboarding Offset Priority</strong><span>*</span>: Select the list of offset sources that should be used to calculate the onboarding offset. The available options are <strong>Employee Timezone</strong>, <strong>Corporate</strong> <strong>Group Location</strong>, <strong>Legal Address State/Territory</strong>, and <strong>UTC</strong>. If multiple offset sources are selected, the priority is determined by the order in which they are selected. For example, if you select <strong>Employee Timezone</strong> and <strong>Corporate Group Location</strong>, the integration will first check for the employee’s timezone. If the candidate does not have an employee timezone configured, the Corporate Group Location will be used instead.</li>
+<li data-list-item-id="e34ca0b2648e781cfaff804abd1d6c05c">
+<strong>Onboarding Offset Time</strong><span>*</span>: Select the time at which the user should be onboarded. The candidate will be onboarded based on the timezone selected in the <strong>Onboarding Offset Priority</strong> parameter and the time specified in this parameter. The available values are <strong>Immediate, 00:00</strong>,<strong> 01:00</strong>,<strong> 02:00</strong>,<strong> 03:00</strong>,<strong> 04:00</strong>,<strong> 05:00</strong>,<strong> 06:00</strong>,<strong> 07:00</strong>,<strong> 08:00</strong>,<strong> 09:00</strong>,<strong> 10:00</strong>,<strong> 11:00</strong>,<strong> 12:00</strong>,<strong> 13:00</strong>,<strong> 14:00</strong>,<strong> 15:00</strong>,<strong> 16:00</strong>,<strong> 17:00</strong>,<strong> 18:00</strong>,<strong> 19:00</strong>,<strong> 20:00</strong>,<strong> 21:00</strong>,<strong> 22:00</strong>,<strong> 23:00</strong>. Select <strong>Immediate</strong> to onboard the candidate immediately. To onboard a candidate at a specific time, select your preferred time between <strong>00:00</strong> and <strong>23:00</strong>.</li>
 </ul>
 </li>
+<li data-list-item-id="ea5bc314b3dcf5c74797b50c61b2602bd">
+<strong>Offset After Onboarding Date</strong>: Select this to delay the onboarding date by a specified number of days. <br/>When selected, the following parameters are displayed:<ul>
 <li data-list-item-id="e32ccd584c7c745706b65793d97fa718e">
-<strong>Days of Offset before Onboarding</strong><span>*</span>: Enter the number of days for offset. This field is available only if you select <strong>Offset Before Onboarding Date</strong> in the <strong>Onboarding Date Offset</strong> field.</li>
+<strong>Days of Offset after Onboarding</strong><span>*</span>: Enter the number of days for offset. This field is available only if you select <strong>Offset After Onboarding Date</strong> in the <strong>Onboarding Date Offset</strong> field.</li>
 <li data-list-item-id="e2db1201c0c48dc9222d0957ff5c32ce1">
 <strong>Onboarding Offset Priority</strong><span>*</span>: Select the list of offset sources that should be used to calculate the onboarding offset. The available options are <strong>Employee Timezone</strong>, <strong>Corporate</strong> <strong>Group Location</strong>, <strong>Legal Address State/Territory</strong>, and <strong>UTC</strong>. If multiple offset sources are selected, the priority is determined by the order in which they are selected. For example, if you select <strong>Employee Timezone</strong> and <strong>Corporate Group Location</strong>, the integration will first check for the employee’s timezone. If the candidate does not have an employee timezone configured, the Corporate Group Location will be used instead.</li>
 <li data-list-item-id="e3152a227fc156fd8f34352f23931c82f">
 <strong>Onboarding Offset Time</strong><span>*</span>: Select the time at which the user should be onboarded. The candidate will be onboarded based on the timezone selected in the <strong>Onboarding Offset Priority</strong> parameter and the time specified in this parameter. The available values are <strong>Immediate, 00:00</strong>,<strong> 01:00</strong>,<strong> 02:00</strong>,<strong> 03:00</strong>,<strong> 04:00</strong>,<strong> 05:00</strong>,<strong> 06:00</strong>,<strong> 07:00</strong>,<strong> 08:00</strong>,<strong> 09:00</strong>,<strong> 10:00</strong>,<strong> 11:00</strong>,<strong> 12:00</strong>,<strong> 13:00</strong>,<strong> 14:00</strong>,<strong> 15:00</strong>,<strong> 16:00</strong>,<strong> 17:00</strong>,<strong> 18:00</strong>,<strong> 19:00</strong>,<strong> 20:00</strong>,<strong> 21:00</strong>,<strong> 22:00</strong>,<strong> 23:00</strong>. Select <strong>Immediate</strong> to onboard the candidate immediately. To onboard a candidate at a specific time, select your preferred time between <strong>00:00</strong> and <strong>23:00</strong>.</li>
-<li data-list-item-id="ee1086da67954497d34233a67196f3a5e">
-<strong>Days of Offset after Onboarding</strong>: Enter the number of days for offset. This field is available only if you select <strong>Offset After Onboarding Date</strong> in the <strong>Onboarding Date Offset</strong> field.</li>
-<li data-list-item-id="e1c9924d0bfe110180468550fe949ac4c">
-<strong>Offboarding Offset Priority</strong><span>*</span>: Select the list of offset sources that should be used to calculate the onboarding offset. The available options are <strong>Employee Timezone</strong>, <strong>Corporate</strong> <strong>Group Location</strong>, <strong>Legal Address State/Territory</strong>, and <strong>UTC</strong>. If multiple offset sources are selected, the priority is determined by the order in which they are selected. For example, if you select <strong>Employee Timezone</strong> and <strong>Corporate Group Location</strong>, the integration will first check for the employee’s timezone. If the candidate does not have an employee timezone configured, the Corporate Group Location will be used instead.</li>
-<li data-list-item-id="e4a3b340d24223c2e0a911c7651dca8be">
-<strong>Offboarding Offset Time</strong><span>*</span>: Select the time at which the user should be offboarded. The candidate will be offboarded based on the timezone selected in the <strong>Offboarding Offset Priority</strong> parameter and the time specified in this parameter. The available values are <strong>Immediate, 00:00</strong>,<strong> 01:00</strong>,<strong> 02:00</strong>,<strong> 03:00</strong>,<strong> 04:00</strong>,<strong> 05:00</strong>,<strong> 06:00</strong>,<strong> 07:00</strong>,<strong> 08:00</strong>,<strong> 09:00</strong>,<strong> 10:00</strong>,<strong> 11:00</strong>,<strong> 12:00</strong>,<strong> 13:00</strong>,<strong> 14:00</strong>,<strong> 15:00</strong>,<strong> 16:00</strong>,<strong> 17:00</strong>,<strong> 18:00</strong>,<strong> 19:00</strong>,<strong> 20:00</strong>,<strong> 21:00</strong>,<strong> 22:00</strong>,<strong> 23:00</strong>. Select <strong>Immediate</strong> to offboard the candidate immediately. To offboard the candidate at a specific time, select your preferred time between <strong>00:00</strong> and <strong>23:00</strong>.</li>
-</ul><h3 id="01KAFZEEN74H2QQ46MSHRP1JWT">Okta Deletions</h3><p>This section enables you to configure the Okta user deletion settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Deletion of User when Deactivated in Okta</strong> setting in the <strong>Parameters</strong> section.</p><ul>
-<li data-list-item-id="e17a18415bc31ded545cf7c910170ee8a">
-<strong> <span> <span>Delete </span> </span> Deprovisioned Users After (Days) </strong><p><span>*</span>: Enter the number of days after deprovisioning to automatically delete users in Okta. For example, if you enter 2, users will be deleted 2 days after they are deprovisioned.</p>
+</ul>
 </li>
+</ul>
+</li></ul><h4 id="h_01KVDB9N8SENSHK7E417R5EN7M">Offboarding Date Offset</h4><ul><li data-list-item-id="e21e0f3eea5ad912cc95ebf9ef33a3859">
+<strong>Offboarding Date offset</strong><span>*</span>: Select the date offset for offboarding. The following options are available:<ul>
+<li data-list-item-id="e4857c610929fdd4c7253a19362c9ed48">
+<strong>No Offset</strong>: Select this if you do not want to apply any offset to the offboarding date.</li>
+<li data-list-item-id="e6244cf221dcd94bbc3a15c9d499724d9">
+<strong>Offset Before Offboarding Date</strong>: Select this to set the offboarding date earlier by a specified number of days.<br/>When selected, the following parameters are displayed:<ul>
+<li data-list-item-id="e16523cdebfd11519da0eaa89e24d8890">
+<strong>Days of Offset before Offboarding</strong><span>*</span>: Enter the number of days for offset. This field is available only if you select <strong>Offset Before Offboarding Date</strong> in the <strong>Offboarding Date Offset</strong> field.</li>
+<li data-list-item-id="e8f0c430536eefbdcec7c6f401c8785b9">
+<strong>Offboarding Offset Priority</strong><span>*</span>: Select the list of offset sources that should be used to calculate the offboarding offset. The available options are <strong>Employee Timezone</strong>, <strong>Corporate</strong> <strong>Group Location</strong>, <strong>Legal Address State/Territory</strong>, and <strong>UTC</strong>. If multiple offset sources are selected, the priority is determined by the order in which they are selected. For example, if you select <strong>Employee Timezone</strong> and <strong>Corporate Group Location</strong>, the integration will first check for the employee’s timezone. If the candidate does not have an employee timezone configured, the Corporate Group Location will be used instead.</li>
+<li data-list-item-id="eafc620dcbffe5317cacb0fc4e453d6f4">
+<strong>Offboarding Offset Time</strong><span>*</span>: Select the time at which the user should be offboarded. The candidate will be offboarded based on the timezone selected in the <strong>Offboarding Offset Priority</strong> parameter and the time specified in this parameter. The available values are <strong>Immediate, 00:00</strong>,<strong> 01:00</strong>,<strong> 02:00</strong>,<strong> 03:00</strong>,<strong> 04:00</strong>,<strong> 05:00</strong>,<strong> 06:00</strong>,<strong> 07:00</strong>,<strong> 08:00</strong>,<strong> 09:00</strong>,<strong> 10:00</strong>,<strong> 11:00</strong>,<strong> 12:00</strong>,<strong> 13:00</strong>,<strong> 14:00</strong>,<strong> 15:00</strong>,<strong> 16:00</strong>,<strong> 17:00</strong>,<strong> 18:00</strong>,<strong> 19:00</strong>,<strong> 20:00</strong>,<strong> 21:00</strong>,<strong> 22:00</strong>,<strong> 23:00</strong>. Select <strong>Immediate</strong> to offboard the candidate immediately. To offboard a candidate at a specific time, select your preferred time between <strong>00:00</strong> and <strong>23:00</strong>.</li>
+</ul>
+</li>
+<li data-list-item-id="e1f683c227f349946e442129848b41ccf">
+<strong>Offset After Offboarding Date</strong>: Select this to delay the offboarding date by a specified number of days.<br/>When enabled, the following parameters are displayed:<ul>
+<li data-list-item-id="e81d00e1f239fd847fdb1ea92b0bdc7a4">
+<strong>Days of Offset after Offboarding</strong><span>*</span>: Enter the number of days for offset. This field is available only if you select <strong>Offset After Offboarding Date</strong> in the <strong>Offboarding Date Offset</strong> field.</li>
+<li data-list-item-id="e274042c1855e5c7fd9c910c5f91fca1c">
+<strong>Offboarding Offset Priority</strong><span>*</span>: Select the list of offset sources that should be used to calculate the offboarding offset. The available options are <strong>Employee Timezone</strong>, <strong>Corporate</strong> <strong>Group Location</strong>, <strong>Legal Address State/Territory</strong>, and <strong>UTC</strong>. If multiple offset sources are selected, the priority is determined by the order in which they are selected. For example, if you select <strong>Employee Timezone</strong> and <strong>Corporate Group Location</strong>, the integration will first check for the employee’s timezone. If the candidate does not have an employee timezone configured, the Corporate Group Location will be used instead.</li>
+<li data-list-item-id="e9dc587747b8391c6f9ffd3ff7054070b">
+<strong>Offboarding Offset Time</strong><span>*</span>: Select the time at which the user should be offboarded. The candidate will be offboarded based on the timezone selected in the <strong>Offboarding Offset Priority</strong> parameter and the time specified in this parameter. The available values are <strong>Immediate, 00:00</strong>,<strong> 01:00</strong>,<strong> 02:00</strong>,<strong> 03:00</strong>,<strong> 04:00</strong>,<strong> 05:00</strong>,<strong> 06:00</strong>,<strong> 07:00</strong>,<strong> 08:00</strong>,<strong> 09:00</strong>,<strong> 10:00</strong>,<strong> 11:00</strong>,<strong> 12:00</strong>,<strong> 13:00</strong>,<strong> 14:00</strong>,<strong> 15:00</strong>,<strong> 16:00</strong>,<strong> 17:00</strong>,<strong> 18:00</strong>,<strong> 19:00</strong>,<strong> 20:00</strong>,<strong> 21:00</strong>,<strong> 22:00</strong>,<strong> 23:00</strong>. Select <strong>Immediate</strong> to offboard the candidate immediately. To offboard a candidate at a specific time, select your preferred time between <strong>00:00</strong> and <strong>23:00</strong>.</li>
+</ul>
+</li>
+</ul>
+</li></ul><h3 id="01KAFZEEN74H2QQ46MSHRP1JWT">Okta Deletions</h3><p>This section enables you to configure the Okta user deletion settings according to your specific use case. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Deletion of User when Deactivated in Okta</strong> setting in the <strong>Parameters</strong> section.</p><ul>
+<li data-list-item-id="e17a18415bc31ded545cf7c910170ee8a">
+<span><strong>Delete </strong></span><strong>Deprovisioned Users After (Days)</strong><span>*</span>: Enter the number of days after deprovisioning to automatically delete users in Okta. For example, if you enter 2, users will be deleted 2 days after they are deprovisioned.</li>
 <li data-list-item-id="e041c692cbf6960775b77445f1f4dda5c">
 <strong>Delete Limit</strong><span>*</span>: Enter the maximum number of user records that should be deleted during each integration run.</li>
 </ul><h3 id="h_01K5VEHZF56V5FCKR8PQ1NN7TQ"><span>Unique Identity</span></h3><p><span> <span>This section enables you to customize the settings to <span>automatically generate unique usernames and email IDs in Okta. It has the following settings:</span></span> </span></p><p><span> <span><span><strong>Note</strong>: This section appears only if you have selected the <strong>Generate Unique Username/Email</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</span></span> </span></p><ul>
@@ -272,6 +303,7 @@
 <li data-list-item-id="e15a59d95ff3bf297f2178253e521d22d">
 <strong>Position ID</strong>: <span>Select this to filter a worker by the position ID specified in the</span> <strong>Position ID</strong> <span>field.</span>
 </li>
+<li data-list-item-id="e3ebc1832f83f121b3c9ae8b5d81325a3"><span><strong>Custom</strong>: Select this to filter a worker by the custom input.</span></li>
 </ul>
 </li>
 <li data-list-item-id="eab5b52b98d42f64a3292a0afe7ce02ae">
@@ -279,6 +311,9 @@
 </li>
 <li data-list-item-id="e4f3ddbdceace2ac90a4f63b361776fdf">
 <strong>Position ID</strong><span>*</span>: <span>Enter a position ID to filter a worker. For example, N321093.</span><br/><span><strong>Note</strong>: This parameter is displayed only if you select <strong>Position ID</strong> in the <strong>Workforce Now Filter</strong> parameter.</span>
+</li>
+<li data-list-item-id="e483417e862dd673889595101a324fe99">
+<span><strong>Custom Source Filter Condition</strong></span><span>*</span><span>: Enter the custom source filter condition for a worker.</span>
 </li>
 <li data-list-item-id="e75929b7ee51f44a5c3564ab0a016010e"><span><strong>Import Limit</strong>: Enter the maximum number of worker records that should be imported for debugging during each integration run. By default, the value is 100.</span></li>
 </ul><h3 id="h_01K3JDHSDXSJJHPRZMHT47QV8A">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong data-end="1326" data-start="1308">Enable Logging</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><ul><li data-list-item-id="eb008ea2ca58920454398ca928ed05c5e">
@@ -313,7 +348,20 @@
 </ul>
 </li>
 </ul>
-</li></ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Notifications</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><ul>
+</li></ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notification Settings</h3><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Notifications</strong> setting in the <a href="#h_01JPHQ5NVAN9KMV1ZDAFZBR9CH">Parameters</a> section.</p><p>This section enables you to customize the notification settings. It has the following settings:</p><ul>
+<li data-list-item-id="e379721405774c4a99004325b935ccae4">
+<strong>Integration Completed Notification</strong>: This section enables you to customize the notifications that are sent upon successful execution. Click the expand icon, if it is not already expanded to view and configure the required settings. Refer to the <a href="#h_01KVDBQXVBZ5VNDJAMEHC5ECHY">Integration Completed Notification</a> section for more details.</li>
+<li data-list-item-id="efa8008cd25878826ab86fe2b85ecac11">
+<strong>Report Settings for Email Attachment: </strong>Select this checkbox if you want to attach a report with the email sent to the recipient. Click the expand icon, if it is not already expanded to view and configure the required settings. Refer to the <a href="#h_01KVDBTZ0NKFC2EQWKX1NFJ4AA">Report Settings for Email Attachment</a> section for more details.</li>
+<li data-list-item-id="e717e62bd3dc39e6c6145f89d57f28b67">
+<strong>Monitored provisioning Notification: </strong>This section enables you to customize the monitored provisioning notification settings. Click the expand icon, if it is not already expanded to view and configure the required settings. Refer to the <a href="#h_01KEH0NNX6H4M85JXE0FX4J916">Monitored provisioning Notification</a> section for more details.</li>
+<li data-list-item-id="e6ef5027c83533231d0b3fe031913a3d1">
+<strong>Enable Create Notification: </strong>Select<strong> </strong>this checkbox to send notifications when one or more users are created in Okta. Refer to the <a href="#h_01KT60GDHD4D88JAT5V1KJ0PPT">Enable Create Notification</a> section for more details.</li>
+<li data-list-item-id="eb08d7bcb4039c37a133bb0923365e663">
+<strong>Enable Update Notification: </strong>Select this checkbox to send notifications when one or more users gets updated in Okta. Refer to the <a href="#h_01KT631S84NX86CTP525MTBK36">Enable Update Notification</a> section for more details.</li>
+<li data-list-item-id="e636b1e95592dfa21e129c7cae6fc649e">
+<strong>Enable Deactivate Notification: </strong>Select this checkbox to send notifications when one or more users gets deactivated in Okta. Refer to the <a href="#h_01KT63ETFE6CNVK80GAQ80N2RE">Enable Deactivate Notification</a> section for more details.</li>
+</ul><h4 id="h_01KVDBQXVBZ5VNDJAMEHC5ECHY">Integration Completed Notification</h4><p>This section enables you to configure the integration completed notification settings. It has the following settings:</p><ul>
 <li data-list-item-id="eb716cff94a38e017fa8fed6d4ed2b80a">
 <strong>Send Notifications to</strong><span>*</span>: Enter the list of email addresses to which notifications on this integration have to be sent. After entering each email, hit enter to save.</li>
 <li data-list-item-id="eb4be33d758f8b8a8c14d8a5544750186">
@@ -321,12 +369,18 @@
 <li data-list-item-id="e47a37893c15a694b92f8ad8963509271">
 <strong>Email Body</strong>: Enter the content that must be used as the email body for all email notifications.</li>
 <li data-list-item-id="e9fecab7c11435f46d3d36968795b1cff">
-<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for each integration execution. When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="eb0cbbdd6b7d76d6b2a6c5929e09f03d2">
-<strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:<ul>
-<li data-list-item-id="ea00e7402367c1baa150505145182e9ed">
-<strong>Full Details</strong>: All attribute details are displayed.</li>
-<li data-list-item-id="efde9e9b7ece5d5f3891719cddd2e5a1a">
-<strong>Custom</strong>: Includes or excludes selected attributes. <span>The following parameters are displayed once you select <strong>Custom</strong>:</span><ul>
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a report for each integration execution. When enabled, the <a href="#h_01KVDBTZ0NKFC2EQWKX1NFJ4AA">Report Settings for Email Attachment</a> section is displayed for further configuration.</li>
+</ul><h5 id="h_01KVDBTZ0NKFC2EQWKX1NFJ4AA">Report Settings for Email Attachment</h5><p>Select this checkbox to do further customization on report settings. It has the following settings:</p><ul>
+<li data-list-item-id="ed2ae9cbd39b546612fc6cb3a88127beb"><h5 id="h_01KVDBV1HQEJJDZB3ZVN7P5SXQ">
+<strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The following are the available options:</h5></li>
+<li data-list-item-id="ea0224922a5b1afad9bbc27482855a861">
+<h5 id="h_01KVDBXH8079SQND3PX04VCG4Q">
+<strong>Full Details</strong>: All attribute details are displayed.</h5>
+<ul><li data-list-item-id="eeef198d7101aa317551b95ddb866542b">
+<h5 id="h_01KVDBVYWYYP19E6RTMWE0QE33">
+<strong>Custom</strong>: Includes or excludes selected attributes. <span>The following parameters are displayed once you select <strong>Custom</strong>:</span>
+</h5>
+<ul>
 <li data-list-item-id="ecb4e0b74068f6b9190cf6e93685a7042">
 <strong>Attribute Filter</strong>: Select the attribute filter to include or exclude attributes in the report.</li>
 <li data-list-item-id="e99af4d3348a9d4c5b9b2bad6dab371ef">
@@ -334,11 +388,9 @@
 <li data-list-item-id="e4a2f9dabda8b09643a5f351617fe6bfe">
 <strong>Attributes to be Excluded</strong>: Select the attributes to be excluded in the report. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Attribute Filter </strong>parameter.</li>
 </ul>
-</li>
-</ul>
 </li></ul>
 </li>
-</ul><h4 id="h_01KEH0NNX6H4M85JXE0FX4J916">Monitored provisioning Notification</h4><ul>
+</ul><h4 id="h_01KEH0NNX6H4M85JXE0FX4J916">Monitored provisioning Notification</h4><p>This section enables you to customize the monitored provisioning notification settings. It has the following settings:</p><ul>
 <li data-list-item-id="ec1b373ae50df69278de202dbf64f2539">
 <strong>Send Notifications to</strong><span>*</span>: Enter the list of email addresses to which notifications on this integration have to be sent. After entering each email, hit enter to save.</li>
 <li data-list-item-id="eeca459f74f5be88ac6133e8a5825e2e7">
@@ -374,7 +426,7 @@
 </li>
 <li data-list-item-id="e0e9d5a2b3fd296df63b3566e994698df"><div>
 <strong>Create Notification Body</strong>: Enter the content that must be used as the email notification body when a user is created in Okta.</div></li>
-</ul><h4 id="h_01KT631S84NX86CTP525MTBK36">Enable Update Notification</h4><div>Select this checkbox to send notifications when one or more users are created in Okta. When enabled, the <strong>New Update Notification</strong> section is displayed.</div><ul>
+</ul><h4 id="h_01KT631S84NX86CTP525MTBK36">Enable Update Notification</h4><div>Select this checkbox to send notifications when one or more users gets updated in Okta. When enabled, the <strong>New Update Notification</strong> section is displayed.</div><ul>
 <li data-list-item-id="e710eba947311f38a259cfc7616eee547">
 <strong>Send Notification To User's Manager on Account Update</strong>: Select  this checkbox to send notifications to the respective managers when a user is updated in Okta.</li>
 <li data-list-item-id="ee432d4443f0b9b9117ed4ee074aef81b">
@@ -403,7 +455,7 @@
 </li>
 <li data-list-item-id="e9bef7de131fa57fb7997bbcbb16e39bf"><div>
 <strong>Update Notification Body</strong>: Enter the content that must be used as the email notification body when a user is updated in Okta.</div></li>
-</ul><h4 id="h_01KT63ETFE6CNVK80GAQ80N2RE">Enable Deactivate Notification</h4><div>Select this checkbox to send notifications when one or more users are created in Okta. When enabled, the <strong>New Deactivate Notification</strong> section is displayed.</div><ul>
+</ul><h4 id="h_01KT63ETFE6CNVK80GAQ80N2RE">Enable Deactivate Notification</h4><div>Select this checkbox to send notifications when one or more users get deactivated in Okta. When enabled, the <strong>New Deactivate Notification</strong> section is displayed.</div><ul>
 <li data-list-item-id="ed15d5ae90ae1c70bc6dc28fd797fa79f">
 <strong>Send Notification To User's Manager on Account Deactivation</strong>: Select this checkbox to send notifications to the respective managers when a user is deactivated in Okta.</li>
 <li data-list-item-id="efca5f02374ad4176f72fe3d3fdeb7f0f">
@@ -449,7 +501,7 @@
 </ul>
 </li>
 </ul>
-</li></ul><p><!-- notionvc: 1a4f7d78-3c21-40af-958e-9e265860c952 --></p><h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab defines how data is mapped from the source to the target application. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed, to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicates required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><h3 id="h_01K7H3FBM0V1D99VEW60RCKMFX">Mapping Custom Attributes</h3><p>Click the <strong>refresh icon</strong> next to the target application name to fetch custom attributes available in Okta under the target application column for mapping.</p><p>Additionally, clicking the <strong>refresh icon</strong> populates the attributes specified in the <strong>Custom Attributes to be Created in Okta</strong> parameter (in the <a href="#01K4ABZPKAE6TPEMRK2JZV9RY7">Okta Attributes</a> section). This allows you to map ADP Workforce Now attributes to the custom attributes that will be created in Okta.</p><p>The new custom attributes will be automatically created in Okta during the next integration run, and their data will be synchronized in subsequent runs.</p><h2 id="h_01KJ53Y3H4BWX0QQW00JSQW5WC">Group Rules</h2><p>The <strong>Group Rules</strong> tab allows you to configure how group assignments are managed through this integration. In this tab, you can define conditions that determine how users are assigned to groups in Okta. </p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Okta Group Management</strong> checkbox in the <a href="#01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</a> section.</p><p>Perform the following steps to create a group rule:</p><ol>
+</li></ul><p><!-- notionvc: 1a4f7d78-3c21-40af-958e-9e265860c952 --></p><h2 id="h_01J0JG38N49DASPBXSDBN4QDMQ">Attribute Map</h2><p>The ADP Workforce Now to Okta integration maps the ADP Workforce Now and Okta attributes. You can modify only the source attributes as needed to align with your specific use case.</p><p>You can write JavaScript expressions to modify the value of the source attribute and construct a value to be updated in the target attribute. Write the expression directly in the source attribute field or click the Expand icon in the source attribute field to write a long-expression.</p><p>All attributes marked with a red asterisk (<span>*</span>) indicate required fields for successful provisioning.</p><p>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the integration.</p><p>You will see the following two attribute map tables:</p><h3 id="h_01KHKBKEQDDTMMB1CCCQRVRM1E">Worker Map</h3><p>This tab displays the attribute mapping used to create a Worker mapping in Okta.</p><h3 id="h_01KHKBKHBP49K206ZXCYR1NSCH">Candidate Map</h3><p>This tab displays the attribute mapping used to create a Candidate mapping in Okta.</p><h3 id="h_01K7H3FBM0V1D99VEW60RCKMFX">Mapping Custom Attributes</h3><p>Click the <strong>refresh icon</strong> next to the target application name to fetch custom attributes available in Okta under the target application column for mapping.</p><p>Additionally, clicking the <strong>refresh icon</strong> populates the attributes specified in the <strong>Custom Attributes to be Created in Okta</strong> parameter (in the <a href="#01K4ABZPKAE6TPEMRK2JZV9RY7">Okta Attributes</a> section). This allows you to map ADP Workforce Now attributes to the custom attributes that will be created in Okta.</p><p>The new custom attributes will be automatically created in Okta during the next integration run, and their data will be synchronized in subsequent runs.</p><h2 id="h_01KJ53Y3H4BWX0QQW00JSQW5WC">Group Rules</h2><p>The <strong>Group Rules</strong> tab allows you to configure how group assignments are managed through this integration. In this tab, you can define conditions that determine how users are assigned to groups in Okta. </p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Okta Group Management</strong> checkbox in the <a href="#01K4A9SYGXKD4PRK6W9STNDTN3">Integration Features</a> section.</p><p>Perform the following steps to create a group rule:</p><ol>
 <li data-list-item-id="e9557a3ae4f6fdc26151e2a7047103bcf">Navigate to the <strong>Group Rules</strong> tab. The following fields are displayed:<br/><img alt="2026-02-23_17-03-46.png" src="./assets/4107449ff68a15b5.bin"/>
 </li>
 <li data-list-item-id="e61f0cac89154624ce6277bb890ab340e">Click <strong>Choose Attribute</strong> to view the list of available attributes that you can use to set conditions.</li>
@@ -489,7 +541,7 @@
 <li data-list-item-id="eeda3b349051d35b36fb9188ab0783545">
 <strong>Remove All Groups on Termination</strong>: Select this checkbox to ensure that all group memberships are removed when a user is terminated.</li>
 <li data-list-item-id="e1047a934dca001f5f82f82f32a58306e">
-<strong>Add Terminated User to a Group</strong>: Select this checkbox to automatically add terminated users to the specified group. This can be used to identify, manage, or apply policies to terminated users through a dedicated group. When enabled, the Terminated User Group Name field is displayed.<ul><li data-list-item-id="e760a93fbbe5fa4af4775049c00386a6c">
+<strong>Add Terminated User to a Group</strong>: Select this checkbox to automatically add terminated users to the specified group. This can be used to identify, manage, or apply policies to terminated users through a dedicated group. When enabled, the following field is displayed:<ul><li data-list-item-id="e760a93fbbe5fa4af4775049c00386a6c">
 <strong>Terminated User Group Name</strong>: This field enables you to select the specified groups for terminated users.</li></ul>
 </li>
 <li data-list-item-id="ecd4b5f03eef389e15235c96ffe0ab51c">

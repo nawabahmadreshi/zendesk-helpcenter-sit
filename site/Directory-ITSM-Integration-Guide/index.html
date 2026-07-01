@@ -19,7 +19,119 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Directory / ITSM Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-_
+<h1 id="h_01KD7Y3KD9MT7413QHSHAVZCNF">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This integration retrieves workforce data from the selected HR application, detects lifecycle events based on the configured look-back and look-ahead settings, evaluates any configured eligibility rules, and then creates, updates, closes, or sends notifications for service desk tickets based on the selected lifecycle event configuration</p><p>By using the HR application as the system of record, the integration enables organizations to automate service desk fulfillment processes throughout the workforce lifecycle, including candidate onboarding, employee onboarding, job changes, leave of absence, termination, and rehire events. The integration supports configurable lifecycle workflows, event-based request generation, automated ticket management, and multi-channel notifications, helping IT and business teams respond efficiently to workforce changes.</p><h2 id="h_01KV523N864ATFG7JMDXFT5DG6">Key Functions</h2><p>This integration automates service desk processes for lifecycle events with the following capabilities:</p><ul>
+<li data-list-item-id="e6b59258da565f1e431d2a86e042d376a">Identifies workforce lifecycle events from the HR application, including hire, change, leave, termination, and rehire events.</li>
+<li data-list-item-id="ea6c9e9b598d73f85fa8e88156f0eb3bf">Creates service requests or tickets in the configured service desk application based on selected lifecycle events.</li>
+<li data-list-item-id="e51db7d175619273802ca4d1192654198">Supports configurable event timing to create tickets when an event is detected, before the event date, on the event date, or after the event date.</li>
+<li data-list-item-id="e0018a501907234fd2f946959ce3fdc87">Allows custom eligibility rules to control which employee records are included in lifecycle event processing.</li>
+<li data-list-item-id="e7b27f5168209e20afb3cd0a4be77be79">Automatically updates or closes existing service desk tickets based on configured ticket statuses.</li>
+<li data-list-item-id="e2f268131370a5f414242105b8d2fa144">Sends event notifications through email and Microsoft Teams.</li>
+<li data-list-item-id="eafc43689cb182f847c52634c2044f855">Generates detailed logs, operational reports, and execution summaries.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e65e7341d3d86adaac675d509ef6c2408">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="efcb0c678bad6abf036d8739e1f7eb808">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="ee65cf04461f12088c310576245ce3437">
+<strong>HR Application Connector</strong>: You must configure a connector for your HR application in the Aquera Admin Portal. Refer to the configuration guide for the respective HR application for configuration details. For example, <strong>Oracle Cloud HCM</strong>.</li>
+<li data-list-item-id="ed81549bd79e0db339b221c8d5631ac87">
+<strong>Service Desk Application Connector</strong>: You must configure a connector for your service desk application in the Aquera Admin Portal. Refer to the configuration guide for the respective service desk application for configuration details. For example, <strong>ServiceNow</strong>.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize workforce lifecycle events from an HR application to a service desk application and automate the creation and management of service requests and tickets.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="ef2524ee8daf80fe437a05a0037d92424">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e7ca0d57181c2f03cd4d0b50a069acff8">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e30a45e377ab205cb1d1b79e6ab9b6fb8">Click<strong> </strong><strong>Create Integration</strong>.</li>
+<li data-list-item-id="ea6627a3f7cf45f513765772452c1dc68">Search for <strong>HR / ITSM - ServiceNow</strong> in the search box next to the <strong>Explore Templates</strong> section and click it to create a new integration.</li>
+<li data-list-item-id="e7f0b8ced1df962b7946bce79b0d91c3c">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ef100a4d7d8813f7d67cb021a1b770411">Click <strong>Continue</strong>.</li>
+</ol><p>Once created, the following tabs are displayed:</p><ul>
+<li data-list-item-id="e1dbb223761d333495cfc56508555c00c"><a href="#h_01KV57ZG85Y9KNEXG8S288H3WK">Overview</a></li>
+<li data-list-item-id="e591a719201321a66893c666ec373d31a"><a href="#h_01KV57ZPHB45GVJ88EC0APPFJJ">Features</a></li>
+<li data-list-item-id="ebec223ff5eb90f77bd179f4ee18f97e4"><a href="#h_01KV57ZPHB45GVJ88EC0APPFJJ">Source</a></li>
+<li data-list-item-id="ef3456e4503eb7239296e68ec199b5b35"><a href="#h_01KV580JN6Y6WH1M2HDGY6JTWB">Service Desk</a></li>
+<li data-list-item-id="ea4f6c0bd514004ee5ee058f5d8fd32ad"><a href="#h_01KV580PQB96710J73V3BG96A9">Operations</a></li>
+<li data-list-item-id="e11713873b1665baec3a517064ab3c2c6"><a href="#h_01KJCP43MS8PMZZMVQPMDWVEEP">Tables</a></li>
+<li data-list-item-id="e705648fd23c55379d8018d745bfeab67"><a href="#h_01KJCP43MS8PMZZMVQPMDWVEEP">Schedule</a></li>
+</ul><h2 id="h_01KV57ZG85Y9KNEXG8S288H3WK">Overview</h2><p>On this tab, you can view general information about the integration, including its purpose, functionality, and supported capabilities. This section provides a high-level overview of how the integration operates between connected applications.</p><h2 id="h_01KV57ZPHB45GVJ88EC0APPFJJ">Directory</h2><p>The <strong>Directory</strong> tab provides an overview of the functional components supported by the integration. These features define the capabilities available within the integration and determine the configuration tabs and settings that are available.</p><h3 id="h_01KJCP43MS8PMZZMVQPMDWVEEP">Configuration</h3><p><strong>Enable Directory Configuration</strong>:</p><h4 id="h_01KWEEAZ1QXZHB58W070R9Y9KB">Directory Configuration</h4><ul>
+<li data-list-item-id="e23997fe83bac36a256f8e1bee86d9ac7">
+<strong>Directory Application</strong>:</li>
+<li data-list-item-id="ec6e085bf3ea5a337c82469c34aad00ec">
+<strong>Resource Type</strong>:</li>
+<li data-list-item-id="e216f0718ad8a8d7f3612c608aefa1299">
+<strong>Enable Directory Provisioning</strong>:</li>
+<li data-list-item-id="eff9b71f9f7b9a55c3dcb5eb70709eddc">
+<strong>Enable Account Creation</strong>:</li>
+<li data-list-item-id="e900b55c4f387fe900ab743759c5e8a2e">
+<strong>Apply Entitlement Assignment Rules</strong>:</li>
+<li data-list-item-id="ee111f25d76f02c40e7e9cd92ae921ac5">
+<strong>Auto-Generate Username</strong>:</li>
+<li data-list-item-id="e6330ddf5eebd4d11ae6c4b60615928d4">
+<strong>Automatically Generate Email</strong>:</li>
+<li data-list-item-id="e47ee636901f490da2d44020840019502">
+<strong>Account Activation Timing</strong>:</li>
+<li data-list-item-id="e33372e6f6d8413b16716c2e74edf2980">
+<strong>Default/Fallback Location</strong>:</li>
+<li data-list-item-id="e3c0e2df152f39e8d2a79001aff597b73">
+<strong>Enable Account Updates</strong>:</li>
+<li data-list-item-id="e1cafaaecca242d609cdbb60f92abb2e5">
+<strong>Enable Account Termination</strong>:</li>
+<li data-list-item-id="ee09694cf7d076121c16cd6286818e430">
+<strong>Invalidate Password</strong>:</li>
+<li data-list-item-id="e2aa590e88bfca02ac183dd6165c82336">
+<strong>Disable Account</strong>:</li>
+<li data-list-item-id="ea744999c7fe7af860f0ff205e2d744d3">
+<strong>Disable Timing</strong>:</li>
+<li data-list-item-id="ef362b11967367c6fa847ffa88116ac8f">
+<strong>Default Location for Terminated Users</strong>:</li>
+<li data-list-item-id="e6b959482bfdd0de06264a185875619dd">
+<strong>Delete Account</strong>:</li>
+<li data-list-item-id="e6cfe867946ba8f5cf6391574367736f1">
+<strong>Delete Timing</strong>:</li>
+<li data-list-item-id="e201440bc0044e670c7f0e6eef027e975">
+<strong>Delete After (Days)</strong>:</li>
+</ul><h3 id="h_01KWEJQQVVWW4SDBBB9P3WZAR7">Manage Writeback</h3><p><strong>Enable Writeback</strong>:</p><h4 id="h_01KWEJRMA7Y1PT9Y45BG87AR5B">Writeback Configuration</h4><ul>
+<li data-list-item-id="ec1f9cfa417030bc09fd852984f4b68d1">
+<strong>Enable Writeback for This Feature</strong>:</li>
+<li data-list-item-id="e5665f0cd710e5ea528532a94164598ad">
+<strong>Select Feature for Writeback</strong>:</li>
+<li data-list-item-id="e55d69f0afa3c06dc0cfc3f65ff7a9410">
+<strong>For Event</strong>:</li>
+<li data-list-item-id="e60e9b07948c05305a1ffb6d1848b73e9">
+<strong>Write Provisioned Identity Back to Ticket</strong>:</li>
+<li data-list-item-id="e89edb5c244e40d97afa83e974a1562d5">
+<strong>Allow Auto Update the Ticket</strong>:</li>
+<li data-list-item-id="e64ad9708ea7d55a0b8c9a6d4fac1f3b2">
+<strong>Resolved Statuses or Statuses to Skip for Employee Tickets</strong>:</li>
+<li data-list-item-id="e685f6360c552c5459c13b9e4ec1a4d4f">
+<strong>Ticket Statuses to Evaluate for Auto Update</strong>:</li>
+<li data-list-item-id="e3b4f49c4667693e397d4bff65d2d303a">
+<strong>Writeback Source Filter</strong>:</li>
+<li data-list-item-id="e578b99a406a9df23c1027adea78d11f8">
+<strong>Enable Comment on Failure in the Ticket</strong>:</li>
+<li data-list-item-id="e42f2ed68cca521becbefd767081ebb9b">
+<strong>Comment On Error Type</strong>:</li>
+<li data-list-item-id="e8217b48a1d2343162166518a311bf6a8">
+<strong>Failure Comment Template</strong>:</li>
+<li data-list-item-id="e4576e2acc36a3d97921d9a6e4f9a4057">
+<strong>Transition the Ticket on Failure</strong>:</li>
+<li data-list-item-id="e2bcde787e979fa4ffd44a81f3795986a">
+<strong>Transition On Error Type</strong>:</li>
+<li data-list-item-id="e2246535e3f0aa994522ef8c5a06fc23b">
+<strong>Failure Transition Status</strong>:</li>
+</ul><p>Attribute Mapping for Write Back</p><h2 id="h_01KWEJZ175DXK4E85QVHF0NRBX">Service Desk</h2><h3 id="h_01KWEK1FFDCXMHZW4GVW55XQEC">Channel</h3><ul><li data-list-item-id="e5f44cf88d3cae9b36b666617aaa68ea1">
+<strong>Enable Target Application Selection</strong>:</li></ul><h4 id="h_01KWEK2GH710TCT1JTNH7HK37K">ITSM Configuration</h4><ul>
+<li data-list-item-id="ef2cf4f822948a54c922646a0c0c9efed">
+<strong>Service Desk Application Settings</strong>:</li>
+<li data-list-item-id="e6f89fab27dc55ff3a4cb32dd4844aa27">
+<strong>Enable Messaging</strong>:</li>
+</ul><h4 id="h_01KWEK4GCZ5FWMB2G5GM4E7NZD">Messaging Applications</h4><ul>
+<li data-list-item-id="ef7c77eba8b5b92ccaeda6d5161a3151d">
+<strong>Messaging Platform Settings (Chat)</strong>:</li>
+<li data-list-item-id="ebf1e58d7aaea133dfae5faac61648c00">
+<strong>Messaging Platform Settings (Teams)</strong>:</li>
+</ul><h2 id="h_01KWEK5VA7SPABDFPVA5R8ZHKJ">Tables</h2><p>In the <strong>Tables</strong> tab, you can add tables to the integration. Tables are used to define custom source attributes and synchronize them with the target application. If the required data is not available in the source application, you can define it in a table and use it to update the target application. Once defined, the table can be referenced in attribute mapping expressions to set or update values automatically.</p><p>For example, to set the timezone attribute of users in the target application to <em>Europe/Paris</em>, create a table during integration setup with <em><strong>timezone</strong></em> as the attribute name and <em><strong>Europe/Paris</strong></em> as the value. Once defined, reference the table in the source attribute of the <strong>Ticket field mapper</strong> using the following format:<br/><em><strong>TABLE.&lt;table_name&gt;.&lt;key_name&gt;</strong> or <strong>TABLE.&lt;table_name&gt;[&lt;key_name&gt;]</strong></em></p><p>For example: <em>TABLE.test.timezone</em></p><p><strong>Note</strong>: You can configure expressions with nested tables in the ticket field mapper, if required.<br/>For example: <em>TABLE.UserHireRecord[TABLE.UserRecord["empDate"]]</em></p><p>Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p><h2 id="h_01KVWRPTWRN33APTZ4EAFVBT22">Schedule</h2><p>Integrations can be scheduled to run automatically based on your preferred timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p>
   </div>
 </body>
 </html>

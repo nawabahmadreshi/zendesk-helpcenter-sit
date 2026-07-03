@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Watchdog Setup Guide: ADP Workforce Now / Okta / ServiceNow Integration</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Watchdog Setup Guide: ADP Workforce Now / Okta / ServiceNow Integration</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KQ76HHB2M37ZK1Z123XGQTPK">Overview</h1><p>Aquera Watchdog is a monitoring and validation tool designed to identify data synchronization issues between integrated applications. It operates independently of the Aquera integration and analyzes application events to detect inconsistencies between source and target systems.</p><p>After an integration execution is completed, you can run the Watchdog to retrieve the event logs, analyze the activities, and report any anomalies or data discrepancies across the applications. For example, if a user is created in the source application, Watchdog checks for a corresponding user provisioning event in the target application and reports an anomaly if no matching event is found. Aquera Watchdog helps ensure guaranteed delivery of events across integrated systems by continuously monitoring and validating data synchronization between the source and target applications.</p><p>When you run the integration Watchdog, a dashboard is generated with a consolidated view of the activities across the systems, including any detected anomalies. The dashboard can be accessed through the <strong>Insights</strong> module. <span>Refer to the </span><a href="#h_01KQ9AKSTAGRHHECR0BZP7CA26"><span>Watchdog Insights </span></a><span>section for the details captured in the dashboard.</span></p><p>Watchdog ensures data consistency across systems, provides visibility into sync failures, and helps proactively identify and resolve integration issues. </p><p>This guide provides details on how to configure and run the Watchdog for the integration that synchronizes employee data from ADP Workforce Now to user accounts in Okta. It also covers the Watchdog settings used to monitor ServiceNow tickets created for employee lifecycle events (new employee onboarding, employee changes and transfers, and employee terminations) in ADP Workforce Now.</p><div><div tabindex="-1"><div><div data-message-author-role="assistant" data-message-id="7849f3d7-b20e-427d-a8f5-918de3614a9f" data-message-model-slug="gpt-5-thinking" dir="auto"><div><div>
+<h1 id="h_01K2F6ANZ30WMRWZ3HS0H8MAZN">Prerequisites</h1>
+<p>The following are the prerequisites:</p>
+<ul>
+<li data-list-item-id="e7109e2621bb78fd609d74d91f5156489">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin Portal. Visit <a href="https://admin.aquera.io">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access. <br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e8c3890450567cab1615742dbc04db1cb">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin Portal to connect to those applications for retrieving the event logs:<ul>
+<li data-list-item-id="e015218d4de66c244030251e72b5cd8c0">
+<strong>ADP Workforce Now</strong>: Ensure you add and configure the ADP Workforce Now connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li data-list-item-id="e414712106f5cd1aebe28aaa812fed636">
+<strong>Okta</strong>: Ensure you add and configure the Okta connector in the Aquera Admin portal. Refer to the  <a href="https://support.aquera.com/hc/en-us/articles/360039119053" rel="noopener noreferrer" target="_blank">Okta Configuration Guide </a>for details.</li>
+<li data-list-item-id="e3b11a9d7f01ff9f6d1b90ca10cc557e3">
+<strong>ServiceNow</strong>: Ensure you add and configure the ServiceNow connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul>
+</div></div></div></div></div></div><h1 data-end="19" data-start="0" id="h_01K4Q5Q7MJ7FEQ698CCEKVYVD8">Watchdog Setup</h1><p data-end="143" data-start="21">This section describes how to configure the Watchdog that monitors the user sync from ADP Workforce Now to Okta and the corresponding JML ticket creations in ServiceNow.</p><h2 data-end="166" data-start="145" id="h_01K4Q5Q7MKCGADBKQRW7EFMD4T">Create Integration Watchdog</h2><p data-end="213" data-start="168">Follow these steps to create the integration watchdog:</p><ol data-end="675" data-start="215">
+<li data-end="258" data-list-item-id="eca79ff92a83f543f52656a8d00ce077d" data-start="215"><p data-end="258" data-start="218">Log in to the <strong>Aquera Admin Portal</strong>.</p></li>
+<li data-end="306" data-list-item-id="e124443ed52eb632aff681ec57aaead2a" data-start="259"><p data-end="306" data-start="262">In the left panel, go to <strong data-end="303" data-start="287">Integrations</strong>.</p></li>
+<li data-end="341" data-list-item-id="ee8f176265f1d9de6959d4e950ddfe7ad" data-start="307"><p data-end="341" data-start="310">Click <strong data-end="338" data-start="316">Create Integration</strong>.</p></li>
+<li data-end="425" data-list-item-id="e2d220cf5bb3dc6cc773b6fe5d640bc52" data-start="342"><p data-end="425" data-start="345">Select <strong>ADP Workforce Now / Okta / ServiceNow [Watchdog]</strong>.</p></li>
+<li data-end="488" data-list-item-id="e5ab56470e06c9625744abc2165004667" data-start="426"><p data-end="488" data-start="429">Enter a name and description for the integration.</p></li>
+<li data-end="617" data-list-item-id="e77af420d6792c1a9e70d99e933a7558c" data-start="489"><p data-end="617" data-start="492">Choose your <strong>ADP Workforce Now</strong>,<strong> Okta</strong>, and <strong>ServiceNow</strong> connector instances.</p></li>
+<li data-end="675" data-list-item-id="ec3f05bd8b471990bf3492d8b4e594d98" data-start="618"><p data-end="675" data-start="621">Click <strong data-end="639" data-start="627">Continue</strong> to open the <strong data-end="669" data-start="652">Configuration</strong> page.</p></li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the ADP Workforce Now, Okta, and ServiceNow connectors that you have selected while creating the integration watchdog. This section enables you to search and select a different instance of the application connectors, if required.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the Watchdog settings according to your use case. It has the following settings:</p><ul>
+<li data-list-item-id="e9ddc037d18f8e860828ba77f90b3ccf6">
+<strong>ADP Workforce Now worker match attribute</strong>: Select the ADP Workforce Now worker attribute that must be used to uniquely identify a worker record and match with an Okta user record.</li>
+<li data-list-item-id="ec22398908155ed687fc54aa4f4ca57ee">
+<strong>Okta user match attribute</strong>: Select the corresponding Okta user attribute that is used to match against the selected ADP Workforce Now attribute to identify the correct Okta user record.</li>
+<li data-list-item-id="e712a8c90e63f1c2381de8484f14bf5f1">
+<strong>Initial log lookback period</strong>: Specify the time period from which the watchdog retrieves historical logs from ADP Workforce Now and Okta during its initial execution. After the first run, the watchdog processes only the event logs that have been created since the last run. These logs are used by Watchdog to compare and analyze the events across both systems. The following options are available:<ul>
+<li data-list-item-id="e582988b119a932b609735864737ad2ea">
+<strong>Last</strong>: Select this option to retrieve logs from a specific duration in the past. You can specify the number of days, hours, or minutes for which logs should be retrieved.</li>
+<li data-list-item-id="e9e2e656987cce5324c0a7d9fb9b3e427">
+<strong>Since the date</strong>: Select this option to retrieve and process logs starting from a specific date. A calendar field is displayed to select the date.</li>
+<li data-list-item-id="efb27c3c730fb0e119749611f91f4fafc">
+<strong>From the beginning of available logs</strong>: Select this option to retrieve all logs currently available in ADP Workforce Now and Okta.</li>
+</ul>
+</li>
+</ul><h2 id="h_01KTBHY6CPRYEDC5HG342E82EQ">Policy</h2><p>The <strong>Policy</strong> tab enables you to set the access policies of users for Applications, Groups and Directory. </p><p>When the Watchdog runs, these policies are evaluated to identify deviations and potential access violations. These policies serve as the basis for auditing user access and detecting compliance issues. Based on the evaluation results, Watchdog generates Audit dashboards and reports that help administrators review and analyze access compliance across the connected systems. Refer to the <a href="../Watchdog-Audit-Dashboard-Guide/" rel="noopener noreferrer" target="_blank">Watchdog: Audit Dashboard Guide</a> for details on Audit dashboard.</p><h3 id="h_01KTBHZ0F61WA9YHPDXZQZ4TKB">Access Policy</h3><p>The <strong>Access Policy</strong> section allows you to define policies that determine where users should be placed within specific Enterprise applications, groups, and the directory.</p><h4 id="h_01KTBJ8WNSMWWRZ3BDTNZWYA3S">Application Policy</h4><p>Turn on the <strong>Enable</strong> toggle to configure the access policies for applications. The following sections are displayed.</p><h5 id="h_01KTBJC1194NXHKDE41JK42PVQ"><strong>Required Applications</strong></h5><p>Use this section to define the conditions under which users must be part of specific Enterprise applications in Okta. Users who meet these conditions are expected to be present in those applications.</p><ol>
+<li data-list-item-id="e467cb3725fec93c5737592b65fe378af">Turn on the <strong>Enable</strong> toggle to configure the access policies for required applications.</li>
+<li data-list-item-id="ec54ecd0b48f47b6dda88db45aa12f2c2">Click on <strong>Choose Attribute</strong> to select a user attribute from the Dayforce application that you want to use in the condition.</li>
+<li data-list-item-id="e69ecb2fa3689211ab074fb947a43b4f8">After selecting the attribute, specify one or more attribute values. Users who match any of the selected attribute values (OR operation) are considered eligible for the application.</li>
+<li data-list-item-id="e8343b5341d12836d57cc68717402ed8f">If required, add more attributes and values. When multiple attributes are added within the same row, those attribute conditions are evaluated using an AND operation. This means users who satisfy all attribute conditions in that row must be part of the corresponding application.</li>
+<li data-list-item-id="e62355014cbcaf310624c85921452fb30">In the <strong>Applications</strong> field, select the applications where users matching the defined conditions should be present.</li>
+<li data-list-item-id="e4ee9cc081a3216f6e7218f43f4de314e">If required, click <strong>Add Row</strong> to add another condition within the same rule. </li>
+<li data-list-item-id="e9d62a25635d5789faa95e3caa9d01867">
+<p>If required, click the + icon at the top-right corner of the rule setting section to add another rule with a set of rows/conditions for required applications. </p>
+<p>When multiple rules are set, the integration evaluates every rule for each user.</p>
+</li>
+</ol><h5 id="h_01KTBJC49Z2YGBJF9RXW2K0H7G"><strong>Forbidden Applications</strong></h5><p>Use this section to define the conditions under which users must not be part of specific OUs. Users who meet these conditions are <strong>not</strong> expected to be present in those OUs.</p><p>The policy setup is similar to the <a href="#h_01KTBJC1194NXHKDE41JK42PVQ">Required Applications</a> procedure.</p><h4 id="h_01KTC1YYZA43BETFXVRV4D00R9">Group Policy</h4><p>Turn on the <strong>Enable</strong> toggle to configure the access policies for groups. The following sections are displayed.</p><h5 id="h_01KTC1YYZB4SX49NJGZ8WWAPM3"><strong>Required Groups</strong></h5><p>Use this section to define the conditions under which users must be members of specific groups. Users who meet these conditions are expected to be present in those groups.</p><p>The policy setup is similar to the <a href="#h_01KTBJC1194NXHKDE41JK42PVQ">Required Applications</a> procedure.</p><h5 id="h_01KTC1YYZBDABRKNE34MJ6PQ8J"><strong>Forbidden Groups</strong></h5><p>Use this section to define the conditions under which users must not be part of specific groups. Users who meet these conditions are <strong>not</strong> expected to be present in those groups.</p><p>The policy setup is similar to the <a href="#h_01KTBJC1194NXHKDE41JK42PVQ">Required Applications</a> procedure.</p><h4 id="h_01KTC1YYZB438W48Y7PE48WTY0">Directory Policy</h4><p>Turn on the <strong>Enable</strong> toggle to configure the directory access policies. </p><p>You can set the conditions that define which users should and should not have access to the directory.</p><p>When you configure the policy, you must select <em>Yes</em> or <em>No</em> in the <strong>Can Access?</strong> field that indicates whether the user satisfying the condition must get access to the directory or not.</p><h3 id="h_01KTBHZ41GYMA7WJW3HWQN1P7S">Attribute Policy</h3><p>The <strong>Attribute Policy</strong> section enables you to select the attributes for which you want to see the values in the Insights dashboard. Only the user attributes that are selected will be displayed in Insights logs.</p><p><strong>Sample Insight Logs created by Watchdog:</strong></p><p><img alt="Insights Data.png" height="1192" src="./assets/4407d30b5b9e6534.bin" width="1308"/></p><p>Refer to the <a href="#h_01KQ9AKSTAGRHHECR0BZP7CA26">Watchdog Insights</a> section for details.</p><h2 id="h_01KVDADHZ3V8N94HWS36SPY4E3">ITSM</h2><p>The <strong>ITSM</strong> tab enables you to set the configurations for monitoring the ServiceNow ticket creations for the employee lifecycle events such as new employee onboarding, employee changes and transfers, and employee terminations. You can also specify the correlation attributes used to match Dayforce employee records with their corresponding ITSM tickets, enabling Watchdog to validate ticket creation and identify any discrepancies.</p><h3 id="h_01KVD347BK0V88V2YM4DNMSRV3">Application Configurations</h3><p>This section contains the ServiceNow-related settings required for Watchdog monitoring.</p><ul>
+<li data-list-item-id="e8fb046e678e9fcc05848cbcd17c7b94d">
+<strong>ITSM Enabled</strong>: Turn on the toggle to retrieve the logs from ServiceNow to monitor the JML ticketing events. The configuration fields are displayed.</li>
+<li data-list-item-id="ed5db72e683645815fd32a0a51ddb1184">
+<strong>Enable common catalog for user lifecycle events</strong>: Turn on this toggle if a single ServiceNow catalog is used for tracking Joiner, Mover (profile updates, department changes, and so on), and Leaver requests. If separate catalogs are used for each request, then turn off the toggle. The remaining fields in this section vary based on this selection.<ul>
+<li data-list-item-id="ec2322db7013fd1012570ba2fa8a85cdf">When Toggle is disabled:<ul>
+<li data-list-item-id="e298bc1d79bfa45fe26a71eed36a6e331">
+<strong>Joiner catalog type</strong>: Select the ServiceNow catalog used to create Joiner requests. Watchdog uses this catalog to identify and retrieve relevant Joiner tickets. </li>
+<li data-list-item-id="e8087315fb1d3dcc7910693e71bb1e359">
+<strong>Mover catalog type</strong>: Select the ServiceNow catalog used to create employee profile change requests. Watchdog uses this catalog to identify and retrieve relevant Mover tickets. </li>
+<li data-list-item-id="ec7eb85ff4920be205de0c2184a615919">
+<strong>Leaver catalog type</strong>: Select the ServiceNow catalog used to create employee termination requests. Watchdog uses this catalog to identify and retrieve relevant termination tickets. </li>
+</ul>
+</li>
+<li data-list-item-id="e59cf57517e10d4a5fe60608f9ca894e0">When Toggle is enabled:<ul>
+<li data-list-item-id="e73ef5d7ad227b9b2b220a4c599ce3496">
+<strong>Catalog type</strong>: Select the common ServiceNow catalog that is used to create Joiner, Mover, and Leaver requests. Watchdog uses this catalog to identify and retrieve relevant Joiner, Mover, and Leaver tickets. </li>
+<li data-list-item-id="ef0aa034bbb12e2bbc1fde6ff16965508">
+<strong>Lifecycle event classification attribute</strong>: Select the attribute in the ITSM ticket that indicates the type of employee lifecycle event (Joiner, Mover, or Leaver). Watchdog reads this field to determine how each ticket should be classified.</li>
+<li data-list-item-id="e2cebb706ef6af218c6c68015b5f470fa">
+<strong>Joiner</strong>: Enter the value of the <strong>Lifecycle event classification attribute</strong> that represents a new employee onboarding event.</li>
+<li data-list-item-id="e22272c57d2354d5ac0d51f9d8590eff5">
+<strong>Mover</strong>: Enter the value of the <strong>Lifecycle event classification attribute</strong> that represents an employee transfer or change event.</li>
+<li data-list-item-id="e1523736a9e1ac0b8f734e7b7f974e063">
+<strong>Leaver</strong>: Enter the value of the <strong>Lifecycle event classification attribute</strong> that represents an employee termination event.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ea6c54e8dd00c8c2f95a94b68344ed900">
+<strong>Dayforce employee match attribute</strong>: Select the attribute that can be used to uniquely identify an employee in Dayforce.</li>
+<li data-list-item-id="ef99540b4a576c738c3db1e59b9899430">
+<strong>ServiceNow attribute to find the matching ticket</strong>: Select the corresponding field in the ServiceNow catalog that stores the unique employee identifier. Watchdog matches this field against the Dayforce employee match attribute to identify the tickets generated for the employee events.</li>
+</ul><p><strong>Sample Insights Logs created by Watchdog for ITSM:</strong><br/><img alt="itsm log.png" height="986" src="./assets/31088d18a0658c6b.bin" width="1634"/></p><p><img alt="itsm log2.png" height="1298" src="./assets/9ed3e8543647379c.bin" width="1186"/></p><h2 id="h_01KQ7DS5DDR5Y7K4VM0Z4F7SJ8">Schedule</h2><p>The integration Watchdog can be scheduled to run automatically based on your choice of timeframe. Refer to <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details. </p><h1 id="h_01KQ9AKSTAGRHHECR0BZP7CA26">Watchdog Insights</h1><p>This section details the data covered in the dashboard created by the Watchdog for the Dayforce to Entra ID integration. </p><ol>
+<li data-list-item-id="e084007aae7d38f6a0737f7df4a5fce84">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e548b15b9d8c741206153019623c5574d">Navigate to <strong>Insights</strong>.</li>
+<li data-list-item-id="eb7b6729750f55438a8478cfafe63ccda">Click on the integration watchdog name, for example, <em>Dayforce to Entra ID Watchdog. </em>The dashboards are displayed.</li>
+</ol><p>The dashboard provides a comprehensive view of workforce events and their synchronization across Dayforce and Entra ID. It includes the following insights:</p><ul>
+<li data-list-item-id="ea25423e1891e47765fdc08eae8a273c8">Displays the count of Joiner, Mover, and Leaver events in Dayforce, along with corresponding user creations, updates, and deactivations in Entra ID. This helps identify any discrepancies in user data between the two systems.</li>
+<li data-list-item-id="ea6d5ba94e7716b99e2717862a88d3dfa">A checklist that verifies whether a corresponding Entra ID user record has been created for each employee added in Dayforce.</li>
+<li data-list-item-id="ed0a0e5787a8a772a765b60ca6eaf4d62">A timeline view illustrating a worker’s journey, from hiring in Dayforce to account creation in Entra ID, and from termination to account deactivation.</li>
+<li data-list-item-id="e9e6de935dea8b06505ff24f551b7c597">A dashboard showing the upcoming hires and terminations, categorized by departments</li>
+<li data-list-item-id="e9f9de45e3fc47172e0d05b3b6fe60327">A trend graph that provides visibility into synchronization patterns or gaps between HR and directory events.</li>
+<li data-list-item-id="e6d53d16982b2de0c410b286f8d3f2149">A geographical map showing the number of Entra ID user logins across various locations.</li>
+<li data-list-item-id="e11ffa99c196adaaeb3e026d22fefd967">A list of Entra ID applications with the highest number of user logins.</li>
+<li data-list-item-id="e15ce52b9346b60cee0f7e812d52f1aac">The list of users who have been inactive for a long time.</li>
+<li data-list-item-id="e42530c048f0e3e9e321c71466dd06a74">A trend graph showing the most frequently accessed applications over a period of time.</li>
+<li data-list-item-id="ecacd67ca7f777b9facf3d6c11e2a206f">A pie chart showing the percentage distribution of workers across different departments.</li>
+<li data-list-item-id="e55dff340ffa085d7a0943cd294c266eb">A horizontal bar chart showing the distribution of workers across various managers.</li>
+<li data-list-item-id="e4de2a59747a6e6ebdf0a9a442e7b6733">Insights into workforce distribution by geographic location, and by department and country.</li>
+<li data-list-item-id="eda0ba45fd2191429617612250950d282">A line chart illustrating hiring trends compared to employee terminations over time.</li>
+<li data-list-item-id="e68ae587f7a993cc7d8bc456ada9d89e4">Detailed logs of events in the Dayforce application and the Entra ID directory.</li>
+</ul><p>The following are some sample snapshots of the dashboard:</p><figure><img alt="DB1.png" height="1256" src="./assets/cfd7842510209285.bin" width="2488"/></figure><figure><img alt="DB2.png" height="1424" src="./assets/bfd3d61bc5ade2f7.bin" width="2340"/></figure><figure><img alt="DB3.png" height="1302" src="./assets/6996122cc9d3229f.bin" width="2392"/></figure><figure><img alt="DB4.png" height="1524" src="./assets/108000621b2547dc.bin" width="2468"/></figure><figure><img alt="DB5.png" height="1128" src="./assets/7fbce21376198b29.bin" width="2356"/></figure><figure><img alt="DB7.png" height="636" src="./assets/5cfab8646e66663b.bin" width="2108"/></figure><figure><img alt="insights details.png" height="1370" src="./assets/d1e4cf8e193a4c12.bin" width="2048"/></figure><p> </p>
+  </div>
+</body>
+</html>

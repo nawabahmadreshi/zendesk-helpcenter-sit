@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Watchdog Setup Guide: BambooHR / SailPoint / ServiceNow Integration</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Watchdog Setup Guide: BambooHR / SailPoint / ServiceNow Integration</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KWVHNAQQ3GHRMGF90TPW7864">Overview</h1><p>Aquera Watchdog is a monitoring and validation tool designed to identify data synchronization issues between integrated applications. It operates independently of the Aquera integration and analyzes application events to detect inconsistencies between source and target systems.</p><p>After an integration execution is completed, you can run the Watchdog to retrieve the event logs, analyze the activities, and report any anomalies or data discrepancies across the applications. For example, if a user is created in the source application, Watchdog checks for a corresponding user provisioning event in the target application and reports an anomaly if no matching event is found. Aquera Watchdog helps ensure guaranteed delivery of events across integrated systems by continuously monitoring and validating data synchronization between the source and target applications.</p><p>When you run the integration Watchdog, a dashboard is generated with a consolidated view of the activities across the systems, including any detected anomalies. The dashboard can be accessed through the <strong>Insights</strong> module. Refer to the <a href="../Watchdog-Setup-Guide-ADP-Workforce-Now-Okta-ServiceNow-Integration/#h_01KQ9AKSTAGRHHECR0BZP7CA26">Watchdog Insights </a>section for the details captured in the dashboard.</p><p>Watchdog ensures data consistency across systems, provides visibility into sync failures, and helps proactively identify and resolve integration issues. </p><p>This guide provides details on how to configure and run the Watchdog for the integration that synchronizes worker data from BambooHR to user accounts in SailPoint. It also covers the Watchdog settings used to monitor ServiceNow tickets created for worker lifecycle events (new worker onboarding, worker changes and transfers, and worker terminations) in BambooHR.</p><h1 id="h_01KWVHRXCEHFWBHKQJRXFK49NV">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e7655ccba9f98c4c91eb62f1bd5fd1999">
+<strong>Tenant Account in the Aquera Admin Portal</strong>: You must have a tenant account with admin access in the Aquera Admin Portal. Visit <a href="https://admin.aquera.io">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get the Aquera tenant access. <br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e51c79678541eb146586cfa0d5a0175df">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You must configure the following application connectors in the Aquera Admin Portal to connect to those applications for retrieving the event logs:<ul>
+<li data-list-item-id="e1ad11bd7a7c8f94bf3fdf30ae5c4e81a">
+<strong>BambooHR</strong>: Ensure you add and configure the BambooHR connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360020300534-BambooHR-Configuration-Guide" rel="noopener noreferrer" target="_blank">BambooHR Configuration Guide</a> for details.</li>
+<li data-list-item-id="e78280d1be8a54b9c96ef62602000a75c">
+<strong>SailPoint Identity Security Cloud</strong>: Ensure you add and configure the SailPoint Identity Security Cloud connector in the Aquera Admin portal. Refer to the  <a href="https://support.aquera.com/hc/en-us/articles/12569382686871-SailPoint-Identity-Security-Cloud-Configuration-Guide" rel="noopener noreferrer" target="_blank">SailPoint Identity Security Cloud Configuration Guide</a><a href="https://support.aquera.com/hc/en-us/articles/360039119053" rel="noopener noreferrer" target="_blank"> </a>for details.</li>
+<li data-list-item-id="e58767200db52e3a1d5d84a1ac7ea9def">
+<strong>ServiceNow</strong>: Ensure you add and configure the ServiceNow connector in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01KWVJ2KWE45E5ARP783E1FRT3">Watchdog Setup</h1><p>This section describes how to configure the Watchdog that monitors the user sync from BambooHR to SailPoint and the corresponding JML ticket creations in ServiceNow.</p><h2 id="h_01KWVJ5VEQ37XTASJJ0WBZH9JE">Create Integration Watchdog</h2><p>Follow these steps to create the integration watchdog:</p><ol data-end="675" data-start="215">
+<li data-end="258" data-list-item-id="e0a1950bd28db03d260876914b7671b86" data-start="215"><p data-end="258" data-start="218">Log in to the <strong>Aquera Admin Portal</strong>.</p></li>
+<li data-end="306" data-list-item-id="e640a14f5d2e9ab4f6a3879bf4b09d3ed" data-start="259"><p data-end="306" data-start="262">In the left panel, go to <strong data-end="303" data-start="287">Integrations</strong>.</p></li>
+<li data-end="341" data-list-item-id="ef50a408f95d86b44aeb56301006e50d0" data-start="307"><p data-end="341" data-start="310">Click <strong data-end="338" data-start="316">Create Integration</strong>.</p></li>
+<li data-end="425" data-list-item-id="e5cddfa9c0062b2fd7d40902c619133be" data-start="342"><p data-end="425" data-start="345">Select <strong>BambooHR / SailPoint Identity Security Cloud / ServiceNow [Watchdog]</strong>.</p></li>
+<li data-end="488" data-list-item-id="e27893df9f1ba2b9fb13514367348826d" data-start="426"><p data-end="488" data-start="429">Enter a name and description for the integration.</p></li>
+<li data-end="617" data-list-item-id="ebc143fd3f8fc350d3b2968dcd155744f" data-start="489"><p data-end="617" data-start="492">Choose your <strong>BambooHR</strong>,<strong> Sailpoint Identity Security Cloud</strong>, and <strong>ServiceNow</strong> connector instances.</p></li>
+<li data-end="675" data-list-item-id="e08cbc3ca29bee60fa657ec66038c158f" data-start="618"><p data-end="675" data-start="621">Click <strong data-end="639" data-start="627">Continue</strong> to open the <strong data-end="669" data-start="652">Configuration</strong> page.</p></li>
+</ol>
+  </div>
+</body>
+</html>

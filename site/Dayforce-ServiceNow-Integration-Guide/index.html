@@ -1,0 +1,369 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce / ServiceNow Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce / ServiceNow Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01KD7Y3KD9MT7413QHSHAVZCNF">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p> </p><h2 id="h_01KV523N864ATFG7JMDXFT5DG6">Key Functions</h2><p>This integration automates service desk processes for lifecycle events with the following capabilities:</p><ul>
+<li data-list-item-id="e0b476cd950e29dbaf22c0cc4200fca04">Identifies workforce lifecycle events from the HR application, including hire, change, leave, termination, and rehire events.</li>
+<li data-list-item-id="ee75d9208ba07ccd3d84019017e84ddcb">Creates service requests or tickets in the configured service desk application based on selected lifecycle events.</li>
+<li data-list-item-id="e2216beee2039cde8490cf1d3de781b26">Supports configurable event timing to create tickets when an event is detected, before the event date, on the event date, or after the event date.</li>
+<li data-list-item-id="e5e03eff682ae51ef630cc8e5d46f8744">Allows custom eligibility rules to control which employee records are included in lifecycle event processing.</li>
+<li data-list-item-id="e0db5dce1821c42ea63752837675d89a6">Automatically updates or closes existing service desk tickets based on configured ticket statuses.</li>
+<li data-list-item-id="ed26b68b793e2949e595f8a75d4b703f1">Sends event notifications through email and Microsoft Teams.</li>
+<li data-list-item-id="e817f3fe49e336a9fdbfd1fbd13ca3865">Generates detailed logs, operational reports, and execution summaries.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e7e0bfab67999183d3cd6241b227d64a4">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e37efa7211d21d731726bd964057458af">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e8eb590240246ab6f5830dc14d310f70e">
+<strong>Dayforce Connector</strong>: You must configure a Dayforce connector in the Aquera Admin Portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360022522853-Dayforce-Configuration-Guide" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a> for details.</li>
+<li data-list-item-id="e8b7bdc846af46768d99a1fc45e67162b">
+<strong>ServiceNow Connector</strong>: You must configure a ServiceNow connector in the Aquera Admin Portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360048479854-ServiceNow-Configuration-Guide" rel="noopener noreferrer" target="_blank">ServiceNow Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ"><span>Integration Setup</span></h1><p>This section outlines how the integration must be configured to synchronize workforce lifecycle events from Dayforce to ServiceNow and automate the creation and management of service requests and tickets.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="eef0be14c8ebcdfbd2dd5c9c88ef38e35">Log in to the Aquera Admin Portal.</li>
+<li data-list-item-id="e4059b48e6f8d8bbdb40f0a8692ae201f">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e1795044deead1dcf3e4260f47736e147">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e26c244f1b5e8dc308e76e291a0356ec1">Search for <strong>Dayforce / ServiceNow</strong> in the search box next to the <strong>Explore Templates</strong> section and click it to create a new integration.</li>
+<li data-list-item-id="e7d6e973107320af4346b75dfa7e8459d">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e4620d824f9ffee97682ab9e6497e9670">Click <strong>Continue</strong>.</li>
+</ol><p>Once created, the following tabs are displayed:</p><ul>
+<li data-list-item-id="e9d29637cf69787ffa37b2219f76c7365"><a href="#h_01KV57ZG85Y9KNEXG8S288H3WK">Overview</a></li>
+<li data-list-item-id="ea1b1b7fc094b9f06e12c1a8ff6b74c02"><a href="#h_01KV57ZPHB45GVJ88EC0APPFJJ">Features</a></li>
+<li data-list-item-id="ea9c35b06b3cb1a11844502cef8451660"><a href="#h_01KV57ZPHB45GVJ88EC0APPFJJ">Source</a></li>
+<li data-list-item-id="ef8e27dbfd98ce0bd08e67a4233202e2a"><a href="#h_01KV580JN6Y6WH1M2HDGY6JTWB">Service Desk</a></li>
+<li data-list-item-id="e80e155f3748f0b83f551cb4c62489b8b"><a href="#h_01KV580PQB96710J73V3BG96A9">Operations</a></li>
+<li data-list-item-id="e1a1b95273fe95384d89cb33b518f3eef"><a href="#h_01KJCP43MS8PMZZMVQPMDWVEEP">Tables</a></li>
+<li data-list-item-id="e6eaca2512204b580a3c204beea1e7fac"><a href="#h_01KJCP43MS8PMZZMVQPMDWVEEP">Schedule</a></li>
+</ul><h2 id="h_01KV57ZG85Y9KNEXG8S288H3WK"><span>Overview</span></h2><p>On this tab, you can view general information about the integration, including its purpose, functionality, and supported capabilities. This section provides a high-level overview of how the integration operates between connected applications.</p><h2 id="h_01KV57ZPHB45GVJ88EC0APPFJJ">Features</h2><p>The <strong>Features</strong> tab provides an overview of the functional components supported by the integration. These features define the capabilities available within the integration and determine the configuration tabs and settings that are available.</p><p><strong>Note</strong>: The features displayed on this tab are mandatory for this integration and are enabled by default. These features cannot be modified or disabled because they are required for the integration to function correctly.</p><h3 id="h_01KVFE5DW0W0ZQY6YSACJXK5P5">HCM Bridge</h3><p>The <strong>HCM Bridge</strong> section controls workforce lifecycle processing within the integration. The following feature is enabled by default:</p><ul><li data-list-item-id="e273e9ad46eaf471ffac776b2cdee0394">
+<strong>Enable HCM bridge</strong>: This feature processes workforce lifecycle events from the Dayforce application, including onboarding, organizational changes, termination, and rehire events. It also makes the Source tab available, where you configure the Source application.</li></ul><h3 id="h_01KVFTD727XBN9SJBB1VR4YKQT">Service Desk Bridge</h3><p>The <strong>Service Desk Bridge</strong> section controls service requests and ticket automation within the integration. The following features are enabled by default:</p><ul><li data-list-item-id="eb9f95d11f847dc82f7b09052320ab2c6">
+<strong>Enable service desk bridge</strong>: This feature creates and manages service requests or tickets based on workforce lifecycle events. It also makes the Service Desk tab available, where you configure the Target application. The following option is available:<ul><li data-list-item-id="ee040c77a232cd0cc324c527774b25401">
+<strong>JML lifecycle event</strong>: Creates and manages service desk tickets for Joiner, Mover, and Leaver (JML) lifecycle events. This feature enables the Lifecycle Event section, where you configure JML event processing.</li></ul>
+</li></ul><h3 id="h_01KVFFE8SV63QAKTX4P4GQWD4P">Operations</h3><p>The <strong>Operations</strong> section controls the operational execution capabilities of the integration. The following feature is enabled by default:</p><ul><li data-list-item-id="ec91a06a23e2943ed2fda5c419a6da941">
+<strong>Enable operations</strong>: This feature executes scheduled synchronization jobs, operational workflows, monitoring activities, and other integration processes required for the integration to function.</li></ul><h2 id="h_01KVFE13Y155MAF3FSDZDFMK28">Source</h2><p>The <strong>Source</strong> tab enables you to configure the <strong>HR application</strong> used by the integration and define how workforce data is retrieved and processed. It also provides advanced settings to control change detection and future-dated workforce event processing.</p><h3 id="h_01KV58G6P4PZDG5K1M2ZYZMAF9">Application Settings</h3><p>The <strong>Application Settings</strong> section enables you to configure the Dayforce application used by the integration. It allows you to select the application instance from which to retrieve workforce data.</p><ul><li data-list-item-id="ea7871974eb59338ec0600fa15b2e05bb">
+<strong>Source application instance:</strong> Select the Dayforce application connector that this integration will connect to for retrieving data. </li></ul><h3 id="h_01KY1P9J0NTTJ35W407A90FMTF">Employee Lifecycle</h3><p>The <strong>Employee Lifecycle</strong> section allows you to configure how workforce lifecycle events from Dayforce are processed and synchronized with ServiceNow. You can define the conditions that control account creation, termination, and rehire events.</p><ul><li data-list-item-id="eea508d972ec50543e0063dfa51b973bb">
+<strong>Enable User Management</strong>: Select this checkbox to synchronize users' lifecycle events, including create, terminate, and rehire, from Dayforce to ServiceNow. When enabled, the <a href="#h_01KVFTD7271CM4SG6359SM3ACP">User Lifecycle Configuration</a> section is displayed to configure further integration settings.  </li></ul><h4 id="h_01KVFTD7271CM4SG6359SM3ACP">User Lifecycle Configuration</h4><p>The <strong>User Lifecycle Configuration</strong> section allows you to define the conditions and triggers that determine how user lifecycle events, such as account creation, termination, and rehire, are processed in ServiceNow.</p><ul><li data-list-item-id="e723277863dc084827a03254ad59c5483"> </li></ul><h2 id="h_01KV580JN6Y6WH1M2HDGY6JTWB">Service Desk</h2><p>The <strong>Service Desk</strong> tab enables you to configure the service desk application where lifecycle-related service requests or tickets are created and managed. It allows you to define where lifecycle-related requests and tickets are created, configure notification channels, and manage how service desk processes are executed.</p><h3 id="h_01KV5AWNTPZPYF77BM6DAABDME">Application Settings</h3><p>The <strong>Application Settings</strong> section enables you to configure the target applications used by the integration for service management and notifications. It allows you to select the application instances that will be used to create and manage requests and tickets, and to deliver notifications.</p><h4 id="h_01KVPZZE2GTMRJTXMG1YHMT063">Target Application</h4><p>The <strong>Target Application</strong> section allows you to select the service desk application that will be used to create and manage lifecycle-related requests and tickets:</p><ul><li data-list-item-id="e8fea01561423070743979b4f6a9115f5">
+<strong>Target application instance</strong>: Select the service desk application connector that this integration will use to create and manage lifecycle event tickets. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul><h4 id="h_01KVPYYB9H42QYMRTRRZC4S7X4">Notification Application</h4><p>The <strong>Notification Application </strong>section enables you to configure the applications used to deliver lifecycle event notifications generated by the integration.</p><ul><li data-list-item-id="e8ebb5623cf132a9f9333f368d0d456ac">
+<strong>Messaging platform settings</strong>: Select the messaging platform application instance configured in Aquera where lifecycle event notifications generated by the integration will be sent. If you do not find your application connector in the list, click the refresh icon available next to the field to reload the available connectors.</li></ul><h3 id="h_01KV5DGBF812MM5BKGE37A93MK">Lifecycle Event</h3><p>The <strong>Lifecycle Events</strong> section enables you to configure how the integration detects workforce lifecycle events and manages service requests or tickets associated with those events:</p><ul><li data-list-item-id="e7951e536fe17068e52b3bac2e91533e8">
+<strong>Create tickets for user lifecycle events</strong>: Enable this option to create tickets when configured user lifecycle events occur. When enabled, the <a href="#h_01KV5M76XT6PD9SQD744GWQ7T7">Event Configuration</a> section is displayed for further configuration.</li></ul><h4 id="h_01KV5M76XT6PD9SQD744GWQ7T7">Event Configuration</h4><p>The <strong>Event Configuration</strong> section allows you to define how the integration processes specific workforce lifecycle events and manages the associated service requests or tickets.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e8dcf234558eafff51d5082a1e3e7236a">
+<p><strong>Select event type</strong>: Select the user lifecycle event for which service desk tickets should be created. If you do not find your event type in the list, click the refresh icon available next to the field to reload the available events. The following are the available options:</p>
+<ul>
+<li data-list-item-id="e5411bc3d9780d34b624ca721dec1d5f9">
+<strong>Hire</strong>: Select this event to create tickets for new employee onboarding.</li>
+<li data-list-item-id="ed3452aee504be2a6b912786709d3ac8e">
+<strong>Change</strong>: Select this event to create tickets when employee information changes.</li>
+<li data-list-item-id="e9cc7fad561767e012709f873a08da681">
+<strong>Leave</strong>: Select this event to create tickets for employee leave events.</li>
+<li data-list-item-id="e263c2e8d19f40835e544a385e8d5a557">
+<strong>Terminate</strong>: Select this event to create tickets for employee termination events.</li>
+</ul>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li data-list-item-id="e10a85d0f3cced45e23a76efd538dac32">Each lifecycle event type is evaluated independently. Failure to create or update a ticket for one lifecycle event does not prevent the integration from processing other configured lifecycle events for the same worker.</li>
+<li data-list-item-id="eeeefbc3ce62cf1de7ec529de328903dd">If a worker has multiple lifecycle events within the same period (for example, Hire, Terminate, and Rehire), the integration processes the most recent lifecycle event based on the effective event date. For example, if <strong>Hire</strong>, <strong>Terminate</strong>, and <strong>Rehire</strong> events are detected for the same worker, the <strong>Rehire</strong> event will be processed.</li>
+</ul>
+</li>
+<li data-list-item-id="e270be24b78894a3f8e6784cb17100de8">
+<strong>Event timing</strong>: Select when the service desk ticket should be created for the selected lifecycle event. The following are the available options:<br/><strong>Note</strong>: For <strong>Hire</strong> and <strong>Rehire</strong> events, the <strong>When Detected</strong> option supports only <strong>present</strong> and <strong>future</strong> effective dates. For <strong>Change</strong>, <strong>Leave</strong>, and <strong>Terminate</strong> events, the <strong>When Detected</strong> option supports <strong>past</strong>, <strong>present</strong>, and <strong>future</strong> effective dates.<ul>
+<li data-list-item-id="e2ec4532ee5a2cab93ca6705e4775411b">
+<strong>When Detected</strong>: Select this option to create the ticket immediately when the event is detected.</li>
+<li data-list-item-id="ee7d82078f387b5f434b70c88d06c2a39">
+<strong>Before Start Date</strong>: Select this option to create the ticket before the start date.<ul><li data-list-item-id="e61da94310948e4831b378797a4185218">
+<strong>Days before/after joining date</strong>: Enter the number of days before the effective date of the selected lifecycle event when the service desk ticket should be created.</li></ul>
+</li>
+<li data-list-item-id="ed987c8f43ad14ac612a31b6d83f8af31">
+<strong>On Start Date</strong>: Select this option to create the ticket on the start date.</li>
+<li data-list-item-id="e1231a2b42744c4a8ea1b4972e3804f6c">
+<strong>After Start Date</strong>: Select this option to create the ticket after the start date.<ul><li data-list-item-id="efa59bacc9f6421f09d1905be60767f63">
+<strong>Days before/after joining date</strong>: Enter the number of days after the effective date of the selected lifecycle event when the service desk ticket should be created.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e6e569050db7ea4093335b6d5174eaa9c">
+<strong>Enable custom eligibility rule</strong>: Enable this to process only employees who satisfy the eligibility conditions defined below. Employees who do not meet the conditions will be excluded from event processing. When enabled, additional configuration options are displayed:<br/><strong>Notes</strong>: <ul>
+<li data-list-item-id="ed3124bdceacf8180663cfe62731f8289">If <strong>Enable custom eligibility rule</strong> is enabled and no rule is specified, the integration returns a validation error.</li>
+<li data-list-item-id="ec68647a5024b3e0a4e26a3cd79a235c1">The configured eligibility rule is evaluated for ticket creation, ticket updates, and ticket closure operations.<ul><li data-list-item-id="ee815e808b0c3a7617ccd59e3cd149237">
+<strong>Custom eligibility rule builder</strong>: Define the eligibility conditions employees must meet to be included in event processing. Only employees who satisfy these conditions will be processed for the selected event type and any associated actions, such as ticket creation or updates. This field uses Aquera Intelligence (AI Assistant). For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.<br/><strong>Note</strong>: For <strong>Hire</strong> event ticket creation conditions, the <strong>Expression Builder</strong> may display attributes from multiple lifecycle event contexts. Currently, there is no option to refresh, filter, or customize the attribute list to display only Hire-specific attributes.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e0cf114abba24bfb3e44547bcfcb621cd">
+<strong>Enable ticket creation</strong>: Enable this option to automatically create a service desk ticket for configured lifecycle events. When enabled, additional configuration options are displayed:<ul>
+<li data-list-item-id="e481735181075472ecb41f5208ce9da41">
+<strong>Ticket type</strong>: Select the type of service desk ticket or request to create for the configured lifecycle event. If you do not find your ticket type in the list, click the refresh icon available next to the field to reload the available tickets. The following are the available options:<ul>
+<li data-list-item-id="ef52bf93056f10b11ae4bb7ca2d18e2c2">
+<strong>Service Catalog</strong>: Select this option to create and process requests through the service desk Service Catalog.<ul><li data-list-item-id="e7b3fe239f5417d3a8fcf1c7c364e3c14">
+<strong>Ticket category</strong>: Select the service desk ticket category to assign to tickets created for the configured lifecycle event. If you do not find your ticket category in the list, click the refresh icon available next to the field to reload the available tickets. For example, select <strong>Application and Account Access</strong>.</li></ul>
+</li>
+<li data-list-item-id="ee5e3c1a5239f96ed3276260e726b2eb9">
+<strong>Ticket</strong>: Select this option to create and process standard service desk tickets.</li>
+</ul>
+</li>
+<li data-list-item-id="e5052b463598d51e087f5943f51280026">
+<strong>Ticket type name</strong>: Select the name of the service desk ticket type to create for the configured lifecycle event. If you do not find your ticket type in the list, click the refresh icon available next to the field to reload the available ticket types. For example, select <strong>Change Password</strong>. </li>
+<li data-list-item-id="e7a8419d82f462e47f45a6b8a5e211da4">
+<strong>Customize how to match the employee from the source with existing tickets</strong>: Enable this option to customize how employees from the HR system are matched with existing service desk tickets. When enabled, additional configuration options are displayed:<br/><strong>Notes</strong>: <ul>
+<li data-list-item-id="eb14cf214397defa89408521a819ed5ea">When a custom correlation attribute is configured with a dynamically generated value and the corresponding attribute is not mapped in the Ticket field mapper, the integration treats each execution as a new request and may create multiple tickets for the same worker. </li>
+<li data-list-item-id="eb90cd2ed176d779b2fbdded8b8523b40">The same custom correlation attribute, such as Person Number, cannot be reused across multiple lifecycle event types. Reusing the same correlation attribute may cause ticket creation to be skipped.<ul>
+<li data-list-item-id="e23cc6e4b8f1e5bdd5701bc889ff77824">
+<strong>Select the source attribute for matching the employee</strong>: Select the HR system attribute to uniquely identify and correlate users between both systems.</li>
+<li data-list-item-id="e8a3f78747bd62ed94c0eb7905c3ee821">
+<strong>Select the target attribute for matching the employee</strong>: Select the service desk attribute to uniquely identify and correlate users between both systems.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e2abc3a8686b19d4dd5420b2e0df48bb5">
+<strong>Enable ticket auto-update</strong>: Enable this option to automatically update service desk JML tickets only when their current status matches one of the selected ticket statuses. When enabled, additional configuration options are displayed:<ul>
+<li data-list-item-id="e8993f8c1a70cbd93da0cc1ebd166d669">
+<strong>Ticket statuses for auto-update evaluation</strong>: Select the service desk ticket statuses that should be evaluated to determine whether a ticket is eligible for automatic updates. If you do not find your ticket status in the list, click the refresh icon available next to the field to reload the available ticket statuses. For example, select <strong>Open</strong>.</li>
+<li data-list-item-id="eff435eb7ce7be89ab6f53d79a935a429">
+<strong>Resolved statuses for auto-updated tickets</strong>: Select the service desk ticket status to assign to the ticket after it is automatically updated. If you do not find your ticket status in the list, click the refresh icon available next to the field to reload the available ticket statuses. </li>
+</ul>
+</li>
+<li data-list-item-id="ebda6916a4cb02702b146c7fd48c7cf15">
+<strong>Enable ticket auto-close</strong>: Enable this option to automatically close the service desk JML ticket after all actions associated with the user lifecycle event have been completed successfully. When enabled, additional configuration options are displayed:<br/><strong>Note</strong>: For incident-based ticket integrations, the <strong>Close Code</strong> and <strong>Close Notes</strong> attributes must be mapped in the <strong>Ticket field mapper</strong> to successfully update ticket status to Resolved or Closed. <ul>
+<li data-list-item-id="efe8f72db901a50d5b3ce433e67f974c7">
+<strong>Ticket statuses for auto-close evaluation</strong>: Select the service desk ticket statuses that should be evaluated to determine whether a ticket is eligible for automatic closure. If you do not find your ticket status in the list, click the refresh icon available next to the field to reload the available ticket statuses. For example, select <strong>Closed Complete</strong>.</li>
+<li data-list-item-id="e5ecd490a00cc2e935262a255897c71fb">
+<strong>Resolved statuses for auto-closed tickets: </strong>Select the service desk ticket status to assign to the ticket after it is automatically closed. If you do not find your ticket status in the list, click the refresh icon available next to the field to reload the available ticket statuses. For example, select <strong>Closed Complete</strong>.</li>
+</ul>
+</li>
+<li data-list-item-id="e9a09d647b817671bb1e9cc1eda68eee4">
+<strong>Ticket field mapper</strong>: This section allows you to map employee data fields from the HR application to the corresponding service desk ticket fields. Source attributes are listed on the left, and target ticket fields are listed on the right. You can modify the source attributes or expressions as needed to align with your use case.<br/>JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. You can enter the expression directly in the source attribute field or click the expand icon to write a longer expression.<br/>Attributes marked with a red asterisk (<span>*</span>) are required for successful provisioning.<br/>The <strong>Search Attributes</strong> field allows you to filter the list of available attributes for mapping.<br/>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.<br/><strong>Note</strong>: To populate assignment group information in created tickets, map either the assignment group <strong>System ID</strong> or the assignment group <strong>Name</strong> in the <strong>Ticket field mapper</strong>.</li>
+<li data-list-item-id="ef244b70fd93d4b52389c7005f54743a9">
+<p><strong>Enable ticket creation through email notification</strong>: Enable this option to create tickets through email notifications when the configured lifecycle event is detected. When enabled, additional configuration options are displayed:</p>
+<ul>
+<li data-list-item-id="eb0653b85afc17440c91f0139365dc897">
+<strong>Ticket creation email subject</strong>: Enter the content that must be used as the email subject in the notifications sent for ticket creation.</li>
+<li data-list-item-id="e58d397c2ea4e3d45ab31b58c25ecd2f1">
+<strong>Ticket creation email recipients</strong>: Select one or more recipient groups to whom the email notifications will be sent for ticket creation.</li>
+<li data-list-item-id="e64b5e2a00be86b71ac8c82b864faffab">
+<strong>Custom recipient email addresses</strong>: Enter the email addresses that should be included as custom recipients for notifications sent for ticket creation.<br/><strong>Note</strong>: After entering an email address, press <strong>Enter</strong> to add it to the recipient list. Repeat this step for each additional email address.</li>
+<li data-list-item-id="e3a831578f401d92a917ad8ba40caf2de">
+<strong>Ticket creation email template</strong>: Enter the content that must be used as the email body in the notifications sent for ticket creation.</li>
+</ul>
+<p><strong>Notes</strong>: </p>
+<ul>
+<li data-list-item-id="eab62982ab853c635d2e36d4090ec5987">When a configured lifecycle event is triggered, the integration sends a notification to the configured recipients. The recipient can then create the service desk ticket based on the information provided in the notification.</li>
+<li data-list-item-id="ea5c0c5056e45f2cd8aeee3ae837c1d51">When <strong>Enable ticket creation through email notification</strong> is enabled, the integration sends a notification for every integration run that meets the configured lifecycle event criteria. Each notification can result in the creation of a new service desk ticket. The integration does not perform duplicate ticket detection or duplicate ticket prevention for tickets created through notifications.</li>
+</ul>
+</li>
+<li data-list-item-id="e66776b6d875d42add50efb494c30b2cd">
+<strong>Enable ticket creation through teams notification</strong>: Enable this option to send Microsoft Teams notifications when the configured lifecycle event is detected. When enabled, additional Teams notification settings are displayed: <br/><strong>Note</strong>: When a configured lifecycle event is triggered, the integration sends a notification to the configured Microsoft Teams channel. The notification can be used to inform stakeholders about the event and provide details required for service request or ticket processing.<ul>
+<li data-list-item-id="e6297d5a394afcef6bb6e25c3b8c0b686">
+<strong>Select team</strong>: Select the Microsoft Teams team where ticket creation notifications will be posted. If you do not find your team in the list, click the refresh icon available next to the field to reload the available teams.</li>
+<li data-list-item-id="e1934146a9cbb62dc9c0ba7cd95b87abc">
+<strong>Select channel</strong>: Select the Microsoft Teams channel within the selected team where ticket creation notifications will be posted. If you do not find your channel in the list, click the refresh icon available next to the field to reload the available channels.</li>
+<li data-list-item-id="e002b79e2fce02aa47c6b75217d6a3666">
+<strong>Teams notification template: </strong>Enter the content that must be used as the notification message sent for ticket creation.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><p>To add another lifecycle event in this integration, click the + icon adjacent to the List View toggle button.</p><figure><img alt="HR_ITSM_1.png" height="168" src="./assets/a1dde8eefaaca019.bin" width="2316"/></figure><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><figure><img alt="HR_ITSM_2.png" height="168" src="./assets/7662e11f96310f6e.bin" width="2316"/></figure><p>To delete a configuration, click the delete icon.</p><figure><img alt="HR_ITSM_3.png" height="168" src="./assets/bb98279f492a29c9.bin" width="2316"/></figure><p>To view the <strong>Lifecycle Event</strong> section in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row, and you will be redirected to the edit mode, where you can make changes.</p><figure><img alt="HR_ITSM_4.png" height="464" src="./assets/00df57d2c9f38678.bin" width="2316"/></figure><h2 id="h_01KV580PQB96710J73V3BG96A9">Operations</h2><p>The <strong>Operations</strong> tab enables you to configure various settings required for the integration execution. The following sections are displayed in this tab:</p><ul>
+<li data-list-item-id="e2b92583a5e3dd7f430c69b7dd9288ad4"><a href="#h_01KHBC8P4Z96NEQJ87YCV9BW5D">Monitor</a></li>
+<li data-list-item-id="eb61382d535f524af20e5997339920b8f"><a href="#h_01KNS2NCYH8BG3B41F5XYD4P5M">Execution</a></li>
+</ul><h3 id="h_01KHBC8P4Z96NEQJ87YCV9BW5D">Monitor</h3><p>The <strong>Monitor</strong> section enables you to customize the operational and notification settings for the integration. It has the following sub-sections for configuration:</p><h4 id="h_01KSFFXMC8DGHWE6ESQJQQF281">Notification Delivery Channel</h4><p>The <strong>Notification Delivery Channels</strong> section enables you to configure the notification channels used by the integration. It has the following settings:</p><ul><li data-list-item-id="e82c23fb67f05f6e5dac7490486dc53fa">
+<strong>Enable email notifications</strong>: Enable this option to send email notifications for integration events. When enabled, the <a href="#h_01KV7V6X68TA0NPF6YFYGCPB2N">Notification Configuration</a> section is displayed for further configuration.</li></ul><h5 id="h_01KV7V6X68TA0NPF6YFYGCPB2N">Notification Configuration</h5><p>The <strong>Notification Configuration</strong> section allows you to define notification settings for integration execution events.</p><p>If the <strong>List View</strong> toggle button is disabled, the following parameters are displayed:</p><ul>
+<li data-list-item-id="e9a1316d997883f1b5968b71bd37c2307">
+<strong>Select event for notification</strong>: Select one or more integration events that should trigger an email notification. The following are the available options:<ul>
+<li data-list-item-id="e7b4bdb976a4623f3f05a82a88a6ded79">
+<strong>Success</strong>: Select this option to send an email notification when the integration completes successfully.</li>
+<li data-list-item-id="e5b423c46f514563c7f598fc9b38606af">
+<strong>Failure</strong>: Select this option to send an email notification when the integration fails.</li>
+<li data-list-item-id="ef9c104870dedbb65283f3898c3cb1f20">
+<strong>Skipped</strong>: Select this option to send an email notification when the integration is skipped.</li>
+</ul>
+</li>
+<li data-list-item-id="e0f86ff88aa2301c4d72551137c59d86a">
+<strong>Custom recipient email addresses</strong>: Enter the email addresses that should be included as custom recipients for notifications sent for the triggered event.</li>
+<li data-list-item-id="e3523ce14556ff3c85b883e8b82c079da">
+<strong>Notification email subject</strong>: Enter the content that must be used as the email subject in the notifications sent for the triggered event.</li>
+<li data-list-item-id="eff49278a00921b8168bfef4eaa2b6eeb">
+<strong>Notification email template</strong>: Enter the content that must be used as the email body in the notifications sent for the triggered event.</li>
+<li data-list-item-id="e1ea0a3134b708e48afdfede4e6dc5687">
+<strong>Send integration report via email:</strong> Select to receive email notifications with a CSV report for all integration runs.<ul>
+<li data-list-item-id="ead9804ff3ef96e2b9768c22ab8473ee5">
+<strong>Select notification report type</strong>: Select the notification report type. This will decide the level of detail to be included in reports. The following are the available options:<ul>
+<li data-list-item-id="e25cb4de9fb12210a39f691735d58ac38">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e2fad10234d1947f29727889403fb4311">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e79c8a2872cfc6a01b6b38d6334b54525">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ec5716a00e8b680d2f0235108ed6686f1">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eaf2dda1b75db4e0594b58886b944a446">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e1082bb779e5c65e3e32f619bed50e4a1">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e0a0c454b933b5448019b19d7c7fe3b9d">
+<strong>Select notification report detail level</strong>: Select the notification report detail level. The following are the available options:<ul>
+<li data-list-item-id="e923f83cdc9e797d012c1dc2af49784b4">
+<strong>All</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="e33bec79e87c472ddaf25f5d468a7e47b">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="e86e62cbb4b330e0ec1d143c0cdd22962">
+<strong>Fields to include in reports</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e3a996f338bcf0b42dad2bf18a1ef6ebc">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="e57272de69bc252c4d253fc9d09fbade0">
+<strong>Fields to exclude from reports</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><p>To add another configuration, click the <strong>+</strong> icon adjacent to the <strong>List View</strong> toggle button.</p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;).</p><p>To delete a configuration, click the delete icon.</p><p>To view the notification configuration in list view, enable the <strong>List View</strong> toggle button.</p><p>In <strong>List View</strong>, only configured values are displayed. If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><h4 id="h_01KV7VV1J9X30QVYDJQDGBQMRQ">Global Operational Settings</h4><p>The <strong>Global Operational Settings</strong> section enables you to configure integration-wide operational controls, reporting preferences, and monitoring settings. These settings apply to all integration runs and help control how execution details are logged, reported, and analyzed.</p><h5 id="h_01KV7W4KZY1XFCJ3YSFXQMJHP9">Log Settings</h5><p>The <strong>Log Settings</strong> section enables you to configure the level of detail recorded in execution logs. It has the following settings:</p><ul>
+<li data-list-item-id="e8d1a6829119004bb2409ef286d280e86">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select log type</strong>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="ebe5b7a01696fe3bd1a4232123b1de73c">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e51afc2a18c11ecd3297b735467887fbd">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ed7229ffbebde084d40b8b51261fbb549">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ebfe8bc5c42fd077040c96fe8698bf717">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ec6360a7c78a96de89b094918e7d937be">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ef95713332d563f5818bcb9e52ed9bea0">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e21467bd4da40c2252ffc04f30dd34c6d">
+<strong>Select log detail level</strong>: Select the log detail level. The following are the available options:<ul>
+<li data-list-item-id="e89a577582d49c9b3bfa44647ede219ba">
+<strong>All</strong>: Select this to include all attribute details in logs.</li>
+<li data-list-item-id="e18111bb26e73e573072c9664e3a29c3e">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="ec87eb1d0e29f703299df071b6cab0a69">
+<strong>Fields to include in logs</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="ecbb8e52590798138c6c0df549bfb3283">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="e870a126d48a195528af4e4a79c96a0d9">
+<strong>Fields to exclude from logs</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h5 id="h_01KV86ERRYGWDMSKMK5YKZMPR9">Report Settings</h5><p>The <strong>Report Settings</strong> section enables you to configure the level of detail included in generated integration reports. It has the following settings:</p><ul>
+<li data-list-item-id="eaee2a456fffd4bd0c40b988da49b90b2">
+<strong>Select report type</strong>: Select the report type. This will decide the level of detail to be included in reports. The following are the available options:<ul>
+<li data-list-item-id="e78b83775a70c6d9000df67037830bd1b">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e0ff55807cf50ff6c758143801a446f27">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ea9c55de85c57703cccfe262b0ca6f79c">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e0807e678d6d737151842fd6aecf492a0">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e04cfdc10878ca0529e120012421b49c7">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e638b7629b9b66bfb67c51e71d6750219">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e7d5ed87e67a699179489cd4e55995848">
+<strong>Select report detail level</strong>: Select the report detail level. The following are the available options:<ul>
+<li data-list-item-id="efcc79577f72bca1024a932ffbcd4b8ac">
+<strong>All</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="eaa6f881532e921b9cfc0bd92eb7d9877">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="e556f6018b4e05f90088968a0c6d3386c">
+<strong>Fields to include in reports</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e1f890133803d4b1c45b6355ceab2a292">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="e8d468853dbbc3ea83b904de378c38438">
+<strong>Fields to exclude from reports</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h5 id="h_01KV86ERRYCD184XX20ETKPWPR">Log Insight Settings</h5><p>The <strong>Log Insight Settings</strong> section enables you to configure the level of detail available for log analysis and insights. It has the following settings:</p><ul>
+<li data-list-item-id="eabf21f9774630f635bd8e6f3e4190760">
+<strong>Select log insight type</strong>: Select the log insight type. This will decide the level of detail to be included for log insights. The following are the available options:<ul>
+<li data-list-item-id="efc590dfcd31a3fdeb799db9755c51963">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ea006b83f02c07adf2f2d644f12b8e79f">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ebc491171384e99e83492f935743d0e0a">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e174f8e38de0c5470a928928df0f65b7a">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e9c92beb0865297c69064e4e1662d4099">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e1346bce230893ea86d8505b32b264f26">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="eefb59e0afce28120ccc4ef4b39cab0f2">
+<strong>Select log insights detail level</strong>: Select the insights level. The following are the available options:<ul>
+<li data-list-item-id="e15aed5a287cbf6c3a56f1c85bbe263bc">
+<strong>All</strong>: Select this to include all attribute details in log insights.</li>
+<li data-list-item-id="e935d77525516c2fdc461bd0b6b0654d7">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included. When selected, the following field is displayed:<ul><li data-list-item-id="ed8ae31f4f8683cf44ab9eb9c708f3e9a">
+<strong>Fields to include in Log Insights</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e6dbd181d22f68a85d18e569febb4fa45">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded. When selected, the following field is displayed:<ul><li data-list-item-id="e36ae735cd0cd7783dbaa224f7b41df2a">
+<strong>Fields to exclude from Log Insights</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01KNS2NCYH8BG3B41F5XYD4P5M">Execution</h3><p>The <strong>Execution</strong> section enables you to configure advanced execution options that can be used for testing, troubleshooting, and controlling the scope of integration processing. It has the following sub-section:</p><h4 id="h_01KS28NHEHVRN9BPPCKGXGAYYN">Advanced Settings</h4><p>Configure the following advanced settings:<br/><strong>Note</strong>: If the <strong>Source Filter</strong> or <strong>Import Limit</strong> is left blank, the integration performs a full synchronization.</p><ul>
+<li data-list-item-id="e03388437963ced225a8acf3441452981">
+<strong>Enable report-only mode</strong>: Enable this option to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e00770b88d67682cb4a318afba163ab53">
+<strong>Enable detailed logging</strong>: Enable this option to capture detailed execution logs for troubleshooting and issue analysis. </li>
+<li data-list-item-id="e482d60db17766e26503916d69d345750">
+<strong>Enable source filter</strong>: Enable this option to filter the HR system attributes. When enabled, the additional configuration options are displayed:<ul>
+<li data-list-item-id="e6d08963853127aeef61bd7d68ea5c16c">
+<strong>Source Filter</strong>: Select the HR system attribute to filter the employees while retrieving from the HR system.</li>
+<li data-list-item-id="ee916cdd8cc4b50a63f1b7396b8172152">
+<strong>Source Filter Value</strong>: Provide the value for the selected source filter.</li>
+</ul>
+</li>
+<li data-list-item-id="e7d006382b2f50d964fe137ac2301773e">
+<strong>Import Limi</strong>t: Specify the maximum number of employee records that can be imported in the target application during a single integration run.</li>
+</ul><h2 id="h_01KJCP43MS8PMZZMVQPMDWVEEP">Tables</h2><p>In the <strong>Tables</strong> tab, you can add tables to the integration. Tables are used to define custom source attributes and synchronize them with the target application. If the required data is not available in the source application, you can define it in a table and use it to update the target application. Once defined, the table can be referenced in attribute mapping expressions to set or update values automatically.</p><p>For example, to set the timezone attribute of users in the target application to <em>Europe/Paris</em>, create a table during integration setup with <em><strong>timezone</strong></em> as the attribute name and <em><strong>Europe/Paris</strong></em> as the value. Once defined, reference the table in the source attribute of the <strong>Ticket field mapper</strong> using the following format:<br/><em><strong>TABLE.&lt;table_name&gt;.&lt;key_name&gt;</strong> or <strong>TABLE.&lt;table_name&gt;[&lt;key_name&gt;]</strong></em></p><p>For example: <em>TABLE.test.timezone</em></p><p><strong>Note</strong>: You can configure expressions with nested tables in the ticket field mapper, if required.<br/>For example: <em>TABLE.UserHireRecord[TABLE.UserRecord["empDate"]]</em></p><p>Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p><h2 id="h_01KVWRPTWRN33APTZ4EAFVBT22">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your preferred timeframe. Refer to </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><h1 id="h_01KBFKZW49NWKGWCBPEP4C29R8">Update the Integration to the Latest Version</h1><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements. </p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="ee0d5254f9283db3b1bad10c0217c67f9">Navigate to the <strong>Integrations</strong> module on the Aquera Admin portal.</li>
+<li data-list-item-id="e2aa2ee959728b3346c456ff9b2af69e7">Click the vertical ellipsis icon next to an integration and click <strong>View Details</strong>. The <strong>Details</strong> panel is displayed with the following sections:<ul>
+<li data-list-item-id="e1e75bbf0ce96fd425e20fa8d054cf1fd">
+<strong>INTEGRATION DETAILS:</strong> Displays the integration name, description, creation date, last update date, and the user who created or last updated it.</li>
+<li data-list-item-id="ea6cc43c1f71b08ac2059e7eda72d22b0">
+<strong>TEMPLATE DETAILS</strong>: Displays the current version number and its features under <strong>CURRENT VERSION</strong>. If a newer version is available, the version number and the changes are shown under <strong>NEW VERSION AVAILABLE </strong>with an <strong>Upgrade</strong> button.</li>
+</ul>
+</li>
+<li data-list-item-id="ec5f72475edaaa9c91de7390fa8d1b5bb">Click <strong>Upgrade</strong>. The <strong>Upgrade Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e3ca1273a7e6f86b8be4790f58ff0e84a">Provide the following details for the new integration to be created after the upgrade:<ul>
+<li data-list-item-id="ea5a575010e60a5ad60b8f55cd4e0aba1">
+<strong>New Integration Name</strong>: Enter the name of the new integration.</li>
+<li data-list-item-id="e9d63cd974271398db3bbbd217fe254a8">
+<strong>Description</strong>: Provide a description for the new integration.<br/>The current version number and the upgraded version number are displayed.</li>
+</ul>
+</li>
+<li data-list-item-id="ecd43cd3d76a820125c8256b9cca221e0">Click <strong>Upgrade</strong>. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
+  </div>
+</body>
+</html>

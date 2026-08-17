@@ -19,7 +19,155 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>ADP Workforce Now / Homecare Homebase Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-_
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform allows your organization to scale complex data management by automating data integration across resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It allows organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately improving efficiency in managing intricate IT infrastructures and applications.</p><p>In this integration, worker records that are created, updated, or terminated in ADP Workforce Now are automatically provisioned in Homecare Homebase based on the defined schedule. The integration evaluates each worker's employment status in ADP Workforce Now, determines whether the corresponding HCHB profile must be created, updated, or deactivated, and applies the change through the HCHB API.</p><p>To identify user records across both systems, the integration uses the attribute configured in the ADP Workforce Now Correlation Attribute parameter and matches it to the attribute configured in the HCHB Correlation Attribute parameter as a correlation attribute.</p><h1 id="h_01M07XPBPWNNF8259W987H2FY7">Key Functions</h1><p>The ADP Workforce Now / Homecare Homebase Integration performs the following functions:</p><ul>
+<li data-list-item-id="ee8a9fecb0989e309e683d9f59fdf8dfb">Synchronizes worker records from ADP Workforce Now to Homecare Homebase.</li>
+<li data-list-item-id="eda05d86b0da68315840781cfcfeae202">Creates new worker profiles in HCHB when a worker is added and becomes active in ADP Workforce Now.</li>
+<li data-list-item-id="e049146d6d03a3dca5657ef8fad0899e7">Updates existing HCHB worker profiles when the corresponding worker's information changes in ADP Workforce Now.</li>
+<li data-list-item-id="e7e2b945a8f71709f60eccad2905c9e67">Deactivates HCHB worker profiles when a worker becomes inactive or is terminated in ADP Workforce Now.</li>
+<li data-list-item-id="ec16af80701e16263670eb2170f4bf245">Supports both full synchronization and incremental synchronization so that only changed or newly eventing records are processed.</li>
+<li data-list-item-id="ec74ef6ee7004ad10c50a9a8c03922f5e">Defers a worker's deactivation to a configured time of day, optionally evaluated in the worker's own time zone, and automatically re-evaluates deferred deactivations on every subsequent run until they become due.</li>
+<li data-list-item-id="ee795a3c997459577a4f3119f52db574e">Sends a welcome email to newly provisioned HCHB users with their generated username and temporary password.</li>
+<li data-list-item-id="e4b5eea76df2869472e3e27c4dd8007e6">Sends success and failure notification emails to administrators, optionally with a CSV integration report attached.</li>
+<li data-list-item-id="e2b2c18b79747f7a2def58274f6360023">Generates a downloadable CSV integration report and detailed, field-level change logs for troubleshooting.</li>
+<li data-list-item-id="eee9b112966f95b7135117e25a1e473a3">Supports a report-only (simulation) mode that shows the changes that would be made without applying them.</li>
+<li data-list-item-id="ee786e7b62909ca38f5a1ce4f8989b028">Supports testing with hard-coded ADP Workforce Now and HCHB payloads, without calling the live application APIs.</li>
+<li data-list-item-id="e3bd21073798e976beb1ee2e759c51d7e">Logs integration metrics to a Log Insights dashboard for monitoring.</li>
+</ul><h1 id="h_01M07XPBQ87Z2GNRAA55J1M5VX">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="eedc0a99d0d948c449c966cd6563def34">Admin Access to ADP Workforce Now: You must have admin access to your ADP Workforce Now instance to configure API access for the integration.</li>
+<li data-list-item-id="e053b1b6131b01b4a6b9a64f6735c57fb">Admin Access to Homecare Homebase: You must have admin access to your Homecare Homebase instance.</li>
+<li data-list-item-id="e9ffea3cfe7e584baf0d1a1b7424b5376">ADP Workforce Now API Subscription and Consent: The integration calls ADP Workforce Now Human Resources and Events APIs (for example Workers, Worker, Events, Federal/State/Local Tax Profiles, Certifications, Licenses, Time Off, Pay Distributions, Pay Statements, and Personal Contacts, depending on the attributes selected). Ensure that consent has been granted to the Aquera application in the ADP Marketplace and that its subscription status is active. If consent is missing or the subscription is suspended, the integration will fail with a corresponding error during execution.</li>
+<li data-list-item-id="eecc820e457e529dc1e94ed8440118c83">Homecare Homebase API Access: The HCHB service account used by the integration must have permission to search for, read, and create or update worker profiles.</li>
+<li data-list-item-id="e6d6a65cc591e137bb1706aba4de63650">Aquera Tenant Account: You must have a tenant account in the Aquera Admin portal. Visit https://admin.aquera.io to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.</li>
+</ul><p><em><strong>Note: </strong>If your organization is in the EU region, use the following URL to register: https://admin.eu.aquera.io</em></p><ul><li data-list-item-id="e6b21df5eeab0fc2700e289d0591486f1">Configure Application Connectors in the Aquera Admin Portal: You need to configure the ADP Workforce Now and Homecare Homebase application connectors in the Aquera Admin Portal before creating the integration.</li></ul><p><em><strong>Note: </strong>Terminated and inactive workers in ADP Workforce Now are not created in HCHB. Only workers that satisfy the configured Create Condition are provisioned.</em></p><h1 id="h_01M07XPBQFY35XJTXK4T2G3GSJ">Integration Setup</h1><p>This section outlines how the integration must be configured to provision worker data from ADP Workforce Now into Homecare Homebase.</p><h2 id="h_01M07XPBQFP9XVTA3ZG6NMDE9V">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e55ebe00fba7a8f76c5e40e9b4a257829">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="e31331b9920b766673c4ee4cb717f4e4b">Navigate to Integrations from the left side panel.</li>
+<li data-list-item-id="ed1c8b9d74a09a9911df55e096ec4ffef">Click Create Integration.</li>
+<li data-list-item-id="ea25b72f591beafb96f4570e0981c6f9f">Select ADP Workforce Now / HCHB.</li>
+<li data-list-item-id="e32085717f40b99e92760fc837064ab4b">Enter a name and a description for the integration.</li>
+<li data-list-item-id="eba1f71f3e66dec4ea7e4cc5f52502380">Select your ADP Workforce Now and Homecare Homebase connector instances.</li>
+<li data-list-item-id="eae1651e7b427a34ef0518d728c69e306">Click Continue. The Configuration page is displayed to configure the integration.</li>
+</ol><h2 id="h_01M07XPBQJB16K19BE5Y2N8T9B">Configuration</h2><p>The following sections are displayed under the Configuration tab: Applications, Parameters, Manage Users, Logging, Notification, Reporting, Log Insights, Debug Mode, and Hard Coded Values.</p><h3 id="h_01M07XPBQNBBJFV795KDEG7ZDB">Applications</h3><p>The Applications section displays the source and target application connectors for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01M07XPBQPNTTBPMC6FJTTMC2J">Parameters</h3><p>The Parameters section enables you to customize the integration settings according to your specific use case. It has the following sub-sections:</p><h3 id="h_01M07XPBQQFMVXKZ9JMRQRK2X6">Integration Features</h3><ul><li data-list-item-id="e3ad02bd953260c53e2ce1cbbe78ca88a">
+<strong>Enable User Lifecycle Management</strong>: Enable this toggle button to synchronise worker data from ADP Workforce Now to HCHB. When enabled, the <a href="#h_01M07XPBQWVBX2PM748YZ5AFKK">Manage Users</a> tab is displayed for further configuration.</li></ul><h3 id="h_01M07XPBQRY8G7A3A725QBS6T8">General Settings</h3><ul>
+<li data-list-item-id="e49705bc92aed0a2c60f264993c98ed2d">
+<strong>Enable Full Sync</strong>: Select this checkbox to execute the integration in full sync mode. When cleared, the integration runs incrementally and only processes workers that have changed since the last successful run.</li>
+<li data-list-item-id="e75a004664d55687eb3d557b6d2fdf5d3">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to generate a report detailing the data changes that would happen, without actually applying them to HCHB.</li>
+<li data-list-item-id="e5431f9aaa5ff8e73235f037ecc562e1f">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When enabled, the Logging tab is displayed for further configuration.</li>
+<li data-list-item-id="e597022209f9dd98dc73eba5d50aed315">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related email notifications. When enabled, the Notification tab is displayed for further configuration.</li>
+<li data-list-item-id="ec7f2326c78860ad5e50b213e71625730">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate a downloadable CSV integration report. When enabled, the Reporting tab is displayed for further configuration.</li>
+<li data-list-item-id="e3aaf302db5ade6724a6df37b7dfe0eb5">
+<strong>Enable Log Insights</strong>: Select this checkbox to analyze integration-related metrics on a dashboard. When enabled, the Log Insights tab is displayed for further configuration.</li>
+<li data-list-item-id="e1803de130722b9e264319df778d920f1">
+<strong>Enable Debug Mode</strong>: Select this checkbox to generate logs outlining data changes for debugging purposes, including a field-level diff between the existing HCHB worker and the payload about to be sent. When enabled, the Debug Mode tab is displayed for further configuration.</li>
+<li data-list-item-id="ed9cd248526c37cfd8d51747739fcf169">
+<strong>Full Sync Threshold In days</strong>: Enter the number of days after which a full synchronization is automatically triggered, measured from the last successful sync. For example, if you enter 4, a full sync automatically runs once four days have elapsed since the last successful run, even if incremental sync was configured.</li>
+</ul><h3 id="h_01M07XPBQWVBX2PM748YZ5AFKK">Manage Users</h3><p>The Manage Users tab is displayed only when the Enable User Lifecycle Management parameter is enabled under Parameters. It enables you to customize how workers are correlated, and when they should be created, updated, or deactivated in HCHB.</p><h3 id="h_01M07XPBQXT7122P03WY828ZQB">ADP Workforce Now Settings</h3><ul>
+<li data-list-item-id="ec28d2d629d618f34b021104a7ae0961f">
+<strong>ADP Workforce Now Correlation Attribute</strong>: Select the ADP Workforce Now attribute used to distinctly find the associated HCHB worker record. The available options are Associate OID, Worker ID, and Position ID.</li>
+<li data-list-item-id="e3bcfe0b1b1a8d30232460fea387d997c">
+<strong>User Provisioning Configuration</strong>: Select one or more operations from the dropdown menu — Create, Update, Delete — to determine which lifecycle actions the integration should perform.</li>
+<li data-list-item-id="e320876c91db1c74895b8c573d53f4df2">
+<strong>ADP Workforce Now Active Statuses</strong>: Select one or more ADP Workforce Now worker status values that should be treated as active (for example Active, On Leave). Workers with these statuses are eligible for creation and update in HCHB.</li>
+<li data-list-item-id="ea5c3cbb0eeb9b02105d9d6d7d6468e86">
+<strong>ADP Workforce Now Inactive Statuses</strong>: Select one or more ADP Workforce Now worker status values that should be treated as inactive (for example Terminated, Inactive, Retired). Workers with these statuses are eligible for deactivation in HCHB.</li>
+</ul><p><em><strong>Note: </strong>The same status value cannot be configured as both active and inactive. The integration validates this and stops with an error if a duplicate is found.</em></p><h3 id="h_01M07XPBR0DZDW5PBPTTBRDH3Q">Create User Settings</h3><p>This section is displayed only when Create is selected in the User Provisioning Configuration parameter.</p><ul>
+<li data-list-item-id="ed40807242b156c6a5e6565306b0ef4ac">
+<strong>Create User Limit</strong>: Specify the maximum number of employee records that must be created in HCHB during a single integration run. Leave this blank to create every record that satisfies the Create Condition.</li>
+<li data-list-item-id="e9c7eb113bce5df4d76f8494662f8b5ec">
+<strong>Create Condition</strong>: Select a condition from the dropdown menu to specify which ADP Workforce Now user records should be created in HCHB. The available options are All Active Users and Custom.</li>
+<li data-list-item-id="e6602387bd821ffad556066fe090a2aad">
+<strong>Custom Create Condition</strong>: Enter a JavaScript expression that defines the create condition. This field is displayed only when Custom is selected in Create Condition.</li>
+</ul><h3 id="h_01M07XPBR2NXFDFZZEE8AW3B7T">Update User Settings</h3><p>This section is displayed only when Update is selected in the User Provisioning Configuration parameter.</p><ul>
+<li data-list-item-id="e894d8f9da9a34ec380648391832b51cb">
+<strong>Update User Limit</strong>: Specify the maximum number of employee records that must be updated in HCHB during a single integration run.</li>
+<li data-list-item-id="e672ed221b829c13983b61a8b4426151c">
+<strong>Update Condition</strong>: Select a condition from the dropdown menu to specify which ADP Workforce Now user records should be updated in HCHB. The available options are All Active Users and Custom.</li>
+<li data-list-item-id="e558eb497dfd385761f8b84296a095adb">
+<strong>Custom Update Condition</strong>: Enter a JavaScript expression that defines the update condition. This field is displayed only when Custom is selected in Update Condition.</li>
+</ul><h3 id="h_01M07XPBR4FAB5V7RCXJ1H1MQV">Delete User Settings</h3><p>This section is displayed only when Delete is selected in the User Provisioning Configuration parameter.</p><ul>
+<li data-list-item-id="eee48808e5529ac1fe455ba02f410ae9a">
+<strong>Deactivation time for terminating a user</strong>: Enter the time of day, in HH:MM:SS format, at which a worker's HCHB profile becomes eligible for deactivation on or after their ADP Workforce Now termination date. If this field is left blank, the deactivation is not gated by a time of day and proceeds as soon as the worker is identified as inactive.</li>
+<li data-list-item-id="edb0a2edf4a14b8fd5627dbfb1e494b3a">
+<strong>Deactivate based on users timezone</strong>: Turn on this toggle button to evaluate the deactivation time in the worker's own time zone instead of the runtime's local time zone. The worker's time zone is resolved from their primary work assignment's time profile, their home work location, or, failing that, from the U.S. state associated with their home work location.</li>
+<li data-list-item-id="eb79984eee77fcb77a11521c2fce923d3">
+<strong>Delete User Limit</strong>: Specify the maximum number of employee records that must be deleted (deactivated) in HCHB during a single integration run.</li>
+<li data-list-item-id="e53f2fc3188bfa96c380955f780fa02a8">
+<strong>Delete Condition</strong>: Select a condition from the dropdown menu to specify which ADP Workforce Now user records should be deleted in HCHB. The available options are All Inactive Users and Custom.</li>
+<li data-list-item-id="eca9a05aaece0116529dee958e5435098">
+<strong>Custom Delete Condition</strong>: Enter a JavaScript expression that defines the delete condition. This field is displayed only when Custom is selected in Delete Condition.</li>
+</ul><p><em><strong>Note: </strong>If a worker's termination date and time have not yet been reached, the worker is held in an internal cache and the deactivation is skipped for that run with a reason of "Termination deferred". The integration automatically re-checks cached workers on every subsequent run and deactivates them once the configured time is reached. Refer to the Future Terminated Users Cache section in the Appendix for details.</em></p><h3 id="h_01M07XPBR84ZH48YVE2ZY4YQ4D">HCHB Settings</h3><ul><li data-list-item-id="e60c7c3fd47d16a843cda01e7083bca33">
+<strong>HCHB Correlation Attribute</strong>: Select the HCHB attribute used to distinctly find the associated ADP Workforce Now user, for example PayrollNumber.</li></ul><h3 id="h_01M07XPBR9ABD4TN06R94ZHZG1">Logging</h3><p>This tab is displayed only when the Enable Logging parameter is enabled under Parameters. It enables you to customize the log generation settings.</p><ul>
+<li data-list-item-id="edefd4a369d19d67325f0892fea6b0cbd">
+<strong>Log Detail Level</strong>: Select the desired log detail level from the dropdown menu. The available options are Summary Only, Full Details, and Custom.</li>
+<li data-list-item-id="eb414f2c882b6325cac358be715e1429f">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values for each event when choosing the Full Details or Custom option. This requires consent to store event data temporarily.</li>
+</ul><p>When Custom is selected as the Log Detail Level, the following parameters are displayed:</p><ul>
+<li data-list-item-id="ec1e89524c315bc9b3f756b6c57b9115d">
+<strong>Attribute Filter</strong>: Select whether to include or exclude specific attributes in the log.</li>
+<li data-list-item-id="ec00f77bf6811f9bb04ee1d470d5f6256">
+<strong>Included Attributes</strong>: Select the attributes to be included in the log. This is displayed only when Included Attributes is selected in the Attribute Filter parameter.</li>
+<li data-list-item-id="e40cc9ed41aa20a5b8ec681b0415e80c3">
+<strong>Excluded Attributes</strong>: Select the attributes to be excluded from the log. This is displayed only when Excluded Attributes is selected in the Attribute Filter parameter.</li>
+</ul><h3 id="h_01M07XPBRCRJGPAGR97HFTTPDF">Notification</h3><p>This tab is displayed only when the Enable Notifications parameter is enabled under Parameters. It allows you to configure the welcome email sent to new HCHB users, the notification report attached to admin emails, and the admin notification emails sent when the integration succeeds or fails.</p><h3 id="h_01M07XPBRC91NSYEFYQ33336CS">Welcome Email Notification</h3><ul>
+<li data-list-item-id="e671ee678eaf822ffc66a55d195fb175d">
+<strong>Enable to send welcome Email notification to user</strong>: Turn on this toggle button to send a welcome email to a worker after their HCHB profile is provisioned.</li>
+<li data-list-item-id="e0695173be288a78f2fa29a13ceeaaef2">
+<strong>Welcome Email Subject</strong>: Enter the content that must be used as the subject of the welcome email.</li>
+<li data-list-item-id="e1b913a8196b8d59d203da88a130b2095">
+<strong>Welcome Email Body</strong>: Enter the content that must be used as the body of the welcome email. Use the placeholders ${name}, ${userName}, and ${password} to insert the worker's name, generated HCHB username, and temporary password respectively.</li>
+</ul><p><em><strong>Note: </strong>The welcome email is sent after the worker's first successful update in HCHB following their creation, once their login credentials are available, and is sent only once per worker.</em></p><h3 id="h_01M07XPBRFR9QNMF0WRJ5Z5XVJ">Notification Report Settings</h3><ul>
+<li data-list-item-id="eb6a36afab2274e2a34639552b400ecb4">
+<strong>Send Integration Report via Email</strong>: Select this checkbox to receive an email notification with a CSV report attached, for all integration runs.</li>
+<li data-list-item-id="ecbdd7e63b95b8d9789a748133e4fb11c">
+<strong>Report Detail Level</strong>: Select the report detail level from the dropdown menu. The available options are Summary Only, Full Details, and Custom.</li>
+<li data-list-item-id="e4cbf3ee2dde08c6374530ad8dd337c22">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values for each event when choosing the Full Details or Custom option.</li>
+</ul><h3 id="h_01M07XPBRG03CT1CHKH5BH1PPM">Execution Success Notification</h3><ul>
+<li data-list-item-id="e4e3f02d72364dab39a1437504ccb555d">
+<strong>Admin's Email Address</strong>: Enter the email addresses of the admins to whom the success notification email will be sent.</li>
+<li data-list-item-id="e106ca358247fed5d0b83383275ecd80b">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for sending success notifications to the admins.</li>
+<li data-list-item-id="e0234936e3e49ac8c28ac37616feb9ab3">
+<strong>Email Notification Body</strong>: Enter the content that must be used as the email body for sending success notifications to the admins.</li>
+</ul><h3 id="h_01M07XPBRJ7KMRDBH69CT69JSH">Execution Failure Notification</h3><ul>
+<li data-list-item-id="e2c6a46d865ea20fde013347e482bd414">
+<strong>Admin's Email Address</strong>: Enter the email addresses of the admins to whom the failure notification email will be sent.</li>
+<li data-list-item-id="ecefbcb7fefd4df2d3647a7ef5fc33793">
+<strong>Email Subject</strong>: Enter the content that must be used as the email subject for sending failure notifications to the admins.</li>
+<li data-list-item-id="ea1d501e6c13778bbf0c1000b060ae1fc">
+<strong>Email Notification Body</strong>: Enter the content that must be used as the email body for sending failure notifications to the admins. Use the placeholder ${error} to insert the error details.</li>
+</ul><h3 id="h_01M07XPBRYR1FG1S8BYH7PXR8M">Reporting</h3><p>This tab is displayed only when the Enable Report Generation parameter is enabled under Parameters. It enables you to customize the CSV integration report that Aquera writes for every run.</p><ul>
+<li data-list-item-id="e66171fb50bf1467822e6673184197c73">
+<strong>Report Detail Level</strong>: Select the desired report detail level from the dropdown menu. The available options are Summary Only, Full Details, and Custom.</li>
+<li data-list-item-id="e0976b0b4ed1e1e344a09be8202e76da2">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values for each event when choosing the Full Details or Custom option.</li>
+</ul><h3 id="h_01M07XPBSA6TFBVPTYJDJ4SBMW">Log Insights</h3><p>This tab is displayed only when the Enable Log Insights parameter is enabled under Parameters. It enables you to customize the metrics that are pushed to the Log Insights dashboard.</p><ul>
+<li data-list-item-id="e042f86e9b160b490abbaf2e218b57e01">
+<strong>Log Insights Detail Level</strong>: Select the desired log insights detail level from the dropdown menu. The available options are Summary Only, Full Details, and Custom.</li>
+<li data-list-item-id="e53e3ba27e8aba69a7883a1c7e31d878f">
+<strong>Show Attribute Values for Each Event</strong>: Select this checkbox to populate the attribute values for each event when choosing the Full Details or Custom option.</li>
+</ul><h3 id="h_01M07XPBSEJ8S6TJK81Q9D6H2S">Debug Mode</h3><p>This tab is displayed only when the Enable Debug Mode parameter is enabled under Parameters. It enables you to limit and target the workers retrieved from ADP Workforce Now during troubleshooting.</p><ul>
+<li data-list-item-id="e39f713641f0353543e41f782874571ca">
+<strong>ADP Workforce Now Filter Attribute</strong>: Select the ADP Workforce Now attribute to filter workers while retrieving from ADP Workforce Now, for example AssociateOID. When a value is selected, the integration switches to full sync and retrieves only the matching worker.</li>
+<li data-list-item-id="eafd6dcfc4043ddfea2e790008fd57a11">
+<strong>Filter Attribute Value</strong>: Provide the value for the selected filter attribute, for example a specific Associate OID.</li>
+<li data-list-item-id="ee0dac4aec37b569801d40d38d74849b0">
+<strong>Import Limit</strong>: Specify the maximum number of worker records that can be imported from ADP Workforce Now during a single integration run.</li>
+</ul><h3 id="h_01M07XPBSGQHTWJCR1P1AGVYBT">Hard Coded Values</h3><p>This tab is displayed only when the Enable Test With Hard Coded Values parameter is enabled under Parameters. It allows you to supply fixed worker payloads so the integration can be tested without calling the live ADP Workforce Now or HCHB APIs.</p><ul>
+<li data-list-item-id="e2f765ab163e6dda97f859ff8e4f27038">
+<strong>ADP Hard Coded Values</strong>: Enter a JSON payload containing one or more ADP Workforce Now worker records. When configured, the integration uses these records instead of retrieving workers from ADP Workforce Now.</li>
+<li data-list-item-id="e212eb3ef25b9b75a932644934857873b">
+<strong>Homecare Homebase Hard Coded Values</strong>: Enter a JSON payload containing one or more HCHB worker records. When configured, the integration uses these records instead of searching for correlated workers in HCHB.</li>
+</ul><p><em><strong>Note: </strong>This mode is intended for configuration testing only. Disable it before running the integration against production data.</em></p><h2 id="h_01M07XPBSP2XQZC1FB2BQPMQS4">Attribute Map</h2><p>The Attribute Map tab defines how worker data is mapped from ADP Workforce Now to Homecare Homebase. The default mapping of attributes is displayed on the page. The source attributes are listed on the left side and the target attributes are listed on the right side of the page.</p><p>You can modify only the source attributes as needed to align with your specific use case. You can write JavaScript expressions to transform the value of a source attribute and construct the value that is written to the target attribute. Write the expression directly in the source attribute field, or click the Expand icon in the source attribute field to write a longer expression.</p><p>Several HCHB target fields expect coded values (for example job title, worker status, worker category, payment method, or team IDs) rather than the free-text values available in ADP Workforce Now. For these fields, the attribute mapping looks up the corresponding HCHB code from a lookup table configured under the Tables tab, based on the worker's ADP Workforce Now values such as department, work location, and status.</p><p>After the source-to-target attribute mapping is completed, click Save Changes at the top-right corner of the page to save the integration.</p><h2 id="h_01M07XPBSWXDM0YR37VFMPEW43">Tables</h2><p>Tables can be added to create custom source attributes for lookups used by the Attribute Map. Tables are used when a required HCHB value cannot be derived directly from an ADP Workforce Now attribute — for example, translating an ADP location code into an HCHB branch code, or an ADP department and role into an HCHB job title ID, worker status ID, worker category, payment method ID, or team ID grouped by branch.</p><p>Based on your requirement, you can add any number of tables to the integration. The table setup and functionality are the same as in other Aquera user integrations. Refer to the Adding Tables in Integration section in the Using Tables in Integrations guide for details.</p><h2 id="h_01M07XPBSZZAW2ZV09YB23QDHR">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the Integration Schedule Setup Guide for further details.</p><h2 id="h_01M07XPBT3TZP8EMNJ9RMVC6V3">Execute Integration</h2><p>You can execute the integration manually or schedule it to run automatically. For further details, refer to the User Action on Integrations guide.</p><h1 id="h_01M07XPBT6CHP3J1R72QFFA8VE">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to User Actions on Integrations for further details.</p><h2 id="h_01M07XPBT6H1X3NTYWPRF87AFN">Update the Integration to the Latest Version</h2><p>You can upgrade an integration built from a template to the latest version to access new features and enhancements.</p><p>Perform the following steps to upgrade an integration:</p><ol>
+<li data-list-item-id="eefea392bd7582e3f7518016fce88cfe5">Navigate to the Integrations module on the Aquera Admin portal.</li>
+<li data-list-item-id="e0ff5f672f2033a9e38857d0e1a9a4803">Click the vertical ellipsis icon next to an integration and click View Details. The Details panel is displayed with the INTEGRATION DETAILS and TEMPLATE DETAILS sections. TEMPLATE DETAILS shows the current version number and its features under CURRENT VERSION, and if a newer version is available, the version number and changes are shown under NEW VERSION AVAILABLE with an Upgrade button.</li>
+<li data-list-item-id="e3140afee9af1ddef8097b533af91bd3f">Click Upgrade. The Upgrade Integration pop-up window is displayed.</li>
+<li data-list-item-id="e928a2966ae272976ed61d517d690bc41">Provide a New Integration Name and a Description for the new integration to be created after the upgrade. The current version number and the upgraded version number are displayed.</li>
+<li data-list-item-id="ee08de3ae9bcc0dc92051e8c146366e76">Click Upgrade. A new integration is created with the same configuration details as the existing one, but with features or enhancements from the upgraded version.</li>
+</ol>
   </div>
 </body>
 </html>

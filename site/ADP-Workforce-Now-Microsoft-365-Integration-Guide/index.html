@@ -21,12 +21,43 @@
 <p><a href="../index.html">← Back to index</a></p>
 <h1 id="h_01M0YW5CXYR4N620F6J5AWBKDE">Overview</h1><p>The <strong>ADP Workforce Now / Microsoft 365</strong> (<strong>PTO to Calendar Sync</strong>) integration retrieves all workers and their paid time off (PTO) requests from ADP Workforce Now. For PTO requests with an <strong>Approved</strong> or <strong>Active</strong> status, the integration creates events in the configured Microsoft 365 shared calendar.</p><p>The integration uses each worker's business email address from ADP Workforce Now to locate the shared calendar in Microsoft 365. Each event identifies the PTO policy and worker, and its location is set to Out of Office.</p><p>This guide explains how to configure the integration to create Microsoft 365 shared calendar events for qualifying PTO requests retrieved from ADP Workforce Now.</p><h2 id="h_01M0YW88TBXGZ4AGZ1XNNYQX8N">Key Functions</h2><p>This integration synchronizes PTO information with the following primary capabilities:</p><ul>
 <li data-list-item-id="e19047e220ec7a31e37fc9836e9943fec">Retrieves all workers and their PTO requests from ADP Workforce Now.</li>
-<li data-list-item-id="e3276536c0b493e7e7942f2ca81086875">Processes PTO requests with an Approved or Active status only.</li>
+<li data-list-item-id="e3276536c0b493e7e7942f2ca81086875">Processes PTO requests with an <strong>Approved</strong> or <strong>Active</strong> status only.</li>
 <li data-list-item-id="e6cd1bedeef8a3423cc6ed4486abdf6fe">Uses each worker's business email address to locate available Microsoft 365 calendars.</li>
 <li data-list-item-id="ecaf4b3bda13d42aa10233b1262753fd4">Creates PTO events in the configured Microsoft 365 shared calendar.</li>
 <li data-list-item-id="ec9455b70210b89fb44d16fd9e8da6488">Includes the PTO policy and worker name in the calendar event subject.</li>
 <li data-list-item-id="e0822150016a2d3f05bf25f4ed2a94716">Creates an all-day event when the PTO period represents a full day or spans multiple days.</li>
-</ul><h1 id="h_01M0YWHK9NV730T3B37Q7Q8TCY">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+</ul><p>For each approved or active PTO request, the integration creates a calendar event with the following information:</p><figure><table>
+<colgroup>
+<col/>
+<col/>
+</colgroup>
+<tbody>
+<tr>
+<td><p><strong>Event property</strong></p></td>
+<td><p><strong>Value</strong></p></td>
+</tr>
+<tr>
+<td><p>Subject</p></td>
+<td><p>&lt;PTO policy&gt; - &lt;worker name&gt;</p></td>
+</tr>
+<tr>
+<td><p>Start and end</p></td>
+<td><p>The dates and times retrieved from the qualifying ADP PTO request</p></td>
+</tr>
+<tr>
+<td><p>Time zone</p></td>
+<td><p>UTC</p></td>
+</tr>
+<tr>
+<td><p>All-day event</p></td>
+<td><p>The event is created as an all-day event when the PTO period starts and ends at midnight or spans at least 24 hours</p></td>
+</tr>
+<tr>
+<td><p>Location</p></td>
+<td><p>Out of Office</p></td>
+</tr>
+</tbody>
+</table></figure><h1 id="h_01M0YWHK9NV730T3B37Q7Q8TCY">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
 <li data-list-item-id="eeafe8df63b05b6f69e107a6a6114865b">
 <strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get the Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
 <li data-list-item-id="eae15f49da5328ab54fd9f5dbcf91b967">
@@ -47,7 +78,25 @@
 <li data-list-item-id="ebdb8cac7d10589a00371d9a4422f2faa">Enter a name and a description for the integration.</li>
 <li data-list-item-id="e9f6c648faed39b18e608cc33e3602424">Select the ADP Workforce Now and Microsoft 365 application connectors.</li>
 <li data-list-item-id="e3b86d6041fb81729825918be6328260c">Click <strong>Continue</strong>.</li>
-</ol><p>Once created, the following tabs are displayed:</p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p>
+</ol><p>Once created, the following tabs are displayed:</p><ul>
+<li data-list-item-id="ecfe8e2fc7dd92186428dfff944044719"><a href="#h_01M0YX23YM96WBXYRJDEK01C6S">Configuration</a></li>
+<li data-list-item-id="e8af1235768b6c62441221cc09add421e"><a href="#h_01M0Z4QH25P7PJ44G5PB7XPETE">Schedule</a></li>
+</ul><h2 id="h_01M0YX23YM96WBXYRJDEK01C6S">Configuration</h2><p>The <strong>Configuration</strong> tab shows the application connectors used for the integration and allows you to configure the Microsoft 365 shared calendar.</p><p>The following sections are displayed in this tab for configuration:</p><ul>
+<li data-list-item-id="e0dde031b13fb0276fc9ab95e99981d50"><a href="#h_01M0Z4X00EDNR0JKXQ7ANGYCHT">Applications</a></li>
+<li data-list-item-id="efdd526a59cad87acbaccf00ab4347109"><a href="#h_01M0Z3Y9ZMZB3NK7ETS88YP3WP">Parameters</a></li>
+</ul><h3 id="h_01M0Z4X00EDNR0JKXQ7ANGYCHT">Applications</h3><p>This section allows you to select the application connectors used for the integration. The following fields are displayed:</p><ul>
+<li data-list-item-id="e8c7b4f7f26fc7485644f811a4c2f7f36">
+<strong>Microsoft Entra ID</strong>: Identifies the Microsoft 365 application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available connectors.</li>
+<li data-list-item-id="efb82a6abb7f22c9ca663d1335d1d8e0c">
+<strong>ADP Workforce Now</strong>: Identifies the ADP Workforce Now application connector that you have configured in the Aquera Admin portal. If you do not find your application connector in the list, click the refresh icon next to the field to reload the available connectors.</li>
+</ul><h3 id="h_01M0Z3Y9ZMZB3NK7ETS88YP3WP">Parameters</h3><p>This section allows you to select the Microsoft 365 shared calendar in which PTO events are created. The following fields are displayed:</p><ul>
+<li data-list-item-id="e1be5c745931951980cc9b209d694492a">
+<strong>Shared Calendars</strong>: Select the Microsoft 365 shared calendar in which PTO events must be created. If you do not find the calendar in the list, click the refresh icon next to the field to reload the available calendars.</li>
+<li data-list-item-id="e3cfbf07acea4d5ea9a9209323047c6ae">
+<p><strong>Owner Email</strong>: Enter the email address or user principal name of the shared calendar owner.</p>
+<p><strong>Note</strong>: The integration identifies the shared calendar using the selected calendar name and the configured owner. Ensure that both values identify the intended calendar.</p>
+</li>
+</ul><h2 id="h_01M0Z4QH25P7PJ44G5PB7XPETE">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your preferred timeframe. </span></span>Navigate to the <strong>Schedule</strong> tab to configure the integration execution schedule based on how frequently PTO changes must be reflected in Microsoft 365.</p><p><span><span>Refer to the </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
   </div>
 </body>
 </html>

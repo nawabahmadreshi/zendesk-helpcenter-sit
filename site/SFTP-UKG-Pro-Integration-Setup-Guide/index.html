@@ -19,7 +19,300 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>SFTP / UKG Pro Integration Setup Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-_
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This integration enables you to synchronize employee data from UKG Pro to an SFTP server. It creates a CSV file containing the data of employees in a specific SFTP location.</p><p>This integration retrieves UKG Pro employee data and places the generated file in an SFTP location.</p><p>The integration can run in full or incremental synchronization mode. It also supports user filtering, debug execution, report-only execution, configurable file formats, timestamped filenames, logs, reports, notifications, and Log Insights.</p><p> </p><p> </p><p>Filters users by employment status or a custom expression before including them in the SAP file.</p><p>Supports full synchronization, incremental synchronization, and debug execution.</p><p>Maps UKG Pro attributes to the configured SAP S/4HANA file columns.</p><p>Generates a TXT, TSV, or CSV file and delivers it to the configured SFTP directory.</p><p>Optionally appends a run timestamp to the output filename to prevent earlier files from being overwritten.</p><p>Generates logs, reports, notification emails, and Log Insights based on the integration settings.</p><h1 id="h_01KG4G8M52X0H1382BKQAJQG71">Key Functions</h1><p>The SFTP / UKG Pro integration performs the following functions:</p><ul>
+<li data-list-item-id="efaae4c8f8c8b35a4b863574502a224af">Retrieves employee data from UKG Pro and generates a CSV file in a specific SFTP location.<ul>
+<li data-list-item-id="e86a1f6aafa5a148d1c876210fdc53806">You can define which candidate statuses must be included for processing by the integration.</li>
+<li data-list-item-id="e219afd24c54b379a8bcc5c29c9d11443">Full synchronization is always performed for the candidate data. For worker data, you can configure the integration to run either a full or incremental sync.</li>
+<li data-list-item-id="ec8076f16c001abe0a8813849b44e114f">
+<p>You can set the CSV file location and the CSV file name in the integration settings.</p>
+<p><strong>Note</strong>: The SFTP server name is configured in the FTP Generic connector in the Aquera Admin Portal.</p>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ec3a6c2828ca943105bdc961fb47c3e32">Writes back the worker email, work phone number, and any custom attributes from a CSV file to ADP Workforce Now, based on the integration settings.<ul><li data-list-item-id="eaaaac2b34782aaba0bc786cf4182fb0c">You can configure the CSV file location and the CSV file name from which the integration must read the data to be written back to ADP.</li></ul>
+</li>
+<li data-list-item-id="e3bb720df4d58067263f25051f9f5b374">Generates reports and logs, and sends notification emails based on the integration settings.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e6c2642160bde4c8d63d358559ebae290">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a>
+</li>
+<li data-list-item-id="e72bbadf01ff297716af1103766427f8a">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e781f5cff1ee01653ee87756bc0386f25">
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="ea6e2a2fb227c51787665fe04e94e1901">
+<strong>FTP Generic</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360058816934" rel="noopener noreferrer" target="_blank">FTP Generic Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+<li data-list-item-id="ed986113f3aa546a69460596ef8d86c3c">
+<strong>Prepare CSV File with the Appropriate Headers:</strong> Make sure that a CSV file with the appropriate column headers is created and placed in the SFTP location, which you will configure in the integration settings. This is necessary for populating the CSV header column names on the attribute mapping pages for candidate and worker sync.</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how the integration must be configured to synchronize Workflow iForms and Person iForms from iCIMS to Dayforce.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e44ec684d6d5828262f48d3e233dbe67c">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="eddd651dac1f8fa1000be661851b0302a">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e39f2a324742f104f194a10822790d3c8">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="eb8695f8588465875458a1339ddfa7adb">Select<strong> ADP Workforce Now / SFTP</strong>.</li>
+<li data-list-item-id="eaffc0fe533720b74da1145d17694a513">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e68b2f37404bc2716111502158151660c">Select your <strong>ADP Workforce Now </strong>and<strong> FTP Generic </strong>connector instances.</li>
+<li data-list-item-id="e1af6a3b4b568837e37ef331aa5c07e10">Click <strong>Continue</strong>. The <strong>Configuration</strong> page is displayed to configure the integration.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the ADP Workforce Now and FTP Generic application connectors that you have selected for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and settings according to your use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Scenarios</h4><p>Enable the following features based on your requirements:</p><ul>
+<li data-list-item-id="e13f0df0dac59f7725adfe8a460b895d8">
+<strong>Enable workers sync</strong>: Select this checkbox to sync worker data from ADP Workforce Now to the SFTP server. When selected, the <strong>Worker Sync Settings</strong> section and the <strong>Worker to SFTP</strong> attribute map setting section are displayed for further configuration. If this checkbox is not selected, the worker data will not be retrieved and processed by the integration.</li>
+<li data-list-item-id="eb5937a60942e5c3f3c9b2cefe76d083f">
+<strong>Enable candidate management</strong>: Select this checkbox to sync candidate data from ADP Workforce Now to the SFTP server. When selected, the <strong>Candidate Management</strong> section and the <strong>Candidate to SFTP</strong> attribute map setting section are displayed for further configuration. If this checkbox is not selected, the candidate data will not be retrieved and processed by the integration.</li>
+<li data-list-item-id="e68fbb4796fa9132230ce3e341e0bd3c3">
+<strong>Enable writeback</strong>: Select this checkbox to enable the integration to write back the worker email, work phone number, and any custom attributes from a CSV file in the SFTP server to ADP Workforce Now. When selected, the <strong>Writeback Settings </strong>section and the <strong>Writeback Map</strong> attribute map setting section are displayed for further configuration.</li>
+</ul><h4 id="h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</h4><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="ecca2f2f36023c2d1f45d1eddeab5dee1">
+<strong>Enable Report-Only Mode</strong>: Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="e664fed49933352e9fef7700b5b9e07fb">
+<strong>SFTP Write File Path</strong>: Specify the folder path in the SFTP server where the integration must create the CSV file containing the worker data and candidate data. For example, <em>Aquera/ADPData/dataexport.csv</em><br/><strong>Note</strong>: The SFTP Server name is configured on the FTP Generic connector configuration page.</li>
+<li data-list-item-id="e85097c346b48efee04617aed4813b61f">
+<strong>Enable Logging</strong>: Select this checkbox to generate logs outlining data changes. When selected, the <a href="#h_01KMMWWZASCF14V76882FQNPZ5">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ebec0f031a07ea1fb4e7cd2708a65d652">
+<strong>Enable Report Generation</strong>: Select this checkbox to generate the integration report. When selected, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e17b000826d9237b47d796d3c6456ab87">
+<strong>Enable Log Insights</strong>: Select this checkbox to visualize the integration-related metrics. When selected, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e8dff021995d665ac08faa64ad3407b54">
+<strong>Enable Notifications</strong>: Select this checkbox to enable integration-related notifications. When selected, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
+</ul><h4 id="h_01KGMG4JM3JXCF60W9N6GEFS2V">Synchronization Settings</h4><p>This section enables you to configure the integration to run in full sync or incremental sync mode.</p><ul><li data-list-item-id="ee560a88babc847b9f3b35d727fc99bae">
+<strong>Enable Incremental Mode</strong>: Select this checkbox to run the integration in incremental mode. When selected, the integration retrieves and processes only the worker data that have been added or modified in ADP since the last integration execution. When this checkbox is not selected, the integration performs a full sync and processes all worker records during each run.<br/><strong>Note</strong>: Candidate data is always processed using a full sync, regardless of this setting.<ul><li data-list-item-id="e1806f82a1b89dcf6139d9f480f928f62">
+<strong>Full Sync Frequency</strong>: The frequency by which the integration must run in full sync mode when the incremental mode is enabled. For example, if the integration is scheduled to run every 6 hours and the <strong>Full Sync Frequency</strong> is set to daily, the integration will run in incremental mode every 6 hours and perform a full sync once every day.<br/><strong>Note</strong>: This setting is displayed only if you have selected the <strong>Enable Incremental Mode</strong> checkbox.</li></ul>
+</li></ul><h3 id="h_01KPTQH26P3CR5WMNQEXQES2C0">Worker Sync Settings</h3><p>This section details the following settings for synchronizing the worker data.</p><ul>
+<li data-list-item-id="e5b99ed3cbce60348148d45ac7971ec72">
+<strong>Source Filter</strong>: Select the ADP Workforce Now filter to filter the workers while retrieving from the SFTP server. The following are the available options:<ul>
+<li data-list-item-id="eaa3fb882e56c17a1d12319cdbc0b7679">
+<strong>None</strong>: Select this option to retrieve all worker records.</li>
+<li data-list-item-id="ee5e62b7b573833d0762d6cac05b053a0">
+<strong>Filter by Associate ID</strong>: Select this option to retrieve worker records for the specified associate ID.<ul><li data-list-item-id="ef368dbfce303202445579ef972aeaa8d">
+<strong>Source Filter Value</strong>: Enter the associate ID to filter the workers.</li></ul>
+</li>
+<li data-list-item-id="eb039161c35fc2efd140175206fe2745a">
+<strong>Filter by Position ID</strong>: Select this option to retrieve worker records for the specified position ID.<ul><li data-list-item-id="e74e398b6a547c297a57c989fa6110970">
+<strong>Source Filter Value</strong>: Enter the position ID to filter the workers.</li></ul>
+</li>
+<li data-list-item-id="e76c2c4af470184785c61684346ef777f">
+<strong>Filter by JS Expression</strong>: Select this option to retrieve worker records that match the configured JavaScript expression.<ul><li data-list-item-id="e2a42113c06125ee1c8d4e1e16771f226">
+<strong>Filter by JS Expression</strong>: Enter a JavaScript expression to filter the workers.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="edbc83f7197684bf15287e1cf796f2d15">
+<strong>Enable Import Limit</strong>: Select whether to limit the number of worker records imported during each integration run. The following are the available options:<ul>
+<li data-list-item-id="e48032cffb691b6c48c5dbc5fab73dc7c">
+<strong>Yes</strong>: Select this option to specify the maximum number of worker records to import per integration run<ul><li data-list-item-id="eade32406f2c42c9a714875d2add66ebe">
+<strong>Import Limit</strong>: Specify the maximum number of worker records that can be imported in the target application during a single integration run.</li></ul>
+</li>
+<li data-list-item-id="e9e722731b7270c85427a8322e26903aa">
+<strong>No</strong>: Select this option to import all eligible worker records without applying a limit.</li>
+</ul>
+</li>
+</ul><h3 id="h_01KPTV18DWNCW5GP7F2TQR9K2B">Candidate Management</h3><p>This section details the setting for synchronizing the candidate data.</p><ul><li data-list-item-id="eb9c5c1e879a977bfa8b95c1faa3f8af8">
+<strong>Candidate Filter Types</strong><span><strong>*</strong></span>: Select one or more filters to use when retrieving candidates. Only the selected filters are applied. The following are the available options:<ul>
+<li data-list-item-id="eb07f7c3d552914259b12c9892af6f8d3">
+<strong>Application Status</strong>: Select this option to filter candidates based on their application status.<ul><li data-list-item-id="e34bbaf54777b1f7ee12edf18830a4b8e">
+<strong>Include Candidates With Application Status</strong><span><strong>*</strong></span>: Select the application statuses of candidates in ADP Workforce Now that must be included in the sync to the SFTP server. For example, select Accepted Offer.</li></ul>
+</li>
+<li data-list-item-id="e38ecde65fd2f468f52229f49c52c68c7">
+<strong>Custom Status</strong>: Select this option to filter candidates using custom application statuses.<ul><li data-list-item-id="e75fd886777adb780640974f28b185612">
+<strong>Custom Application Statuses</strong><span><strong>*</strong></span>: Enter one or more custom application status values to filter candidates. Each value must exactly match the corresponding status value in ADP Workforce Now.</li></ul>
+</li>
+<li data-list-item-id="eba0cde8c76c5572b075be03fa9e55af7">
+<strong>Lookback Window</strong>: Select this option to filter candidates based on the configured lookback period.<ul><li data-list-item-id="ef365d27224b01990772b6d6a3c76b14f">
+<strong>Candidate Lookback Window (days)</strong><span><strong>*</strong></span><strong>: </strong>Enter the number of past days to consider when retrieving candidates.</li></ul>
+</li>
+<li data-list-item-id="eb17621c2da33c3a91e1b3d686f39afbb">
+<strong>Email</strong>: Select this option to filter candidates by their email address.<ul><li data-list-item-id="ee064b67140739580d33e6ed62a15281c">
+<strong>Filter Candidates by Email</strong><span><strong>*</strong></span><strong>: </strong>Enter one or more email addresses to filter candidates by their email address.</li></ul>
+</li>
+</ul>
+</li></ul><h3 id="h_01KPTV18DW0BVDJTPJJ3STD47Z">Writeback Settings</h3><p>This section details the following settings for writing back data from the SFTP server to ADP Workforce Now:</p><ul>
+<li data-list-item-id="ee2c623c698d59c57b9350c353c67b125">
+<strong>SFTP Read File Path</strong>: Specify the folder path in the SFTP server from where the integration must read the CSV file containing the worker data for writeback to ADP Workforce Now. For example, <em>Aquera/ADPWritebackData/workerdata.csv</em><br/>The work email, work phone number, and any custom attributes (configured in the Writeback attribute map) will be written back to ADP. <br/><strong>Note</strong>: The SFTP Server name is configured on the FTP Generic connector configuration page.</li>
+<li data-list-item-id="e2cc86e07be80371f56a31f5ab638a72a">
+<strong>Writeback Correlation Header</strong>: Select the CSV column name that contains the unique identifier for each worker record. This column value will be used by the integration to identify the matching worker record in ADP. </li>
+<li data-list-item-id="eba587bcbd26d59cd4354ddaca021447c">
+<strong>Writeback Correlation Attribute</strong>: Select the corresponding worker attribute in ADP Workforce Now that will be used to match against the selected CSV column name to identify the correct worker record. </li>
+</ul><h3 id="h_01KMMWWZASCF14V76882FQNPZ5">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
+<li data-list-item-id="e6734c47994567ab6d83533ba10e6477e">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select Log Type</strong>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e3b40edf219affb6d964c331f52b8dd71">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="efd12654c522b81ede7e572dfaa665760">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e42083b635adcc1e50724f5a639d6e1d1">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="efb6a7c8e35ddd048643618c1db4530c9">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ec917684d47ea9e3f0ddc353b89338f82">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e96b7fcf9305681a6d8f13d0ff316fec7">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e690d55df07ac7cb573ec2fe7ced9fda5">
+<strong>Select Log Level</strong>: Select the log detail level. The following are the available options:<ul>
+<li data-list-item-id="ec772c88eadd3f4c916500d97c2a61a05">
+<strong>All</strong>: Select this to include all attribute details in logs.</li>
+<li data-list-item-id="ea37a38a11c51ad47897429bac9a6fabd">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="ef478963a93eed75dc9e0ff22b3c1f806">
+<strong>Fields to include in logs</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="eadd74807f22c83f24fb62d269a797d06">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="e9af1b817cfb1a2bfc0a833542a5b27ea">
+<strong>Fields to exclude from logs</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ee3f598d7facb568777a408cccd46a6bd">
+<strong>Enter PII fields</strong>: Enter the fields that contain personally identifiable information (PII) to be included in logs. </li>
+<li data-list-item-id="ee26bf997edf8da10a058ebf77f8f2662">
+<strong>Enter GUID fields</strong>: Enter the fields that contain globally unique identifiers to ensure they are handled correctly in logs.</li>
+<li data-list-item-id="e7c90d996e8df8a3e378ba800298d975f">
+<strong>Enter EmployeeId fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in logs. For example, adding <strong>associateId</strong> ensures the employee identifier is included in logs.</li>
+</ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable report generation</strong> parameter in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
+<li data-list-item-id="ee19f053a30bfc0e78ee4914823289e78">
+<strong>Select Report Type</strong>: Select the report type. This will decide the level of detail to be included in reports. The following are the available options:<ul>
+<li data-list-item-id="ed4d17212f6951e7d23fb1f5cf7ad59d4">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e39eb928535f6c4bcdb27ef38db7ec5fe">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="eac6b99bfbbcabed37921d8d2a209363d">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e59b08d550c023870729300f2fbdbdd5b">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e2105895fa76eee3cf5ef1d4db2fcdaa3">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eb4a975303862c37610d64890effe83c2">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e50424e88f72735ca1f51bf6653d503e2">
+<strong>Select Report Level</strong>: Select the report detail level. The following are the available options:<ul>
+<li data-list-item-id="e0a7ce22c882393ad92b8db58b06ac639">
+<strong>All</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="ef3e8429497f1c389333aad1156ae5d25">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="eca363832ee14f5df716c9611041b8a75">
+<strong>Fields to include in reports</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e15f85a16ac6859e3d6762a87392ac68e">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="ea27917cc826abed2de3b14b5998ef730">
+<strong>Fields to exclude from reports</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="ec0046ceb38ea04cad5d3d470823f49e7">
+<strong>Enter PII fields</strong>: Enter the fields that contain personally identifiable information (PII) to be included in reports. </li>
+<li data-list-item-id="e700d89df0dd3c8d575508d8b47a88ff2">
+<strong>Enter GUID fields</strong>: Enter the fields that contain globally unique identifiers to ensure they are handled correctly in reports.</li>
+<li data-list-item-id="e0a3714df389242f4f1276eec5a658a8b">
+<strong>Enter EmployeeId fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in logs. For example, adding <strong>associateId</strong> ensures the employee identifier is included in reports.</li>
+</ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>This section enables you to customize the <strong>Log Insights</strong> settings for viewing and analyzing the integration data. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> setting in the <a href="#h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</a> section.</p><ul>
+<li data-list-item-id="ee246a067e27b4a2eefb2c5bf377a8a3f">
+<strong>Enter Dashboard Name</strong>: Enter the name of the Log Insights dashboard that must be created after the integration run.</li>
+<li data-list-item-id="ec748428f847ce0b703d50f4c1b81a56c">
+<strong>Select Analytics Type</strong>: Select the log insight type. This will decide the level of detail to be included for log insights. The following are the available options:<ul>
+<li data-list-item-id="e9a6f60c5091922ce84d1342fc9f7362f">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e0f7ec112ab0911af445960b418fce02f">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ebb6a0cb3b4063a436a4ca7f8cc043435">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e18e5fd875f39de00de6563e61187b138">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eb5fa2eb9dd1553aba7bc3c7f89a5c903">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eda66e893379ec7fe42e6915a1a4b83ff">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="ed9ff3648451b0cfd1f4b2330b8ccd05b">
+<strong>Select Analytics Level</strong>: Select the insights level. The following are the available options:<ul>
+<li data-list-item-id="e2fee78bc9f94a33e5d6e18b794b24919">
+<strong>All</strong>: Select this to include all attribute details in log insights.</li>
+<li data-list-item-id="e79f5968f927f11c533740ee439583990">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included. When selected, the following field is displayed:<ul><li data-list-item-id="eda7adedf0b5b34468ad4eea039ea4297">
+<strong>Fields to include in Log Insights</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e2f81bebd1d1844fa54ce345575719c71">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded. When selected, the following field is displayed:<ul><li data-list-item-id="ec8802e9f42b4ec686797759fff4bf971">
+<strong>Fields to exclude from Log Insights</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e88fb2390c89cb8ede4b8885ac5f82301">
+<strong>Enter PII fields</strong>: Enter the fields that contain personally identifiable information (PII) to be included in reports. </li>
+<li data-list-item-id="e99e64755a154b3508ab4cc06be8eae0c">
+<strong>Enter GUID fields</strong>: Enter the fields that contain globally unique identifiers to ensure they are handled correctly in reports.</li>
+<li data-list-item-id="e0245b0291012e3f7c1b5ac518424968b">
+<strong>Enter EmployeeId fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in logs. For example, adding <strong>associateId</strong> ensures the employee identifier is included in reports.</li>
+</ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable notifications</strong> setting in the <strong>Parameters</strong> section.</p><h4 id="h_01KMD5HX6RZDKPDAS75W3C2BAC">Notification Template Settings</h4><p>Configure the following settings to customize notifications:</p><ul>
+<li data-list-item-id="ef056ba2c07c86914912246e7a12cdf1c">
+<strong>Send Email Notifications For Success</strong>: Select this checkbox to send an email notification on successful integration runs. When selected, the <strong>Success Execution</strong> section is displayed for further configuration.</li>
+<li data-list-item-id="ee910308ec4f634e52a9e0569de77987f">
+<strong>Send Email Notifications For Failures</strong>: Select this checkbox to send an email notification on failed syncs in an integration run. When enabled, the <strong>Failure Execution </strong>section is displayed for further configuration.</li>
+<li data-list-item-id="e937585c021c47118abd71cef799c8173">
+<strong>Attach Report to Email</strong>: Select this checkbox to receive an email notification with an attached report for each integration execution.</li>
+</ul><h4 id="h_01KMDB9FBA9XQX58JJ5R0BJGRS">Success Execution</h4><p>Configure the following notification settings for successful integration runs:</p><ul>
+<li data-list-item-id="eb2ba958f7733564b726d1074e26eb8d4">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration runs.</li>
+<li data-list-item-id="ef13b3d4f65fa47184b0b98ae711fa7ff">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e76be64a491b6951c5128c43aeee5de25">
+<strong>Email Subject</strong>: Enter the content that must be used as the subject in email notifications.</li>
+<li data-list-item-id="e0fbf6a371e3688eea5328d0bd84c9359">
+<strong>Integration Execution Success Email Body</strong>: Enter the content that must be used as the email body for notifications sent upon successful sync.</li>
+</ul><h4 id="h_01KMYRKV8WABFW2SDY1JHBDHCX">Failure Execution</h4><p>Configure the following settings for failed syncs:</p><ul>
+<li data-list-item-id="e1a1c769b4b53be992a425724e67f2ea0">
+<strong>Send To</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon failed syncs.</li>
+<li data-list-item-id="e63555b9301ec078ebc7f304f383ba50f">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e4bc197abc5201fb646759c6083ee8641">
+<strong>Email Subject</strong>: Enter the content that must be used as the subject in email notifications.</li>
+<li data-list-item-id="ee0f751a7dc63b575890032d2bc1ddf05">
+<strong>Email Body</strong>: Enter the content that must be used as the email body for notifications sent upon failed form syncs.</li>
+</ul><h4 id="h_01KMF2X3G32JK6ZPBW74RWAJ7K">Notification Report Settings</h4><p>Configure the following email notification report settings:</p><ul>
+<li data-list-item-id="e5894e223cdb174f2eaf70e5946d3968e">
+<strong>Select Report Type</strong>: Select the report type. This will decide the level of detail to be included in reports. The following are the available options:<ul>
+<li data-list-item-id="e3e931911ef9773c4bff8e7a3530f4aa5">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ef6abba11c038ce5ed88ec927e6624788">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e2c8b68a35cf24be47d8f419c5d7b97c8">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e39d7c207c3dbe21eddd84db622f21ddd">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ec0d0b046bcbfaf47b2eaa0caf458d7ea">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e97f938660b06b56802858162fdbb8652">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e5d4a61129c08d99e144162aed952788e">
+<strong>Select Report Level</strong>: Select the report detail level. The following are the available options:<ul>
+<li data-list-item-id="e399547658011d0e05f01fcbce7d638b9">
+<strong>All</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="eb95a70845494f0119b9864b5f50ac0da">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="e66a3e0a2b55f260640be129eb6ed4f7c">
+<strong>Fields to include in reports</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="eeb459346cf7edd4a94a8581940a88ac1">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="ec4e52a21530055316935d5ec0a69d3ed">
+<strong>Fields to exclude from reports</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e46c37b22934a1fb3ad007c69ad8a12d6">
+<strong>Enter PII fields</strong>: Enter the fields that contain personally identifiable information (PII) to be included in reports. </li>
+<li data-list-item-id="e374ee7951e235f02ca1eac2529f8e7ce">
+<strong>Enter GUID fields</strong>: Enter the fields that contain globally unique identifiers to ensure they are handled correctly in reports.</li>
+<li data-list-item-id="e5a1c7febbf3d44f19e2ae6de99af2bbe">
+<strong>Enter EmployeeId fields</strong>: Enter the fields that represent employee identification values to be displayed consistently in logs. For example, adding <strong>associateId</strong> ensures the employee identifier is included in reports.</li>
+</ul><h2 id="h_01KPTV18DWG3VBTF717Q0AMST6">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab contains settings to configure the following mappings:</p><ul>
+<li data-list-item-id="e7de74525424037ce08f89d3ac0d7dade">ADP Workforce Now worker attributes to CSV columns for worker sync</li>
+<li data-list-item-id="e04b342d97f9712862089c291d54f28c6">ADP Workforce Now candidate attributes to CSV columns for candidate sync</li>
+<li data-list-item-id="e50994bd2e09f046921fabd32a7d7c32b">CSV columns to  ADP Workforce Now worker attributes for writebacks </li>
+</ul><h3 id="h_01KPWFHC772R0J1BBNZDRRME5H">Worker to SFTP</h3><p>The <strong>Worker to SFTP </strong>section enables you to map ADP Workforce Now worker attributes to the columns in the CSV file within the SFTP server. This section is displayed only if you have selected <strong>Enable workers sync</strong>.</p><figure><img alt="w to sftp.png" height="624" src="./assets/4a9df85bd8a6c1be.bin" width="1988"/></figure><p><strong>Note</strong>: For the CSV column header names to be populated in the <strong>Target Attribute </strong>section of the attribute map, make sure that the CSV file containing header rows is already placed in the SFTP location.</p><h3 id="h_01KPWFJ05GNMHQY0YB35ZWFVGJ">Candidate to SFTP</h3><p>The <strong>Candidate to SFTP </strong>section enables you to map ADP Workforce Now candidate attributes to the columns in the CSV file within the SFTP server. This section is displayed only if you have selected <strong>Enable candidate management</strong>.</p><figure><img alt="c to sftp.png" height="638" src="./assets/ab9a84a488db1879.bin" width="1986"/></figure><p><strong>Note</strong>: For the CSV column header names to be populated in the <strong>Target Attribute </strong>section of the attribute map, make sure that the CSV file containing header rows is already placed in the SFTP location.</p><h3 id="h_01KPWFJ2RR17RJ9SQH2BZ56061">Writeback Map</h3><p>The <strong>Writeback Map </strong>section enables you to map CSV columns to the ADP Workforce Now worker attributes. This section is displayed only if you have selected <strong>Enable writeback</strong>.</p><figure><img alt="writeback.png" height="682" src="./assets/2a94a71363781f73.bin" width="2004"/></figure><p>Mapping can be set for work email, work phone number, and all custom attributes in ADP Workforce Now. </p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Schedule</h2><p>The integration can be scheduled to run automatically at specified intervals. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for details. </p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
   </div>
 </body>
 </html>

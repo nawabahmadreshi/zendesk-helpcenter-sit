@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SFTP / UKG Pro Integration Setup Guide - Draft Copy</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>SFTP / UKG Pro Integration Setup Guide - Draft Copy</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01JZW9E9B6ZZRTWQSYHXT2DAAF">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p><strong>This integration retrieves employee data from UKG Pro, generates a file, and delivers it to the configured SFTP directory.</strong></p><p>The integration can run in full or incremental synchronization mode. It also supports user filtering, debug execution, report-only execution, configurable file formats, timestamped filenames, logs, reports, notifications, and Log Insights.</p><h2 id="h_01M1EE04YEJMEN6RGKZDY0YC1A">Key Functions</h2><p>The SFTP / UKG Pro integration performs the following functions:</p><ul>
+<li data-list-item-id="efaae4c8f8c8b35a4b863574502a224af">Retrieves employee data from UKG Pro and generates a file containing the retrieved data in a specific SFTP location.</li>
+<li data-list-item-id="e27c99e610a39376b9a2f45a0b865876d">Supports full synchronization and incremental synchronization. Full synchronization processes all employees that match the configured user filter, while incremental synchronization processes employees changed since the last sync.</li>
+<li data-list-item-id="e3bb720df4d58067263f25051f9f5b374">Generates detailed logs and reports.</li>
+<li data-list-item-id="e066c8138aa3697794d90fb5a8144bd7b">Sends email notifications for successful, failed, and skipped integration executions.</li>
+</ul><h1 id="h_01JZW70JA70W2SCAXXM5NFYAK0">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e6c2642160bde4c8d63d358559ebae290">
+<strong>Tenant Account in the Aquera Admin Portal</strong>: You must have a tenant account with admin access in the Aquera Admin Portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io</a> to register.</li>
+<li data-list-item-id="e72bbadf01ff297716af1103766427f8a">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin Portal:<ul>
+<li data-list-item-id="e781f5cff1ee01653ee87756bc0386f25">
+<strong>UKG Pro</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/4420217992727" rel="noopener noreferrer" target="_blank">UKG Pro Configuration Guide</a> for configuration details.<br/><strong>Note</strong>: You must configure the following tenant attributes during connector configuration:<ul>
+<li data-list-item-id="e2e0f587ac76f6286a1353211de188ca2">Client ID</li>
+<li data-list-item-id="eb0420c9ef87c65e608f9d97f8a5b288a">Client Secret</li>
+<li data-list-item-id="e72cd1d81b9c247a62e668c18a2de7bca">Tenant Alias</li>
+<li data-list-item-id="e8526b8c5b0332a301e0da6ee1b0eb99a">Service Account Username</li>
+<li data-list-item-id="e8fcc8ce99e9f564da9ebd638fd27f92e">Service Account Password</li>
+<li data-list-item-id="e782632ba01b62c1706866903994ca5a1">Service Account User API Key</li>
+<li data-list-item-id="eb24a776f56f1d120c0fd7852e61abcec">Service Account Customer API Key</li>
+</ul>
+</li>
+<li data-list-item-id="ea6e2a2fb227c51787665fe04e94e1901">
+<strong>FTP Generic</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360058816934" rel="noopener noreferrer" target="_blank">FTP Generic Configuration Guide</a> for configuration details.<br/><strong>Note</strong>: The integration uses the SFTP file path configured in the <a href="#h_01M1KTH2PCZEKKZD14ZS4TC38H">SFTP Settings</a> section. It ignores the value if configured in the <strong>File path</strong> tenant attribute of the FTP Generic connector.</li>
+</ul>
+</li>
+</ul><h1 id="h_01F6EH0W486EMXD6A000X2Z4YZ">Integration Setup</h1><p>This section outlines how to create and configure the integration to generate employee files in SFTP from UKG Pro data.</p><h2 id="h_01HXY3TX2QHXF1YJK3GCQQ87P7">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e44ec684d6d5828262f48d3e233dbe67c">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="eddd651dac1f8fa1000be661851b0302a">Navigate to <strong>Integrations</strong> from the left-side panel.</li>
+<li data-list-item-id="e39f2a324742f104f194a10822790d3c8">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e85a0aac74fac344bf3f58b6952978227">Search for <strong>SFTP / UKG Pro</strong> in the search box next to the <strong>Explore Templates</strong> section, and then select it to create a new integration.</li>
+<li data-list-item-id="eaffc0fe533720b74da1145d17694a513">Enter a name and a description for the integration.</li>
+<li data-list-item-id="e68b2f37404bc2716111502158151660c">Select your <strong>UKG Pro </strong>and<strong> FTP Generic </strong>connector instances.</li>
+<li data-list-item-id="e1af6a3b4b568837e37ef331aa5c07e10">Click <strong>Continue</strong>. The <a href="#h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</a> page is displayed.</li>
+</ol><h2 id="h_01JPQ8ZTEY7NJC2SRMDWPK964A">Configuration</h2><p>The following sections are displayed under the <strong>Configuration</strong> tab:</p><h3 id="h_01JPQ91FKVZHN9SQJEN1N0S3XQ">Applications</h3><p>The <strong>Applications</strong> section displays the <strong>UKG Pro</strong> and <strong>FTP Generic</strong> application connectors that you have selected for the integration. This section allows you to search and update these application connectors.</p><h3 id="h_01JPS6V3Y0HBETQWCMNHNHZAVN">Parameters</h3><p>The <strong>Parameters</strong> section enables you to customize the integration features and settings according to your use case. It has the following settings:</p><h4 id="01K4A9SYGXKD4PRK6W9STNDTN3">Integration Settings</h4><p>Enable the following features based on your requirements:</p><ul>
+<li data-list-item-id="e13f0df0dac59f7725adfe8a460b895d8">
+<strong>Enable report-only mode</strong>: Enable this to generate the output file and integration report without uploading the file to SFTP.</li>
+<li data-list-item-id="e1871caf0400ad88ed1a42dac2122dee5">
+<strong>Enable full sync</strong>: Enable this to include all UKG Pro employee records that match the configured user filter for processing during each run.</li>
+<li data-list-item-id="ece83ed496fee9cc168619199fe09642c">
+<strong>Enable incremental sync</strong>: Enable this to execute the integration in incremental mode. In incremental mode, the integration retrieves and processes only the employee data that have been added or modified in UKG Pro since the last integration execution.<br/><strong>Note</strong>: If both <strong>full</strong> and <strong>incremental</strong> synchronization are enabled, <strong>incremental</strong> synchronization takes precedence.</li>
+<li data-list-item-id="ee20d778e494d67b1a83da28b037e6abd">
+<strong>Enable debug mode</strong>: Enable this to test the integration for specific UKG Pro employees. When enabled, the <a href="#h_01M1GFR3W48XB1EMDYARC8WM65">Debug Settings</a> section is displayed for further configuration.<br/><strong>Note</strong>: If this field is enabled and full or incremental sync is also enabled, debug mode takes precedence.</li>
+</ul><h4 id="h_01M1GFR3W48XB1EMDYARC8WM65">Debug Settings</h4><p>This section enables you to customize the debug mode settings.</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable Debug Mode</strong><span><strong> </strong></span>setting.</p><p>It has the following settings:</p><ul>
+<li data-list-item-id="e6eeae0aaa38e231e6d2f786ea440101a">
+<strong>Select field to filter employees for debugging</strong>: Select <strong>Employee ID</strong> or <strong>Email Address</strong> to filter the UKG Pro employees for the debug run.</li>
+<li data-list-item-id="e1bc96024b6ba8aed632789d5e845f490">
+<strong>Employee IDs</strong>: Enter one or more comma-separated employee IDs to identify UKG Pro employees for the debug run.<br/><strong>Note</strong>: This field is displayed only when <strong>Employee ID</strong> is selected to filter employees.</li>
+<li data-list-item-id="e980a8854af0d97d3af90fee02d327522">
+<strong>Email Addresses</strong>: Enter one or more comma-separated email addresses to identify UKG Pro employees for the debug run.<br/><strong>Note</strong>: This field is displayed only when <strong>Email Address</strong> is selected to filter employees.</li>
+</ul><h3 id="h_01M1K1H860DYM4S4TCYBD7ESRJ">General Settings</h3><p>Configure the following general settings:</p><ul>
+<li data-list-item-id="e85097c346b48efee04617aed4813b61f">
+<strong>Enable logging</strong>: Select this to generate logs outlining data changes. When enabled, the <a href="#h_01KMMWWZASCF14V76882FQNPZ5">Log Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e695f5ec3ccd485c1fe38d3e99ef586d3">
+<strong>Enable notifications</strong>: Select this to enable integration-related notifications. When enabled, the <a href="#h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ebec0f031a07ea1fb4e7cd2708a65d652">
+<strong>Enable report generation</strong>: Select this to generate the integration report. When enabled, the <a href="#01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e17b000826d9237b47d796d3c6456ab87">
+<strong>Enable Log Insights</strong>: Select this to visualize the integration-related metrics. When enabled, the <a href="#h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</a> section is displayed for further configuration.</li>
+</ul><h3 id="h_01KMMWWZASCF14V76882FQNPZ5">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable logging</strong> parameter in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</a> section.</p><ul>
+<li data-list-item-id="e6734c47994567ab6d83533ba10e6477e">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Select log type</strong>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e3b40edf219affb6d964c331f52b8dd71">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="efd12654c522b81ede7e572dfaa665760">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e42083b635adcc1e50724f5a639d6e1d1">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="efb6a7c8e35ddd048643618c1db4530c9">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ec917684d47ea9e3f0ddc353b89338f82">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e96b7fcf9305681a6d8f13d0ff316fec7">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e690d55df07ac7cb573ec2fe7ced9fda5">
+<strong>Select log level</strong>: Select the log detail level. The following are the available options:<ul>
+<li data-list-item-id="ec772c88eadd3f4c916500d97c2a61a05">
+<strong>Full</strong>: Select this to include all attribute details in logs.</li>
+<li data-list-item-id="ea37a38a11c51ad47897429bac9a6fabd">
+<strong>Inclusion list</strong>: Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="ef478963a93eed75dc9e0ff22b3c1f806">
+<strong>Fields to include in logs</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="eadd74807f22c83f24fb62d269a797d06">
+<strong>Exclusion list</strong>: Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="e9af1b817cfb1a2bfc0a833542a5b27ea">
+<strong>Fields to exclude from logs</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01K04H64FAB90EMWBN6K7GPF4W">Notifications</h3><p>This section enables you to customize the notification settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable notifications</strong> parameter in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</a> section.</p><h4 id="h_01KMD5HX6RZDKPDAS75W3C2BAC">Notification Template Settings</h4><p>Configure the following settings to customize notifications:</p><ul>
+<li data-list-item-id="e50ef9e2b20677d17bcca127b146a5f1f">
+<strong>Send email notifications for success</strong>: Enable this to send an email notification on successful integration runs. When selected, the <a href="#h_01KMDB9FBA9XQX58JJ5R0BJGRS">Success Execution</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ed7bbfbca4685a49856744f2f035f6c5a">
+<strong>Send email notifications for failures</strong>: Enable this to send an email notification on failed syncs in an integration run. When enabled, the <a href="#h_01KMYRKV8WABFW2SDY1JHBDHCX">Failure Execution</a><strong> </strong>section is displayed for further configuration.</li>
+<li data-list-item-id="e4c5ce52cc2fca294bd69c34ad06f8a82">
+<strong>Send email notification for skipped records</strong>: Enable this to send an email notification when records are skipped during an integration run. When enabled, the <a href="#h_01M1K1HC212G052PS1DWHW150K">Skipped Execution</a><strong> </strong>section is displayed for further configuration.</li>
+<li data-list-item-id="ea8b0998ac9e6857de42a515314c9a216">
+<strong>Attach report in email</strong>: Enable this to receive an email notification with an attached report for each integration execution.</li>
+</ul><h4 id="h_01KMDB9FBA9XQX58JJ5R0BJGRS">Successful Execution</h4><p>Configure the following notification settings for successful integration runs:</p><ul>
+<li data-list-item-id="eb003dd6f3c39b899ff09c66b9662f287">
+<strong>Send to</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon successful integration runs.</li>
+<li data-list-item-id="e419cc5d6735069ed4dbd1d943409520c">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e40df76f6e82460aedbc511662844300d">
+<strong>Email subject</strong>: Enter the content that must be used as the subject in email notifications.</li>
+<li data-list-item-id="e76434b92bc74ebd291c404c5d7489746">
+<strong>Integration execution success email body</strong>: Enter the content that must be used as the email body for notifications sent upon successful sync.</li>
+</ul><h4 id="h_01KMYRKV8WABFW2SDY1JHBDHCX">Failed Execution</h4><p>Configure the following notification settings for failed syncs:</p><ul>
+<li data-list-item-id="e5ef8b6964a1547632248132c6596253f">
+<strong>Send to</strong>: Enter the email addresses of the admins to whom the email notifications will be sent upon failed syncs.</li>
+<li data-list-item-id="ede9c2cf50c2a25670e78fbaae2f53031">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="e3539d71f06d6a706c1ecd38085b7246a">
+<strong>Email subject</strong>: Enter the content that must be used as the subject in email notifications.</li>
+<li data-list-item-id="e6f2492108b5db439aa6cc869e2c31a57">
+<strong>Email body</strong>: Enter the content that must be used as the email body for notifications sent when an integration execution fails.</li>
+</ul><h4 id="h_01M1K1HC212G052PS1DWHW150K">Skipped Execution</h4><p>Configure the following notification settings for executions in which records are skipped:</p><ul>
+<li data-list-item-id="eb65cd2ebf53ea0809d9046a4ad665c44">
+<strong>Send to</strong>: Enter the email addresses of the admins to whom the email notifications will be sent when records are skipped during an integration run.</li>
+<li data-list-item-id="e84315594cc290611b18eae8dab4ec29c">
+<strong>Cc</strong>: Enter the email addresses of additional recipients who should receive a copy of the email notification.</li>
+<li data-list-item-id="ef25f52dd1121026b69f450eca0be89ae">
+<strong>Email subject</strong>: Enter the content that must be used as the subject in email notifications.</li>
+<li data-list-item-id="e95bab6739a827fd0fcfd17658eaf9932">
+<strong>Email body</strong>: Enter the content that must be used as the email body for notifications.</li>
+</ul><h4 id="h_01KMF2X3G32JK6ZPBW74RWAJ7K">Notification Report Settings</h4><p>Configure the following email notification report settings:</p><ul>
+<li data-list-item-id="e817f5343b490565f5c3e899b2b5df05d">
+<strong>Select report type</strong>: Select the report type. This will decide the level of detail to be included in reports. The following are the available options:<ul>
+<li data-list-item-id="ee0b5403c252940af959583f3c97cbe13">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="effa1e92ec87ce86db3556d525a1571a8">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e40d48a898ade2e026fc2d9397880519d">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ed687768bdab5330641b6d198c6b54468">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e832fd40bde7a28e95dfa8407602f5599">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ec927f9c8bd7d25d169f9e28d0b799f29">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e467b2bc1ea7cdd2155e3455d9951ae4d">
+<strong>Select report level</strong>: Select the report detail level. The following are the available options:<ul>
+<li data-list-item-id="eb7eb2b101916bbf9a9a28126a783cd01">
+<strong>Full</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="e9c19940467326a7f4c6908df18d8db6b">
+<strong>Inclusion list</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="e90af715e285d3c99124812df3a0d7829">
+<strong>Fields to include in reports</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e1bf9d41e1bad6cf0be5e2e29e53172e8">
+<strong>Exclusion list</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="e3fe46e33e259a018ce639a87eb4140f6">
+<strong>Fields to exclude from reports</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="01KG21C7RQCRB9NJP5ZN6VEHXX">Report Settings</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong>Enable report generation</strong> parameter in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</a> section.</p><ul>
+<li data-list-item-id="ee19f053a30bfc0e78ee4914823289e78">
+<strong>Select report type</strong>: Select the report type. This will decide the level of detail to be included in reports. The following are the available options:<ul>
+<li data-list-item-id="ed4d17212f6951e7d23fb1f5cf7ad59d4">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e39eb928535f6c4bcdb27ef38db7ec5fe">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="eac6b99bfbbcabed37921d8d2a209363d">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e59b08d550c023870729300f2fbdbdd5b">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e2105895fa76eee3cf5ef1d4db2fcdaa3">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eb4a975303862c37610d64890effe83c2">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e50424e88f72735ca1f51bf6653d503e2">
+<strong>Select report level</strong>: Select the report detail level. The following are the available options:<ul>
+<li data-list-item-id="e0a7ce22c882393ad92b8db58b06ac639">
+<strong>Full</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="ef3e8429497f1c389333aad1156ae5d25">
+<strong>Inclusion list</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="eca363832ee14f5df716c9611041b8a75">
+<strong>Fields to include in reports</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e15f85a16ac6859e3d6762a87392ac68e">
+<strong>Exclusion list</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="ea27917cc826abed2de3b14b5998ef730">
+<strong>Fields to exclude from reports</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01K10JE0BE3NC9YPVFVTZJBJ7B">Log Insights</h3><p>This section enables you to customize the <strong>Log Insights</strong> settings for viewing and analyzing the integration data. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have enabled the <strong>Enable Log Insights</strong> parameter in the <a href="#h_01JZT4V8HJ90QZAEZ9Z3TXBCDK">General Settings</a> section.</p><ul>
+<li data-list-item-id="ee246a067e27b4a2eefb2c5bf377a8a3f">
+<strong>Enter dashboard name</strong>: Enter a name for the Log Insights dashboard that must be created after the integration execution.</li>
+<li data-list-item-id="ec748428f847ce0b703d50f4c1b81a56c">
+<strong>Select analytics type</strong>: Select the log insight type. This will decide the level of detail to be included for log insights. The following are the available options:<ul>
+<li data-list-item-id="e9a6f60c5091922ce84d1342fc9f7362f">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e0f7ec112ab0911af445960b418fce02f">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ebb6a0cb3b4063a436a4ca7f8cc043435">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e18e5fd875f39de00de6563e61187b138">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eb5fa2eb9dd1553aba7bc3c7f89a5c903">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eda66e893379ec7fe42e6915a1a4b83ff">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="ed9ff3648451b0cfd1f4b2330b8ccd05b">
+<strong>Select analytics level</strong>: Select the insights level. The following are the available options:<ul>
+<li data-list-item-id="e2fee78bc9f94a33e5d6e18b794b24919">
+<strong>Full</strong>: Select this to include all attribute details in log insights.</li>
+<li data-list-item-id="e79f5968f927f11c533740ee439583990">
+<strong>Inclusion list</strong>: Select this if you want to choose attributes to be included. When selected, the following field is displayed:<ul><li data-list-item-id="eda7adedf0b5b34468ad4eea039ea4297">
+<strong>Fields to include in Log Insights</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e2f81bebd1d1844fa54ce345575719c71">
+<strong>Exclusion list</strong>: Select this if you want to choose attributes to be excluded. When selected, the following field is displayed:<ul><li data-list-item-id="ec8802e9f42b4ec686797759fff4bf971">
+<strong>Fields to exclude from Log Insights</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01M1K257ARHDGMXKEXB2SSG4RK">UKG to SFTP Settings</h2><p>This tab enables you to control which UKG Pro employees are included and how the files are generated in SFTP.</p><h3 id="h_01M1K2A9SSG16Z8AM1VPT2FVWD">UKG Pro Settings</h3><ul>
+<li data-list-item-id="eebad9cae1d1799beb305e76a06a01578">
+<strong>Employees to be included</strong>: Select the UKG Pro employees to be included in the integration. You can select all users, one status, a supported combination of statuses, or Custom.<br/>For example:<ul>
+<li data-list-item-id="ea530ec4d84c5ca970f4df641a2c8a2a5">Select <em>All Active Users</em> to include only employees whose account status is active.</li>
+<li data-list-item-id="ed90043b1811788443f34908b6b42a614">Select Custom to define a custom filter.</li>
+</ul>
+</li>
+<li data-list-item-id="e89b2a21a995358b43b1f4c481e74434e">
+<strong>Enter custom filter</strong>: Enter an expression that identifies the employees to include.<br/>For example:<br/><br/><em>(new Date(dateInJob).setHours(0,0,0,0) &lt;= new Date().setHours(0,0,0,0) &amp;&amp; employeeStatusCode === "A") || ( employeeStatusCode === "A" &amp;&amp; new Date(dateOfTermination).setHours(0,0,0,0) &gt;= new Date().setHours(0,0,0,0) ) || employeeStatusCode === "T" || employeeStatusCode === "L"</em><br/><br/><strong>Notes</strong>:<ul>
+<li data-list-item-id="ecef9c56af1c3af4abfa7e61bfd63f3cc">This field is displayed only when <em>Custom</em> is selected in the <strong>Employees to be included</strong> field.</li>
+<li data-list-item-id="ec4d13f280891daa438c8212c38f82754">In the above example, <strong>A</strong> represents <strong>Active</strong>, <strong>T</strong> represents <strong>Terminated</strong>, and <strong>L</strong> represents <strong>Leave of Absence</strong>.</li>
+</ul>
+</li>
+<li data-list-item-id="ece03c40a75537ecfe43324b3ce87e6b1">
+<strong>Time Zone</strong>: Select the time zone to use when evaluating the date and time configured in the <strong>Enter custom filter</strong> and <strong>Future hire hold condition</strong> fields.<br/><strong>Note</strong>: This is required when you configure a custom filter or enable <strong>Manage future hires</strong>.</li>
+<li data-list-item-id="e1299994d8301a201891b16616218b162">
+<strong>Manage future hires</strong>: Enable this to delay processing employees with future hire dates. During each subsequent incremental synchronization run, the integration reevaluates these employees using the <strong>Future hire hold condition</strong> and processes them when their hire date arrives.<br/><strong>Note</strong>: This feature works only with incremental synchronization runs.</li>
+<li data-list-item-id="e0f074930a09cc640cf32125de8943e65">
+<strong>Future hire hold condition</strong>: Enter an expression that identifies employees whose processing must be delayed because their hire date is in the future. The integration reevaluates the expression during each incremental synchronization run.<br/>For example:<br/><br/><em>employeeStatusCode === "A" &amp;&amp; new Date(dateInJob).setHours(0,0,0,0) &gt; new Date().setHours(0,0,0,0)</em><br/><br/><strong>Note</strong>: This expression identifies active employees whose hire date value is later than the current date.</li>
+</ul><h3 id="h_01M1KTH2PCZEKKZD14ZS4TC38H">SFTP Settings</h3><ul>
+<li data-list-item-id="e3866d8f38afe63cb12f0ee76c872143a">
+<strong>Select Directory</strong>: Select <strong>Working Directory</strong> to upload the generated file to the working directory on the SFTP server, or select <strong>Custom Input</strong> to use a different directory.<br/>If you select <strong>Custom Input</strong>, the following field is displayed:<ul><li data-list-item-id="e40eaf27e1c85711dbf7873a38a076f25">
+<strong>SFTP Directory</strong>: Enter the target directory on the SFTP server. To deliver the same file to multiple custom directories, enter the directory paths separated by commas.<br/>Enter ./ to use the working directory on the SFTP server.</li></ul>
+</li>
+<li data-list-item-id="e7ea8346776e0c9b965d7edca40426724">
+<strong>SFTP file name</strong>: Provide a name for the file to be generated on the SFTP server.<br/><strong>Note</strong>: You don't need to include a file extension in the file name. The integration automatically applies the file extension based on the format you select in the <strong>File format</strong> field.</li>
+<li data-list-item-id="ea833cb99184f367e72c34f585368a79d">
+<strong>Generate a unique file name by appending timestamp</strong>: Enable this to append a run timestamp to the filename. For example, <em>filename_YYYY-MM-DD_HH-MM-SS.csv</em>.<br/><strong>Note</strong>: This prevents earlier files from being overwritten.</li>
+<li data-list-item-id="e9f7063680a61cf7444389c44b8533c25">
+<strong>File format</strong>: Select the format of the file to be generated. You can select <em>txt</em>, <em>tsv</em>, or csv.<br/><strong>Note</strong>: CSV files are comma-delimited and include a header row. The txt and tsp files are tab-delimited and do not include a header row.</li>
+</ul><h2 id="h_01KPTV18DWG3VBTF717Q0AMST6">Attribute Map</h2><p>The <strong>Attribute Map</strong> tab enables you to define how UKG Pro attributes are mapped when generating the file on the SFTP server.</p><p>UKG Pro attributes are listed on the left, and the target file columns appear on the right for mapping based on your specific use case.</p><p>Refer to the following table to view a sample mapping:</p><figure><table><tbody>
+<tr>
+<td><p><strong>UKG Pro Field</strong></p></td>
+<td><p><strong>Column name in the file</strong></p></td>
+</tr>
+<tr>
+<td><p>employeeNumber</p></td>
+<td><p>EmployeeNumber</p></td>
+</tr>
+<tr>
+<td><p>firstName</p></td>
+<td><p>FirstName</p></td>
+</tr>
+<tr>
+<td><p>preferredName</p></td>
+<td><p>PreferredFirstName</p></td>
+</tr>
+<tr>
+<td><p>Employee_PreferredLastName</p></td>
+<td><p>LastName</p></td>
+</tr>
+<tr>
+<td><p>emailAddress</p></td>
+<td><p>Email</p></td>
+</tr>
+<tr>
+<td><p>orgLevel1Code</p></td>
+<td><p>OrgLevel1</p></td>
+</tr>
+<tr>
+<td><p>primaryJobCode</p></td>
+<td><p>Title</p></td>
+</tr>
+<tr>
+<td><p>fullTimeOrPartTimeCode</p></td>
+<td><p>FullOrPartTime</p></td>
+</tr>
+<tr>
+<td><p>employeeStatusCode</p></td>
+<td><p>EmploymentStatus</p></td>
+</tr>
+<tr>
+<td><p>lastHireDate</p></td>
+<td><p>EmployeeStartDate</p></td>
+</tr>
+<tr>
+<td><p>statusStartDate</p></td>
+<td><p>EmploymentStatusDate</p></td>
+</tr>
+<tr>
+<td><p>jobDescription</p></td>
+<td><p>TitleDescription</p></td>
+</tr>
+<tr>
+<td><p>supervisorEmployeeNumber</p></td>
+<td><p>ManagerEmployeeNumber</p></td>
+</tr>
+<tr>
+<td><p>deriveLocationCode</p></td>
+<td><p>StoreID</p></td>
+</tr>
+</tbody></table></figure><p>You can use JavaScript expressions to transform source attribute values and construct the values that are updated in the file. You can enter the expression directly in the source attribute field or click the expand icon to write a longer expression.</p><p>The <strong>Search Attributes</strong> field allows you to filter the list of available attributes for mapping.<br/>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</p><h2 id="h_01K04J6RRA21B3QX6Q3EPK80JN">Tables</h2><p>The Tables tab enables you to define custom values that are not available from UKG Pro. After creating a table, reference it in an attribute-mapping expression to populate values in the generated file.</p><p>Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p><h2 id="h_01M1KTH2PCQA3C1VWVV451M0FJ">Schedule</h2><p>The integration can be scheduled to run automatically at specified intervals. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for details. </p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations </a>for further details.</p><p> </p>
+  </div>
+</body>
+</html>

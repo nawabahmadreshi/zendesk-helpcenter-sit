@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dayforce / SailPoint ISC Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>Dayforce / SailPoint ISC Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01M36C4AZ14159V3BF4V00XFRD">Overview</h1><p>Aquera's integrations facilitate automatic user provisioning, helping ensure consistency across systems. They enable organizations to streamline user lifecycle processes and automate repetitive tasks, improving efficiency in managing user identities and access.</p><p>With this integration, employee records created or updated in Dayforce are automatically synchronized with SailPoint based on the configured schedule.</p><p>This guide explains how to configure the <strong>Dayforce to SailPoint</strong> integration and synchronize employee data from Dayforce to SailPoint.</p><h2 id="h_01K06FVR3HAYYM66WATF77B0B4">Key Functions</h2><p>The Dayforce / SailPoint integration provides the following functions:</p><ul>
+<li data-list-item-id="e4ee14ace5f359d656914bb9695755efd">Creates, updates, and deprovisions user accounts in SailPoint based on employee lifecycle events in Dayforce.</li>
+<li data-list-item-id="ec6ef9d30185c08dcaffe064e2b862d19">Supports full and incremental syncs and allows you to schedule recurring full syncs.</li>
+<li data-list-item-id="e73804df147a093a244829ac8a500d5e5">Enables you to filter Dayforce records based on the values configured.</li>
+<li data-list-item-id="e56bd80527c1dbc44d659d0695584cddd">Generates detailed logs and reports.</li>
+<li data-list-item-id="eb362fe7cdb15ecc2ed4af6a898ba7f3d">Sends notifications about successful and failed integration run events via email.</li>
+</ul><h1 id="h_01J46AGRGRQPVRAPETC1V9F4Q4">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="ee8c843ef125b858aef02d207eba21267">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a> </li>
+<li data-list-item-id="e146474ddf2a503012463a7b4a9fb3563">
+<strong>Configure Applications in the Aquera Admin Portal</strong>: <ul>
+<li data-list-item-id="e8ac99c20015da34bb2a5d174cf7f94b1">
+<strong>Dayforce Connector</strong>: Ensure you add and configure the Dayforce connector in the Aquera Admin portal. For details, refer to the corresponding <a href="https://support.aquera.com/hc/en-us/articles/360022522853" rel="noopener noreferrer" target="_blank">Dayforce Configuration Guide</a>.</li>
+<li data-list-item-id="eb6a76b29acac9dfa90a040aef66a633e">
+<strong>SailPoint Connector</strong>: Ensure you add and configure the SailPoint connector in the Aquera Admin portal. For details, refer to the corresponding <a href="https://support.aquera.com/hc/en-us/articles/12569382686871" rel="noopener noreferrer" target="_blank">SailPoint Identity Security Cloud Configuration Guide</a>.</li>
+</ul>
+</li>
+<li data-list-item-id="ede4f0351e60c95d8297c9971e108e736">
+<strong>Source application in SailPoint</strong>: You must create a source application of type SCIM 2.0 in your SailPoint Identity Security Cloud instance. Make sure that provisioning is enabled as shown below.<br/><img alt="dayforce:sailpoint.png" height="1694" src="./assets/a4c420ec6fd6d2fe.bin" width="1572"/>
+</li>
+<li data-list-item-id="e75227a18afb56e58bb7db162eea0f183">
+<strong>Scopes</strong>: Make sure that the following scopes are enabled while generating a token: <ul>
+<li data-list-item-id="e94d51d3aa4d2c2d9f09d497f8c098b81">idn:accounts:read </li>
+<li data-list-item-id="e4a60844a1102c9e175a3122fb000ab41">idn:accounts:manage</li>
+<li data-list-item-id="ea36881fd3d4e94fe0e3dae958c922513">idn:accounts-state:manage</li>
+<li data-list-item-id="e680125bbda442bc636fb6d741cd06167">idn:sources:read</li>
+<li data-list-item-id="e0224f2d09a345ec5e04be40c8177181e">idn:sources:manage</li>
+<li data-list-item-id="e123c878509cf752b871659137f174329">idn:source-schema:read</li>
+<li data-list-item-id="efbb9eeb1f9b845a595cd18098f0dc93f">idn:source-schema:manage</li>
+</ul>
+</li>
+</ul><h1 id="h_01J46B7Y1FJFZ9EF69E21925AA">Integration Setup</h1><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e8843429b849bac5eb87dcb9a582390f5">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="eb7da7bce056c6239ba3397731a4a182e">Navigate to <strong>Integrations</strong> on the left panel.</li>
+<li data-list-item-id="e8fd2a9cb140b8d73f128a2fca70a19a1">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e495ec24205a5416756065c0aedb580ae">Search for <em><strong>Dayforce / Sailpoint ISC</strong></em> in the search box next to the <strong>Explore Templates</strong> section, and click it<em>.</em> The <strong>Create New Integration</strong> pop-up window is displayed.</li>
+<li data-list-item-id="e20c6bae67e0873eb25401a8f35683b41">Enter a name and a description for the integration.</li>
+<li data-list-item-id="edb94a9a86ed2a32bb156047c2c740f20">Click <strong>Continue</strong>.</li>
+</ol><h2 id="h_01M36EE24GG6AJTCZVVZ2NQ0JX">Dayforce</h2><p>The <strong>Dayforce</strong> tab allows you to select the Dayforce connector used by the integration. The following section is displayed:</p><ul><li data-list-item-id="efcdced89f3941f9ff4e6bfb9c03816fc"><a href="#h_01M36G3DZ8A270093JD33DNFR1">Application Settings</a></li></ul><h3 id="h_01M36G3DZ8A270093JD33DNFR1">Application Settings</h3><p>The <strong>Application Settings</strong> section specifies the Dayforce application instance that is used by the integration. The following field is available:</p><ul><li data-list-item-id="e6941e80820059753299058fa58ff712a">
+<strong>Dayforce Application Instance</strong>: Select the Dayforce application from which the integration retrieves the data.</li></ul><h2 id="h_01M36G5BF1KEFXHC5A8GNHT3MW">Sailpoint</h2><p>The <strong>SailPoint</strong> tab provides the configuration options for selecting the SailPoint connector, configuring the full sync schedule, upsert condition and mapping attributes between Dayforce and SailPoint.<br/>The following sections are displayed:</p><ul>
+<li data-list-item-id="e17e0859c0adfab2512956698025325fb"><a href="#h_01M36G693HR3MHK8FQ73YJ9F1R">Application Settings</a></li>
+<li data-list-item-id="ed570f0a3a070ac132dbd4ea678d299aa"><a href="#h_01M36H3S8T60CYR111KJSY4684">Configuration</a></li>
+<li data-list-item-id="e8aa0429f919f0c175cb07eb2f17162ba"><a href="#h_01M36H77A99JNGRZ2RHMVAC95P">Mapping</a></li>
+</ul><h3 id="h_01M36G693HR3MHK8FQ73YJ9F1R">Application Settings</h3><p>The <strong>Application Settings</strong> section specifies the SailPoint application instance that is used by the integration. The following fields are available:</p><ul>
+<li data-list-item-id="e7076b15aeeabfc13098204e6ae55b9a8">
+<strong>SailPoint Application Instance</strong>: Select the SailPoint application from which the integration retrieves the data.</li>
+<li data-list-item-id="e7616df74d47b3106ab5329f97586cb12">
+<strong>SailPoint Source</strong>: Select the SailPoint source application that you have configured in the SailPoint instance.</li>
+<li data-list-item-id="eddc045bc0440d4a8c87db167a7d6c1f6">
+<strong>Enable recurring full sync</strong>: Select this checkbox to run a full sync based on the configured schedule. The following. When enabled, the following fields are displayed.<ul>
+<li data-list-item-id="e616d26de2af54f9b15b07aa2e603ff89">
+<strong>Full sync schedule</strong>: Select the option to determine how frequently the full sync must run.</li>
+<li data-list-item-id="e5748855b8bcd34b09edfe9cf3522aa62">
+<strong>Start schedule from</strong>: Select the option that determines when the full sync must begin.<ul>
+<li data-list-item-id="e45f8ca697c632024507998b41a76ebcb">
+<strong>Start now</strong>: Select this option to begin the full sync immediately.</li>
+<li data-list-item-id="ea204ebd88b75354737f1ec3d3e00c63f">
+<strong>From specific date</strong>: Select this option to specify the date from which the full sync must begin. When selected, the following field is displayed:<ul><li data-list-item-id="e0893a15ce1785f84b680c68045a0a5ff">
+<strong>Start date</strong>: Select the date from which the full sync must begin.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="eabf756faf32abf177882695cbd3d7073">
+<strong>Start time</strong>: Select the time from which the full sync should begin.</li>
+<li data-list-item-id="e853051dd1bebea9a45735cd9ecc8caa7">
+<strong>Disable incremental sync</strong>: Enable this checkbox to run the integration only in full sync mode and not in incremental mode.</li>
+</ul>
+</li>
+<li data-list-item-id="e15d8708925c28637e2ab6015d56a4589">
+<strong>Reset last full sync timestamp</strong>: Enable this checkbox to reset and rerun a full sync from a specified date and time. When enabled, the following fields are displayed:<ul>
+<li data-list-item-id="ee4feb4829d87fcebab910502bd0db8a3">
+<strong>Reset effective date</strong>: Select the date from which the full sync must run again.<span aria-hidden="true"></span>
+</li>
+<li data-list-item-id="ec6cbfccf18501e8cc027421c2120feb3">
+<strong>Reset time</strong>: <span aria-hidden="true"></span>Select the time to reset the last full sync timestamp.</li>
+</ul>
+</li>
+</ul><h3 id="h_01M36H3S8T60CYR111KJSY4684">Configuration</h3><p>The <strong>Configuration</strong> section allows you to define the condition for creating or updating employee records in SailPoint.</p><p><strong>Upsert Condition</strong>: Select the upsert condition that determines which employees are eligible to be created or updated in SailPoint. The following options are available.</p><ul>
+<li data-list-item-id="ee1e224616e6c04cb2f549bf5182bfadc">
+<strong>All Employees</strong>: Select this option to create or update all employees in SailPoint.</li>
+<li data-list-item-id="e55cea9f2a00d4fd8d44a18b493469083">
+<strong>All Active Employees</strong>: Select this option to create or update only the active employees in SailPoint.</li>
+<li data-list-item-id="ed52f5a24e75b8962c19c010248fed15a">
+<strong>All Inactive Employees</strong>: Select this option to create or update only inactive employees in SailPoint.</li>
+<li data-list-item-id="e5459703bb38bdb390e819a8ba69ef2d0">
+<strong>Custom</strong>: Select this option to define a condition that determines which employee records are created or updated in SailPoint.<ul><li data-list-item-id="e6abf292deecaecfdedfe451cfae6123c">
+<strong>Custom Upsert Condition</strong>: Enter the condition that determines which employee records are created or updated in SailPoint. This field is displayed only when <strong>Custom</strong> is selected in the <strong>Upsert Condition</strong> field.</li></ul>
+</li>
+</ul><h3 id="h_01M36H77A99JNGRZ2RHMVAC95P">Mapping</h3><p>The <strong>Mapping </strong>section allows you to map attributes between Dayforce and SailPoint. </p><h4 id="h_01JK5GN77B61SSZPDRX8YC5A52">Attribute Map</h4><p>The <strong>Attribute Map</strong> page displays the default mapping from Dayforce to SailPoint. You can provide a JavaScript expression for a source attribute by clicking <strong>Enter Expression</strong> at the end of the source attributes list. The expression is evaluated at runtime, and the resulting value is assigned to the corresponding target attribute.</p><h4 id="h_01KMF7XVHMTVH3HA4PQ1N9BG02">Preview Data</h4><p>You can preview the attribute values that will be created or updated in sailPoint based on your mappings.</p><p>To preview the attribute values, perform the following steps:</p><ol>
+<li data-list-item-id="e15eb60af866a9fdcdab19c295f71f3d1">Click the <strong>Enter objects for preview</strong> field at the top of the <strong>Attribute Map</strong> page. A pop-up window is displayed.</li>
+<li data-list-item-id="e72063c0cba7a22e88ab749bbb07ae830">Select <strong>id</strong> and enter the ID of the employee.</li>
+<li data-list-item-id="efe00fc4a6c6d61c93b80f2c38e6aed56">Click <strong>Preview</strong>. The data are displayed corresponding to each mapping provided in the Attribute Mapper.</li>
+</ol><h2 id="h_01M36R70378WCTBMKCPGA7BSG2">Operations</h2><p>This tab allows you to configure various settings required for the integration execution. The following section is displayed:</p><ul><li data-list-item-id="ec0663617ef976cf09e853acb325c653f"><a href="#h_01M36R80XCWZCQV7YKNQ1905WB">Execution</a></li></ul><h3 id="h_01M36R80XCWZCQV7YKNQ1905WB">Execution</h3><p>This section enables you to customize the execution settings for the integration. The following fields are available: </p><ul>
+<li data-list-item-id="eade71f519375f5417586d774c246e3f7">
+<strong>Report Only Mode</strong>: Select this checkbox to generate a report that shows the data that would be changed, without actually making those changes.</li>
+<li data-list-item-id="ef709059759da0b7811447b8d253d5671">
+<strong>Import Limit</strong>: The maximum number of employee records that must be retrieved from the source application during a single run of the integration.</li>
+<li data-list-item-id="ede5cb6450f1a35947b9aa4e60d07b7c3">
+<strong>Enable Source Filter</strong>: Enable this toggle to filter records retrieved from the source application. When enabled, the following fields are displayed:<ul>
+<li data-list-item-id="ecb38c7af048fc8c90f6f6383ae793780">
+<strong>Select Filter Type</strong>: Select the source attribute used to filter the records.</li>
+<li data-list-item-id="e95cd02979fde3d2305a903a5e647af8e">
+<strong>Filter Value</strong>: Enter the value used to filter the records based on the selected source attribute.</li>
+</ul>
+</li>
+<li data-list-item-id="e442f3c9ad7f9487d73569dd91572ecf6">
+<strong>Source Non Native Filter</strong>: Enter the JavaScript expression used to filter Dayforce records after all users are retrieved from Dayforce.</li>
+</ul><h2 id="h_01M36SNX10746JSH3JQH07037M">Notification</h2><p>This tab allows you to configure various settings required for the integration execution. The following sections are displayed:</p><ul>
+<li data-list-item-id="e510ae39551342ab90560a723e2685e14"><a href="#h_01M36W1KR8VVJVBQKG54E1P600">Monitoring</a></li>
+<li data-list-item-id="ea6448a5ce7f933235311ffb87bbb34b9"><a href="#h_01M36XVQ8FER7G6YQ6QFZ48GJT">Notification</a></li>
+</ul><h3 id="h_01M36W1KR8VVJVBQKG54E1P600">Monitoring</h3><p>This section enables you to customize the operational settings for the integration. The following field is displayed:</p><ul>
+<li data-list-item-id="eae4fba910bc4d13e868b7a4ed52e8375">
+<strong>Enable Logging</strong>: Select this checkbox to enable execution logs for each integration run. When enabled the following field is displayed:<ul><li data-list-item-id="e40f74cd016982c70ad3e849dcb2462e8">
+<strong>Log Level</strong>: Select the log level. This will decide the level of detail to be included in logs.<br/>The following are the available options:<ul>
+<li data-list-item-id="eece244538fb20c04722880c4c5371c9b">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="ece3c5ca5b9236fc3d691b621d6df99f3">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="efda36e9936b99547bdb6787ef8c95c9e">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ed7205f7ec4ad4d30c164bee545266bc1">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e96fe447201af773bcc440da5514583a1">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e5b2dd7cd3c4dd11c74a092ccd0a6b2d0">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data. </li>
+</ul>
+</li></ul>
+</li>
+<li data-list-item-id="e58d0d105cebeea393deb4eba866e46f9">
+<strong>Enable Reporting</strong>: Select this checkbox to generate a report after each integration run. When enabled the following fields are displayed:<span aria-hidden="true"></span><ul>
+<li data-list-item-id="e28aaf792f7d7b5c70360e4467331209a">
+<strong>Reporting Type</strong>: Select the report type. This will decide the level of details to be included in reports.<br/>The following are the available options:<ul>
+<li data-list-item-id="e30ad45d60234d55aac23c22aacbbb5a6">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e250ad5c35e429e0f060a544772aabbe7">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="eb7f426165cc59ac8a345843998f46f78">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ebac5e25095bbad5bcf57fff14a733b34">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e6c45571da2b914d512ae95a1efdd81c7">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="ea8488ce91d6e50358d886a4b471789a8">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data. </li>
+</ul>
+</li>
+<li data-list-item-id="ef8f8b12906bc1dc9248ba56f1426da27">
+<strong>Report Format Type</strong>: Select the format in which the run report must be sent.</li>
+</ul>
+</li>
+<li data-list-item-id="efa247037e056d7600fd94ea8704973dc">
+<strong>Enable Log Insights</strong>: Select this checkbox to enable the dashboard for monitoring run throughput, error rates, and duration trends. The following field is displayed:<ul><li data-list-item-id="e83641edee431eb4a57dbee7d9f99978c">
+<strong>Log Insights Level</strong>: Select the Log Insights level. This will decide the level of detail to be included for Log Insights.<br/>The following are the available options:<ul>
+<li data-list-item-id="e8dc87e8f33af0cda4a3245b8591362b2">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="eb1c399631129e6dda87781d352a3c8dc">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ebb4c84232b213ad484e4e8a51a9bfac3">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="e46d9efd7d765097ad219130e68baf4b8">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="efd7f78f5db1145e95888a378084139b1">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e5363c0959d04707d322106eb16b9484c">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li></ul>
+</li>
+</ul><h3 id="h_01M36XVQ8FER7G6YQ6QFZ48GJT">Notification</h3><p>This section allows you to configure notification settings for provisioning events.</p><p><strong>Enable Email Notification</strong>: Select this checkbox to send an email notification when the integration runs. When enabled, the <strong>Email Notification Configuration</strong> section is displayed.</p><p>To navigate to multiple configurations, use the arrow icons (&lt; or &gt;) which is located at the bottom-right side of the table.</p><p>If you want to modify the configuration, click any value in the row and you will be redirected to the edit mode, where you can make changes.</p><p>If you want to display few rows in the table, select a value from the drop down list to specify the number of rows displayed per page.</p><div>To delete a configuration, place the cursor over the row and click the delete icon displayed on the right side of the table.</div><p>To add a new configuration, click the <strong>+</strong> <strong>Add Notification configuration</strong> button. The following parameters are displayed:</p><ul>
+<li data-list-item-id="ebdc5a1c48a00aeefb965c309fa84e80e">
+<strong>Select Event Type</strong>: Select the event for which the notification must be sent.</li>
+<li data-list-item-id="e425bcb62e1b8141180b61087f2e66fa4">
+<strong>Admin Email Address</strong>: The comma-separated list of administrative email addresses to which notifications are sent.</li>
+<li data-list-item-id="e3228a9cdfee7aeef55931478b53d94fe">
+<strong>Enter Subject Line</strong>: Enter the content that must be used as the email subject.</li>
+<li data-list-item-id="eb058afaad0486fb3f0df8c79209ce7ca">
+<strong>Email Template</strong>: Enter the notification email content in the template that is sent when a new user is created in the target application.</li>
+</ul><h2 id="h_01JV4VH803XE82ZDJ9EMERFAXE">Tables</h2><p>Tables can be added to create custom source attributes and POST (sync) them to the target application. Tables are used when an application attribute is empty or a specific data is not sent from the HR application, and you want to update a value for that attribute in Okta. Based on your requirements, you can add any number of tables in the integration.</p><p>The table setup and functionality are the same as that in the User Integration. Refer to the <a href="../Using-Tables-in-Integrations/#h_01EKHB2K4NA8PP7JZC3JJ2PBER" rel="noopener noreferrer" target="_blank">Adding Tables in Integration</a> section in the <strong>Using Tables in Integration</strong> guide for details.</p><h2 id="h_01KQ9Q699N0TNXXRJTKZYM0Z7M">Schedule</h2><p>Integrations can be scheduled to run automatically based on your choice of timeframe. Refer to the <a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank">Integration Schedule Setup Guide</a> for further details.</p>
+  </div>
+</body>
+</html>

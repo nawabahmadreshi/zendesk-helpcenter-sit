@@ -19,7 +19,7 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>Dayforce / Microsoft Entra Provisioning Service Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01KMM8M5AHJSS1WPW2CK0SMYNS">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.<br/>This integration automates the synchronization of worker data from Dayforce to the target directory configured through the Microsoft Entra Provisioning Service connector. Depending on the enterprise application configuration in Microsoft Entra ID, the target directory can be Microsoft Entra ID (cloud) or on-premises Active Directory configured through the Microsoft Entra ID API-driven provisioning application. The integration automatically creates user accounts during onboarding, updates accounts when worker information changes, and deactivates accounts when workers leave the organization. </p><h2 id="h_01KW1HHNQKBTXW867P18733APR">Key Functions</h2><p>This integration keeps accounts in the target directory synchronized with worker records in Dayforce throughout the employee lifecycle. The target directory can be Microsoft Entra ID or on-premises Active Directory, depending on how the enterprise application is configured in Microsoft Entra ID. The integration provides the following capabilities:</p><ul>
+<div>This guide applies to the latest public version of the integration (version 1.0.1).</div><h1 id="h_01KMM8M5AHJSS1WPW2CK0SMYNS">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.<br/>This integration automates the synchronization of worker data from Dayforce to the target directory configured through the Microsoft Entra Provisioning Service connector. Depending on the enterprise application configuration in Microsoft Entra ID, the target directory can be Microsoft Entra ID (cloud) or on-premises Active Directory configured through the Microsoft Entra ID API-driven provisioning application. The integration automatically creates user accounts during onboarding, updates accounts when worker information changes, and deactivates accounts when workers leave the organization.</p><p>A configurable source filter lets you define which workers the integration processes. You can filter by a single worker attribute or combine multiple parameters into one expression. This flexibility supports phased rollouts, testing with a limited population, and targeting specific worker segments before syncing the entire workforce.</p><h2 id="h_01KW1HHNQKBTXW867P18733APR">Key Functions</h2><p>This integration keeps accounts in the target directory synchronized with worker records in Dayforce throughout the employee lifecycle. The target directory can be Microsoft Entra ID or on-premises Active Directory, depending on how the enterprise application is configured in Microsoft Entra ID. The integration provides the following capabilities:</p><ul>
 <li data-list-item-id="e1b4950c9f2807262c1d50f6b77b3673d">Synchronizes worker data from Dayforce to the configured target directory on a scheduled full and incremental basis.</li>
 <li data-list-item-id="e541649a565a358b3994d3739634a7d68">Creates user accounts automatically in the target directory when new workers are onboarded in Dayforce.</li>
 <li data-list-item-id="eca90513cddaf25fae19d58cec20541d1">Updates account attributes in the target directory when corresponding worker details change in Dayforce.</li>
@@ -102,9 +102,53 @@
 <li data-list-item-id="eac8fbe299a01e1ff2923b58af01f3805">
 <strong>Enable source filter:</strong> Enable this toggle to process only records that match the specified filter criteria. When enabled, the following fields are displayed:<ul data-pm-slice='3 3 ["list",{"spread":false,"start":507,"end":1481},"regular_list_item",{"start":1110,"end":1481}]' data-spread="false">
 <li data-list-item-id="e11da631a1b2211d51f60adc200d94519">
-<strong>Select filter type:</strong> Select the source attribute to use for filtering.</li>
+<strong>Select filter type:</strong> Select the Dayforce worker attribute used to filter the worker records processed by the integration. The following options are available:<ul>
+<li data-list-item-id="e0574d2b34c3a030802317f0afab54d12"><strong>Display Name</strong></li>
+<li data-list-item-id="e45dc35a9a83c2b4295da2917173c2b34"><strong>Social Security Number</strong></li>
+<li data-list-item-id="eaf44db4488f6157fec9860fee6ffd74c"><strong>Employee Number</strong></li>
+<li data-list-item-id="e80b499c9e3dd753270187f2c21a67e6d"><strong>OrgUnit XRefCode</strong></li>
+<li data-list-item-id="e40ddc9bea84dc209224c0c37fbc51d01"><strong>Department XRefCode</strong></li>
+<li data-list-item-id="e0a408113418d8db16334e9da6c788a20"><strong>Job XRefCode</strong></li>
+<li data-list-item-id="ed5199349ab0c377a386757011d775a10"><strong>Position XRefCode</strong></li>
+<li data-list-item-id="e351dbab06c5f0506e31481419e2e83c5"><strong>Pay Class XRefCode</strong></li>
+<li data-list-item-id="efebf86c4fa2835ffc7b83b96c39e7e6d"><strong>Employment Status XRefCode</strong></li>
+<li data-list-item-id="e784ec7f5ea0ec6be90a1723e72abb5e1"><strong>Custom Filter String</strong></li>
+</ul>
+</li>
 <li data-list-item-id="ec19c8f5e4c511364300281f4fd03daf7">
-<strong>Filter value:</strong> Enter the value for the selected filter attribute.</li>
+<strong>Filter value:</strong> Enter the value corresponding to the selected filter type. For <strong>Custom Filter String</strong>, enter one or more Dayforce filter parameters in the format parameter=value. Separate multiple parameters using the "&amp;" operator. For example, <em>departmentXRefCode=ENGINEERING&amp;filterHireStartDate=2026-01-01.</em><br/><strong>Note</strong>: Logical operators such as <strong>OR</strong> and <strong>NOT</strong> are not supported.<ul><li data-list-item-id="efca7b6f4f428fe25ccb3ce03ed97a275">The following parameters are supported when you select <strong>Custom Filter String:</strong><ul>
+<li data-list-item-id="eda05176eee97b1a275dea10c08720862">employeeNumber</li>
+<li data-list-item-id="e269ef3606d5a068ea0eb23178c5d5dee">displayName</li>
+<li data-list-item-id="e54e2dd690a33abd129a52fa36c1d551c">socialSecurityNumber</li>
+<li data-list-item-id="e4f05844266bfe22ac0c7d0e58b698a5a">employmentStatusXRefCode</li>
+<li data-list-item-id="ea0c1da87b3f972696930fdacd61c558f">orgUnitXRefCode</li>
+<li data-list-item-id="e2d4c7c25233e03152e6abf4d2c54a5e5">departmentXRefCode</li>
+<li data-list-item-id="ea6b6d7274273be5808b93c0c6783615d">jobXRefCode</li>
+<li data-list-item-id="e90011202b5f881031d7b33bd5e1cf8fb">positionXRefCode</li>
+<li data-list-item-id="e5539b870902c3d441245aff19b0f837b">payClassXRefCode</li>
+<li data-list-item-id="e0224df317781192bc9ca65b542380d9f">payGroupXRefCode</li>
+<li data-list-item-id="e557329119aaf0bb53762828c56c5dbd6">payPolicyXRefCode</li>
+<li data-list-item-id="e87a622ee3575ae04b2597df6cec649f4">payTypeXRefCode</li>
+<li data-list-item-id="e803458996205aa75c32f6c20a3329418">payrollPolicyXRefCode</li>
+<li data-list-item-id="e30239164883ca446d6265c2cbf7884ea">filterHireStartDate</li>
+<li data-list-item-id="e68e030ad284c0431de1b8c44e43df5c5">filterHireEndDate</li>
+<li data-list-item-id="e114518391eb4a337c3421ccd24e2e733">filterTerminationStartDate</li>
+<li data-list-item-id="eb73f3628503b0182d3238171e7ae46c7">filterTerminationEndDate</li>
+<li data-list-item-id="ed4f30415ede186efb3467f97da23bc9a">filterUpdatedStartDate</li>
+<li data-list-item-id="eea155881b1bf793d8eb09e30dc87ff08">filterUpdatedEndDate</li>
+<li data-list-item-id="e6d69f4ee901fca5a44228ade465f175d">filterUpdatedEntities</li>
+<li data-list-item-id="ee43b7a6a3d79a5bcc3b97881f7f4a231">filterOriginalHireStartDate</li>
+<li data-list-item-id="e997cf5c01005747777131a098424467d">filterOriginalHireEndDate</li>
+<li data-list-item-id="e59d092559bc1c1c37ac483ea042950e1">filterSeniorityStartDate</li>
+<li data-list-item-id="ed91c86cb60c08cf1774b977fbca7be5b">filterSeniorityEndDate</li>
+<li data-list-item-id="e8caf5d8a1e07a12d009ac11c8991fe5e">filterBaseSalaryFrom</li>
+<li data-list-item-id="e206e70730e2408bd32d7032ec9cf4373">filterBaseSalaryTo</li>
+<li data-list-item-id="ef3c9e3255af73bff9a29e1b595cf68d2">filterBaseRateFrom</li>
+<li data-list-item-id="e5dfbba325c09419a5ad95e2a7e02d84d">filterBaseRateTo</li>
+<li data-list-item-id="e93ba3478542c045d7e039b9cad11324d">contextDate</li>
+</ul>
+</li></ul>
+</li>
 </ul>
 </li>
 </ul><h3 id="h_01KN47NYDZ014D07BNJKKQFDED">Monitor</h3><p data-pm-slice="1 1 []">The <strong>Monitor</strong> section allows you to configure logging and reporting options for the integration.</p><h4 id="h_01KSHXF7YZXW8XYHPBW0GGX85G">Logging Settings</h4><p>The <strong>Logging Settings</strong> section enables you to configure the level of detail recorded in execution logs. It has the following settings:</p><ul>

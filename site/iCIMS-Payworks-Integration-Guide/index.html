@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>iCIMS / Payworks Integration Guide</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 40px; line-height: 1.55; }
+    .container { max-width: 980px; }
+    .meta { color:#666; font-size: 14px; margin-bottom: 12px; }
+    img { max-width: 100%; height: auto; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+    td, th { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="meta">Synced from Zendesk Help Center</div>
+    <h1>iCIMS / Payworks Integration Guide</h1>
+<p><a href="../index.html">← Back to index</a></p>
+<h1 id="h_01M48R05FPKPAD57SQFYRRMCBE">Overview</h1><p>This integration synchronizes employees between iCIMS and Payworks, one direction at a time, selected by the Sync Direction setting on the Overview tab. The two directions never run in the same invocation.</p><p><strong>iCIMS to Payworks</strong> is an event-driven employee lifecycle sync. A candidate whose iCIMS workflow reaches a hire status is created in Payworks; a candidate who already correlates to a Payworks employee is updated instead, with each field skipped when Payworks already matches iCIMS. A termination status sets the Payworks payroll status and termination date. This direction is driven by the iCIMS webhook and processes one candidate per event.</p><p><strong>Payworks to iCIMS</strong> is a foundational data sync. Payworks organization and employment data is written back onto the matching iCIMS People profile: a Payworks employee with no existing iCIMS values is treated as a first sync and created, one with existing values is diffed and updated, and a terminated Payworks employee instead writes a configured termination-status field onto iCIMS. This direction can be triggered manually for one named person, or run on a schedule that polls the full Payworks roster and correlates each employee back to iCIMS by a configured field.</p><p>Each direction has its own independent lifecycle operations, per-operation conditions and limits, and correlation key settings. Candidates are correlated on the configured iCIMS correlation field against the Payworks <code>employeeNumber</code>. Every processed record appears in the CSV report and the notification email with its operation and result.</p><h2 id="h_01M48R05FPZH6X21AEAWKSWA1F">Key Functions</h2><ul>
+<li data-list-item-id="e527349ce30504fc6b0e2bcb1baa01ee7">Creates, updates, and terminates Payworks employees from iCIMS hire and termination workflow events, driven by an iCIMS webhook.</li>
+<li data-list-item-id="e148c46497dd1c0cb91faa68832ae30fb">Writes Payworks organization and employment fields back onto the matching iCIMS People profile, either for one named person or across the full Payworks roster on a schedule.</li>
+<li data-list-item-id="ec18b737b40e0c2c8aee5e8931bb03d09">Correlates candidates between the two systems using a configurable iCIMS field matched against the Payworks employee number.</li>
+<li data-list-item-id="e2cf7e41ba8afeebecab9f576022533f2">Applies independent lifecycle operations (Create, Update, Delete), conditions, and limits for each sync direction.</li>
+<li data-list-item-id="e9813ad7e217635ae12a2e6b901924a16">Supports a report-only mode that simulates every operation without writing changes.</li>
+<li data-list-item-id="eb910ac4d27a71c1069903b1a3bdf6542">Supports manual, on-demand runs for a single candidate or a single Payworks-correlated person, for testing.</li>
+<li data-list-item-id="e752d3f094e7cad5773dbfb852f229f6a">Masks personally identifiable information (social insurance number, birth date, full tax setup) in logs, reports, and notification attachments.</li>
+<li data-list-item-id="e1e2701ec2c82d6b68f4ed6967abec551">Generates a per-record CSV report, run logs, a Log Insights (OpenSearch) dashboard, and success/failure email notifications.</li>
+</ul><h1 id="h_01M48R05FPTQ0CKBRJ3VK7CF3M">Prerequisites</h1><p>The following are required before configuring this integration:</p><ul>
+<li data-list-item-id="e9c455269456188a4e8e81cec3fd27da3">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal.</li>
+<li data-list-item-id="e017e9cbb920384cf76a33f771343deda">
+<strong>iCIMS Application Connector:</strong> You must have an iCIMS application connector configured in the Aquera Admin portal, with webhook access for the <code>WorkFlowStatusChangeEvent</code> event type.</li>
+<li data-list-item-id="e8e86728fac36075aa343f8459b69f29d">
+<strong>Payworks Application Connector:</strong> You must have a Payworks application connector configured in the Aquera Admin portal.</li>
+</ul><h1 id="h_01M48R05FPNR6FE5C9CC0D4YVT">Integration Setup</h1><p>This section details the configuration for this integration, organized by tab.</p><h2 id="h_01M48R05FPQXM954YJC5JBXDXN">Overview Tab</h2><h3 id="h_01M48R05FPVKN038ZENHVAYS0J">Applications</h3><p>This section allows you to select the connectors used for the integration. The following fields are displayed:</p><ul>
+<li data-list-item-id="e881f032a3902998735985b53546c96ba">
+<strong>icims:</strong> Select the iCIMS application connector configured in the Aquera Admin portal.</li>
+<li data-list-item-id="e22d002d45330b31b44b52e80bd316567">
+<strong>payworks:</strong> Select the Payworks application connector configured in the Aquera Admin portal.</li>
+</ul><h3 id="h_01M48R05FPG2E7FXFHBVX30WQZ">Parameters</h3><h4 id="h_01M48R05FP0A6SW8SBM66GC2KD">Sync Control Settings</h4><ul><li data-list-item-id="ec4638993823edd2a92c40ec7b0c664d8">
+<p><strong>Sync Directions:</strong> Select which direction runs: <em>iCIMS to Payworks</em> or <em>Payworks to iCIMS</em>. This is a single-select field — only one direction is ever active at once. iCIMS to Payworks creates, updates, and terminates Payworks employees from iCIMS hires, driven by the iCIMS webhook. Payworks to iCIMS writes Payworks organization/employment fields back onto a named iCIMS person's People profile. </p>
+<!-- VERIFY: The UI description for this field states Payworks to iCIMS is "manual-test-only in this build... there is no scheduled discovery yet." However, the script's resolvePayworksToIcimsRunTargets()/fetchAllPayworksEmployees() functions implement a scheduled roster-poll discovery mode that runs whenever Manual Payworks to iCIMS Person ID is left empty. Please confirm which is current — the UI copy may be stale, or scheduled discovery may be gated off elsewhere (e.g. Schedule tab) in a way not captured in these screenshots. --><p> The employee-number write-back on the iCIMS to Payworks create path is controlled separately, by "Write Employee Number Back To iCIMS" (see <a href="#icims-to-payworks-tab">iCIMS to Payworks Tab</a>).</p>
+</li></ul><h4 id="h_01M48R05FPT8VKY52WQXCVB9KM">Operational Features</h4><ul>
+<li data-list-item-id="ecf5a9994996b8aa533d93b3ba88b5aa7">
+<strong>Enable Report-Only Mode:</strong> No changes are written to Payworks when enabled. All operations are simulated and the run reports as SIMULATED.</li>
+<li data-list-item-id="edca0ff96ec6544fce01f50ce8618af8f">
+<strong>Enable Notifications:</strong> Send the end-of-run report email and the missing-required-fields alert.</li>
+<li data-list-item-id="ee3966b95d85825cea9c3f430dbc75323">
+<strong>Enable Dashboard Generation:</strong> Writes one Log Insights event per processed record, plus a run summary, to the OpenSearch dashboard.</li>
+<li data-list-item-id="e9f1ee31da8efa013c37844a63497fc54">
+<strong>Enable Logging:</strong> Emit progress logging for the run. The configuration table, run summary, warnings, and errors are always logged.</li>
+<li data-list-item-id="e57442718261e50a618bec86d9cb2d59b">
+<strong>Enable Debug Mode:</strong> Log full payloads and per-field detail. Note that iCIMS profile data contains personal information — enable only when troubleshooting.</li>
+<li data-list-item-id="efe548e19a959cbc31f459c51aadd14a5">
+<strong>Enable Reporting:</strong> Write the per-record CSV integration report at the end of the run.</li>
+</ul><h4 id="h_01M48R05FPHERSA56FV83CZSF3">Manual Candidate Run</h4><p>This section allows you to run the iCIMS to Payworks direction on demand for a single candidate, for testing.</p><ul>
+<li data-list-item-id="e300281d392c7567a509c661081a8881e">
+<strong>Manual Candidate ID:</strong> iCIMS person ID to process on demand. When set, the webhook payload is ignored and this one candidate is pulled by API. Leave empty for normal event-driven operation.</li>
+<li data-list-item-id="ee39aa1542bd7a349c30fd6ed4579fbec">
+<strong>Manual Job ID:</strong> Optional. When empty, it is derived from the People profile's job reference.</li>
+<li data-list-item-id="e6076ac8d8d3e685803e99855c29d4ce3">
+<strong>Manual Applicant Workflow ID:</strong> Optional. When empty, it is discovered by search; supply it directly if discovery cannot find it.</li>
+<li data-list-item-id="e36dfe49459ed964741bb2c888a13a806">
+<strong>Manual Run Operation:</strong> Select <em>Hire</em> or <em>Terminate</em>. A manual run (Manual Candidate ID set) carries no workflow status, so the operation to exercise is stated outright here.</li>
+<li data-list-item-id="e811ccf8df8f07bc3fc2234a50e668b56">
+<strong>Workflow Person Search Field:</strong> Search field relating an applicant workflow to a person, used only when discovering the workflow ID. Default: <code>applicantworkflow.person.id</code>.</li>
+</ul><h2 id="icims-to-payworks-tab">iCIMS to Payworks Tab</h2><p>This tab configures the iCIMS to Payworks direction: candidate creation, update, and termination driven by the iCIMS webhook.</p><h3 id="h_01M48R05FPC38KK7JKBYB89VGS">iCIMS Settings</h3><ul>
+<li data-list-item-id="e52c346cb6cd0697402ec82777656f580">
+<strong>Source Correlation Key:</strong> The iCIMS People field holding the Payworks employee number used to match the candidate. This field is also what the reverse direction writes, so it must be writable on the People profile. Configured separately from the Payworks to iCIMS tab's Source Correlation Key — both default to the same field, but if they are ever set to different fields, the two directions will stop matching each other's records. Keep them in sync unless that divergence is deliberate. Default: <em>External ID</em>.</li>
+<li data-list-item-id="e3adcd7d1c829e682668e69e626b0da49">
+<strong>Hire Status Categories:</strong> Workflow status categories that mean the candidate should be created or updated in Payworks. Matching is case- and whitespace-insensitive.</li>
+<li data-list-item-id="ed2bf94167ddce4196377862fa0baae29">
+<strong>Terminate Status Categories:</strong> Workflow status categories that mean the candidate should be terminated in Payworks. Matching is case- and whitespace-insensitive.</li>
+<li data-list-item-id="e119cdc9bbf2e1290e940312edef9b203">
+<strong>Hire Status IDs:</strong> Optional. When set, these take precedence over the status categories above for classifying an incoming webhook event as a hire.</li>
+<li data-list-item-id="ec7cbbfe079ee442f9c5b6794d64c8d4f">
+<strong>Terminate Status IDs:</strong> Optional. When set, these take precedence over the status categories above for classifying an incoming webhook event as a termination.</li>
+<li data-list-item-id="e2a8438a25ad2a3df51a5fffd48d58c5c">
+<strong>Webhook Event Types:</strong> iCIMS event type(s) treated as a genuine hire/terminate webhook. A run whose payload carries none of these, or no payload at all, is treated as having no target for this run (reported as NO_ACTION) rather than a malformed webhook — this integration is event-based only, so an unrelated or empty trigger is never misread as a candidate event and reported as a validation failure.</li>
+</ul><h3 id="h_01M48R05FP92JB0F1JJA5QD1KW">Payworks Settings</h3><ul><li data-list-item-id="ef1a147129b5cb285d7f8c2d320e3dcb1">
+<strong>Destination Correlation Key:</strong> The Payworks employee attribute matched against the source correlation key. <code>employeeNumber</code> is the business key the integration assigns and stores in iCIMS; <code>employeeId</code> is the Payworks-assigned internal key used only in request paths and is never written back. Configured separately from the Payworks to iCIMS tab's Destination Correlation Key — both default to the same value. Default: <em>Employee Number</em>.</li></ul><h3 id="h_01M48R05FPMY3VTP0EC0E647D8">Lifecycle Operations</h3><p>Choose which operations are active for this direction: <strong>Create</strong>, <strong>Update</strong>, and/or <strong>Delete</strong>.</p><h3 id="h_01M48R05FPDTV0HE6VR6P67NZ7">Create Settings</h3><ul>
+<li data-list-item-id="e2fc3b8842583f780a12e769e2908667a">
+<strong>Create Condition:</strong> Optional JS expression. Variables: <code>SOURCE</code> (iCIMS combined data), <code>TARGET</code> (Payworks employee). Return true to allow the create. Leave empty to allow all hire events.</li>
+<li data-list-item-id="e633fb97d5b84c6ff03c95f3f3d760729">
+<strong>Create Limit:</strong> Maximum creates per run. Use "unlimited" for no cap.</li>
+</ul><h3 id="h_01M48R05FP95ADSZM9G81G4XC9">Update Settings</h3><ul>
+<li data-list-item-id="e21b66d0a1f9e73587b8d1f7466e9e26e">
+<strong>Update Condition:</strong> Optional JS expression. Variables: <code>SOURCE</code> (iCIMS combined data), <code>TARGET</code> (Payworks employee). Return true to allow the update. Leave empty to allow all hire events.</li>
+<li data-list-item-id="efd88372d948d88582192ee53c433bcc4">
+<strong>Update Limit:</strong> Maximum updates per run. Use "unlimited" for no cap.</li>
+</ul><h3 id="h_01M48R05FPN105671622YPYTGP">Delete Settings</h3><ul>
+<li data-list-item-id="e9559dd9542569f96b7a2d934f92e6574">
+<strong>Delete Condition:</strong> Optional JS expression. Variables: <code>SOURCE</code> (iCIMS combined data), <code>TARGET</code> (Payworks employee). Return true to allow the delete/termination. Leave empty to allow all termination events.</li>
+<li data-list-item-id="eef93a6297a15f3a3d88093cd9bc89a61">
+<strong>Delete Limit:</strong> Maximum deletes/terminations per run. Use "unlimited" for no cap.</li>
+</ul><h3 id="h_01M48R05FP7KATAGXMND4F8F7Y">Employee Record Steps</h3><ul><li data-list-item-id="e5bedee426624857acb53d4c3a19c77ec">
+<strong>Write Employee Number Back To iCIMS:</strong> After a create, writes the new Payworks employee number into the iCIMS source correlation field. Without it, the candidate still has no correlation value on the next run, so it would match nothing and be created a second time. Only an empty field is ever filled.</li></ul><h2 id="h_01M48R05FPQR1GY13ES74NJJMK">Payworks to iCIMS Tab</h2><p>This tab configures the Payworks to iCIMS direction: writing Payworks organization and employment data back onto iCIMS People profiles.</p><h3 id="h_01M48R05FPPQ5JZJGXMRKC8JV0">iCIMS Settings</h3><ul>
+<li data-list-item-id="ed645688aa4761c30ced8642e38a9c47b">
+<strong>Source Correlation Key:</strong> The iCIMS People field this direction searches/reads to correlate a Payworks employee. Configured separately from the iCIMS to Payworks tab's Source Correlation Key — both default to the same field, but if they are ever set to different fields, the two directions will stop matching each other's records. Keep them in sync unless that divergence is deliberate. Default: <em>External ID</em>.</li>
+<li data-list-item-id="e84cf71ab04ec4f2e5a10b3d1d264bbe4">
+<strong>Termination Status Field Name:</strong> iCIMS People field to write when a correlated Payworks employee is terminated (payroll status matches the Termination Payroll Status). Tenant-specific custom field name, e.g. <code>field12345</code>. Leave empty to skip the write.</li>
+</ul><p><strong>Enable Payworks to iCIMS Lifecycle Management:</strong> Master toggle for all Payworks to iCIMS lifecycle operations. When disabled, no iCIMS field is created, updated, or terminated, and every correlated target is reported as skipped.</p><h3 id="h_01M48R05FP7G1E87TWPBPBMG17">Payworks Settings</h3><ul>
+<li data-list-item-id="eaf127c0346eabfad7dd6298e1cf4bd64">
+<strong>Destination Correlation Key:</strong> The Payworks employee attribute this direction correlates against. Configured separately from the iCIMS to Payworks tab's Destination Correlation Key — both default to the same value. <code>employeeNumber</code> is the business key stored on iCIMS; <code>employeeId</code> is the Payworks-assigned internal key used only in request paths. Default: <em>Employee Number</em>.</li>
+<li data-list-item-id="e86ded96476b2a84d118deef282ab65bb">
+<strong>Manual Payworks to iCIMS Person ID:</strong> iCIMS person ID to process for the Payworks to iCIMS direction. Optional. When left empty, this direction instead polls the full Payworks employee roster (capped by Payworks Roster Max Employees) and correlates each employee back to iCIMS by searching for the configured Source Correlation Key. Their correlation value is looked up in Payworks by employee number, and configured organization/employment fields are written back onto their iCIMS People profile.</li>
+</ul><h3 id="h_01M48R05FPD2VD7SK2PN3A5RDP">Lifecycle Operations</h3><p>Choose which Payworks to iCIMS operations are active: <strong>Create</strong>, <strong>Update</strong>, and/or <strong>Delete</strong>.</p><!-- VERIFY: No screenshots were provided for Create/Update/Delete Condition and Limit fields on this tab, though the script defines PAYWORKS_TO_ICIMS_CREATE_CONDITION, PAYWORKS_TO_ICIMS_CREATE_LIMIT, and the matching Update/Delete pairs, which mirror the iCIMS to Payworks tab's Create/Update/Delete Settings sections. If this tab has equivalent sections in the UI, please supply screenshots so they can be documented here; I have not added fabricated sections for them. --><h2 id="h_01M48R05FPD9W3SZ5KZF0CPTA8">Operation Settings Tab</h2><p>This tab is organized into four sub-sections: Logging, Reporting, Advance Settings, and Log Insights.</p><h3 id="h_01M48R05FP9703BS60A5VTEW1D">Logging</h3><ul>
+<li data-list-item-id="eaf38022dcdd17a421476c957ecd05ad6">
+<strong>Log Attribute Consent:</strong> When disabled, the per-record table is not written to the log at all.</li>
+<li data-list-item-id="e5a2255f95d268a8a7bc846728d9a2235">
+<strong>Log Detail:</strong> Full Details emits every report column. Summary Only emits no per-record rows. Custom applies the attribute list below. Default: <em>Full Details</em>.</li>
+</ul><h3 id="h_01M48R05FPSGZE8V5M1N5JYRX1">Reporting</h3><ul>
+<li data-list-item-id="e8218e78ab91dc0726fa2a4de71562f5b">
+<strong>Report Attribute Consent:</strong> When disabled, the CSV report is written with no data rows.</li>
+<li data-list-item-id="eb18d0293827cbfe86dde3a7169890567">
+<strong>Report Detail:</strong> Full Details emits every report column. Summary Only emits no per-record rows. Custom applies the attribute list below. Default: <em>Full Details</em>.</li>
+</ul><h3 id="h_01M48R05FPVMH5RWRSASM3MAC2">Advance Settings</h3><p><strong>PII &amp; Security</strong></p><ul>
+<li data-list-item-id="e3c10d74dc20c5ee5759f56d8dffbe436">
+<strong>Mask Sensitive Fields:</strong> Masks sensitive values in every log line, the CSV report, and the notification attachment. The forward payload carries the social insurance number, birth date, and the full Canadian tax setup, so this should stay enabled outside of a controlled debugging session.</li>
+<li data-list-item-id="e66e595bd8f9685a8b8e24ec09dcef194">
+<strong>Masked Field Names:</strong> Field names masked wherever they appear, matched case-insensitively against both the attribute name and the report column. A masked value is rendered as its last two characters only.</li>
+</ul><p><strong>Settings</strong></p><ul>
+<li data-list-item-id="e77cd9c1502bf25616aa39dbf0db0a83a">
+<strong>Transient Retry Attempts:</strong> How many times a call is retried after a transient failure (429, 502, 503, timeout) before the record is reported as failed. Retries back off exponentially. Set to 0 to disable. Default: <em>3</em>.</li>
+<li data-list-item-id="e295ae88e0233cb33c9c64fc8e663f455">
+<strong>Retry Backoff (ms):</strong> Base delay before the first retry. Each subsequent attempt doubles it. Default: <em>1000</em>.</li>
+</ul><h3 id="h_01M48R05FPN1C8H3Z0EG6JZWZB">Log Insights</h3><ul>
+<li data-list-item-id="ec41973f859f70fa7c7199cb889306df1">
+<strong>Dashboard Name:</strong> The OpenSearch index events are written to. The run summary goes to the same name with <code>-Summary</code> appended. Default: <em>iCIMS to Payworks Integration</em>.</li>
+<li data-list-item-id="e9e45224eb86a9a3a1056142e4e4a6c0e">
+<strong>Select the Analytics Detail Level:</strong> Full Details and Custom write one event per record as well as the run summary. Summary Only writes the summary alone. Default: <em>Full Details</em>.</li>
+<li data-list-item-id="e3cf6d3bdac9ec9c686fdb3cefb387466">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily):</strong> Consent to store attribute values alongside each event so the dashboard can show what changed. With consent withheld, the event is still written, carrying its operation and result but no attribute values. Masked fields stay masked either way — see PII &amp; Security.</li>
+</ul><h2 id="h_01M48R05FPDFTVZS6H949Z2VCG">Notification Tab</h2><h3 id="h_01M48R05FP6MN05YYP8MG2KG3T">Notification Recipients</h3><ul>
+<li data-list-item-id="e066a2f41a677fc44f54ba9f0e584a55c">
+<strong>Notification Recipients:</strong> Shared recipients for the integration report and the missing-required-fields alert. Used whenever the success or failure list below is left empty.</li>
+<li data-list-item-id="e20e1e6abf851c8652629b95437da6ee2">
+<strong>Send On Success:</strong> Send the report email for SUCCESS, SIMULATED, and NO_ACTION runs.</li>
+<li data-list-item-id="e47a8909400148938b6c4945ce7d56171">
+<strong>Send On Failure:</strong> Send the report email for FAILED and PARTIAL_SUCCESS runs.</li>
+</ul><h3 id="h_01M48R05FPPF5PAN8A4S7FWR7F">Execution Success Notification</h3><ul>
+<li data-list-item-id="e2ba9808c0d6a3e19b52d74b90664815b">
+<strong>Success Recipients:</strong> Recipients for successful, simulated, and no-action runs. Falls back to the shared notification emails when empty.</li>
+<li data-list-item-id="e78aad14cb2fc5589bda747157613a0bc">
+<strong>Success Email Subject:</strong> Leave empty to use the built-in subject.</li>
+<li data-list-item-id="e984f0ce4564ae287e6a2a3793689668a">
+<strong>Success Email Body:</strong> Leave empty to send the built-in plain-text per-record report. When set, the email becomes an HTML summary card followed by this content.</li>
+</ul><h3 id="h_01M48R05FPJ6SPSXWAA2DRWVZ5">Execution Failure Notification</h3><ul>
+<li data-list-item-id="ef5bf68a7e0d6fcde83082da84a40e127">
+<strong>Failure Recipients:</strong> Recipients for failed and partially successful runs, and for the missing-required-fields alert. Falls back to the shared notification emails when empty.</li>
+<li data-list-item-id="e3d30953c1460fd39a3d986dcfba94f9f">
+<strong>Failure Email Subject:</strong> Leave empty to use the built-in subject.</li>
+<li data-list-item-id="e27074f47f808c6e9e8804067ef39f94b">
+<strong>Failure Email Body:</strong> Leave empty to send the built-in plain-text per-record report. When set, the email becomes an HTML summary card followed by this content.</li>
+</ul><h3 id="h_01M48R05FPXFTG2516K5XWZB4E">Notification Report Settings</h3><ul>
+<li data-list-item-id="e3a4728cc518c9629593c48e6d6a9f9da">
+<strong>Attach Integration Report:</strong> Attach the per-record report as a CSV file to the notification email.</li>
+<li data-list-item-id="e10ef1fb6cca4eee461268af86629adc8">
+<strong>Notification Report Consent:</strong> When disabled, no CSV attachment is added to the email.</li>
+<li data-list-item-id="ef1c628d28b6b2dba818b95eaef3adb78">
+<strong>Notification Report Detail:</strong> Full Details emits every report column. Summary Only emits no per-record rows. Custom applies the attribute list below. Default: <em>Full Details</em>.</li>
+</ul><h2 id="h_01M48R05FP913PY6SJYBQN5DTH">Attribute Mapper Tab</h2><p>This tab controls how fields are mapped between the two systems. Each sync direction uses its own, independent map:</p><ul>
+<li data-list-item-id="ef778fbf71224ff1fc412395a91198e23">The <strong>Employee</strong> map drives the iCIMS to Payworks direction's create and update payloads (the full employee, contact, dates, organization, personal, phone number, sensitive, SIN, tax, and employment containers). This map is required — the integration will not create or update a Payworks employee without it.</li>
+<li data-list-item-id="e621c2f9c63f69434c2829cbe18a21fac">The <strong>Payworks to iCIMS Employee Fields</strong> map drives the organization/employment fields written back onto iCIMS People during the Payworks to iCIMS direction's create and update steps. This map is optional; the run still completes without it, simply skipping that write.</li>
+</ul><p>Termination is not driven by either map: in both directions, termination writes a fixed value directly (the Payworks payroll status and termination date for iCIMS to Payworks; the configured Termination Status Field Name for Payworks to iCIMS).</p><h2 id="h_01M48R05FPZWY49H4T0KDV19DA">Tables Tab</h2><p>Standard Aquera table functionality is available on this integration for defining custom reference values to use in attribute mapping expressions.</p><h2 id="h_01M48R05FPPEFT08NGB5Y5MBP5">Schedule Tab</h2><p>Standard Aquera scheduling is available to run this integration automatically on your preferred timeframe.</p><h1 id="h_01M48R05FP9MD4T960YT733EXA">How the Integration Processes Records</h1><h2 id="h_01M48R05FPQTH7V0W5HC48KTQS">iCIMS to Payworks</h2><p>This direction is triggered by an iCIMS <code>WorkFlowStatusChangeEvent</code> webhook, or by a manual candidate run for testing. For each candidate:</p><ol>
+<li data-list-item-id="eb0ef0c9ae6ca690ab1b15ee537aa70fe">The People, Job, and Applicant Workflow profiles are fetched from iCIMS and combined.</li>
+<li data-list-item-id="e96a6a7d2a661d11552fa92036edff238">The candidate is correlated to Payworks using the Source Correlation Key against the Payworks employee number.</li>
+<li data-list-item-id="e6b712b1d7b7efaf4de6f20b87c8976f3">The event is classified as a hire or a termination, based on the configured status categories (or status IDs, which take precedence).</li>
+<li data-list-item-id="ea00b564d31dd7ca9c4f9812fa834c275">The candidate is bucketed: a hire event with no existing Payworks employee is a <strong>Create</strong>; a hire event with an existing Payworks employee is an <strong>Update</strong>; a termination event with an existing Payworks employee is a <strong>Delete</strong> (termination). Anything else is skipped, with a reason recorded.</li>
+<li data-list-item-id="eb9ab076bae97574e690cfdec995c19d2">The bucketed candidate is checked against its operation's condition and limit.</li>
+<li data-list-item-id="ee5d5e9358359ac92ce39622f9da4b971">The operation is executed: Payworks is created or patched, or, for an update, only the fields that actually differ are sent.</li>
+<li data-list-item-id="ed2be61ee9b2b9322379fd1450a6a0fe8">On a successful create, the new Payworks employee number is written back to the configured iCIMS field (unless that field already holds a value).</li>
+</ol><h2 id="h_01M48R05FP598Z3MNZWH83ZQQ0">Payworks to iCIMS</h2><p>This direction is triggered manually for one named iCIMS person, or — when no manual person is set — by polling the full Payworks roster on a schedule. For each target:</p><ol>
+<li data-list-item-id="e373ba06d4330cd4a057c03e0b331d034">The iCIMS person is resolved (directly, for a manual run; by searching on the correlation field, for a roster poll) and the correlated Payworks employee is looked up.</li>
+<li data-list-item-id="edb3d1444b731eabcf0aaa9d3808f6da5">The target is bucketed by the Payworks employee's payroll status and whether iCIMS already holds any mapped value: a terminated employee is a <strong>Delete</strong>; an active employee with no existing iCIMS values is a <strong>Create</strong>; an active employee with existing values to diff is an <strong>Update</strong>.</li>
+<li data-list-item-id="e6edd8ecbd6b8bee497b3ee9cd1c1445b">The bucketed target is checked against its operation's condition and limit.</li>
+<li data-list-item-id="e6b202d7f9dd588cd47b9364532d94549">For Create and Update, the mapped organization/employment fields are written to iCIMS, if changed. For Delete, the configured Termination Status Field Name is set on the iCIMS People profile.</li>
+</ol><h2 id="h_01M48R05FPYJEE7WSTBWCZ6PY0">Correlation</h2><p>Both directions correlate candidates using the same two values: the configured iCIMS field (Source Correlation Key) and the Payworks employee number (Destination Correlation Key). Each direction's keys default to the same fields but are configured independently — if they are ever set to different values, the two directions will stop matching each other's records.</p><h2 id="h_01M48R05FP9824F2K3W9Y4GYHA">Retries and Idempotency</h2><p>Transient failures (429, 502, 503, or a timeout) are retried with exponential backoff, up to the configured Transient Retry Attempts. A create is never retried on a timeout, to avoid submitting the same employee twice; the integration instead re-checks whether the employee already exists before giving up.</p><h2 id="h_01M48R05FPJ9HTT5Y3EBTZ2RKJ">PII Masking</h2><p>When Mask Sensitive Fields is enabled, matching values are replaced in every log line, the CSV report, and the notification attachment, showing only the last two characters. This applies regardless of which direction is running.</p>
+  </div>
+</body>
+</html>

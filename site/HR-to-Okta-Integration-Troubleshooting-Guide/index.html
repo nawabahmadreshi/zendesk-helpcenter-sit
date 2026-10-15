@@ -19,7 +19,7 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>HR to Okta Integration - Troubleshooting Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01M4TH9Z1GXX67XST0NF3VK09J">Overview</h1><p>This guide describes common errors that can occur when the HR to Okta Integration runs. It explains the possible causes of each error and provides steps to diagnose and resolve the issue.</p><h1 id="h_01M4THMFSBR2VC1VRFCW65NR2H">Troubleshooting</h1><p>This section covers the errors and the corresponding solutions.</p><h3 id="h_01M4THMKBZ7PDJTPABDD88NEAZ">Error: Creation validation failed. No matching user was found using the configured correlation attribute.</h3><p>After the Aquera integration submitted a request to create the user in Okta, it could not locate the user. Aquera validates the operation by searching Okta for the user using the configured correlation attribute (Source Match Expression). The validation fails when no matching user is found. Either Okta did not create the user, or it created the user without a value in the correlation attribute.</p><h2 id="h_01M4THMQ4VX154Q4Y5Y0MBDKR0">Solution</h2><p>Perform the following steps to identify and resolve the issue:</p><ol>
+<h1 id="h_01M4TH9Z1GXX67XST0NF3VK09J">Overview</h1><p>This guide describes common errors that can occur when the HR to Okta Integration runs. It explains the possible causes of each error and provides steps to diagnose and resolve the issue.</p><h1 id="h_01M4THMFSBR2VC1VRFCW65NR2H">Troubleshooting</h1><p>This section covers the errors and the corresponding solutions.</p><h3 id="h_01M4THMKBZ7PDJTPABDD88NEAZ">Error: Creation validation failed. No matching user was found using the configured correlation attribute.</h3><p>After the Aquera integration submitted a request to create the user in Okta, it could not locate the user. Aquera validates the operation by searching Okta for the newly created user using the configured correlation attribute (Source Match Expression). The validation fails when no matching user is found. Either Okta did not create the user, or it created the user without a value in the correlation attribute.</p><h2 id="h_01M4THMQ4VX154Q4Y5Y0MBDKR0">Solution</h2><p>Perform the following steps to identify and resolve the issue:</p><ol>
 <li data-list-item-id="ee370ee6de017bc0362ecc03366ee0579">Verify that the following settings are configured in the integration:<ul>
 <li data-list-item-id="ed27713051595d11fd48a7143959d927c">Make sure that the <strong>Source Match Expression</strong> is configured.</li>
 <li data-list-item-id="ed5503a9b509ac4afc11a21ded81b0fac">Make sure that the attributes used in the <strong>Source Match Expression</strong> are mapped to the corresponding attributes in the <strong>Attribute Map</strong>.</li>
@@ -195,14 +195,72 @@
 <li data-list-item-id="eb6cacb69ebcf1028920aaddcfd59aa5c">On the app user profile click <strong>Mappings</strong> and select <strong>Configure User mappings </strong>for the application you have selected in 3rd step.</li>
 <li data-list-item-id="ecbc14e1edae0a9cfcf1d4f1362a48178">In the &lt;App name&gt; to Okta User tab, check the listed attribute:<ul>
 <li data-list-item-id="eb1b6297de4738e86e2f066dc807cf4e0">If the row shows <strong data-renderer-mark="true">Choose an attribute or enter an expression...</strong> it means the attribute is unmapped and the user is created without value.</li>
-<li data-list-item-id="e834b047e87817ad147df5d8a9a23e817">If the mapping is active it is indicated by a green arrow, click the arrow and select <strong>Apply </strong><strong>mapping </strong><strong>on </strong><strong>user </strong><strong>create </strong><strong>and </strong><strong>update</strong> to ensure that subsequent updates are reflected in the Okta user profile.<br/><img alt="troubleshooting-2.png" height="332" src="./assets/705edeef5af0f9ac.bin" width="1724"/>
+<li data-list-item-id="e834b047e87817ad147df5d8a9a23e817">If the mapping is active it is indicated by a green arrow, click the arrow and select <strong>Apply mapping on user create and update</strong> to ensure that subsequent updates are reflected in the Okta user profile.<br/><img alt="troubleshooting-2.png" height="332" src="./assets/705edeef5af0f9ac.bin" width="1724"/>
 </li>
 <li data-list-item-id="ed57bae7680871f0ee1d6e72e1c0a4f76">Make sure that the Okta profile mapping does not modify the attribute value using expressions such as toUpperCase() or substring(). If a transformation is required, configure it in the Aquera Attribute Map and map the attribute directly in Okta.</li>
 </ul>
 </li>
+<li data-list-item-id="ef0ab53c143709c121feb9ce684c97b70">
+<p>Aquera sends array attribute values to Okta as comma-separated text, and Okta must convert those values back into an array using a mapping expression.</p>
+<div><pre><code>(appuser.numberArray != "" &amp;&amp; appuser.numberArray != null) ? Arrays.flatten(appuser.numberArray) : {}</code></pre></div>
+</li>
+<li data-list-item-id="eac225477a1d8ed631857d8ee4d5029e1"><span>Open the Custom Identity Source application and navigate to <strong>Provisioning</strong> &gt; <strong>To Okta</strong> &gt; <strong>Okta Attribute Mappings</strong>. Verify that <strong>Create and update</strong> is displayed in the <strong>Apply on</strong> column for each required attribute, and click <strong>Force Sync</strong>.</span></li>
 </ol>
 </li>
-</ol><h3 id="h_01M4X57XPGYQD8J179YMXHJAYF">Error: update failure: code 400, detail= Update validation failed. These attributes were not updated: &lt;lists&gt;.</h3><h2 id="h_01M4X5AMCJQKXTG5Q91YDVVGEG">Solution</h2><p>Perform the following steps to identify and resolve the issue:</p><p> </p><h3 id="h_01M4X5B81RZZMESA4W2G1F84RZ">Error: update failure: code= 404, detail= Update validation failed. The user was not found.</h3><p>After Aquera submits a request to update a user in Okta, it searches for the user using the Okta user ID to confirm the update. The validation fails when Okta cannot find a user with that ID. The user existed when Aquera loaded the Okta users at the beginning of the integration run but was deleted before the update could be confirmed.</p><p>Causes for this error:</p><ul>
+<li data-list-item-id="eaac7d10a083a2bd917042850855bad13">Verify that this application controls the user profile perform the following:</li>
+</ol><h3 id="h_01M4X57XPGYQD8J179YMXHJAYF">Error: update failure: code 400, detail= Update validation failed. These attributes were not updated: &lt;lists&gt;.</h3><p>After Aquera submits a request to update a user in Okta through the Custom Identity Source application, it reads the user profile and compares the updated attribute values with the values sent by Aquera. The validation fails when one or more attributes have different values in Okta.</p><p><strong>Causes for this error:</strong></p><ul>
+<li data-list-item-id="eda5a682ba310ed241347a3e04b5ac6bf">The attribute is not mapped in the Aquera <strong>Attribute Map</strong> or does not exist in the Okta application user profile.</li>
+<li data-list-item-id="e7fafe9ac73f113c26dddc3a187ded589">The attribute mapping in Okta is configured to apply only during user creation, so subsequent updates are not reflected in the Okta user profile.</li>
+<li data-list-item-id="e87cfdc875a4e10bba920a48cbd473f83">The attribute is not mapped correctly in the Okta profile mapping, or the mapping expression changes its value.</li>
+<li data-list-item-id="eee2223e36907b5272d369af7e7f58ddf">Another application has a higher profile source priority and controls the user profile or attribute value.</li>
+<li data-list-item-id="e4edfe3b0d6d8b798fddda93478db9722">The attribute value sent by Aquera does not match the data type or format expected by Okta.</li>
+<li data-list-item-id="ea8440ec7c438f2fabf4a9fcb1ce169be">The required reactivation settings are not enabled in the Custom Identity Source application, so rehired users remain suspended or deactivated in Okta.</li>
+</ul><h2 id="h_01M4ZS1NJDGDGK8D4WSYHT5S8G">Solution</h2><p>Perform the following steps to identify and resolve the issue:</p><ol>
+<li data-list-item-id="ea939b9ec9abe633fcf226025ce1a0a96">Compare the values in the Okta application perform the following:<ol>
+<li data-list-item-id="e57f748e8d9003ce14359d5db21748243">Note the attributes that are listed in the error.</li>
+<li data-list-item-id="e4ab21145bb04d653ea3a15510386fbc8">Navigate to <strong>Directory</strong> and select <strong>People</strong>.</li>
+<li data-list-item-id="e5abf802fbc2d3974868f07be759560c3">Open the user profile and navigate to <strong>Profile</strong> tab. Check the value for the attributes that was listed in the error wether the value is empty or a different value is entered.<ol>
+<li data-list-item-id="e7d9bb87fdc1d5f11423a77fd8b53446f">If the value is empty then the attribute is not mapped in the mapper. In this case check step 2 to 4.</li>
+<li data-list-item-id="e9854d91387d11e272bbf6ad00527f7c0">If a different value is present the check point 4 to 6.</li>
+</ol>
+</li>
+</ol>
+</li>
+<li data-list-item-id="ecb685c6d08f1446917efc53b5c62f6d8">Verify in Aquera wether the attribute is mapped in the mapper perform the following steps:<ol>
+<li data-list-item-id="e72f9b8c4d5000a8c000ecc38db462998">Navigate to <strong>Mapping and Assignments</strong> and select <strong>Attribute Map</strong> in the integration.</li>
+<li data-list-item-id="e3d1bb7db3db0f1c3e98144cbf0246eca">Check wether all the listed source attribute are mapped to its corresponding target attribute.</li>
+<li data-list-item-id="e2d6748e5974b4de19f896d2f72e1a217">In the Enter objects for preview enter the user id number to preview the values the integration will send to Okta. If the values are incorrect correct the source expression or the target attribute and save it.</li>
+</ol>
+</li>
+<li data-list-item-id="eed24343ef06264b75b5204f22b6f292a">Verify wether the attribute exist in the Okta application perform the following steps:<ol>
+<li data-list-item-id="eac7571be98f5d2677e0274be00be9558">Navigate to <strong>Directory</strong> and select <strong>Profile Editor</strong> in the Okta application.</li>
+<li data-list-item-id="e889ffc4bfcccc7a0a3f733b6fb313d5a">Search for the application and open it.</li>
+<li data-list-item-id="ed7bd41cdf4f2fb5b30d08646d31060e6">Check wether the <strong>Attributes</strong> section contains all the attributes that was listed in the error. If the attributes are missing then perform any one of the action:<ol>
+<li data-list-item-id="ebc0ea1eea3042b635f1a6de405c5a5a8">Enable the <strong>Auto-Create and Map Attributes in Okta Application </strong>toggle: Enable this toggle in the Aquera integration and click the refresh icon next to the target application. The integration creates the missing attributes in the Okta application and maps them to the Okta directory attributes.</li>
+<li data-list-item-id="e9b8b8476fa5d81d1054db81efb5f2003">Click <strong>+Add Attribute</strong> on the application user profile that you have selected and add he attribute with he same name and data type as the Okta directory attribute.<br/><img alt="troubleshooting-1.png" height="1148" src="./assets/1dd1c21c8f0b4734.bin" width="1952"/>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li data-list-item-id="ec6e6722cb4a02aa373635e4cb32b1ac5">Verify the attribute mapper between the Okta application to Okta perform the following steps:<ol>
+<li data-list-item-id="e1a68ccb2439a9362cd537a067242edd7">On the app user profile click <strong>Mappings</strong> and select <strong>Configure User mappings </strong>for the application you have selected in 3rd step.</li>
+<li data-list-item-id="e547162730cbe8cb097af2c8fdb41d153">In the &lt;App name&gt; to Okta User tab, check the listed attribute:<ol>
+<li data-list-item-id="ee04598b62761169640cf24ea73aa2f9d">If the row shows <strong data-renderer-mark="true">Choose an attribute or enter an expression...</strong> it means the attribute is unmapped and the user is created without value.</li>
+<li data-list-item-id="ef85be33bf9bdcb31f811140af4d9c975">If the mapping is active it is indicated by a green arrow, click the arrow and select <strong>Apply mapping on user create and update</strong> to ensure that subsequent updates are reflected in the Okta user profile.<br/><img alt="troubleshooting-2.png" height="332" src="./assets/705edeef5af0f9ac.bin" width="1724"/>
+</li>
+<li data-list-item-id="eed10ef05894b739d93ba824bf8adaeac">Make sure that the Okta profile mapping does not modify the attribute value using expressions such as toUpperCase() or substring(). If a transformation is required, configure it in the Aquera Attribute Map and map the attribute directly in Okta.</li>
+</ol>
+</li>
+<li data-list-item-id="e4d0812f31208d3b5b1f203b807f14eb6">
+<p>Aquera sends array attribute values to Okta as comma-separated text, and Okta must convert those values back into an array using a mapping expression.</p>
+<div><pre><code>(appuser.numberArray != "" &amp;&amp; appuser.numberArray != null) ? Arrays.flatten(appuser.numberArray) : {}</code></pre></div>
+</li>
+<li data-list-item-id="ef691b7d701421629b464d01b9577c642"><span>Open the Custom Identity Source application and navigate to <strong>Provisioning</strong> &gt; <strong>To Okta</strong> &gt; <strong>Okta Attribute Mappings</strong>. Verify that <strong>Create and update</strong> is displayed in the <strong>Apply on</strong> column for each required attribute, and click <strong>Force Sync</strong>.</span></li>
+</ol>
+</li>
+<li data-list-item-id="ed3182aa2d8c16c441c99ab101fe5b40a">Verify that this application controls the user profile perform the following:</li>
+</ol><p> </p><h3 id="h_01M4X5B81RZZMESA4W2G1F84RZ">Error: update failure: code= 404, detail= Update validation failed. The user was not found.</h3><p>After Aquera submits a request to update a user in Okta, it searches for the user using the Okta user ID to confirm the update. The validation fails when Okta cannot find a user with that ID. The user existed when Aquera loaded the Okta users at the beginning of the integration run but was deleted before the update could be confirmed.</p><p>Causes for this error:</p><ul>
 <li data-list-item-id="e1f0095c8ed7b62342c079ee1bae8458c">The user was deleted manually or by another process in Okta during the integration run.</li>
 <li data-list-item-id="efa73bab11b8a62f4137c8afda8416785">The user was deleted and recreated in Okta during the integration run, resulting in a new Okta user ID.</li>
 </ul><h2 id="h_01M4X5DCY0A19M28HKPHHNFGV2">Solution</h2><p>Perform the following steps to identify and resolve the issue:</p><ol>
@@ -243,13 +301,18 @@
 <li data-list-item-id="e50f537817b09836d33828be11e77b95d">Log in to Okta instance.</li>
 <li data-list-item-id="e8ebb0ba014fdcc0d42f8cd034f05313d">Navigate to <strong>Directory</strong> and select <strong>People</strong>. The <strong>People</strong> page is displayed.</li>
 <li data-list-item-id="ee9bec6952827e6c56529f7a69894043d">Click <strong>Advance search</strong>, select the correlation attribute, enter the required value, and click <strong>Search</strong>, or you can search for the user with their name.</li>
-<li data-list-item-id="e27ba0b492e772cfcd9dea1b8899922cd">Click the user profile and check:<ol>
-<li data-list-item-id="e41d3714fa5d00794189c86df109e6149">The status of the user (for example: <strong>Active</strong>, <strong>Suspended</strong>)</li>
-<li data-list-item-id="eb3479c41f6fe11e40db2b557cad410e9">If <strong>Profile sourced by Custom Identity Source</strong> is displayed below the user's name.</li>
+<li data-list-item-id="e27ba0b492e772cfcd9dea1b8899922cd">
+<span>Click the user profile and check:</span><ol>
+<li data-list-item-id="e41d3714fa5d00794189c86df109e6149"><span>The status of the user (for example: <strong>Active</strong>, <strong>Suspended</strong>)</span></li>
+<li data-list-item-id="eb3479c41f6fe11e40db2b557cad410e9"><span>If <strong>Profile sourced by Custom Identity Source</strong> is displayed below the user's name.</span></li>
 </ol>
 </li>
 </ol>
-</li></ol><h3 id="h_01M4ZEA5HWCJG5EMD8QQP15K6J">Error: Access denied: Okta XaaS isn't enabled for your account. Please contact Okta Support.</h3><h2 id="h_01M4ZEBSYZWAFRMJKM6TY1SFVB">Solution</h2><h3 id="h_01M4ZEWJN7107VC4WJWRBW1KV5">Error: The Okta import process returned an error. Please review the Okta UI and the identity source session details.</h3><p>After Aquera uploads user records to Okta through the Custom Identity Source application, it requests Okta to process the import session. The import fails when Okta encounters an error while creating, updating, or deleting the records and sets the import session status to <strong>ERROR</strong>. As a result, Aquera stops the integration run.</p><h2 id="h_01M4ZEYCBHDEYFM3ZVC607ZSGA">Solution</h2><p>Perform the following steps to identify and resolve the issue:</p><ol>
+</li></ol><h3 id="h_01M4ZEA5HWCJG5EMD8QQP15K6J">Error: Access denied: Okta XaaS isn't enabled for your account. Please contact Okta Support.</h3><p>Before uploading user records to Okta, Aquera sends a request to retrieve the open import sessions of the Custom Identity Source application. The request fails when Okta returns a <strong>403 Forbidden</strong> error, indicating that access to the requested resource is denied. As a result, the integration stops without uploading any user records.</p><p><strong>Causes for this error:</strong></p><ul>
+<li data-list-item-id="edf228dd4ca35382270f30728408e85f4">The configured API credentials do not have the required permissions to access the import sessions.</li>
+<li data-list-item-id="eada5e8761ea175f14c703797a84fad58">The API credentials are not authorized to access the Custom Identity Source application.</li>
+<li data-list-item-id="e1930174a4594bc17992b9c09662ba67d">Okta security policies or API access restrictions prevent the request.</li>
+</ul><h2 id="h_01M4ZEBSYZWAFRMJKM6TY1SFVB">Solution</h2><h3 id="h_01M4ZEWJN7107VC4WJWRBW1KV5">Error: The Okta import process returned an error. Please review the Okta UI and the identity source session details.</h3><p>After Aquera uploads user records to Okta through the Custom Identity Source application, it requests Okta to process the import session. The import fails when Okta encounters an error while creating, updating, or deleting the records and sets the import session status to <strong>ERROR</strong>. As a result, Aquera stops the integration run.</p><h2 id="h_01M4ZEYCBHDEYFM3ZVC607ZSGA">Solution</h2><p>Perform the following steps to identify and resolve the issue:</p><ol>
 <li data-list-item-id="edd9a7b8b03b84b7a37744fbf7023bd6b">Log in to your Okta instance.</li>
 <li data-list-item-id="e97103346e186335c9ccf226e055ec8f7">Navigate to <strong>Reports</strong> and select <strong>Import Monitoring</strong> or click <strong>Monitor Imports</strong> displayed below the user's name in your Custom Identity Source application.</li>
 <li data-list-item-id="e01556e7e4f8946fac8f4c10a9e711dfc">Search your application at the time it run. It shows the <strong>Status </strong>has <em>Failed</em>.</li>

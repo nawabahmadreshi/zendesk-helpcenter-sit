@@ -19,7 +19,243 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>iCIMS / UKG Ready Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-<h1 id="h_01M4G60864YSQDE01B3ED0HZ6Z">Overview</h1><h1 id="h_01M4G62PNHPFJTG5T1B81YRVPK">Key Functions</h1><h1 id="h_01M4G63D3HA80RN63N2C766H60">Prerequisites</h1><h1 id="h_01M4G63HMVNSSY7ZBNDY1XXQM4">Integration Setup</h1><h2 id="h_01M4G64123WYQCQWVC88XV87KJ">Create integration</h2><p> </p><p> </p>
+<h1 id="h_01M51KAN8WQSR3X6KT5ZZSFP1S">Overview</h1><p><span>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</span></p><p><span>The <strong>iCIMS / UKG Ready</strong> integration synchronizes employees between <strong>iCIMS</strong> and <strong>UKG Ready</strong>. For each integration run, employees are synchronized in only one direction, based on the <strong>Sync Direction</strong> setting in the </span><a href="#h_01M48R05FPG2E7FXFHBVX30WQZ"><span>Parameters</span></a><span> section. The integration does not synchronize employees in both directions during the same integration execution.</span></p><p><span>The following synchronization directions are available:</span></p><ul>
+<li data-list-item-id="e41517e257d4259a93284c422074deaba">
+<span><strong>iCIMS to UKG Ready</strong>: It synchronizes employee lifecycle events from iCIMS to UKG Ready.</span><br/><span>When a candidate reaches a hire status in iCIMS, the integration creates the employee in UKG Ready. If the candidate is already matched to an existing UKG Ready employee, the integration updates only the fields whose values differ from iCIMS. Fields that already contain the same values are skipped. When a candidate reaches a termination status in iCIMS, the integration updates the employee's payroll status and termination date in UKG Ready.</span><br/><span><strong>Note</strong>: This direction is normally triggered by an iCIMS webhook and processes one candidate for each event. You can also execute it manually for a specific candidate.</span>
+</li>
+<li data-list-item-id="e3dc70e041371e0bffc39be9efe8efc2f">
+<span><strong>UKG Ready to iCIMS</strong>: It synchronizes organization and employment data from UKG Ready to the matching iCIMS People profile.</span><br/><span>If the matching iCIMS profile does not contain existing values, the integration performs an initial synchronization and writes the UKG Ready data to iCIMS. If values already exist, the integration updates only the fields whose values differ from UKG Ready. For terminated employees, the integration updates the configured termination status field in iCIMS instead of performing the standard employee data synchronization.</span><br/><span>This direction can be executed manually for a specific employee or scheduled to retrieve the full Payworks employee data. During a scheduled execution, each UKG Ready employee is matched to the corresponding iCIMS profile using the configured matching field.</span>
+</li>
+</ul><p><span>Each synchronization direction has its own lifecycle operations, conditions, limits, and correlation settings. To match records between the two applications, the integration compares the configured iCIMS correlation field with the <strong>employeeNumber</strong> field in UKG Ready.</span></p><h2 id="h_01M51M85JWHCY7F0K3HKCBGH8A"><span>Key Functions</span></h2><p><span>This integration supports the following functions:</span></p><ul>
+<li data-list-item-id="ed1a98dcb9af479fa677f722dd096c1b7"><span>Synchronizes employee data between iCIMS and UKG Ready in the configured synchronization direction.</span></li>
+<li data-list-item-id="ef8665252a8da42723f3f2bc2b4abcdf0"><span>Creates, updates, and terminates employees in UKG Ready based on hire and termination events received from iCIMS.</span></li>
+<li data-list-item-id="e4a021fdc069bc81322fe1080016474d5"><span>Supports writing UKG Ready employee information back to iCIMS after an employee is processed, when writeback is enabled.</span></li>
+<li data-list-item-id="e7990a5476ad72cc37d4cf8e68d6dd1bd"><span>Synchronizes organization and employment data from UKG Ready to matching iCIMS People profiles and updates the configured termination status for terminated employees.</span></li>
+<li data-list-item-id="e3fb56db5d7525b944cede7407c85d0e6"><span>Matches employee records between iCIMS and UKG Ready using configurable correlation attributes.</span></li>
+<li data-list-item-id="e48bbf4edc98b819a3c7baa05e71760e8"><span>Supports configurable lifecycle operations, conditions, and execution limits for each synchronization direction.</span></li>
+<li data-list-item-id="ed809eaad3c34e06fe8bbec9d580f5781"><span>Supports manual execution for individual records and scheduled synchronization.</span></li>
+<li data-list-item-id="e94e095c2775abf4baba7c3cc14da249d"><span>Provides report-only execution, logging, reporting, dashboards, email notifications, and configurable masking of sensitive employee data.</span></li>
+</ul><h1 id="h_01M51PD38C4KP8WRZG98QJ6RYY">Prerequisites</h1><p>The following are the required setup steps<strong> </strong>before configuring this integration:</p><ul>
+<li data-list-item-id="e8ead6cb240029e0e272148a011d81374">
+<strong>Tenant Account in the Aquera Admin Portal:</strong> You must have a tenant account with admin access in the Aquera Admin portal. Visit <a href="https://admin.aquera.io" rel="noopener noreferrer" target="_blank">https://admin.aquera.io</a> and register to get a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note:</strong> If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>.</li>
+<li data-list-item-id="e8c813087fb8be312f56ffa898bec0b4b">
+<strong>Configure Application Connectors in the Aquera Admin Portal</strong>: You need to configure the following application connectors in the Aquera Admin portal:<ul>
+<li data-list-item-id="ed3ff18998e582aea3bc07cc5bafff781">
+<strong>iCIMS:</strong> You must have an iCIMS connector configured in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360056231174" rel="noopener noreferrer" target="_blank">iCIMS Configuration Guide</a> for configuration details.</li>
+<li data-list-item-id="ed4d9f52fe4653fac18dd766cf2f61a16">
+<strong>UKG Ready:</strong> You must have a UKG Ready connector configured in the Aquera Admin portal. Refer to the <a href="https://support.aquera.com/hc/en-us/articles/42771732621847" rel="noopener noreferrer" target="_blank">Payworks Configuration Guide</a> for configuration details.</li>
+</ul>
+</li>
+<li data-list-item-id="eaf98468aff468ee7fac30f622c6c176e">
+<strong>Webhook setup</strong>: You must have the required webhook created in iCIMS for the <strong>iCIMS to UKG Ready</strong> use case. Refer to the <a href="../iCIMS-Message-Listener-Integration-Setup-Guide/" rel="noopener noreferrer" target="_blank">iCIMS Message Listener Integration Setup Guide</a> for further details.</li>
+</ul><h1 id="h_01M51PM7KMQ10T2S811EQE568F">Integration Setup</h1><p>This section details the configuration and mapping process required for this integration. It outlines the steps to create the integration and set up integration preferences.</p><h2 id="h_01M51PQ95P4N468XXEGG81KG97">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e7551e1d7cf82bf9060db7ce15e9145a0">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ee071e07a174ac846e573d9cd6c0ef169">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="e099566fc9fb0ee61dea083fdaf6de84c">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e2c3d2df6c3f8e4e1a549e727b57a1ca2">Search for <strong>iCIMS / UKG Ready </strong>in the search box next to the <strong>Explore Templates</strong> section, and then select it to create a new integration.</li>
+<li data-list-item-id="e09e6c009bc3b6f6205ba8b7eee2afc7a">Enter a name and a description for the integration.</li>
+<li data-list-item-id="eef76da15858442300bfe297e9b5cddbb">Select your <strong>iCIMS</strong> and <strong>UKG Ready</strong> connector instances.</li>
+<li data-list-item-id="eed657f3e68072c08424a5225673ea8d1">Click <strong>Continue</strong>. The <strong>Overview</strong> tab is displayed for further configuration.</li>
+</ol><h2 id="h_01M51PRR8FS8FR5P2NA3EPPYQ2">Overview</h2><p>This tab allows you to select the connectors used by the integration and configure the settings that control synchronization behavior.</p><p>The following sections are available in this tab:</p><ul>
+<li data-list-item-id="edc5e1569757303670e6c0a5771a9c951"><a href="#h_01M48R05FPVKN038ZENHVAYS0J">Connections</a></li>
+<li data-list-item-id="ec1d144d34e75f4f030309942db1403ac"><a href="#h_01M48R05FPG2E7FXFHBVX30WQZ">Parameters</a></li>
+</ul><h3 id="h_01M51PY4JGFB2H7EVHM8KJFBQG">Connections</h3><p>This section allows you to select the connections used for the integration. The following fields are displayed:</p><ul>
+<li data-list-item-id="e2155a93e98385f5389e13a5f5ecffab5">
+<strong>iCIMS:</strong> Select the iCIMS connector configured in the Aquera Admin portal.</li>
+<li data-list-item-id="e7daa46a74b73a5a1e2d52b28f192dd54">
+<strong>UKG Ready:</strong> Select the UKG Ready connector configured in the Aquera Admin portal.</li>
+</ul><p><strong>Note</strong>: If you do not find your connector in the list, click the refresh icon available next to the field to reload the available connectors.</p><h3 id="h_01M51PZ9WE0B2KTF2KAVE6S4RD">Parameters</h3><p>This section allows you to configure the synchronization behavior, operational features, and settings for manually processing an iCIMS candidate.</p><p>The following settings are available in this section for configuration:</p><h4 id="h_01M51Q2BWES5F629CW9B2Z4JNZ">Event Control Settings</h4><ul><li data-list-item-id="e7d3f6b2301d562ece977272e1b8920f0">
+<strong>Enable User Lifecycle Management</strong>: Select this checkbox to manage the lifecycle events of candidates from the source.</li></ul><h4 id="h_01M48R05FPT8VKY52WQXCVB9KM">Operational settings</h4><p>This section allows you to configure operational integration features for the integration. The following fields are displayed:</p><ul>
+<li data-list-item-id="ef3f952458c1e783bdc31abd72ab039f5">
+<strong>Enable report-only mode:</strong> Select this checkbox to execute the integration in the report-only mode. The report-only mode generates a report to show the data that would be changed without actually making those changes.</li>
+<li data-list-item-id="ec1e8e11aaa5b1c6907e91ebe3dc2cfb3">
+<strong>Enable logging:</strong> Select this checkbox to generate logs outlining data changes. When selected, the <a href="#h_01M48R05FP9703BS60A5VTEW1D">Logging</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e8b31b39d3c78b1f34323ff67f4ea5ee4">
+<strong>Enable reporting:</strong> Select this checkbox to generate the integration report. When selected, the <a href="#h_01M48R05FPSGZE8V5M1N5JYRX1">Reporting</a> section is displayed for further configuration.</li>
+<li data-list-item-id="ea29972a8936c3e1beb6b94b9054ebffe">
+<strong>Enable notifications:</strong> Select this checkbox to enable integration-related notifications. When selected, the <a href="#h_01M48R05FPDFTVZS6H949Z2VCG">Notifications</a> tab is displayed for further configuration.</li>
+<li data-list-item-id="ee5bdfd4afab780e86a5e6dc49a25194f">
+<strong>Enable dashboard generation:</strong> Select this checkbox to visualize the integration-related metrics. When selected, the <a href="#h_01M48R05FPN1C8H3Z0EG6JZWZB">Log Insights</a> section is displayed for further configuration.</li>
+<li data-list-item-id="e29cb7ddb114e7a6de9109e362d5b2e0e">
+<strong>Enable debug mode:</strong> Select this checkbox to log complete payloads and detailed field-level information for troubleshooting. iCIMS profile data may contain personal information, enable this only when required for troubleshooting.</li>
+</ul><h4 id="h_01M51Z2VAVS6GWDJ64457ZCJ7H">Manual candidate execution</h4><p>Use this section to manually execute the <strong>iCIMS to UKG Ready</strong> sync for a single candidate. The following fields are available for configuration:</p><ul>
+<li data-list-item-id="e645854920b46e97683a8cf01d9ffd5d8">
+<strong>Candidate ID:</strong> Enter the Person ID of the candidate to process manually. When a Person ID is specified, the integration ignores the webhook payload and retrieves only the specified candidate through the API. Leave this field blank for event-driven synchronization.</li>
+<li data-list-item-id="eafa0eea5b7c04dd4e7968adf2a76cd31">
+<strong>Job ID:</strong> Enter the job ID to use for the integration. If left blank, the integration uses the job reference from the People profile.</li>
+<li data-list-item-id="e31be5832074ebb5464af287074a4f8b5">
+<strong>Applicant workflow ID:</strong> Enter the applicant workflow ID. If left blank, the integration searches for the ID automatically. Specify the ID if the integration cannot find it through the search.</li>
+<li data-list-item-id="e896fea50dd2ab023bd399a98c0b9651b">
+<strong>Run operation:</strong> Select <em>Hire</em> or <em>Terminate</em> to specify which operation the integration must perform during a manual execution.</li>
+<li data-list-item-id="e6f8baadee7f66c86be54659577d9794e">
+<strong>Person matching attribute:</strong> Enter the applicant workflow field used to match the workflow to a person when the integration searches for the Applicant Workflow ID.</li>
+</ul><h2 id="h_01M51Z6X8HPF3Z7RY0YGCH1CJ3">iCIMS Settings</h2><p>This tab allows you to configure how candidates are synchronized from <strong>iCIMS </strong>to<strong> UKG Ready</strong> when hire or termination events are received from the iCIMS webhook.</p><p><strong>Note</strong>: This tab is displayed only when <strong>User Lifecycle Management</strong> checkbox is selected in <a href="#h_01M51PZ9WE0B2KTF2KAVE6S4RD">Parameters</a> section.</p><h3 id="h_01M5VV17MHCN8XW34T7Y41AZWC">iCIMS to UKG Ready</h3><p>This section allows you to configure how iCIMS candidates are matched to Payworks employees and how webhook events are identified as hire or termination events. The following fields are available for configuration:</p><ul>
+<li data-list-item-id="e06a3ea3a9a5848af406dc5e802573e75">
+<strong>iCIMS correlation attribute:</strong> Select the iCIMS People attribute to match a candidate with the corresponding UKG Ready employee.<br/><strong>Note</strong>: This field should use the same value as the corresponding correlation field configured for the <strong>UKG Ready to iCIMS</strong> direction. If different fields are configured, the two synchronization directions might not match the same employee records.</li>
+<li data-list-item-id="e8ba6cd70b68d439a2118b3d45dae19ad">
+<strong>Hire status categories:</strong> Enter the iCIMS workflow status categories that identify a candidate as ready to be created or updated in UKG Ready. The integration matches the configured values regardless of capitalization or extra spaces.</li>
+<li data-list-item-id="ec76947c4741692c3f6a6841eabaa5196">
+<strong>Termination status categories:</strong> Enter the iCIMS workflow status categories that identify a candidate as ready to be terminated in UKG Ready. The integration matches the configured values regardless of capitalization or extra spaces.</li>
+<li data-list-item-id="ef50ad50602b72b5f60cf274011b13d6e">
+<strong>Hire status IDs:</strong> Enter the workflow status IDs that identify a hire event. When configured, these IDs are used instead of <strong>Hire status categories</strong> to determine whether an incoming webhook event is a hire event.</li>
+<li data-list-item-id="e5cae6893fecc8e37505e9e91e3741971">
+<strong>Termination status IDs:</strong> Enter the workflow status IDs that identify a termination event. When configured, these IDs are used instead of <strong>Termination status categories</strong> to determine whether an incoming webhook event is a termination event.</li>
+<li data-list-item-id="e47d8b5d6ad801f31af65aec86d12935c">
+<strong>Write back external ID from UKG Ready</strong>: Enable this checkbox to writeback the external ID of the UKG Ready employee to the iCIMS.</li>
+<li data-list-item-id="ea3bae0c23a9b9f0707dc1aa77d8c748a">
+<strong>Lifecycle Operation:</strong> Select the employee lifecycle operations that the integration can perform in UKG Ready. Select one or more operations that the integration should perform. Based on the selected operations, the corresponding configuration sections are displayed. <br/>The following are the available options:<ul>
+<li data-list-item-id="e4445942a74dbf2bc55dddc28f2891336"><a href="#h_01M520JXF34PN1YBYY2C528P5N">Create</a></li>
+<li data-list-item-id="e3ce57c38551489aa67a185dff14fbf95"><a href="#h_01M5VJ2TAMW8B0P0DDH75PGT6T">Update</a></li>
+<li data-list-item-id="ea03f4a3d8c6f5c6d69cc1e742591e873"><a href="#h_01M5VKRN54HKP0BVX0MCAYBC3W">Delete</a></li>
+</ul>
+</li>
+</ul><h3 id="h_01M520JXF34PN1YBYY2C528P5N">UKG Ready Settings</h3><p>This section allows you to configure the UKG Ready field used to match an employee with the corresponding iCIMS candidate.</p><ul><li data-list-item-id="ef1a147129b5cb285d7f8c2d320e3dcb1">
+<strong>UKG Ready correlation attribute:</strong> Select the UKG Ready employee attribute to match with the corresponding iCIMS candidate.<br/><strong>Note</strong>: This field should use the same value as the corresponding correlation field configured for the <strong>UKG Ready to iCIMS</strong>direction.</li></ul><h3 id="h_01M5VQY0233QG2Q929NT1QKR75">Create settings</h3><p>Use this section to define to limit the number of candidates synchronized from <strong>iCIMS </strong>to<strong> UKG Ready</strong> when hire or termination events are received from the iCIMS webhook.</p><ul>
+<li data-list-item-id="e2fc3b8842583f780a12e769e2908667a">
+<strong>Create condition</strong>: Enter a JavaScript expression to define the conditions under which an employee can be created in Payworks. You can use SOURCE for the iCIMS data and TARGET for the Payworks employee data. The expression must return true for the create operation to proceed. Leave this field blank to allow creation for all identified hire events.</li>
+<li data-list-item-id="e633fb97d5b84c6ff03c95f3f3d760729">
+<strong>Create limit:</strong> Enter the maximum number of employees that can be created during an integration run. Enter <em>unlimited</em> if you don't want any limit.</li>
+</ul><h3 id="h_01M5VJ2TAMW8B0P0DDH75PGT6T">Update settings</h3><p>Use this section to define when existing UKG Ready employees can be updated and to limit the number of updates during an integration run. The following fields are displayed:</p><ul>
+<li data-list-item-id="e21b66d0a1f9e73587b8d1f7466e9e26e">
+<strong>Update condition:</strong> Enter a JavaScript expression to define the conditions under which an existing Payworks employee can be updated. You can use SOURCE for the iCIMS data and TARGET for the Payworks employee data. The expression must return true for the update operation to proceed. Leave this field blank to allow updates for all identified hire events.</li>
+<li data-list-item-id="efd88372d948d88582192ee53c433bcc4">
+<strong>Update limit:</strong> Enter the maximum number of employees that can be updated during an integration run. Enter <em>unlimited</em> if you don't want any limit.</li>
+</ul><h3 id="h_01M5VKRN54HKP0BVX0MCAYBC3W">Delete settings</h3><p>Use this section to define when employees can be terminated in UKG Ready and to limit the number of terminations during an integration run. The following fields are displayed:</p><ul>
+<li data-list-item-id="e9559dd9542569f96b7a2d934f92e6574">
+<strong>Termination condition:</strong> Enter a JavaScript expression to define the conditions under which an employee can be terminated in Payworks. You can use SOURCE for the iCIMS data and TARGET for the Payworks employee data. The expression must return true for the termination operation to proceed. Leave this field blank to allow termination for all identified termination events.</li>
+<li data-list-item-id="eef93a6297a15f3a3d88093cd9bc89a61">
+<strong>Termination limit:</strong> Enter the maximum number of employees that can be terminated during an integration run. Enter <em>unlimited</em> if you don't want any limit.</li>
+</ul><h2 id="h_01M5VM94PZAYNYJWJ99V2JJYDN">Employee Data Management</h2><p>This tab allows you to select which employee details the integration updates in UKG Ready. Select the required checkboxes to display the corresponding mappers in the <strong>Attribute Mapper</strong> section, where you can map iCIMS values to UKG Ready fields. The following fields are displayed:</p><ul>
+<li data-list-item-id="eb4a9a78bb1765330daa7899a50fccbaa">
+<strong>Update default job</strong>: Select this checkbox to match the iCIMS job title to a UKG Ready job and set it as the employee’s default job. If the title matches multiple jobs, the integration reports the issue without assigning a default job.</li>
+<li data-list-item-id="ee4f5cfaf5cce51709418ad7053147baa">
+<strong>Create base compensation</strong>: Select this checkbox to create a base compensation record in UKG Ready using the iCIMS offer amount. The integration skips this step if a record already exists for the same effective date.</li>
+<li data-list-item-id="ee05582713753838972dbd5fb2caf7324">
+<strong>Update HR fields</strong>: Select this checkbox to populate HR custom fields in UKG Ready with values from iCIMS. </li>
+<li data-list-item-id="e6858d0b5f3258f80aa55461c4399666e">
+<strong>Preserve existing HR custom fields: </strong>Select this checkbox to preserve existing HR custom field values when updating EIP% in UKG Ready. If this checkbox is not selected, UKG Ready may delete existing custom field values during updates.</li>
+<li data-list-item-id="ebdee9c6b75e49eab1c29406b20d91428">
+<strong>Update managers and cost centre</strong>: Select this checkbox to match the three iCIMS manager levels to UKG Ready accounts and update the employee’s managers and cost centre in UKG Ready.</li>
+</ul><h2 id="h_01M5VQT7RMBFBCA7TJWWV1QZXT">Operation settings</h2><p>This tab enables you to configure various settings required for the integration execution. The following sections are displayed in this tab:</p><ul>
+<li data-list-item-id="e597dfaf7bf5ae9f1e6b92fdcf5da22a0"><a href="#h_01M5VQVQTX9H3Y24BCGE6QVAFX">Log Settings</a></li>
+<li data-list-item-id="e87dd2d585f379d857c571ccb4d2278da"><a href="#h_01M5VQWNW69DG3GZM9VC6EBKN5">Report Settings</a></li>
+<li data-list-item-id="e9d9a39e79988bdeee000b37e59c23481"><a href="#h_01M5VQXAW45W11V8PENRGY7C4W">Log Insights</a></li>
+</ul><h3 id="h_01M5VQVQTX9H3Y24BCGE6QVAFX">Log Settings</h3><p>This section enables you to customize the log generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong data-end="1326" data-start="1308">Enable Logging</strong> setting in the <a href="../iCIMS-Payworks-Integration-Guide/#h_01M48R05FPG2E7FXFHBVX30WQZ">Parameters</a> section.</p><ul>
+<li data-list-item-id="e5e60b5713e43f2a7df45bc5c9742d420">
+<strong>Log attribute consent:</strong> Select this checkbox to include attribute details in the integration logs.</li>
+<li data-list-item-id="e0dd12d20c417567075dd2d169f4e6814">
+<strong>Select the log detail level</strong>: Select the log detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e020b5b0a793aae7191387f849955e563">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e4b6cb6afd9786d98aa271061a23166f7">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="ecbeea0d88fbc71f41fb8fd02d1eb3303">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e0ed8f140fa0544dc5e8211112c6698c8">
+<strong>Log custom mode</strong>: Select the attribute filter to include or exclude attributes in the log. Based on your selection, the following parameters are displayed:</li>
+<li data-list-item-id="e460cb7bf15f3344a3acb7fb912ef0cc3">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the log. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Log custom mode </strong>parameter.</li>
+<li data-list-item-id="e7fd0eb6e14dce74e2ddfc2978855209d">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded in the log. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Log custom mode </strong>parameter.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01M5VQWNW69DG3GZM9VC6EBKN5">Report Settings</h3><p>This section enables you to customize the report generation settings. It has the following settings:</p><p><strong>Note</strong>: This section appears only if you have selected the <strong data-end="1326" data-start="1308">Enable reporting</strong> setting in the <a href="../iCIMS-Payworks-Integration-Guide/#h_01M48R05FPG2E7FXFHBVX30WQZ">Parameters</a> section.</p><ul>
+<li data-list-item-id="e8218e78ab91dc0726fa2a4de71562f5b">
+<strong>Report attribute consent:</strong> Select this checkbox to include attribute details in the integration reports.</li>
+<li data-list-item-id="e13eef2d0a373c22f4099745ffab4564d">
+<strong>Select the report detail level</strong>: Select the detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="eb48eebebd721c4b1d924676d11bd9a01">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="eed419e224f2e23df905befc14eacf2c9">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e5f6401b51e4f0e8ce8aaccfda27df086">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e8a2c201904191c9748f1c253ac3c84ef">
+<strong>Report custom mode</strong>: Select the attribute filter to include or exclude attributes in the report. Based on your selection, the following parameters are displayed:</li>
+<li data-list-item-id="e8dfb74a9c4bd23aa6f5c9ebafb594ea3">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the report. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Report custom mode </strong>parameter.</li>
+<li data-list-item-id="ef32d1823c909074f8303faf614b4d999">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded in the report. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Report custom mode </strong>parameter.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01M5VQX84Z6T9VM5V4FAHGVFAD">Log Insights</h3><p>Use this section to configure the data generated for integration dashboards and the level of detail available for each processed record. It has the following settings:</p><ul>
+<li data-list-item-id="ec41973f859f70fa7c7199cb889306df1">
+<strong>Dashboard name:</strong> Enter the name of the dashboard used to store and display integration events. The execution summary is stored in a separate dashboard using the same name with<em> -Summary</em> appended.</li>
+<li data-list-item-id="e9e45224eb86a9a3a1056142e4e4a6c0e">
+<strong>Select the analytics detail level:</strong> Select the detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="ef15b61a77bf2921aee543318540d6af6">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e68050c5dc305cb468034d3aea5e1e174">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e71ac5c51dcfefd3cc87a80627d91028a">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e2f028902a8d501a9afb078292065342f">
+<strong>Analytics custom mode</strong>: Select the attribute filter to include or exclude attributes in the dashboard. Based on your selection, the following parameters are displayed:</li>
+<li data-list-item-id="e03300bca4bcec8abd9b6da50d249fb3a">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the dashboard. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Analytics custom mode </strong>parameter.</li>
+<li data-list-item-id="ea80576d92697137f683bff8331597296">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded in the dashboard. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Analytics custom mode </strong>parameter.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e8c793bbba7834fee0bcf665468b162f6">
+<strong>Show Attribute Values for Each Event (requires consent to store event data temporarily)</strong>: Select this checkbox to store attribute values with each event so that the dashboard can show what changed. If this checkbox is not selected, the event still includes the operation and result, but does not include attribute values. Fields configured for masking remain masked.</li>
+</ul><h2 id="h_01M5VTFZHA603YAFNKD9M5KEGR">Notifications</h2><p>This tab allows you to configure email notifications for integration executions, including recipients and notification content for successful and failed executions.</p><h3 id="h_01M5VTG7B577N5J3WM9ZA104RQ">Notification recipients</h3><p>Use this section to configure the default recipients for integration notifications. These recipients are used when no recipients are configured separately for success or failure notifications. The following fields are available for configuration:</p><ul>
+<li data-list-item-id="e0162f0de34492f13c1b4cdea5f24732f">
+<strong>Notification recipients</strong>: Enter the email addresses of the users who should receive notifications. These recipients are used when no recipients are configured separately for successful or failed executions.</li>
+<li data-list-item-id="e4bccbe2d54ba82fc47266f9824b04969">
+<strong>Send notifications on successful execution</strong>: Select this checkbox to send the integration notifications for executions with the <em>SUCCESS</em>, <em>SIMULATED</em>, or <em>NO_ACTION</em> status.</li>
+<li data-list-item-id="ef439e4eac460f59bed730956fc2d12ba">
+<strong>Send notifications on failed execution</strong>: Select this checkbox to send the integration notifications for executions with the <em>FAILED</em> or <em>PARTIAL_SUCCESS</em> status.</li>
+</ul><h3 id="h_01M5VTHJKRVK9M4K5P4EP65HQF">Execution success notification</h3><p>Use this section to configure the recipients and email content for successful integration executions. The following fields are available for configuration:</p><ul>
+<li data-list-item-id="e2ba9808c0d6a3e19b52d74b90664815b">
+<strong>Notification recipients:</strong> Enter the email addresses of the users who should receive notifications for executions with the SUCCESS, SIMULATED, or NO_ACTION status. If left blank, the integration uses the recipients configured in the <a href="../iCIMS-Payworks-Integration-Guide/#h_01M48R05FP6MN05YYP8MG2KG3T">Notification recipients</a> section.</li>
+<li data-list-item-id="e78aad14cb2fc5589bda747157613a0bc">
+<strong>Success email subject:</strong> Enter the subject for success notification emails. If left blank, the integration uses the default subject.</li>
+<li data-list-item-id="e984f0ce4564ae287e6a2a3793689668a">
+<strong>Success email body:</strong> Enter the content to include in success notification emails. If left blank, the integration sends the default content. If configured, the email includes an HTML summary followed by the configured content.</li>
+</ul><h3 id="h_01M5VTJEM5YZ28CQ5DJW7V7HMV">Execution failure notification</h3><p>Use this section to configure the recipients and email content for failed integration executions. The following fields are available for configuration:</p><ul>
+<li data-list-item-id="eb882057d2758edc81ee8c16f1848159d">
+<strong>Notification recipients</strong>: Enter the email addresses of the users who should receive notifications for failed executions. If left blank, the integration uses the recipients configured in the <a href="../iCIMS-Payworks-Integration-Guide/#h_01M48R05FP6MN05YYP8MG2KG3T">Notification recipients</a> section.</li>
+<li data-list-item-id="e49bd496073b06dca1ba3ded6bd291141">
+<strong>Failure email subject</strong>: Enter the subject for failure notification emails. If left blank, the integration uses the default subject.</li>
+<li data-list-item-id="e78f2135bfdd53631ed4a764928671367">
+<strong>Failure email body</strong>: Enter the content to include in failure notification emails. If left blank, the integration sends the default content. If configured, the email includes an HTML summary followed by the configured content.</li>
+</ul><h3 id="h_01M5VTK8CHQQHZ6AVPSMPJ4Q2H">Notification report settings</h3><p>Use this section to configure whether the integration report is attached to notification emails and the level of detail included in the report. The following fields are available for configuration:</p><ul>
+<li data-list-item-id="e3a4728cc518c9629593c48e6d6a9f9da">
+<strong>Attach integration report</strong>: Select this checkbox to attach the integration execution report to notification emails.</li>
+<li data-list-item-id="eaad54d51ce6019e7e3b5a8c844bcdd61">
+<strong>Notification attribute consent:</strong> Select this checkbox to include attribute details in the reports.</li>
+<li data-list-item-id="e81e0b5dbbc5b5aaf7d312068e9466180">
+<strong>Select the report detail level</strong>: Select the detail level from the dropdown menu. The following are the available options:<ul>
+<li data-list-item-id="e69147acd6e7519b12eb9723d286c4ee1">
+<strong>Summary Only</strong>: Attribute details are not displayed. Only the count of CRUD operations is shown.</li>
+<li data-list-item-id="e10098715bcbaaaa3ab3257d1df94486d">
+<strong>Full Details</strong>: All attribute details are displayed.</li>
+<li data-list-item-id="e0bd28e066044542b31e3f1dc8f90b8f1">
+<strong>Custom</strong>: Includes or excludes selected attributes. The following parameters are displayed once you select <strong>Custom</strong>:<ul>
+<li data-list-item-id="e116e9964f8de8df199f78cac12666266">
+<strong>Report custom mode</strong>: Select the attribute filter to include or exclude attributes in the report. Based on your selection, the following parameters are displayed:</li>
+<li data-list-item-id="ea1a0fa63ee7f88f96589105d9a4e6c99">
+<strong>Attributes to be Included</strong>: Select the attributes to be included in the report. This parameter is displayed only if the <strong>Included Attributes</strong> option is selected in the <strong>Report custom mode </strong>parameter.</li>
+<li data-list-item-id="e95a027d4379c1961feba8436e6f7db31">
+<strong>Attributes to be Excluded</strong>: Select the attributes to be excluded in the report. This parameter is displayed only if the <strong>Excluded Attributes</strong> option is selected in the <strong>Report custom mode </strong>parameter.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h2 id="h_01M5VTMMHZAFC8G7Y9ATR6MBGH">Attribute Mapper</h2><p>Use this tab to map attributes between <strong>iCIMS</strong> and <strong>Payworks</strong>. The available mappings depend on the synchronization direction selected in the <a href="../iCIMS-Payworks-Integration-Guide/#h_01M48R05FPQXM954YJC5JBXDXN">Overview</a> tab.</p><p>You can modify the source attributes as needed to align the mapping with your use case.</p><p>You can also use JavaScript expressions to modify a source attribute value or construct a value to be written to the target attribute. Enter the expression directly in the source attribute field, or click the Expand icon to enter a longer expression.</p><p>Attributes marked with a red asterisk (*) are required for successful provisioning.</p><p>When <strong>iCIMS to Payworks</strong> is selected, the following mappings are available:</p><ul>
+<li data-list-item-id="e0b91bc938083ffc10001fcce8025b274">
+<strong>iCIMS to Payworks employee map</strong>: Defines how iCIMS candidate attributes are mapped to Payworks employee attributes when employee data is synchronized from iCIMS to Payworks. The integration uses this mapping to create new employees and update existing employees in Payworks.</li>
+<li data-list-item-id="e10c484d61e07bc59ea2f82b5a817c19f">
+<strong>Payworks to iCIMS writeback map</strong>: Defines how Payworks employee attributes are mapped back to iCIMS People attributes after the integration processes an employee in Payworks.<br/><strong>Note</strong>: This mapping is available only when writeback is enabled.</li>
+</ul><p>When <strong>Payworks to iCIMS</strong> is selected, the following mapping is available:</p><ul><li data-list-item-id="e595bd465fff384a601f812a98db11486">
+<strong>Payworks to iCIMS map</strong>: Defines how Payworks employee attributes are mapped to iCIMS People attributes when employee data is synchronized from Payworks to iCIMS. The integration uses this mapping to update the corresponding iCIMS People profile during create and update operations.</li></ul><p>After completing the source-to-target attribute mappings, click <strong>Save Changes</strong> in the upper-right corner of the page to save the integration.</p>
   </div>
 </body>
 </html>

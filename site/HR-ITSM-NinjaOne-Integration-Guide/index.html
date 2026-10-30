@@ -19,7 +19,392 @@
     <div class="meta">Synced from Zendesk Help Center</div>
     <h1>HR / ITSM - NinjaOne Integration Guide</h1>
 <p><a href="../index.html">← Back to index</a></p>
-_
+<h1 id="h_01M65KHYGNNK9126VWXMCRB1JM">Overview</h1><p>The Aquera platform enables your organization to scale complex data management by automating data integration across various resource types. Aquera's integrations facilitate automatic provisioning, ensuring consistency across systems. It enables organizations to streamline processes, dynamically scale resources, and automate repetitive tasks, ultimately enhancing efficiency in managing complex IT infrastructures and applications.</p><p>This integration automates identity-driven IT service management workflows by connecting your HR system to <strong>NinjaOne</strong>. <strong>The integration retrieves workforce data from the selected HR application, detects employee lifecycle events based on the configured lifecycle rules, and automatically creates NinjaOne tickets for the configured lifecycle events.</strong></p><p>The integration supports configurable ticket creation for employee lifecycle events, such as new hires, pre-hires, and terminations. It also allows you to control when tickets are created, map employee information to service desk ticket fields, and customize how employees are matched between the HR system and NinjaOne.</p><h2 id="h_01M65KN1F03GPB5AXCCZT9N51R">Key Functions</h2><p>This integration provides the following capabilities:</p><ul>
+<li data-list-item-id="e3bdeb06d72fc037b6518d938f5eb4abe">Retrieves workforce data from the configured HR application.</li>
+<li data-list-item-id="e14576710f8b440d7f043fcbff029d5b1">Detects employee lifecycle events based on configured rules.</li>
+<li data-list-item-id="e0e554d43aa2189be4aed5f177c2db7e5">Creates NinjaOne tickets for selected employee lifecycle events.</li>
+<li data-list-item-id="e3b55b77b9f5cddf4b3a74cd4e6a2aa65">Allows custom employee matching between the HR application and NinjaOne.</li>
+<li data-list-item-id="ec8d38e80d44d34668080f20e2e7817ce">Maps HR attributes to NinjaOne request fields.</li>
+<li data-list-item-id="ec611b01ff7e5f1d718961d53d59e205c">Supports configurable rules to determine when employee lifecycle events are processed for ticket creation.</li>
+<li data-list-item-id="e23f732d194324422cd0e2ca05b5edec0">Sends event notifications through email.</li>
+<li data-list-item-id="e911673d8f742aee0b4bff91f880841fd">Generates detailed logs, operational reports, and execution summaries.</li>
+</ul><h1 id="h_01M65KZS4Q5GFGP3X1JEZVMHA2">Prerequisites</h1><p>The following are the prerequisites:</p><ul>
+<li data-list-item-id="e4c7c17573be4d9b4268848dd32781492">
+<strong>Aquera Tenant Account</strong>: You must have a tenant account in the Aquera Admin portal. Visit <a href="https://admin.aquera.io/">https://admin.aquera.io</a> to register for a tenant account. Contact your Aquera account manager to get Aquera tenant access.<br/><strong>Note</strong>: If your organization is in the EU region, use the following URL to register: <a href="https://admin.eu.aquera.io/" rel="noopener noreferrer" target="_blank">https://admin.eu.aquera.io/</a>
+</li>
+<li data-list-item-id="e8469c14f9f5ffc740e48548fc35fa410">
+<strong>Configure Application Connectors in the Aquera Admin Portal:</strong> You need to configure the following application connectors in the Aquera Admin portal for integration:<ul>
+<li data-list-item-id="ed02084daa1fd70315d610aa16a298ba4">
+<strong>ADP Workforce Now</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/360017945933" rel="noopener noreferrer" target="_blank">ADP Workforce Now Configuration Guide</a> for details.</li>
+<li data-list-item-id="eb7e71b4922ccc4744c0fa0b096160be7">
+<strong>NinjaOne</strong>: Refer to the <a href="https://support.aquera.com/hc/en-us/articles/42884732376599" rel="noopener noreferrer" target="_blank">NinjaOne Configuration Guide</a> for details.</li>
+</ul>
+</li>
+</ul><h1 id="h_01M65M39MN6GS1J18XXRFTAM9H">Integration Setup</h1><p>This section explains how to configure the integration to synchronize employee lifecycle events from an HR application with NinjaOne and automatically create tickets for the configured lifecycle events.</p><h2 id="h_01M65M45485SAH0DA868B9DE7F">Create Integration</h2><p>Perform the following steps to create the integration:</p><ol>
+<li data-list-item-id="e94976e38c25f6f6c795cd5cf38f6e22e">Log in to the Aquera Admin portal.</li>
+<li data-list-item-id="ea1ff87c06417ca375f73b68c6d435087">Navigate to <strong>Integrations</strong> from the left side panel.</li>
+<li data-list-item-id="eb51dfb6a599974eede882870a7220f0f">Click<strong> Create Integration</strong>.</li>
+<li data-list-item-id="e73831c1a7f8cbdafeb93b65defee4e27">Search for <strong>HR / ITSM - NinjaOne</strong> in the search box next to the <strong>Explore Templates</strong> section and click it to create a new integration.</li>
+<li data-list-item-id="e4f54e967c3285e32bc7a299d2bde0c3e">Enter a name and a description for the integration.</li>
+<li data-list-item-id="ead7b7c6ccd9924794d0eb523cc5a04c5">Click <strong>Continue</strong>.</li>
+</ol><p>Once created, the following tabs are displayed:</p><ul>
+<li data-list-item-id="ed3af73453c8aeb2e392637af5af047f8"><a href="#h_01M65R51T1EY7710P8JM76T2WS">Overview</a></li>
+<li data-list-item-id="e1797d6af8c4ecb9f76fdf72078b6e020"><a href="#h_01M65R5P2834QCADF11QEPGG0T">Source</a></li>
+<li data-list-item-id="e602619b75d5e0680c511c44bba618f9b"><a href="#h_01M65RHWHDM89QM1A57A10DPVA">Service Desk</a></li>
+<li data-list-item-id="ed4b01358dca20b222755d7460222f602"><a href="#h_01M65TM2JVZG3CHVJ7BVEPPWQJ">Operations</a></li>
+<li data-list-item-id="e8b64e9de8066faa3ffd5b2fb646a685a"><a href="#h_01M65ZGJ6HDKJ9ZZNHNHBBGH8Q">Features</a></li>
+<li data-list-item-id="e84ff5b653af6bcaf81a0c39a709332b6"><a href="#h_01M65ZH8K1K1AWKF5JGNQ2ZHFA">Tables</a></li>
+<li data-list-item-id="e66303e00f5a817a2bd8f995b336bfc77"><a href="#h_01M65ZHSR54MKVR3XADCRWXE47">Schedule</a></li>
+</ul><h2 id="h_01M65R51T1EY7710P8JM76T2WS">Overview</h2><p>The <strong>Overview</strong> tab displays general information about the integration, including its purpose and supported capabilities. It provides a high-level overview of how the integration automates ticket creation for employee lifecycle events.</p><h2 id="h_01M65R5P2834QCADF11QEPGG0T">Source</h2><p>The <strong>Source</strong> tab allows you to select the HR application used by the integration and define which employees are considered for NinjaOne ticket creation.</p><p>The following sections are available on this tab:</p><h3 id="h_01M65R710DZT360Z99CEBTN97C">Application Settings</h3><p>The <strong>Application Settings</strong> section allows you to identify the HR application instance used by the integration. The following field is available in this section for configuration:</p><ul><li data-list-item-id="e566c7de40254a46619e77e0af42430bc">
+<strong>HR application instance</strong>: Select the HR application connector from which employee data and lifecycle events will be retrieved for this integration. If the required connector is not available in the list, click the refresh icon next to the field to reload the available connectors.<br/><strong>Note</strong>:<ul><li data-list-item-id="e6a450a0838b8c19b4fba287271b79bc6">Currently, this integration only supports the <strong>ADP Workforce Now </strong>connector.</li></ul>
+</li></ul><h2 id="h_01M65R93AKS2AA5KCR2QJJA49G">Filter Employees</h2><p>This section allows you to define which employees from the HR application are considered for NinjaOne ticket creation. The following field is available in this section for configuration:</p><ul><li data-list-item-id="e5a9eb18559cd2e48d15f61a6276b4c69">
+<strong>Enable employee filter</strong>: Turn on this toggle button to filter employees considered for NinjaOne ticket creation. Only employees who match the configured filter criteria are processed. When enabled, the <a href="#h_01M65RAYA2XSB1YQ9F4PM17XP1">Employee Filter Configuration</a><span> </span>section is displayed for further configuration.</li></ul><h3 id="h_01M65RAYA2XSB1YQ9F4PM17XP1">Employee Filter Configuration</h3><p>This section allows you to configure the criteria used to filter employees from the HR application for NinjaOne ticket creation.</p><p>The following fields are displayed for configuration:</p><ul>
+<li data-list-item-id="ef9bb748bca550416f104573707e9253e">
+<strong>Use filter for new hires</strong>: Turn on this toggle button to filter new hires from the HR application. Only new hires who match the filter criteria are considered for NinjaOne ticket creation.<br/>When enabled, the following fields are displayed for configuration:<ul>
+<li data-list-item-id="e525109610f45e52735e58290fec0435a">
+<strong>Employee filter criteria</strong>: Select the method used to filter employees from the HR application. The following is the available option:<ul><li data-list-item-id="e1e5b136b3f6686762b81683b36d91e02">
+<strong>Based on date</strong>: Select this to filter employees using a date attribute from the HR application. Only matching employees are considered for ticket creation.</li></ul>
+</li>
+<li data-list-item-id="e64545f0832b28832679719435ffb7eb7">
+<strong>Date attribute to filter employees</strong>: Select the date attribute used to filter employees from the HR application. For example, <em>Hire Date</em>.</li>
+</ul>
+</li>
+<li data-list-item-id="e083e9e7e20be5810dd42640b1013d352">
+<strong>Use Filter for Change Employees</strong>: Turn on this toggle button to filter users from the HR application.  Only users who match the defined rules are considered for NinjaOne ticket creation. When enabled, the following fields are displayed for further configuration:<ul><li data-list-item-id="e797c9bce6860727fab43a7880457e3cd">
+<strong>Look-back Window for Changes (Days)</strong>: Enter the number of past days to consider for ticket creation. Leave this field blank to process all matching employees.</li></ul>
+</li>
+<li data-list-item-id="ebb2bf4be8b3e948dcdc6449aa9060f70">
+<strong>Use filter for terminated employees</strong>: Turn on this toggle button to filter terminated employees from the HR application. Only terminated employees who match the filter criteria are considered for NinjaOne ticket creation.<br/>When enabled, the following fields are available for configuration:<ul>
+<li data-list-item-id="e4c628f5f6aa5e40f030e9c3c639a4c47">
+<strong>Employee filter criteria</strong>: Select the method used to filter terminated employees from the HR application. The following is the available option:<ul><li data-list-item-id="ede1e153739c823393d2d914d39f52953">
+<strong>Based on date</strong>: Select this to filter terminated employees using a date attribute from the HR application. Only matching employees are considered for ticket creation.</li></ul>
+</li>
+<li data-list-item-id="e7001e853eb40f109f41594207ba11471">
+<strong>Date attribute to filter employees</strong>: Select the date attribute used to filter terminated employees from the HR application. For example, <em>Termination Date</em>.</li>
+</ul>
+</li>
+<li data-list-item-id="e690e83c397d2e1b07be0214e9617267c">
+<strong>Use filter for rehires</strong>: Turn on this toggle button to filter rehires from the HR application. Only rehires who match the filter criteria are considered for NinjaOne ticket creation. When enabled, the following fields are displayed for configuration:<ul>
+<li data-list-item-id="e77ea1aa79a1d58f39ba7856d69ea7cb4">
+<strong>Employee filter criteria</strong>: Select the method used to filter employees from the HR application. The following is the available option:<ul><li data-list-item-id="e5e9f7a1e811a067d202d303d86d75d77">
+<strong>Based on date</strong>: Select this to filter employees using a date attribute from the HR application. Only matching employees are considered for ticket creation.</li></ul>
+</li>
+<li data-list-item-id="e27b5574f05975547df4057bcf7d64794">
+<strong>Date attribute to filter employees</strong>: Select the date attribute used to filter employees from the HR application. For example, Rehire Date.</li>
+</ul>
+</li>
+</ul><h2 id="h_01M65RHWHDM89QM1A57A10DPVA">Service Desk</h2><p>The <strong>Service Desk</strong> tab enables you to configure the NinjaOne application, where employee lifecycle tickets are created and managed. It allows you to select the NinjaOne instance, define which lifecycle events create tickets, configure ticket settings, and map HR attributes to service desk ticket fields.</p><p>The following sections are displayed in this tab:</p><ul>
+<li data-list-item-id="e55ea5852006db5226cf890a117530b07"><a href="#h_01M65RKJ9F4TGEYVA3CXD24MRS">Channel</a></li>
+<li data-list-item-id="e1bcc420cfabd6aa1051da9172666a06d"><a href="#h_01M65RRCWDEMWKZ5ZRFVJFSAJC">JML Ticket Creation</a></li>
+</ul><h3 id="h_01M65RKJ9F4TGEYVA3CXD24MRS">Channel</h3><p>This section enables you to identify the NinjaOne application used by the integration to create tickets. The following field is available in this section for configuration:</p><ul>
+<li data-list-item-id="e19b1adbff6d7c256d71b0d44c95c366d">
+<strong>Enable service desk application</strong>: Enable this option to select the service desk application. When enabled, the <a href="#h_01M65RN7EFJSRKK58MAXSCSHAX">Service Desk Application Configuration</a> section is displayed for further configuration.</li>
+<li data-list-item-id="eec59e562ba3c6b563baa59b299aeb5c7">
+<strong>Enable messaging</strong>: Enable this option to allow the integration to send messages and notifications through the configured messaging channel. When enabled, the <a href="#h_01M65RQP800726K6QH0000XBB7">Messaging Application</a><a href="#h_01M07M5H23BC8B8DWMJ6Q01ZDR"> </a>section is displayed for further configuration.</li>
+</ul><h4 id="h_01M65RN7EFJSRKK58MAXSCSHAX">Service Desk Application Configuration</h4><p>The <strong>Service Desk</strong> <strong>Application Configuration</strong> section allows you to identify the service desk application instance used by the integration.</p><ul><li data-list-item-id="e7616fcd17e5dac862059777a36b68843">
+<strong>Service desk application instance</strong>: Select the NinjaOne application connector where the integration will create tickets. If the required connector is not available in the list, click the refresh icon next to the field to reload the configured application connectors.</li></ul><h4 id="h_01M65RQP800726K6QH0000XBB7">Messaging Application</h4><p>The <strong>Messaging Application</strong> Configuration section allows you to configure the messaging application instances used by the integration to send notifications.</p><ul>
+<li data-list-item-id="e88700534be89ff579862a49f025912de">
+<strong>Enable Slack notifications</strong>: Enable this option to send Slack notifications when the configured lifecycle event is detected. When enabled, additional Slack notification settings are displayed: <ul><li data-list-item-id="e7f4eb3011dde3fa44b146840200ec4c0">
+<strong>Slack application instance</strong>: Select the Slack application instance configured in Aquera to send lifecycle event notifications. If the required connector is not available in the list, click the refresh icon next to the field to reload the configured application connectors.</li></ul>
+</li>
+<li data-list-item-id="e20514632bfacc5fa6396ffd279a61228">
+<strong>Enable Microsoft Teams notifications</strong>: Enable this option to send Microsoft Teams notifications when the configured lifecycle event is detected. When enabled, additional Teams notification settings are displayed: <ul><li data-list-item-id="e07c9963ee46dfcfe5d997ec0e2d50a1f">
+<strong>Microsoft Teams application instance</strong>: Select the Microsoft Teams application instance configured in Aquera to send lifecycle event notifications. If the required connector is not available in the list, click the refresh icon next to the field to reload the configured application connectors.</li></ul>
+</li>
+</ul><h3 id="h_01M65RRCWDEMWKZ5ZRFVJFSAJC">JML Ticket Creation</h3><p>This section enables you to configure how NinjaOne tickets are created for employee lifecycle events. The following field is displayed in this section:</p><ul><li data-list-item-id="e2e66cd487a7d6cf98fe76562136cf6ee">
+<strong>Enable ticket creation</strong>: Turn on this toggle button to automatically create NinjaOne tickets for employee lifecycle events. When enabled, the <a href="#h_01M65RTKGSX479HHXRGJ98WNBC">Ticket Creation Configuration</a><a href="#h_01M07M95Z6VCJ92JM1XTDRFQDP"> </a>section is displayed for configuration.</li></ul><h4 id="h_01M65RTKGSX479HHXRGJ98WNBC">Ticket Creation Configuration</h4><p>This section allows you to configure how NinjaOne tickets are created for a selected employee lifecycle event.</p><ul>
+<li data-list-item-id="e3990d8ccfa52507db24c6ea64be6cd8f">
+<strong>Select event type</strong>: Select the employee lifecycle event for which NinjaOne tickets should be created. The following lifecycle events are available for selection:<ul>
+<li data-list-item-id="ec7c117cdc891bd0f7d6a4eb35714cfbf">
+<strong>Hire</strong>: Select this option if you want to create NinjaOne tickets when a new hire event is detected.</li>
+<li data-list-item-id="e898f8341603b6b840d839cef1cff6562">
+<strong>Change</strong>: Select this option if you want to create NinjaOne tickets when an employee change event is detected.</li>
+<li data-list-item-id="e77d30b063ed6159c8fdabaa97426d184">
+<strong>Terminate</strong>: Select this option if you want to create NinjaOne tickets when a termination event is detected.</li>
+<li data-list-item-id="ea3f0bcb77c18d7996117b0e597145259">
+<strong>Rehire</strong>: Select this option if you want to create NinjaOne tickets when a rehire event is detected.</li>
+<li data-list-item-id="ec908053ed7ab4eb5ad14d6b737933be2">
+<strong>Pre-hire</strong>: Select this option if you want to create NinjaOne tickets when a pre-hire event is detected.</li>
+</ul>
+</li>
+<li data-list-item-id="ee29fc1fb4fd6579380b43b699d56bb81">
+<strong>Select change events</strong>: Select one or more employee attributes to monitor for changes in the HR application. After the integration is configured, the integration checks the selected attributes for subsequent changes. If a change is detected in any selected attribute, the integration considers the employee for mover ticket creation in NinjaOne.<br/>For example, if you select <strong>Department</strong> and <strong>Location</strong>, the integration tracks changes to these attribute values. If an employee's department or location changes, the employee is considered for mover ticket creation. <br/>Refer to <a href="#h_01M5Y9EFYCF88SXBMGEBZ7XW93">Supported Attributes for Change event</a> for details on which attributes each HR application supports.<br/><strong>Note</strong>: This option appears only when the event type is selected to <strong>Change</strong>.</li>
+<li data-list-item-id="e5ab459f6ef5130999d3ef06c11a41cc8">
+<strong>Event timing</strong>: Define when the NinjaOne ticket should be created for the selected lifecycle event. The following are the available options:<ul>
+<li data-list-item-id="ec4b32f929367f8ccb68ea2e1f9642403">
+<strong>When detected</strong>: Select this if you want to create tickets immediately after the lifecycle event is detected.</li>
+<li data-list-item-id="e06f62919c5c85b51921b6c5c02097bf5">
+<strong>Before start date</strong>: Select this if you want to create tickets before the actual start date of the employee.</li>
+<li data-list-item-id="e020ac9243c06c425933350efcb27a54f">
+<strong>On start date</strong>: Select this if you want to create tickets on the employee's start date.</li>
+<li data-list-item-id="e3e48487a10c467a45b568495fb3ed9a1">
+<strong>After start date</strong>: Select this if you want to create tickets after the actual start date of the employee.<br/>When you select <strong>Before start date </strong>or<strong> After start date</strong>, the following field is displayed to define the number of days:<ul><li data-list-item-id="e00e385328dce1fbc2b9287ebd2cb8cfc">
+<strong>Days Before / After Joining Date</strong>: Enter the number of days before or after the selected lifecycle event date when the ticket should be created. For example, entering <strong>7</strong> with <strong>Before start date</strong> selected creates the ticket seven days before the employee's effective start date.</li></ul>
+</li>
+</ul>
+</li>
+<li data-list-item-id="e5221eac60b0f1c31c124d1160768ad48">
+<strong>Enable conditional event detection</strong>: Turn on this toggle button to create NinjaOne tickets only for employees who satisfy a defined condition. When enabled, the following field is displayed:<ul><li data-list-item-id="e3065fdd48d7f688c49eb6d4afae73dfa">
+<strong>Ticket creation condition</strong>: Enter a condition to control which employees trigger NinjaOne ticket creation. Only employees who satisfy this condition are considered for ticket creation. You can describe the condition in plain language and use <strong>AI Assist</strong> to convert it into a filter expression. For details on how to set up an AI prompt, review and analyze the output generated by the AI Assistant, refer to the <a href="https://support.aquera.com/hc/en-us/articles/38762399218711">Using Aquera AI Assistant for Generating Unique Values in Integrations</a> guide.</li></ul>
+</li>
+<li data-list-item-id="e0438c44a44f30fb8278e1ad929bd8a66">
+<strong>Enable ticket creation</strong>: Turn on this toggle button to create NinjaOne tickets for the selected lifecycle event. When enabled, the following fields are displayed for further configuration:<ul>
+<li data-list-item-id="ea4fdb9b33a6c4d62777d796649be5e97">
+<strong>Organization</strong>: Select the organization (client) that the ticket belongs to. NinjaOne requires the <strong>clientId</strong> to create and update tickets.</li>
+<li data-list-item-id="e52cdbeb688476d967f74138675e10329">
+<strong>Request Template</strong>: Select the NinjaOne request template used when creating tickets for the selected lifecycle event. If the required request template is not available, click the Refresh icon next to the field to reload the available request template.</li>
+<li data-list-item-id="e33f37afb2ee1de25b482e59ea4a8cdcc">
+<strong>Customize how users are matched across systems</strong>: Turn on this toggle button to configure custom employee matching. When enabled, the following fields are displayed.<ul>
+<li data-list-item-id="ed36747bc26bb6c9289f018ea19083bd0">
+<strong>Select How Employees Are Matched Between Source and Target</strong>: Select the method used to correlate employees between the HR application and NinjaOne.</li>
+<li data-list-item-id="ea129a8b6b042d696d4b82d5463f804f9">
+<strong>Select Source Attribute for Matching the Employee</strong>: Select the HR application attribute used to uniquely identify employees.</li>
+<li data-list-item-id="e88c1729942f24a0bef6516fe2fda2a78">
+<strong>Select Target Attribute for Matching the Employee</strong>: Select the NinjaOne field used to uniquely identify employees.</li>
+</ul>
+</li>
+<li data-list-item-id="eee4789c67f8c459575347c10d8c949ea">
+<strong>Auto update the ticket</strong>: Enable this option to automatically update the ticket when its status matches the configured update criteria. When enabled, the following field is displayed:<ul><li data-list-item-id="eb408f8e5b55c4a3bb0776481cbc8ecf0">
+<strong>Ticket statuses to evaluate for auto-update</strong>: Select the ticket statuses that the integration evaluates before automatically updating a ticket. For example, select In Progress.</li></ul>
+</li>
+<li data-list-item-id="e66a7e363c40b25e8bc2b8577e3336108">
+<strong>Auto close the ticket</strong>: Enable this option to automatically close the ticket when its status matches the configured close criteria. When enabled, the following fields are displayed:<ul>
+<li data-list-item-id="ee6138a9d0a3a0603ab6bf98d9f838a12">
+<strong>Ticket statuses to evaluate for auto-close</strong>: Select the ticket statuses that the integration evaluates before automatically closing a ticket. For example, select Waiting for Customer.</li>
+<li data-list-item-id="ee6c98e6f52ae1fbf5683972d31add286">
+<strong>Ticket close status</strong>: Select the status assigned to the ticket when it is automatically closed.</li>
+</ul>
+</li>
+<li data-list-item-id="e555d091cdfd1ce171b732d26e8b11660">
+<strong>Ticket management mapper</strong>: This section allows you to map HR attributes to NinjaOne ticket fields. Source attributes are displayed on the left side, and service desk ticket fields are displayed on the right side of the page. You can modify only the source attributes as needed, to align with your specific use case. JavaScript expressions can be used to transform source attribute values and construct the values that are updated in the target attributes. You can enter the expression directly in the source attribute field or click the expand icon to write a longer expression. The <strong>Search Attributes</strong> field allows you to search for source attributes.<br/>Attributes marked with a red asterisk (<span>*</span>) are mandatory for successful execution.<br/>After the source-to-target attribute mapping is completed, click <strong>Save Changes</strong> at the top-right corner of the page to save the configuration.</li>
+</ul>
+</li>
+</ul><h2 id="h_01M65TM2JVZG3CHVJ7BVEPPWQJ">Operations</h2><p>The <strong>Operations</strong> tab enables you to configure various settings required for the integration execution. The following sections are displayed in this tab:</p><ul>
+<li data-list-item-id="e610cc79f36217c0b76f1979779db1339"><a href="#h_01M65TPRT0W0SHRCNGPA5TC3X2">Monitor</a></li>
+<li data-list-item-id="ed58b87d7dd55a92336ecbf6aa261148b"><a href="#h_01M65ZCAY3QJ8CMK7YMJWQ28HG">Execution</a></li>
+</ul><h3 id="h_01M65TPRT0W0SHRCNGPA5TC3X2">Monitor</h3><p>The <strong>Monitor</strong> section enables you to customize the operational and notification settings for the integration. It has the following sub-sections for configuration:</p><h4 id="h_01M65TPX4QBMSBNWPVQR7DZP1H">Define Notification Channel</h4><p>This<strong> </strong>section enables you to define the notification channel used by the integration. It has the following settings:</p><ul><li data-list-item-id="e98bd6aa1e178393ca17b0961b1784079">
+<strong>Enable email notifications</strong>: Select this checkbox to send email notifications for integration events. When enabled, the <a href="#h_01M65TQSJH9ESTN2Q46S7PQ3H4">Notification Configuration</a> section is displayed for further configuration.</li></ul><h5 id="h_01M65TQSJH9ESTN2Q46S7PQ3H4"><strong>Notification Configuration</strong></h5><p>The <strong>Notification Configuration</strong> section allows you to define notification settings for integration execution events.</p><ul>
+<li data-list-item-id="e066c5fa7b6e6f287fa73d22fa8770303">
+<strong>Select event for notification</strong>: Select the integration event that should trigger an email notification. The following are the available options:<ul>
+<li data-list-item-id="ea6e23384ce847ea94522f297d022290a">
+<strong>Success</strong>: Select this to send an email notification when the integration completes successfully.</li>
+<li data-list-item-id="e6f68e576319322717c9a09a05ebdc83c">
+<strong>Failure</strong>: Select this to send an email notification when the integration fails.</li>
+<li data-list-item-id="e9bdc3648743d9cfdb4585697ccb9fdb2">
+<strong>Hire ticket creation</strong>: Select this to send an email notification for hire ticket creation events.</li>
+<li data-list-item-id="ee2e987db101a72365a5827ee5d0609cc">
+<strong>Terminate ticket creation</strong>: Select this to send an email notification for termination ticket creation events.</li>
+<li data-list-item-id="e0de73d88bd301d1801a190b0d9a3b6aa">
+<strong>Rehire ticket creation</strong>: Select this to send an email notification for rehire ticket creation events.</li>
+<li data-list-item-id="e07f6ac71396e28b503499beea78a99b6">
+<strong>Change ticket creation</strong>: Select this to send an email notification for change ticket creation events.</li>
+</ul>
+</li>
+<li data-list-item-id="e856adec4ee2d03338cfcdca57ebd304b">
+<strong>Notification delivery channel</strong>: Select the channel to send notifications. Currently, only <em><strong>Email</strong></em> is supported as a channel.</li>
+<li data-list-item-id="ef870385bf0850b98597bea09a8d3ab66">
+<strong>Notification recipients</strong>: Select the recipients to send email notifications. For example, select <em><strong>Supervisor</strong></em> if you want to send email notifications to the user's supervisor. The following field is displayed when you select <strong>Custom</strong> in this field:<ul><li data-list-item-id="ece99d6e51570190f1d84478faaf98f0e">
+<strong>Custom email addresses</strong>: Enter the email IDs of the users to whom you want to send email notifications.</li></ul>
+</li>
+<li data-list-item-id="e1902b421a712274f6527a5b810180943">
+<strong>Email subject</strong>: Enter the content that must be used as the email subject.</li>
+<li data-list-item-id="e419698e9a30fae3d7a5f517a17865e4f">
+<strong>Notification body template</strong>: Enter the content to be used as the notification body. You can use available customization features, such as <em>variables</em> and <em>Improve Description</em> to configure the email body.</li>
+<li data-list-item-id="e22daf524122fbba2941e2fda1d66a7dc">
+<strong>Attach Report:</strong> Select this checkbox if you want to attach a report to the email sent to the recipient.</li>
+</ul><h4 id="h_01M65ZBE8Z9Z7TPY7FK9W488Y7">Global Operation Settings</h4><h5 id="h_01KV7W4KZY1XFCJ3YSFXQMJHP9"><strong>Logging Settings</strong></h5><p>This section enables you to configure the level of detail recorded in execution logs. It has the following settings:</p><ul>
+<li data-list-item-id="e8e300f7a847b8a4cf8cc70c3ddc29352">
+<p id="01K5B9P929CY5YBAY51DATK62B"><strong>Log type</strong>: Select the log type. This will decide the level of detail to be included in logs.<br/>The following are the available options:</p>
+<ul>
+<li data-list-item-id="e89aab88ca6bd182974a31cb12cb74038">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e469ff2a2821c42cb42609fb7b1d6204e">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="e1a08db347e13203277794fc76cc5bef2">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ef310485d2087b30185c5863b683ec04b">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="efd1427da6f0a628a08eb76ef7b626903">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="eded28738cdafad096bb4e6e46c844963">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e783399e8503e438eba65f223aefe6eab">
+<strong>Log level</strong>: Select the log detail level. The following are the available options:<ul>
+<li data-list-item-id="e8b9f3f026469f1884852f76d877cf79f">
+<strong>All</strong>: Select this to include all attribute details in logs.</li>
+<li data-list-item-id="e5eab0d6c06e5c64a1faa860908c87cc9">
+<strong>Include List</strong>: Select this if you want to choose attributes to be included in logs. When selected, the following field is displayed:<ul><li data-list-item-id="e668926a9eefde1adaefcb028dffe30c3">
+<strong>Fields to include in logs</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e1d6507fa13c73f9b15a3fc2357a096e4">
+<strong>Exclude List</strong>: Select this if you want to choose attributes to be excluded from the logs. When selected, the following field is displayed:<ul><li data-list-item-id="ee675c1b59658145407ba0e2fd98923ad">
+<strong>Fields to exclude from logs</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h5 id="h_01KV86ERRYGWDMSKMK5YKZMPR9"><strong>Report Settings</strong></h5><p>The <strong>Report Settings</strong> section enables you to configure the level of detail included in generated integration reports. It has the following settings:</p><ul>
+<li data-list-item-id="e2ef6730021100429197ec95d35c126cf">
+<strong>Report type</strong>: Select the report type. This will decide the level of detail to be included in reports. The following are the available options:<ul>
+<li data-list-item-id="e3c019c174ad7498a6196a3844e711107">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="e382ad85f265ccff506cf236b87972d87">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ed785036f6a58e58747667bb35b8822cf">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="ec2dadce18d22df0458889f3b1a0e8789">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e8ab6d08ed8d4611a1199ce765eaaefe9">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e0b2850f521b7bf495a333e01ca761d06">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e559e76170f8416fbeaf4516feb59212b">
+<strong>Reporting level</strong>: Select the report detail level. The following are the available options:<ul>
+<li data-list-item-id="ebf76e8a6d82d653ab9e53d26a939c51b">
+<strong>All</strong>: Select this to include all attribute details in reports.</li>
+<li data-list-item-id="e2f26430e5e199f4d82087fa6c5746c81">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included in reports. When selected, the following field is displayed:<ul><li data-list-item-id="e8c57cc49d13a346fd231a5f29592f2d3">
+<strong>Fields to include in reports</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e94d4501bc19f22f3f96e5772c61a62d2">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded from the reports. When selected, the following field is displayed:<ul><li data-list-item-id="e909fca6386e7230524be0066b9454738">
+<strong>Fields to exclude from reports</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h5 id="h_01KV86ERRYCD184XX20ETKPWPR"><strong>Log Insight Settings</strong></h5><p>The <strong>Log Insight Settings</strong> section enables you to configure the level of detail available for log analysis and insights. It has the following settings:</p><ul>
+<li data-list-item-id="e94ac4d1b3f9968f94740e4bc791baf5f">
+<strong>Log Insights type</strong>: Select the Log Insights type. This will decide the level of detail to be included in log insights. The following are the available options:<ul>
+<li data-list-item-id="e29a27f245dfe2dbe26ff2e136edff7b0">
+<strong>Minimum</strong>: Select this option to include only operation details. No GUIDs or field-level information will be included.</li>
+<li data-list-item-id="edff0d5ca35b484541f4590c67e5fd9fe">
+<strong>Metadata</strong>: Select this option to include operation details and field names. GUIDs are excluded.</li>
+<li data-list-item-id="ebc070137e26edb412a6996d79e92a7b0">
+<strong>Non-PII Data</strong>: Select this option to include operation details, field names, and selected non-PII values. GUIDs are excluded.</li>
+<li data-list-item-id="eb7f7ad8a3680d3cb15cb978733d10f0a">
+<strong>GUID with Non-PII Data</strong>: Select this option to include GUIDs, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e249bc6f8ad72ba62cce62da7b8545657">
+<strong>Employee Number with Non-PII Data</strong>: Select this option to include employee numbers, operation details, field names, and selected non-PII values.</li>
+<li data-list-item-id="e62e767643116a6e3f99ab5f881343be3">
+<strong>Employee Number with All Data</strong>: Select this option to include employee numbers, operation details, field names, and all values, including both PII and non-PII data.</li>
+</ul>
+</li>
+<li data-list-item-id="e24e029c674c8f19f2b656709dd874ba0">
+<strong>Log Insights level</strong>: Select the insights level. The following are the available options:<ul>
+<li data-list-item-id="eca3ead03fc16ae8bd8e0b00e16ccf833">
+<strong>All</strong>: Select this to include all attribute details in Log Insights.</li>
+<li data-list-item-id="ef749169767948f4371e68835cb2483e1">
+<strong>Inclusion List</strong>: Select this if you want to choose attributes to be included. When selected, the following field is displayed:<ul><li data-list-item-id="e07f44ef66928fd244da5c27d0cc253d0">
+<strong>Fields to include in Log Insights</strong>: Select the attributes to be included. For example, <em>Email</em>.</li></ul>
+</li>
+<li data-list-item-id="e78c21dcfea8cf21397bcb6c31f7329eb">
+<strong>Exclusion List</strong>: Select this if you want to choose attributes to be excluded. When selected, the following field is displayed:<ul><li data-list-item-id="e9bf33075eb905b710608418c14d18cae">
+<strong>Fields to exclude from Log Insights</strong>: Select the attributes to be excluded. For example, <em>FirstName</em>.</li></ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="h_01M65ZCAY3QJ8CMK7YMJWQ28HG">Execution</h3><p>The <strong>Execution</strong> section enables you to configure advanced execution options that can be used for testing, troubleshooting, and controlling the scope of integration processing. It has the following sub-section:</p><h4 id="h_01M65ZDPN5BNWRS4E40W2RBHPJ">Advanced Settings</h4><p>Configure the following advanced settings:</p><ul>
+<li data-list-item-id="e24e7e6fb7a64d11c96f7d2fea11302e8">
+<strong>Enable report-only mode</strong>: Turn on this toggle button to generate a report detailing the data changes that would happen, but without applying them.</li>
+<li data-list-item-id="e5ea71f31a5d14b06ee99cca180602fc9">
+<strong>Enable Incremental mode</strong>: Select to execute the integration in incremental mode.</li>
+<li data-list-item-id="ea768bfee1d9c44d63cef96d4fabfb78a">
+<strong>Enable detailed logging</strong>: Turn on this toggle button to capture detailed execution logs for troubleshooting and issue analysis.</li>
+<li data-list-item-id="e096845de7bca06590e334427bf5a6d4c">
+<strong>Enable filter</strong>: Turn on this toggle button to filter the users included in the integration. When enabled, the following fields are displayed:<ul>
+<li data-list-item-id="e689bf1e2243b0b4b5262dc8f42f8aa60">
+<strong>Filter by</strong>: Select the field type to filter users. </li>
+<li data-list-item-id="e229e60caf2c21dc54597e46a6864f97b">
+<strong>Filter Value</strong>: Enter the value for the selected source filter.</li>
+</ul>
+</li>
+</ul><h4 id="h_01M65ZE83M03K9ZJQ50P91KF22">Operating Safeguard Settings</h4><p>Configure the following operation safeguard settings:</p><ul>
+<li data-list-item-id="e7bfc81e80f59fce6070cc96892bccc84">
+<strong>Event type</strong>: Select the event type to which you want to apply the safeguard limit.</li>
+<li data-list-item-id="e9f337d1ceeac45c42ef7576e8620a274">
+<strong>Enable safeguard limit</strong>: Turn on this toggle button to keep a safeguard limit for the integration run.</li>
+<li data-list-item-id="e0b78f290db5aa7645c80f43cef8c9664">
+<strong>Safeguard limit type</strong>: Select whether you want to set the safeguard limit as a number or percentage. <ul><li data-list-item-id="e51f1348f684f1f7ad79c0d5e4b128bd5">
+<strong>Safeguard limit</strong>: Enter the number of safeguard limit you want to set for this integration run.</li></ul>
+</li>
+<li data-list-item-id="e5868d7b464f4cd367efd55c9c0993ae1">
+<strong>Action when safeguard limit is exceeded</strong>: Select the type of action need to be taken when the integration exceeds the safeguard limit.</li>
+</ul><h2 id="h_01M65ZGJ6HDKJ9ZZNHNHBBGH8Q">Features</h2><p>The <strong>Features</strong> tab provides an overview of the functional capabilities supported by the integration. The following section is displayed on this tab:</p><h3 id="h_01KW1TH82EGE4EW275DJSB2X28">Service Desk Bridge</h3><p>The <strong>Service Desk Bridge</strong> section controls the functional capabilities supported by the integration.</p><p>The following features are enabled by default for this integration:</p><ul>
+<li data-list-item-id="ea7012909d78831f3ec8c8d1d852f1bdc">
+<strong>Enable HCM Bridge</strong>: This is enabled by default to process employee lifecycle events from the configured HR application.</li>
+<li data-list-item-id="e88f5c18f497647137761fde586ebef1e">
+<strong>Enable Service Desk Bridge</strong>: This is enabled by default to create and manage NinjaOne tickets based on employee lifecycle events.</li>
+<li data-list-item-id="e958f4555d3d8a867a4f6d84c977bc2a5">
+<strong>Enable Employee Lifecycle</strong>: This is enabled by default to process employee lifecycle events, including onboarding, employee changes, and termination events.</li>
+<li data-list-item-id="ef79caaaf2cfec49e9fe85c766fd56b5b">
+<strong>Enable Candidate Lifecycle</strong>: This is enabled by default to process candidate lifecycle events, including onboarding, employee changes, and termination events.</li>
+<li data-list-item-id="e98201dc812fe4259948611101940f911">
+<strong>JML Lifecycle Events</strong>: This is enabled by default to create NinjaOne tickets for Joiner, Mover, and Leaver (JML) lifecycle events.</li>
+</ul><p>Additional features displayed on this page represent capabilities supported by the integration but are not currently used by this integration template. To learn more or enable these features, contact the Aquera Support team.</p><h2 id="h_01M65ZH8K1K1AWKF5JGNQ2ZHFA">Tables</h2><p>In the <strong>Tables</strong> tab, you can add tables to the integration. Tables are used to define custom source attributes and synchronize them with the target application. If the required data is not available in the source application, you can define it in a table and use it to update the target application. Once defined, the table can be referenced in attribute mapping expressions to set or update values automatically.</p><p>For example, to set the timezone attribute of users in the target application to <em>Europe/Paris</em>, create a table during integration setup with <em><strong>timezone</strong></em> as the attribute name and <em><strong>Europe/Paris</strong></em> as the value. Once defined, reference the table in the source attribute of the <strong>Ticket field mapper</strong> using the following format:<br/><em><strong>TABLE.&lt;table_name&gt;.&lt;key_name&gt;</strong> or <strong>TABLE.&lt;table_name&gt;[&lt;key_name&gt;]</strong></em></p><p>For example: <em>TABLE.test.timezone</em></p><p><strong>Note</strong>: You can configure expressions with nested tables in the ticket field mapper if required.<br/>For example: <em>TABLE.UserHireRecord[TABLE.UserRecord["empDate"]]</em></p><p>Refer to the <a href="../Using-Tables-in-Integrations/" rel="noopener noreferrer" target="_blank">Using Tables in Integrations</a> guide for more details.</p><h2 id="h_01M65ZHSR54MKVR3XADCRWXE47">Schedule</h2><p><span><span>Integrations can be scheduled to run automatically based on your preferred timeframe. Refer to the </span></span><a href="../Integration-Schedule-Setup-Guide/" rel="noopener noreferrer" target="_blank"><span><span>Integration Schedule Setup Guide</span></span></a><span><span> for further details.</span></span></p><h1 id="h_01J6YAY9KXHRE6D4TDZNBCBHEF">Execute Integration</h1><p>You can execute an integration manually or schedule it to run automatically. For further details, refer to the <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Action on Integrations</a> guide.</p><h1 id="h_01K06FZJ20WACCTKEZJPE2D9JK">Additional Options</h1><p>Aquera provides additional options in its integration solutions, allowing you to perform various actions on integrations, including executing, upgrading, copying, modifying, deleting, exporting, importing, viewing logs, and downloading reports. Refer to <a href="../User-Actions-on-Integrations/" rel="noopener noreferrer" target="_blank">User Actions on Integrations</a> for further details.</p><h1 id="h_01M65ZM7ZRJTEPQVHR9B7VZMP1">Appendix</h1><p>This section lists the supported attributes for each HR application. Select <strong>Change</strong> as the event type, then select the attributes to check for changes.</p><h2 id="h_01M65ZN5J14JNSWYT5H3FEYFQ7">Supported Attributes for Change event</h2><p>The attributes available in the <strong>Select change events</strong> field vary depending on the configured HR application. Select the attributes that you want the integration to monitor for changes. After you configure the integration, if a change is detected in any selected attribute, the integration considers the employee for mover ticket creation in NinjaOne.<br/>The following sections list the attributes supported for each HR application:</p><zd-accordion><details><summary>Supported Attributes for ADP Workforce Now</summary><div><ul>
+<li data-list-item-id="e56c904df8901a64a0c8d405cddeda1b5">Location</li>
+<li data-list-item-id="ee6cdb87089ebc09127eefa6c1633e2cd">Worker Type</li>
+<li data-list-item-id="e9724ddd3667097a7d9f69321441147a4">Original Hire Date </li>
+<li data-list-item-id="effe8dec842c6ff38771c704028b1ba0d">Legal Address Added</li>
+<li data-list-item-id="ed18550c0d9a7038a38be6c802adf18d8">Legal Address Changed</li>
+<li data-list-item-id="e0a23fe4a08fbd327cafbe2bb889c4be5">Legal Address Removed</li>
+<li data-list-item-id="e880af62d3b327c8775082b770b5bc3a4">Personal Address Added</li>
+<li data-list-item-id="e24d8d0f604c7e0009d18942223a8c755">Personal Address Changed</li>
+<li data-list-item-id="e04161f08a23f9e0529cb356ab3e8d39d">Personal Address Removed</li>
+<li data-list-item-id="ec4fc2d4acfa4cf8a257276496c1cd824">Birth Date</li>
+<li data-list-item-id="e02209b777209c932fc824ed86bf61ea9">Ethnicity</li>
+<li data-list-item-id="e65d438e2c8169d4daaceb5625ad92d32">Gender</li>
+<li data-list-item-id="e3950f246028d3c1b37eb25a02460f91f">Highest Education Level</li>
+<li data-list-item-id="e37fdf85f95792ba81b91ca6e6b7db6c2">Legal Name</li>
+<li data-list-item-id="eed3e7bf3706c5a9e981e0da2e2a13a0a">Race</li>
+<li data-list-item-id="e14da516eaecffbeeafb6d3fb4ab98e83">Religion</li>
+<li data-list-item-id="ed821e7f531c3ce28d764db89031b8b00">Business Fax Added</li>
+<li data-list-item-id="ed2e5b101a0f4cd0d346af28260db568a">Business Fax Changed</li>
+<li data-list-item-id="ecaf9cc91f0bb3ace1061c4702c1244de">Business Fax Removed</li>
+<li data-list-item-id="e78ac7ae36e97698eef299154a55b7c43">Business Mobile Added</li>
+<li data-list-item-id="e4a48096b32a3ab32bfb9f227d59193e2">Business Mobile Changed</li>
+<li data-list-item-id="e832dd7c94b8695100f5111bc8446b49b">Business Mobile Removed</li>
+<li data-list-item-id="e5ca7c267064cd53a26d77c47183dbdeb">Business Pager Added</li>
+<li data-list-item-id="e2ee2aa991902b228058aace023df568d">Business Pager Changed</li>
+<li data-list-item-id="e37e0f8a023642608a9648c8a41e11f6c">Business Pager Removed</li>
+<li data-list-item-id="e19e2832f6d545e6577bf6dbea61d3c33">Business Landline Added</li>
+<li data-list-item-id="e878f1039b5210ba891949b7194263796">Business Landline Removed</li>
+<li data-list-item-id="e87e0a74c0de67430a2916e5ffe8ee5fd">Business Landline Changed</li>
+<li data-list-item-id="ea1f10521c225f96303b8a9eb2b0ebf6d">Business Email Added</li>
+<li data-list-item-id="ecbb9b4bf70e499789d6a1a9c9f5e7311">Business Email Removed</li>
+<li data-list-item-id="e07419d02b8a81d34b159f03a164cbbec">Business Email Changed</li>
+<li data-list-item-id="ee27ccb195792371dfde570c5b41e4f98">Personal Email Added</li>
+<li data-list-item-id="e8f246db29e71356afd0a6e49c2ee48cb">Personal Email Changed</li>
+<li data-list-item-id="e93734bb31fa143b39caaa2e4f41de286">Personal Email Removed</li>
+<li data-list-item-id="e8ab93e30ae871931a4b8fe7798300bbc">Personal Fax Added</li>
+<li data-list-item-id="eb23ef5e03c4e641bf02a60303abf6b7d">Personal Fax Changed</li>
+<li data-list-item-id="e57cf6a59926ce1bf65fedc24513305ab">Personal Fax Removed</li>
+<li data-list-item-id="e13cbc3a7da088ba0047cd101c84cae5b">Personal Landline Added</li>
+<li data-list-item-id="e62ce84b9b79c19253f078caac2474eb6">Personal Landline Changed</li>
+<li data-list-item-id="e921cc35bb2a273a42b92f5c09d4525ce">Personal Landline Removed</li>
+<li data-list-item-id="e6ea2f9001d66c838d1c6a0077451b7c6">Personal Mobile Added</li>
+<li data-list-item-id="e1188271154c3dbffa552ad7a5cbba59c">Personal Mobile Changed</li>
+<li data-list-item-id="ec2cd5b92cd9f3fc9c367aa7ff4a4b2e5">Personal Mobile Removed</li>
+<li data-list-item-id="e7e0e43f39cd022943d7c80aec5782753">Personal Pager Added</li>
+<li data-list-item-id="e04e2313e9980b359c69f80d98bb8750c">Personal Pager Changed</li>
+<li data-list-item-id="e950f66dd8255bef3a724f74726f3d1a8">Personal Pager Removed</li>
+<li data-list-item-id="e08600a43a17d9bd3aaf296181b560741">Position</li>
+<li data-list-item-id="e224f2ea0aaa5813b59a0f03fc67430c7">Department</li>
+<li data-list-item-id="ec6be681a0cbe7d1bc91fc31df7b3b8b2">Work Assignment Retired</li>
+<li data-list-item-id="e05fc8b15f176d6ef85dbac1450be8dc4">Manager</li>
+<li data-list-item-id="e6d6e5446849fec4e0c312970f4287d16">Preferred Name</li>
+<li data-list-item-id="e15daf259525c3351c0f7aa089101d159">Government ID Added</li>
+<li data-list-item-id="e6465947f36887297af162b921b47d42f">Government ID Changed</li>
+<li data-list-item-id="e8dcb2f1662f0ab8cf6a82fee92149255">Military Status</li>
+<li data-list-item-id="ee1b0c7ca440693d6f0467d579b68ab96">Military Classification</li>
+<li data-list-item-id="ed97318265ef8c91b2f731872de553026">Base Remuneration</li>
+<li data-list-item-id="ecd06ada61a69aa1c07c3c955e37e0296">Additional Remuneration Added</li>
+<li data-list-item-id="e5035858d4f5596e29d63b0904025af98">Additional Remuneration Changed</li>
+<li data-list-item-id="efd51f40f096b989834ccfa248e57f390">Additional Remuneration Removed</li>
+<li data-list-item-id="e367c6c9188c4b18880864743b82216c1">Standard Hours</li>
+</ul></div></details></zd-accordion>
   </div>
 </body>
 </html>
